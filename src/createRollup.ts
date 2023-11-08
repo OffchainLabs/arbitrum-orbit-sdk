@@ -9,14 +9,14 @@ import {
 import { rollupCreator } from './contracts';
 import { isSupportedParentChainId } from './utils/isSupportedParentChainId';
 
-const defaults = {
+export const defaults = {
   maxDataSize: BigInt(104_857),
   nativeToken: zeroAddress,
   deployFactoriesToL2: false,
   maxFeePerGasForRetryables: BigInt(0),
 };
 
-type CreateRollupFunctionParams = GetFunctionArgs<
+export type CreateRollupFunctionParams = GetFunctionArgs<
   typeof rollupCreator.abi,
   'createRollup'
 >['args'][0];
