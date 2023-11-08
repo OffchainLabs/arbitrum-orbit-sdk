@@ -5,6 +5,7 @@ import {
   PublicClient,
   TransactionReceipt,
   encodeFunctionData,
+  Address,
 } from 'viem';
 
 import { rollupCreator } from './contracts';
@@ -49,25 +50,20 @@ export function createRollupEncodeFunctionData({
 
 export async function createRollupPrepareTransactionRequest({
   params,
+  account,
   publicClient,
-  walletClient,
 }: {
   params: CreateRollupParams;
+  account: Address;
   publicClient: PublicClient;
-  walletClient: WalletClient;
 }) {
   const chainId = publicClient.chain?.id;
-  const account = walletClient.account?.address;
 
   if (!isSupportedParentChainId(chainId)) {
     throw new Error('chainId is undefined');
   }
 
-  if (typeof account === 'undefined') {
-    throw new Error('account is undefined');
-  }
-
-  const request = await walletClient.prepareTransactionRequest({
+  const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreator.address[chainId],
     data: createRollupEncodeFunctionData({ params }),
