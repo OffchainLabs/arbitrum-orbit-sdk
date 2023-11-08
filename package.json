@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./src/dist --declaration",
-    "postbuild": "cp ./src/package.json ./src/dist",
-    "wagmi:generate": "wagmi generate"
+    "generate": "wagmi generate"
   },
   "devDependencies": {
     "@wagmi/cli": "^1.5.2",
