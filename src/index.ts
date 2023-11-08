@@ -1,4 +1,9 @@
-import { createRollup, CreateRollupResult } from './createRollup';
+import {
+  createRollup,
+  createRollupEncodeFunctionData,
+  createRollupPrepareTransactionRequest,
+  CreateRollupResult,
+} from './createRollup';
 import {
   createChainConfig,
   CreateChainConfigParams,
@@ -9,6 +14,8 @@ import { ParentChainId } from './types/ParentChainId';
 
 export {
   createRollup,
+  createRollupEncodeFunctionData,
+  createRollupPrepareTransactionRequest,
   CreateRollupResult,
   createChainConfig,
   CreateChainConfigParams,
