@@ -1,5 +1,6 @@
 {
-  "include": ["src"],
+  "include": ["./src/**/*"],
+  "exclude": ["./src/dist/**/*"],
   "compilerOptions": {
     "strict": true,
     "incremental": true,

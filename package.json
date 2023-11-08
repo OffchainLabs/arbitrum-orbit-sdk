@@ -5,8 +5,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./dist --declaration",
-    "postbuild": "cp ./src/package.json ./dist",
+    "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./src/dist --declaration",
+    "postbuild": "cp ./src/package.json ./src/dist",
     "wagmi:generate": "wagmi generate"
   },
   "devDependencies": {
