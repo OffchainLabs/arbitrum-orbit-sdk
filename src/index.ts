@@ -5,6 +5,11 @@ import {
   CreateRollupResult,
 } from './createRollup';
 import {
+  createRollupConfig,
+  CreateRollupConfigParams,
+  CreateRollupConfigResult,
+} from './createRollupConfig';
+import {
   createChainConfig,
   CreateChainConfigParams,
 } from './createChainConfig';
@@ -17,6 +22,9 @@ export {
   createRollupEncodeFunctionData,
   createRollupPrepareTransactionRequest,
   CreateRollupResult,
+  createRollupConfig,
+  CreateRollupConfigParams,
+  CreateRollupConfigResult,
   createChainConfig,
   CreateChainConfigParams,
   ChainConfig,
