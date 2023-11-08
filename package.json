@@ -1,6 +1,7 @@
 {
   "workspaces": [
-    "src"
+    "src",
+    "example"
   ],
   "private": true,
   "type": "module",
