@@ -1,0 +1,17 @@
+{
+  "workspaces": [
+    "src"
+  ],
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./dist --declaration",
+    "postbuild": "cp ./src/package.json ./dist",
+    "wagmi:generate": "wagmi generate"
+  },
+  "devDependencies": {
+    "@wagmi/cli": "^1.5.2",
+    "node-fetch": "^3.3.0",
+    "typescript": "^5.2.2"
+  }
+}
