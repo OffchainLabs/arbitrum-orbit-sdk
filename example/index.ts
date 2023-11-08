@@ -3,6 +3,7 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumGoerli } from 'viem/chains';
 
 import {
+  generateChainId,
   createRollupConfig,
   createRollupPrepareTransactionRequest,
 } from '@arbitrum/orbit-sdk';
@@ -35,7 +36,7 @@ async function main() {
   const request = await createRollupPrepareTransactionRequest({
     params: {
       config: createRollupConfig({
-        chainId: BigInt(Math.floor(Math.random() * 100000000000) + 1),
+        chainId: BigInt(generateChainId()),
         owner: account.address,
       }),
       batchPoster,
