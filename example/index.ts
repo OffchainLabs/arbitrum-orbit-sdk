@@ -3,10 +3,10 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumGoerli } from 'viem/chains';
 
 import {
-  generateChainId,
   createRollupPrepareConfig,
   createRollupPrepareTransactionRequest,
 } from '@arbitrum/orbit-sdk';
+import { generateChainId } from '@arbitrum/orbit-sdk/utils';
 
 if (typeof process.env.PRIVATE_KEY === 'undefined') {
   throw new Error(`Please provide the "PRIVATE_KEY" environment variable`);

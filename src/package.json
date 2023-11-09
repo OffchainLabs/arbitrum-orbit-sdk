@@ -14,12 +14,19 @@
     "./contracts": {
       "types": "./dist/contracts.d.ts",
       "default": "./dist/contracts.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "default": "./dist/utils/index.js"
     }
   },
   "typesVersions": {
     "*": {
       "contracts": [
         "./dist/contracts.d.ts"
+      ],
+      "utils": [
+        "./dist/utils/index.d.ts"
       ]
     }
   },
