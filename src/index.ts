@@ -15,6 +15,7 @@ import {
 } from './createRollupPrepareChainConfig';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { ParentChainId } from './types/ParentChainId';
+import * as utils from './utils';
 
 export {
   createRollup,
@@ -29,4 +30,5 @@ export {
   ChainConfig,
   ChainConfigArbitrumParams,
   ParentChainId,
+  utils,
 };
