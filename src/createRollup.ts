@@ -10,6 +10,7 @@ import {
 
 import { rollupCreator } from './contracts';
 import { isSupportedParentChainId } from './utils/isSupportedParentChainId';
+import { createRollupGetDeployedContractsFromTransactionReceipt } from './createRollupGetDeployedContractsFromTransactionReceipt';
 
 export const defaults = {
   maxDataSize: BigInt(104_857),
@@ -30,11 +31,6 @@ export type CreateRollupParams = Pick<
   RequiredKeys
 > &
   Partial<Omit<CreateRollupFunctionParams, RequiredKeys>>;
-
-export type CreateRollupResult = {
-  txHash: `0x${string}`;
-  txReceipt: TransactionReceipt;
-};
 
 export function createRollupEncodeFunctionData({
   params,
@@ -82,7 +78,7 @@ export async function createRollup({
   params: CreateRollupParams;
   publicClient: PublicClient;
   walletClient: WalletClient;
-}): Promise<CreateRollupResult> {
+}) {
   const chainId = publicClient.chain?.id;
   const account = walletClient.account?.address;
 
@@ -104,10 +100,10 @@ export async function createRollup({
   });
 
   const hash = await walletClient.writeContract(request);
-  const txReceipt = await publicClient.waitForTransactionReceipt({ hash });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
   return {
-    txHash: txReceipt.transactionHash,
-    txReceipt,
+    receipt,
+    result: createRollupGetDeployedContractsFromTransactionReceipt(receipt),
   };
 }

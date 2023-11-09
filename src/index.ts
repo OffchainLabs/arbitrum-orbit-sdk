@@ -2,7 +2,6 @@ import {
   createRollup,
   createRollupEncodeFunctionData,
   createRollupPrepareTransactionRequest,
-  CreateRollupResult,
 } from './createRollup';
 import {
   createRollupPrepareConfig,
@@ -22,7 +21,6 @@ export {
   createRollup,
   createRollupEncodeFunctionData,
   createRollupPrepareTransactionRequest,
-  CreateRollupResult,
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
