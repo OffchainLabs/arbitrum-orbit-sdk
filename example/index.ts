@@ -4,6 +4,7 @@ import { arbitrumGoerli } from 'viem/chains';
 
 import {
   createRollupPrepareConfig,
+  createRollupPrepareChainConfig,
   createRollupPrepareTransactionRequest,
 } from '@arbitrum/orbit-sdk';
 import { generateChainId } from '@arbitrum/orbit-sdk/utils';
@@ -33,11 +34,20 @@ const account = privateKeyToAccount(
 );
 
 async function main() {
+  const chainId = generateChainId();
+
   const request = await createRollupPrepareTransactionRequest({
     params: {
       config: createRollupPrepareConfig({
-        chainId: BigInt(generateChainId()),
+        chainId: BigInt(chainId),
         owner: account.address,
+        chainConfig: createRollupPrepareChainConfig({
+          chainId,
+          arbitrum: {
+            InitialChainOwner: account.address,
+            DataAvailabilityCommittee: true,
+          },
+        }),
       }),
       batchPoster,
       validators: [validator],
