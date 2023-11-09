@@ -10,9 +10,9 @@ import {
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
 import {
-  createChainConfig,
-  CreateChainConfigParams,
-} from './createChainConfig';
+  createRollupPrepareChainConfig,
+  CreateRollupPrepareChainConfigParams,
+} from './createRollupPrepareChainConfig';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { ParentChainId } from './types/ParentChainId';
 
@@ -24,8 +24,8 @@ export {
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
-  createChainConfig,
-  CreateChainConfigParams,
+  createRollupPrepareChainConfig,
+  CreateRollupPrepareChainConfigParams,
   ChainConfig,
   ChainConfigArbitrumParams,
   ParentChainId,
