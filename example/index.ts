@@ -21,11 +21,13 @@ function sanitizePrivateKey(privateKey: string): `0x${string}` {
   return privateKey as `0x${string}`;
 }
 
+const chain = arbitrumGoerli;
+
 const batchPoster = privateKeyToAccount(generatePrivateKey()).address;
 const validator = privateKeyToAccount(generatePrivateKey()).address;
 
 const publicClient = createPublicClient({
-  chain: arbitrumGoerli,
+  chain,
   transport: http(),
 });
 
@@ -60,7 +62,9 @@ async function main() {
     serializedTransaction: await account.signTransaction(request),
   });
 
-  console.log(`Rollup deployed in transaction: ${txHash}`);
+  console.log(
+    `Rollup deployed in transaction: ${chain.blockExplorers.default.url}/tx/${txHash}`
+  );
 }
 
 main();
