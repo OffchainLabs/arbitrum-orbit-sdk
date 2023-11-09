@@ -62,8 +62,12 @@ async function main() {
     serializedTransaction: await account.signTransaction(request),
   });
 
+  const txReceipt = await publicClient.waitForTransactionReceipt({
+    hash: txHash,
+  });
+
   console.log(
-    `Rollup deployed in transaction: ${chain.blockExplorers.default.url}/tx/${txHash}`
+    `Rollup deployed in transaction: ${chain.blockExplorers.default.url}/tx/${txReceipt.transactionHash}`
   );
 }
 
