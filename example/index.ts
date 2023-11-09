@@ -6,6 +6,7 @@ import {
   createRollupPrepareConfig,
   createRollupPrepareChainConfig,
   createRollupPrepareTransactionRequest,
+  createRollupGetDeployedContractsFromTransactionReceipt,
 } from '@arbitrum/orbit-sdk';
 import { generateChainId } from '@arbitrum/orbit-sdk/utils';
 
@@ -67,7 +68,10 @@ async function main() {
   });
 
   console.log(
-    `Rollup deployed in transaction: ${chain.blockExplorers.default.url}/tx/${txReceipt.transactionHash}`
+    `Contracts deployed in transaction: ${chain.blockExplorers.default.url}/tx/${txReceipt.transactionHash}`
+  );
+  console.dir(
+    createRollupGetDeployedContractsFromTransactionReceipt(txReceipt)
   );
 }
 
