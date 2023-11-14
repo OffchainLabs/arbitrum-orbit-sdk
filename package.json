@@ -8,11 +8,13 @@
   "scripts": {
     "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./src/dist --declaration",
     "dev": "yarn build --watch",
-    "generate": "wagmi generate"
+    "generate": "wagmi generate",
+    "test": "vitest"
   },
   "devDependencies": {
     "@wagmi/cli": "^1.5.2",
     "node-fetch": "^3.3.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }
