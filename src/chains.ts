@@ -1,1 +1,5 @@
-export { arbitrumGoerli, arbitrumSepolia } from 'viem/chains';
+export {
+  arbitrum as arbitrumOne,
+  arbitrumGoerli,
+  arbitrumSepolia,
+} from 'viem/chains';

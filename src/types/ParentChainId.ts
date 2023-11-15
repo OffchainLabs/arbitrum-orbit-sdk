@@ -1,3 +1,6 @@
-import { rollupCreator } from '../contracts';
+import { arbitrumOne, arbitrumGoerli, arbitrumSepolia } from '../chains';
 
-export type ParentChainId = keyof typeof rollupCreator.address;
+export type ParentChainId =
+  | typeof arbitrumOne.id
+  | typeof arbitrumGoerli.id
+  | typeof arbitrumSepolia.id;

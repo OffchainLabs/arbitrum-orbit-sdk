@@ -1,9 +1,10 @@
 import { fetch as fetchPlugin } from '@wagmi/cli/plugins';
 
 import { ParentChainId } from './src';
-import { arbitrumGoerli, arbitrumSepolia } from './src/chains';
+import { arbitrumOne, arbitrumGoerli, arbitrumSepolia } from './src/chains';
 
 const blockExplorerApiUrls: Record<ParentChainId, string> = {
+  [arbitrumOne.id]: 'https://api.arbiscan.io/api',
   [arbitrumGoerli.id]: 'https://api-goerli.arbiscan.io/api',
   [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
 };
@@ -25,6 +26,7 @@ type ContractConfig = {
 const rollupCreatorContractConfig: ContractConfig = {
   name: 'RollupCreator',
   address: {
+    [arbitrumOne.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
     [arbitrumGoerli.id]: '0x2025FCb2Ee63Fcd60E079c9602f7a25bfcA100EE',
     [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
   },
