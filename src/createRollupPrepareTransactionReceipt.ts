@@ -7,6 +7,10 @@ import {
 } from 'viem';
 
 import { rollupCreator } from './contracts';
+import {
+  sanitizeRollupContracts,
+  RollupContracts,
+} from './types/RollupContracts';
 
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {
   const abiItem = getAbiItem({ abi: rollupCreator.abi, name: 'RollupCreated' });
@@ -34,11 +38,20 @@ function decodeRollupCreatedEventLog(log: Log<bigint, number>) {
   return decodedEventLog;
 }
 
-export function createRollupGetDeployedContractsFromTransactionReceipt(
-  txReceipt: TransactionReceipt
-) {
-  const eventLog = findRollupCreatedEventLog(txReceipt);
-  const decodedEventLog = decodeRollupCreatedEventLog(eventLog);
+export type CreateRollupTransactionReceipt = TransactionReceipt & {
+  getRollupContracts(): RollupContracts;
+};
 
-  return decodedEventLog.args;
+export function createRollupPrepareTransactionReceipt(
+  txReceipt: TransactionReceipt
+): CreateRollupTransactionReceipt {
+  return {
+    ...txReceipt,
+    getRollupContracts: function () {
+      const eventLog = findRollupCreatedEventLog(txReceipt);
+      const decodedEventLog = decodeRollupCreatedEventLog(eventLog);
+
+      return sanitizeRollupContracts(decodedEventLog.args);
+    },
+  };
 }

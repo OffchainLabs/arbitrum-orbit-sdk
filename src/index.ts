@@ -12,8 +12,12 @@ import {
   createRollupPrepareChainConfig,
   CreateRollupPrepareChainConfigParams,
 } from './createRollupPrepareChainConfig';
-import { createRollupGetDeployedContractsFromTransactionReceipt } from './createRollupGetDeployedContractsFromTransactionReceipt';
+import {
+  createRollupPrepareTransactionReceipt,
+  CreateRollupTransactionReceipt,
+} from './createRollupPrepareTransactionReceipt';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
+import { RollupContracts } from './types/RollupContracts';
 import { ParentChainId } from './types/ParentChainId';
 import * as utils from './utils';
 
@@ -26,7 +30,9 @@ export {
   CreateRollupPrepareConfigResult,
   createRollupPrepareChainConfig,
   CreateRollupPrepareChainConfigParams,
-  createRollupGetDeployedContractsFromTransactionReceipt,
+  createRollupPrepareTransactionReceipt,
+  CreateRollupTransactionReceipt,
+  RollupContracts,
   ChainConfig,
   ChainConfigArbitrumParams,
   ParentChainId,

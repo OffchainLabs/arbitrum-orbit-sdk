@@ -3,14 +3,16 @@ import {
   GetFunctionArgs,
   zeroAddress,
   PublicClient,
-  TransactionReceipt,
   encodeFunctionData,
   Address,
 } from 'viem';
 
 import { rollupCreator } from './contracts';
 import { isSupportedParentChainId } from './utils/isSupportedParentChainId';
-import { createRollupGetDeployedContractsFromTransactionReceipt } from './createRollupGetDeployedContractsFromTransactionReceipt';
+import {
+  CreateRollupTransactionReceipt,
+  createRollupPrepareTransactionReceipt,
+} from './createRollupPrepareTransactionReceipt';
 
 export const defaults = {
   maxDataSize: BigInt(104_857),
@@ -78,7 +80,7 @@ export async function createRollup({
   params: CreateRollupParams;
   publicClient: PublicClient;
   walletClient: WalletClient;
-}) {
+}): Promise<CreateRollupTransactionReceipt> {
   const chainId = publicClient.chain?.id;
   const account = walletClient.account?.address;
 
@@ -100,10 +102,7 @@ export async function createRollup({
   });
 
   const hash = await walletClient.writeContract(request);
-  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  const txReceipt = await publicClient.waitForTransactionReceipt({ hash });
 
-  return {
-    receipt,
-    result: createRollupGetDeployedContractsFromTransactionReceipt(receipt),
-  };
+  return createRollupPrepareTransactionReceipt(txReceipt);
 }

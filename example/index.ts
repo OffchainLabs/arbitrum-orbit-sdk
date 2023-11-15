@@ -6,7 +6,7 @@ import {
   createRollupPrepareConfig,
   createRollupPrepareChainConfig,
   createRollupPrepareTransactionRequest,
-  createRollupGetDeployedContractsFromTransactionReceipt,
+  createRollupPrepareTransactionReceipt,
 } from '@arbitrum/orbit-sdk';
 import { generateChainId } from '@arbitrum/orbit-sdk/utils';
 
@@ -63,16 +63,14 @@ async function main() {
     serializedTransaction: await account.signTransaction(request),
   });
 
-  const txReceipt = await publicClient.waitForTransactionReceipt({
-    hash: txHash,
-  });
+  const txReceipt = createRollupPrepareTransactionReceipt(
+    await publicClient.waitForTransactionReceipt({ hash: txHash })
+  );
 
   console.log(
     `Contracts deployed in transaction: ${chain.blockExplorers.default.url}/tx/${txReceipt.transactionHash}`
   );
-  console.dir(
-    createRollupGetDeployedContractsFromTransactionReceipt(txReceipt)
-  );
+  console.dir(txReceipt.getRollupContracts());
 }
 
 main();
