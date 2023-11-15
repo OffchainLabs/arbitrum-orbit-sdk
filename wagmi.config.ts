@@ -1,5 +1,4 @@
 import { fetch as fetchPlugin } from '@wagmi/cli/plugins';
-import fetch from 'node-fetch';
 
 import { ParentChainId } from './src';
 import { arbitrumGoerli, arbitrumSepolia } from './src/chains';
