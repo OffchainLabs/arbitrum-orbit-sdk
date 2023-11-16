@@ -1,4 +1,4 @@
-import { fetch as fetchPlugin } from '@wagmi/cli/plugins';
+import { etherscan } from '@wagmi/cli/plugins';
 
 import { ParentChainId } from './src';
 import { arbitrumOne, arbitrumGoerli, arbitrumSepolia } from './src/chains';
@@ -9,13 +9,12 @@ const blockExplorerApiUrls: Record<ParentChainId, string> = {
   [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
 };
 
-export function getRequestUrl(chainId: ParentChainId, address: `0x${string}`) {
-  return `${blockExplorerApiUrls[chainId]}?module=contract&action=getabi&format=raw&address=${address}`;
-}
-
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
-  const response = await fetch(getRequestUrl(chainId, address));
-  return await response.json();
+  await (
+    await fetch(
+      `${blockExplorerApiUrls[chainId]}?module=contract&action=getabi&format=raw&address=${address}&apikey=${process.env.ARBISCAN_API_KEY}`
+    )
+  ).json();
 }
 
 type ContractConfig = {
@@ -55,14 +54,6 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
   console.log(`- ${contract.name} ✔`);
 }
 
-function request(config: ContractConfig) {
-  // since we'll make sure that all contracts have same abis, it doesn't really matter which one we choose
-  const chainId = arbitrumGoerli.id;
-  const address = config.address[chainId];
-
-  return { url: getRequestUrl(chainId, address) };
-}
-
 export default async function () {
   console.log(`Checking if contract ABIs match...`);
 
@@ -73,8 +64,9 @@ export default async function () {
   return {
     out: 'src/generated.ts',
     plugins: [
-      fetchPlugin({
-        request,
+      etherscan({
+        chainId: arbitrumOne.id,
+        apiKey: process.env.ARBISCAN_API_KEY!,
         contracts,
         cacheDuration: 0,
       }),
