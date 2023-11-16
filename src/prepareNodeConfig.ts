@@ -2,6 +2,10 @@ import { NodeConfig } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 
+function sanitizePrivateKey(privateKey: string) {
+  return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
+}
+
 export function prepareNodeConfig({
   chainName,
   chainConfig,
@@ -71,14 +75,14 @@ export function prepareNodeConfig({
         'max-size': 90000,
         'enable': true,
         'parent-chain-wallet': {
-          'private-key': batchPosterPrivateKey,
+          'private-key': sanitizePrivateKey(batchPosterPrivateKey),
         },
       },
       'staker': {
         'enable': true,
         'strategy': 'MakeNodes',
         'parent-chain-wallet': {
-          'private-key': validatorPrivateKey,
+          'private-key': sanitizePrivateKey(validatorPrivateKey),
         },
       },
       'caching': {
