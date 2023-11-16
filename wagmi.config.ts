@@ -23,22 +23,22 @@ type ContractConfig = {
   address: Record<ParentChainId, `0x${string}`>;
 };
 
-const rollupCreatorContractConfig: ContractConfig = {
-  name: 'RollupCreator',
-  address: {
-    [arbitrumOne.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
-    [arbitrumGoerli.id]: '0x2025FCb2Ee63Fcd60E079c9602f7a25bfcA100EE',
-    [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
+const contracts: ContractConfig[] = [
+  {
+    name: 'RollupCreator',
+    address: {
+      [arbitrumOne.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
+      [arbitrumGoerli.id]: '0x2025FCb2Ee63Fcd60E079c9602f7a25bfcA100EE',
+      [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
+    },
   },
-};
+];
 
 function allEqual<T>(array: T[]) {
   return array.every((value) => value === array[0]);
 }
 
-export async function assertContractsMatch(contract: {
-  address: Record<number, `0x${string}`>;
-}) {
+export async function assertContractAbisMatch(contract: ContractConfig) {
   const abis = await Promise.all(
     Object.entries(contract.address)
       // fetch abis for all chains
@@ -49,21 +49,25 @@ export async function assertContractsMatch(contract: {
 
   // make sure all abis are the same
   if (!allEqual(abis.map((abi) => JSON.stringify(abi)))) {
-    throw new Error(`ABIs don't match`);
+    throw new Error(`- ${contract.name} ERROR`);
   }
 
-  console.log('Contracts match.');
+  console.log(`- ${contract.name} ✔`);
+}
+
+function request(config: ContractConfig) {
+  // since we'll make sure that all contracts have same abis, it doesn't really matter which one we choose
+  const chainId = arbitrumGoerli.id;
+  const address = config.address[chainId];
+
+  return { url: getRequestUrl(chainId, address) };
 }
 
 export default async function () {
-  await assertContractsMatch(rollupCreatorContractConfig);
+  console.log(`Checking if contract ABIs match...`);
 
-  // since we made sure that all contracts have same abis, it doesn't really matter which one we choose
-  const chainId = arbitrumGoerli.id;
-  const address = rollupCreatorContractConfig.address[chainId];
-
-  function request() {
-    return { url: getRequestUrl(chainId, address) };
+  for (const contract of contracts) {
+    await assertContractAbisMatch(contract);
   }
 
   return {
@@ -71,7 +75,7 @@ export default async function () {
     plugins: [
       fetchPlugin({
         request,
-        contracts: [rollupCreatorContractConfig],
+        contracts,
         cacheDuration: 0,
       }),
     ],
