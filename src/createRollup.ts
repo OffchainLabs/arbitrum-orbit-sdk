@@ -1,7 +1,7 @@
 import { PublicClient, WalletClient, GetFunctionArgs } from 'viem';
 
 import { rollupCreator } from './contracts';
-import { isSupportedParentChainId } from './utils/isSupportedParentChainId';
+import { validParentChainId } from './types/ParentChain';
 import { defaults } from './createRollupDefaults';
 import {
   createRollupPrepareTransactionReceipt,
@@ -33,7 +33,7 @@ export async function createRollup({
   const chainId = publicClient.chain?.id;
   const account = walletClient.account?.address;
 
-  if (!isSupportedParentChainId(chainId)) {
+  if (!validParentChainId(chainId)) {
     throw new Error('chainId is undefined');
   }
 

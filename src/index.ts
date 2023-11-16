@@ -15,7 +15,7 @@ import {
 } from './createRollupPrepareTransactionReceipt';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
-import { ParentChainId } from './types/ParentChainId';
+import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import * as utils from './utils';
@@ -33,6 +33,7 @@ export {
   CoreContracts,
   ChainConfig,
   ChainConfigArbitrumParams,
+  ParentChain,
   ParentChainId,
   NodeConfig,
   prepareNodeConfig,

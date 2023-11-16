@@ -3,7 +3,7 @@ import { Address, PublicClient, encodeFunctionData } from 'viem';
 import { CreateRollupParams } from './createRollup';
 import { defaults } from './createRollupDefaults';
 import { rollupCreator } from './contracts';
-import { isSupportedParentChainId } from './utils/isSupportedParentChainId';
+import { validParentChainId } from './types/ParentChain';
 
 function createRollupEncodeFunctionData({
   params,
@@ -28,7 +28,7 @@ export async function createRollupPrepareTransactionRequest({
 }) {
   const chainId = publicClient.chain?.id;
 
-  if (!isSupportedParentChainId(chainId)) {
+  if (!validParentChainId(chainId)) {
     throw new Error('chainId is undefined');
   }
 
