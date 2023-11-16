@@ -1,25 +1,12 @@
-import {
-  WalletClient,
-  GetFunctionArgs,
-  zeroAddress,
-  PublicClient,
-  encodeFunctionData,
-  Address,
-} from 'viem';
+import { PublicClient, WalletClient, GetFunctionArgs } from 'viem';
 
 import { rollupCreator } from './contracts';
 import { isSupportedParentChainId } from './utils/isSupportedParentChainId';
+import { defaults } from './createRollupDefaults';
 import {
-  CreateRollupTransactionReceipt,
   createRollupPrepareTransactionReceipt,
+  CreateRollupTransactionReceipt,
 } from './createRollupPrepareTransactionReceipt';
-
-export const defaults = {
-  maxDataSize: BigInt(104_857),
-  nativeToken: zeroAddress,
-  deployFactoriesToL2: false,
-  maxFeePerGasForRetryables: BigInt(0),
-};
 
 export type CreateRollupFunctionParams = GetFunctionArgs<
   typeof rollupCreator.abi,
@@ -33,44 +20,6 @@ export type CreateRollupParams = Pick<
   RequiredKeys
 > &
   Partial<Omit<CreateRollupFunctionParams, RequiredKeys>>;
-
-export function createRollupEncodeFunctionData({
-  params,
-}: {
-  params: CreateRollupParams;
-}) {
-  return encodeFunctionData({
-    abi: rollupCreator.abi,
-    functionName: 'createRollup',
-    args: [{ ...defaults, ...params }],
-  });
-}
-
-export async function createRollupPrepareTransactionRequest({
-  params,
-  account,
-  publicClient,
-}: {
-  params: CreateRollupParams;
-  account: Address;
-  publicClient: PublicClient;
-}) {
-  const chainId = publicClient.chain?.id;
-
-  if (!isSupportedParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
-  }
-
-  const request = await publicClient.prepareTransactionRequest({
-    chain: publicClient.chain,
-    to: rollupCreator.address[chainId],
-    data: createRollupEncodeFunctionData({ params }),
-    value: BigInt(0),
-    account,
-  });
-
-  return { ...request, chainId };
-}
 
 export async function createRollup({
   params,

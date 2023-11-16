@@ -1,8 +1,4 @@
-import {
-  createRollup,
-  createRollupEncodeFunctionData,
-  createRollupPrepareTransactionRequest,
-} from './createRollup';
+import { createRollup } from './createRollup';
 import {
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
@@ -12,6 +8,7 @@ import {
   prepareChainConfig,
   PrepareChainConfigParams,
 } from './prepareChainConfig';
+import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
@@ -25,7 +22,6 @@ import * as utils from './utils';
 
 export {
   createRollup,
-  createRollupEncodeFunctionData,
   createRollupPrepareTransactionRequest,
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
