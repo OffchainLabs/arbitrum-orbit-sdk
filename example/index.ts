@@ -70,7 +70,7 @@ async function main() {
   console.log(
     `Contracts deployed in transaction: ${chain.blockExplorers.default.url}/tx/${txReceipt.transactionHash}`
   );
-  console.dir(txReceipt.getRollupContracts());
+  console.dir(txReceipt.getCoreContracts());
 }
 
 main();

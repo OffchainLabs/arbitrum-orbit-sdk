@@ -4,13 +4,11 @@ import {
   getEventSelector,
   Log,
   decodeEventLog,
+  DecodeEventLogReturnType,
 } from 'viem';
 
 import { rollupCreator } from './contracts';
-import {
-  sanitizeRollupContracts,
-  RollupContracts,
-} from './types/RollupContracts';
+import { CoreContracts } from './types/CoreContracts';
 
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {
   const abiItem = getAbiItem({ abi: rollupCreator.abi, name: 'RollupCreated' });
@@ -38,8 +36,18 @@ function decodeRollupCreatedEventLog(log: Log<bigint, number>) {
   return decodedEventLog;
 }
 
+export function prepareCoreContracts(
+  params: DecodeEventLogReturnType<
+    typeof rollupCreator.abi,
+    'RollupCreated'
+  >['args']
+): CoreContracts {
+  const { rollupAddress, inboxAddress, ...rest } = params;
+  return { ...rest, rollup: rollupAddress, inbox: inboxAddress };
+}
+
 export type CreateRollupTransactionReceipt = TransactionReceipt & {
-  getRollupContracts(): RollupContracts;
+  getCoreContracts(): CoreContracts;
 };
 
 export function createRollupPrepareTransactionReceipt(
@@ -47,11 +55,11 @@ export function createRollupPrepareTransactionReceipt(
 ): CreateRollupTransactionReceipt {
   return {
     ...txReceipt,
-    getRollupContracts: function () {
+    getCoreContracts: function () {
       const eventLog = findRollupCreatedEventLog(txReceipt);
       const decodedEventLog = decodeRollupCreatedEventLog(eventLog);
 
-      return sanitizeRollupContracts(decodedEventLog.args);
+      return prepareCoreContracts(decodedEventLog.args);
     },
   };
 }
