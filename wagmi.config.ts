@@ -31,6 +31,14 @@ const contracts: ContractConfig[] = [
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
     },
   },
+  {
+    name: 'TokenBridgeCreator',
+    address: {
+      [arbitrumOne.id]: '0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14',
+      [arbitrumGoerli.id]: '0x1C608642d0944e95957a7ac3a478EC17FA191E9A',
+      [arbitrumSepolia.id]: '0xC35800028e31044173d37291F425DCc42D068c84',
+    },
+  },
 ];
 
 function allEqual<T>(array: T[]) {
