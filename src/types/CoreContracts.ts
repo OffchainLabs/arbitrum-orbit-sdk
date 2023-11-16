@@ -13,4 +13,5 @@ export type CoreContracts = {
   upgradeExecutor: Address;
   validatorUtils: Address;
   validatorWalletCreator: Address;
+  deployedAtBlockNumber: number;
 };

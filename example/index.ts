@@ -91,7 +91,6 @@ async function main() {
 
   // get information about the deployed core contracts from the transaction receipt
   const coreContracts = txReceipt.getCoreContracts();
-  const coreContractsDeploymentBlockNumber = Number(txReceipt.blockNumber);
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
 
   // prepare the node config
@@ -99,7 +98,6 @@ async function main() {
     chainName: 'My Orbit Chain',
     chainConfig,
     coreContracts,
-    coreContractsDeploymentBlockNumber,
     batchPosterPrivateKey,
     validatorPrivateKey,
     parentChainId: parentChain.id,

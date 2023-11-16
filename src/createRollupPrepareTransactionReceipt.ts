@@ -4,7 +4,6 @@ import {
   getEventSelector,
   Log,
   decodeEventLog,
-  DecodeEventLogReturnType,
 } from 'viem';
 
 import { rollupCreator } from './contracts';
@@ -36,16 +35,6 @@ function decodeRollupCreatedEventLog(log: Log<bigint, number>) {
   return decodedEventLog;
 }
 
-export function prepareCoreContracts(
-  params: DecodeEventLogReturnType<
-    typeof rollupCreator.abi,
-    'RollupCreated'
-  >['args']
-): CoreContracts {
-  const { rollupAddress, inboxAddress, ...rest } = params;
-  return { ...rest, rollup: rollupAddress, inbox: inboxAddress };
-}
-
 export type CreateRollupTransactionReceipt = TransactionReceipt & {
   getCoreContracts(): CoreContracts;
 };
@@ -59,7 +48,14 @@ export function createRollupPrepareTransactionReceipt(
       const eventLog = findRollupCreatedEventLog(txReceipt);
       const decodedEventLog = decodeRollupCreatedEventLog(eventLog);
 
-      return prepareCoreContracts(decodedEventLog.args);
+      const { rollupAddress, inboxAddress, ...rest } = decodedEventLog.args;
+
+      return {
+        rollup: rollupAddress,
+        inbox: inboxAddress,
+        ...rest,
+        deployedAtBlockNumber: Number(txReceipt.blockNumber),
+      };
     },
   };
 }

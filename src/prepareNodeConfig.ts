@@ -14,7 +14,6 @@ export function prepareNodeConfig({
   chainName,
   chainConfig,
   coreContracts,
-  coreContractsDeploymentBlockNumber,
   batchPosterPrivateKey,
   validatorPrivateKey,
   parentChainId,
@@ -23,7 +22,6 @@ export function prepareNodeConfig({
   chainName: string;
   chainConfig: ChainConfig;
   coreContracts: CoreContracts;
-  coreContractsDeploymentBlockNumber: number;
   batchPosterPrivateKey: string;
   validatorPrivateKey: string;
   parentChainId: number;
@@ -44,7 +42,7 @@ export function prepareNodeConfig({
             'rollup': coreContracts.rollup,
             'validator-utils': coreContracts.validatorUtils,
             'validator-wallet-creator': coreContracts.validatorWalletCreator,
-            'deployed-at': coreContractsDeploymentBlockNumber,
+            'deployed-at': coreContracts.deployedAtBlockNumber,
           },
         },
       ]),
