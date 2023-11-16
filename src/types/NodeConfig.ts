@@ -1,22 +1,29 @@
 import { ChainConfig } from './ChainConfig';
 
+export type NodeConfigChainInfoJson = [
+  {
+    'chain-id': number;
+    'parent-chain-id': number;
+    'chain-name': string;
+    'chain-config': ChainConfig;
+    'rollup': {
+      'bridge': string;
+      'inbox': string;
+      'sequencer-inbox': string;
+      'rollup': string;
+      'validator-utils': string;
+      'validator-wallet-creator': string;
+      'deployed-at': number;
+    };
+  }
+];
+
 export type NodeConfig = {
   'chain': {
-    'info-json': Array<{
-      'chain-id': number;
-      'parent-chain-id': number;
-      'chain-name': string;
-      'chain-config': ChainConfig;
-      'rollup': {
-        'bridge': string;
-        'inbox': string;
-        'sequencer-inbox': string;
-        'rollup': string;
-        'validator-utils': string;
-        'validator-wallet-creator': string;
-        'deployed-at': number;
-      };
-    }>;
+    /**
+     * This is a stringified `NodeConfigChainInfoJson` object.
+     */
+    'info-json': string;
     'name': string;
   };
   'parent-chain': {

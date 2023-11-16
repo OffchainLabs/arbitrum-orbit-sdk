@@ -1,9 +1,13 @@
-import { NodeConfig } from './types/NodeConfig';
+import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 
 function sanitizePrivateKey(privateKey: string) {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
+}
+
+function stringifyInfoJson(infoJson: NodeConfigChainInfoJson): string {
+  return JSON.stringify(infoJson);
 }
 
 export function prepareNodeConfig({
@@ -27,7 +31,7 @@ export function prepareNodeConfig({
 }): NodeConfig {
   const config: NodeConfig = {
     'chain': {
-      'info-json': [
+      'info-json': stringifyInfoJson([
         {
           'chain-id': chainConfig.chainId,
           'parent-chain-id': parentChainId,
@@ -43,7 +47,7 @@ export function prepareNodeConfig({
             'deployed-at': coreContractsDeploymentBlockNumber,
           },
         },
-      ],
+      ]),
       'name': chainName,
     },
     'parent-chain': {

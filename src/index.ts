@@ -16,7 +16,7 @@ import {
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
-import { NodeConfig } from './types/NodeConfig';
+import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import * as utils from './utils';
 
@@ -36,6 +36,7 @@ export {
   ParentChain,
   ParentChainId,
   NodeConfig,
+  NodeConfigChainInfoJson,
   prepareNodeConfig,
   utils,
 };
