@@ -9,9 +9,9 @@ import {
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
 import {
-  createRollupPrepareChainConfig,
-  CreateRollupPrepareChainConfigParams,
-} from './createRollupPrepareChainConfig';
+  prepareChainConfig,
+  PrepareChainConfigParams,
+} from './prepareChainConfig';
 import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
@@ -30,8 +30,8 @@ export {
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
-  createRollupPrepareChainConfig,
-  CreateRollupPrepareChainConfigParams,
+  prepareChainConfig,
+  PrepareChainConfigParams,
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
   CoreContracts,

@@ -1,7 +1,7 @@
 import { it, expect } from 'vitest';
 
 import { ChainConfig } from './types/ChainConfig';
-import { defaults, createRollupPrepareChainConfig } from './createRollupPrepareChainConfig';
+import { defaults, prepareChainConfig } from './prepareChainConfig';
 
 const chainId = 69_420;
 const vitalik: `0x${string}` = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
@@ -44,7 +44,7 @@ it('creates chain config with defaults', () => {
     },
   };
 
-  const result = createRollupPrepareChainConfig(params);
+  const result = prepareChainConfig(params);
 
   assertChainConfigsEqual(result, {
     ...defaults,
@@ -87,7 +87,7 @@ it('creates chain config with custom params', () => {
     },
   };
 
-  const result = createRollupPrepareChainConfig(params);
+  const result = prepareChainConfig(params);
 
   assertChainConfigsEqual(result, params);
 });

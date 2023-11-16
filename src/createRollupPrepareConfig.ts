@@ -2,7 +2,7 @@ import { parseEther, zeroAddress } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
 import { CreateRollupFunctionParams } from './createRollup';
-import { createRollupPrepareChainConfig } from './createRollupPrepareChainConfig';
+import { prepareChainConfig } from './prepareChainConfig';
 
 type RequiredKeys = 'chainId' | 'owner';
 
@@ -47,7 +47,7 @@ export function createRollupPrepareConfig({
     ...params,
     chainConfig: JSON.stringify(
       chainConfig ??
-        createRollupPrepareChainConfig({
+        prepareChainConfig({
           chainId: Number(params.chainId),
           arbitrum: { InitialChainOwner: params.owner },
         })

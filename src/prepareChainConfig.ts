@@ -29,17 +29,14 @@ export const defaults = {
   },
 };
 
-export type CreateRollupPrepareChainConfigParams = Pick<
-  ChainConfig,
-  'chainId'
-> &
+export type PrepareChainConfigParams = Pick<ChainConfig, 'chainId'> &
   Partial<Omit<ChainConfig, 'chainId' | 'arbitrum'>> & {
     arbitrum: Pick<ChainConfigArbitrumParams, 'InitialChainOwner'> &
       Partial<Omit<ChainConfigArbitrumParams, 'InitialChainOwner'>>;
   };
 
-export function createRollupPrepareChainConfig(
-  params: CreateRollupPrepareChainConfigParams
+export function prepareChainConfig(
+  params: PrepareChainConfigParams
 ): ChainConfig {
   return {
     ...defaults,

@@ -3,7 +3,7 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumGoerli } from 'viem/chains';
 import {
   createRollupPrepareConfig,
-  createRollupPrepareChainConfig,
+  prepareChainConfig,
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
   prepareNodeConfig,
@@ -59,7 +59,7 @@ async function main() {
   const chainId = generateChainId();
 
   // create the chain config
-  const chainConfig = createRollupPrepareChainConfig({
+  const chainConfig = prepareChainConfig({
     chainId,
     arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
   });
