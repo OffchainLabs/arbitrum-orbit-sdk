@@ -1,4 +1,8 @@
-import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
+import {
+  NodeConfig,
+  NodeConfigChainInfoJson,
+  NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
+} from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 
@@ -8,6 +12,12 @@ function sanitizePrivateKey(privateKey: string) {
 
 function stringifyInfoJson(infoJson: NodeConfigChainInfoJson): string {
   return JSON.stringify(infoJson);
+}
+
+function stringifyBackendsJson(
+  backendsJson: NodeConfigDataAvailabilityRpcAggregatorBackendsJson
+): string {
+  return JSON.stringify(backendsJson);
 }
 
 export function prepareNodeConfig({
@@ -105,8 +115,14 @@ export function prepareNodeConfig({
       'rpc-aggregator': {
         'enable': true,
         'assumed-honest': 1,
-        'backends':
-          '[{"url":"http://localhost:9876","pubkey":"YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==","signermask":1}]',
+        'backends': stringifyBackendsJson([
+          {
+            url: 'http://localhost:9876',
+            pubkey:
+              'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
+            signermask: 1,
+          },
+        ]),
       },
     };
   }

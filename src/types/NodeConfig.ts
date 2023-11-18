@@ -18,6 +18,14 @@ export type NodeConfigChainInfoJson = [
   }
 ];
 
+export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = [
+  {
+    url: string;
+    pubkey: string;
+    signermask: number;
+  }
+];
+
 export type NodeConfig = {
   'chain': {
     /**
@@ -79,6 +87,9 @@ export type NodeConfig = {
       'rpc-aggregator': {
         'enable': boolean;
         'assumed-honest': number;
+        /**
+         * This is a stringified `NodeConfigDataAvailabilityRpcAggregatorBackendsJson` object.
+         */
         'backends': string;
       };
     };
