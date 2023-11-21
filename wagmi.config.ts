@@ -1,4 +1,4 @@
-import { etherscan } from '@wagmi/cli/plugins';
+import { erc, etherscan } from '@wagmi/cli/plugins';
 
 import { ParentChainId } from './src';
 import { arbitrumOne, arbitrumGoerli, arbitrumSepolia } from './src/chains';
@@ -72,6 +72,11 @@ export default async function () {
   return {
     out: 'src/generated.ts',
     plugins: [
+      erc({
+        20: true,
+        721: false,
+        4626: false,
+      }),
       etherscan({
         chainId: arbitrumOne.id,
         apiKey: process.env.ARBISCAN_API_KEY!,
