@@ -1,7 +1,6 @@
-import { parseEther } from 'viem';
-
 import { CreateRollupParams } from './createRollup';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { deterministicFactoriesDeploymentEstimatedFees } from './constants';
 
 export function createRollupGetCallValue(params: CreateRollupParams) {
   // when not deploying deterministic factories to L2, no callvalue is necessary, as no retryable tickets will be created
@@ -14,6 +13,5 @@ export function createRollupGetCallValue(params: CreateRollupParams) {
     return BigInt(0);
   }
 
-  // TODO: Improve estimates
-  return parseEther(String('0.13'));
+  return deterministicFactoriesDeploymentEstimatedFees;
 }
