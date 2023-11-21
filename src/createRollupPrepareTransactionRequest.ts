@@ -2,6 +2,7 @@ import { Address, PublicClient, encodeFunctionData } from 'viem';
 
 import { CreateRollupParams } from './createRollup';
 import { defaults } from './createRollupDefaults';
+import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { rollupCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 
@@ -36,7 +37,7 @@ export async function createRollupPrepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreator.address[chainId],
     data: createRollupEncodeFunctionData({ params }),
-    value: BigInt(0),
+    value: createRollupGetCallValue(params),
     account,
   });
 

@@ -3,6 +3,7 @@ import { PublicClient, WalletClient, GetFunctionArgs } from 'viem';
 import { rollupCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { defaults } from './createRollupDefaults';
+import { createRollupGetCallValue } from './createRollupGetCallValue';
 import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
@@ -46,7 +47,7 @@ export async function createRollup({
     abi: rollupCreator.abi,
     functionName: 'createRollup',
     args: [{ ...defaults, ...params }],
-    value: BigInt(0),
+    value: createRollupGetCallValue(params),
     account,
   });
 

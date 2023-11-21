@@ -1,0 +1,19 @@
+import { parseEther } from 'viem';
+
+import { CreateRollupParams } from './createRollup';
+import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+
+export function createRollupGetCallValue(params: CreateRollupParams) {
+  // when not deploying deterministic factories to L2, no callvalue is necessary, as no retryable tickets will be created
+  if (!params.deployFactoriesToL2) {
+    return BigInt(0);
+  }
+
+  // when using a custom fee token, the retryable tickets will be paid for in the custom fee token, so no callvalue is necessary
+  if (isCustomFeeTokenAddress(params.nativeToken)) {
+    return BigInt(0);
+  }
+
+  // TODO: Improve estimates
+  return parseEther(String('0.13'));
+}
