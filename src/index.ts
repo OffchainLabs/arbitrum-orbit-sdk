@@ -8,6 +8,14 @@ import {
   prepareChainConfig,
   PrepareChainConfigParams,
 } from './prepareChainConfig';
+import {
+  createRollupEnoughCustomFeeTokenAllowance,
+  CreateRollupEnoughCustomFeeTokenAllowanceParams,
+} from './createRollupEnoughCustomFeeTokenAllowance';
+import {
+  createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
+  CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
+} from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import {
   createRollupPrepareTransactionReceipt,
@@ -28,6 +36,10 @@ export {
   CreateRollupPrepareConfigResult,
   prepareChainConfig,
   PrepareChainConfigParams,
+  createRollupEnoughCustomFeeTokenAllowance,
+  CreateRollupEnoughCustomFeeTokenAllowanceParams,
+  createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
+  CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
   CoreContracts,
