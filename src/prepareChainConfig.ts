@@ -26,6 +26,8 @@ export const defaults = {
     DataAvailabilityCommittee: false,
     InitialArbOSVersion: 10,
     GenesisBlockNum: 0,
+    MaxCodeSize: 24_576,
+    MaxInitCodeSize: 49_152,
   },
 };
 

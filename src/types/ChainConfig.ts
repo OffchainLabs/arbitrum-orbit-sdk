@@ -7,6 +7,8 @@ export type ChainConfigArbitrumParams = {
   InitialArbOSVersion: number;
   InitialChainOwner: Address;
   GenesisBlockNum: number;
+  MaxCodeSize: number;
+  MaxInitCodeSize: number;
 };
 
 export type ChainConfig = {
