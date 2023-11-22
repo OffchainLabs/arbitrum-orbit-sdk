@@ -1,11 +1,21 @@
 import { erc, etherscan } from '@wagmi/cli/plugins';
 
 import { ParentChainId } from './src';
-import { arbitrumOne, arbitrumGoerli, arbitrumSepolia } from './src/chains';
+import {
+  arbitrumOne,
+  arbitrumGoerli,
+  sepolia,
+  arbitrumSepolia,
+} from './src/chains';
+
+function sleep(ms: number = 3_000) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const blockExplorerApiUrls: Record<ParentChainId, string> = {
   [arbitrumOne.id]: 'https://api.arbiscan.io/api',
   [arbitrumGoerli.id]: 'https://api-goerli.arbiscan.io/api',
+  [sepolia.id]: 'https://api-sepolia.etherscan.io/api',
   [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
 };
 
@@ -28,6 +38,7 @@ const contracts: ContractConfig[] = [
     address: {
       [arbitrumOne.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
       [arbitrumGoerli.id]: '0x2025FCb2Ee63Fcd60E079c9602f7a25bfcA100EE',
+      [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
     },
   },
@@ -36,6 +47,7 @@ const contracts: ContractConfig[] = [
     address: {
       [arbitrumOne.id]: '0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14',
       [arbitrumGoerli.id]: '0x1C608642d0944e95957a7ac3a478EC17FA191E9A',
+      [sepolia.id]: '0x52f5fFCdfE2AEA2dF283c95e6cc668fc84A54057',
       [arbitrumSepolia.id]: '0xC35800028e31044173d37291F425DCc42D068c84',
     },
   },
@@ -67,6 +79,7 @@ export default async function () {
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
+    await sleep(); // sleep to avoid rate limiting
   }
 
   return {
