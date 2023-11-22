@@ -4,6 +4,7 @@ import { rollupCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
+import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
 import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
@@ -42,11 +43,13 @@ export async function createRollup({
     throw new Error('account is undefined');
   }
 
+  const maxDataSize = createRollupGetMaxDataSize(chainId);
+
   const { request } = await publicClient.simulateContract({
     address: rollupCreator.address[chainId],
     abi: rollupCreator.abi,
     functionName: 'createRollup',
-    args: [{ ...defaults, ...params }],
+    args: [{ ...defaults, ...params, maxDataSize }],
     value: createRollupGetCallValue(params),
     account,
   });
