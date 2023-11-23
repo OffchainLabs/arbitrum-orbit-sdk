@@ -8,10 +8,8 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
-  prepareNodeConfig,
 } from '@arbitrum/orbit-sdk';
 import { generateChainId } from '@arbitrum/orbit-sdk/utils';
-import { writeFile } from 'fs/promises';
 
 function sanitizePrivateKey(privateKey: string): `0x${string}` {
   if (!privateKey.startsWith('0x')) {
@@ -27,10 +25,6 @@ function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
   }
 
   return sanitizePrivateKey(privateKey);
-}
-
-function getRpcUrl(chain: Chain) {
-  return chain.rpcUrls.default.http[0];
 }
 
 function getBlockExplorerUrl(chain: Chain) {
@@ -131,23 +125,7 @@ async function main() {
     await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash })
   );
 
-  // get information about the deployed core contracts from the transaction receipt
-  const coreContracts = txReceipt.getCoreContracts();
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
-
-  // prepare the node config
-  const nodeConfig = prepareNodeConfig({
-    chainName: 'My Orbit Chain',
-    chainConfig,
-    coreContracts,
-    batchPosterPrivateKey,
-    validatorPrivateKey,
-    parentChainId: parentChain.id,
-    parentChainRpcUrl: getRpcUrl(parentChain),
-  });
-
-  await writeFile('node-config.json', JSON.stringify(nodeConfig, null, 2));
-  console.log(`Node config written to "node-config.json"`);
 }
 
 main();
