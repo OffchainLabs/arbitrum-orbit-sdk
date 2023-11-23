@@ -1,6 +1,15 @@
-import { erc20ABI } from './generated';
-import { rollupCreatorConfig, tokenBridgeCreatorConfig } from './generated';
+import { parseAbi } from 'viem';
 
-export { erc20ABI };
+import {
+  erc20ABI,
+  rollupCreatorConfig,
+  tokenBridgeCreatorConfig,
+} from './generated';
+
 export const rollupCreator = rollupCreatorConfig;
 export const tokenBridgeCreator = tokenBridgeCreatorConfig;
+
+export { erc20ABI };
+export const upgradeExecutorABI = parseAbi([
+  'function executeCall(address target, bytes targetCallData)',
+]);
