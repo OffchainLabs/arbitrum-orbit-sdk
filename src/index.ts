@@ -21,6 +21,11 @@ import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
 } from './createRollupPrepareTransactionReceipt';
+import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
+import {
+  setValidKeysetPrepareTransactionRequest,
+  SetValidKeysetPrepareTransactionRequestParams,
+} from './setValidKeysetPrepareTransactionRequest';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
@@ -42,6 +47,10 @@ export {
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
+  setValidKeyset,
+  SetValidKeysetParams,
+  setValidKeysetPrepareTransactionRequest,
+  SetValidKeysetPrepareTransactionRequestParams,
   CoreContracts,
   ChainConfig,
   ChainConfigArbitrumParams,
