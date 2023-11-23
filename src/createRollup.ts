@@ -9,6 +9,9 @@ import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
 } from './createRollupPrepareTransactionReceipt';
+import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { ChainConfig } from './types/ChainConfig';
+import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 
 export type CreateRollupFunctionParams = GetFunctionArgs<
   typeof rollupCreator.abi,
@@ -41,6 +44,15 @@ export async function createRollup({
 
   if (typeof account === 'undefined') {
     throw new Error('account is undefined');
+  }
+
+  const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
+
+  if (
+    isCustomFeeTokenAddress(params.nativeToken) &&
+    !isAnyTrustChainConfig(chainConfig)
+  ) {
+    throw new Error(`Custom fee token can only be used on AnyTrust chains`);
   }
 
   const maxDataSize = createRollupGetMaxDataSize(chainId);
