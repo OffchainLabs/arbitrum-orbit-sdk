@@ -84,6 +84,8 @@ it('creates chain config with custom params', () => {
       InitialArbOSVersion: 11,
       InitialChainOwner: vitalik,
       GenesisBlockNum: 1,
+      MaxCodeSize: 40 * 1024,
+      MaxInitCodeSize: 80 * 1024,
     },
   };
 
