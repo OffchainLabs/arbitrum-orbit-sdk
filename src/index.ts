@@ -18,6 +18,10 @@ import {
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import {
+  createRollupPrepareTransaction,
+  CreateRollupTransaction,
+} from './createRollupPrepareTransaction';
+import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
 } from './createRollupPrepareTransactionReceipt';
@@ -45,6 +49,8 @@ export {
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
+  createRollupPrepareTransaction,
+  CreateRollupTransaction,
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
   setValidKeyset,
