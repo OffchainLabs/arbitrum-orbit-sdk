@@ -41,7 +41,9 @@ export async function createRollupPrepareTransactionRequest({
     isCustomFeeTokenAddress(params.nativeToken) &&
     !isAnyTrustChainConfig(chainConfig)
   ) {
-    throw new Error(`Custom fee token can only be used on AnyTrust chains`);
+    throw new Error(
+      `Custom fee token can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`
+    );
   }
 
   const maxDataSize = createRollupGetMaxDataSize(chainId);
