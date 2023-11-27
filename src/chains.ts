@@ -5,5 +5,5 @@ import {
   arbitrumSepolia,
 } from 'viem/chains';
 
-export const chains = [arbitrumOne, arbitrumGoerli, sepolia, arbitrumSepolia];
+export const chains = [arbitrumGoerli, sepolia, arbitrumSepolia];
 export { arbitrumOne, arbitrumGoerli, sepolia, arbitrumSepolia };
