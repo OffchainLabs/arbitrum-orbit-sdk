@@ -1,9 +1,4 @@
-import {
-  arbitrum as arbitrumOne,
-  arbitrumGoerli,
-  sepolia,
-  arbitrumSepolia,
-} from 'viem/chains';
+import { arbitrumGoerli, sepolia, arbitrumSepolia } from 'viem/chains';
 
-export const chains = [arbitrumOne, arbitrumGoerli, sepolia, arbitrumSepolia];
-export { arbitrumOne, arbitrumGoerli, sepolia, arbitrumSepolia };
+export const chains = [arbitrumGoerli, sepolia, arbitrumSepolia];
+export { arbitrumGoerli, sepolia, arbitrumSepolia };
