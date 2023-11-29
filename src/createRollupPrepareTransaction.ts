@@ -1,7 +1,7 @@
 import { Transaction, decodeFunctionData } from 'viem';
 
 import { rollupCreator } from './contracts';
-import { CreateRollupFunctionParams } from './createRollup';
+import { CreateRollupFunctionInputs } from './createRollup';
 
 function createRollupDecodeFunctionData(data: `0x${string}`) {
   return decodeFunctionData({
@@ -11,7 +11,7 @@ function createRollupDecodeFunctionData(data: `0x${string}`) {
 }
 
 export type CreateRollupTransaction = Transaction & {
-  getInput(): CreateRollupFunctionParams;
+  getInputs(): CreateRollupFunctionInputs;
 };
 
 export function createRollupPrepareTransaction(
@@ -19,8 +19,14 @@ export function createRollupPrepareTransaction(
 ): CreateRollupTransaction {
   return {
     ...tx,
-    getInput: function () {
-      const args = createRollupDecodeFunctionData(tx.input).args;
+    getInputs: function () {
+      const { functionName, args } = createRollupDecodeFunctionData(tx.input);
+
+      if (functionName !== 'createRollup') {
+        throw new Error(`
+          [createRollupPrepareTransaction] expected function name to be "createRollup" but got "${functionName}"
+        `);
+      }
 
       if (typeof args === 'undefined') {
         throw new Error(
@@ -28,15 +34,7 @@ export function createRollupPrepareTransaction(
         );
       }
 
-      const [input] = args;
-
-      if (typeof input === 'undefined' || typeof input === 'string') {
-        throw new Error(
-          `[createRollupPrepareTransaction] failed to decode function data`
-        );
-      }
-
-      return input;
+      return args;
     },
   };
 }

@@ -1,13 +1,13 @@
 import { parseEther, zeroAddress } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
-import { CreateRollupFunctionParams } from './createRollup';
+import { CreateRollupFunctionInputs } from './createRollup';
 import { prepareChainConfig } from './prepareChainConfig';
 
 type RequiredKeys = 'chainId' | 'owner';
 
 export type CreateRollupPrepareConfigResult =
-  CreateRollupFunctionParams['config'];
+  CreateRollupFunctionInputs[0]['config'];
 
 export type CreateRollupPrepareConfigParams = Pick<
   CreateRollupPrepareConfigResult,

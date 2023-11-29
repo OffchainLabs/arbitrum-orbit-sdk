@@ -35,7 +35,7 @@ async function main() {
   );
 
   // get the chain config from the transaction inputs
-  const chainConfig: ChainConfig = JSON.parse(tx.getInput().config.chainConfig);
+  const chainConfig: ChainConfig = JSON.parse(tx.getInputs()[0].config.chainConfig);
   // get the core contracts from the transaction receipt
   const coreContracts = txReceipt.getCoreContracts();
 

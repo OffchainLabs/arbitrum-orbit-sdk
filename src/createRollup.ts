@@ -13,18 +13,18 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 
-export type CreateRollupFunctionParams = GetFunctionArgs<
+export type CreateRollupFunctionInputs = GetFunctionArgs<
   typeof rollupCreator.abi,
   'createRollup'
->['args'][0];
+>['args'];
 
 type RequiredKeys = 'config' | 'batchPoster' | 'validators';
 
 export type CreateRollupParams = Pick<
-  CreateRollupFunctionParams,
+  CreateRollupFunctionInputs[0],
   RequiredKeys
 > &
-  Partial<Omit<CreateRollupFunctionParams, RequiredKeys>>;
+  Partial<Omit<CreateRollupFunctionInputs[0], RequiredKeys>>;
 
 export async function createRollup({
   params,
