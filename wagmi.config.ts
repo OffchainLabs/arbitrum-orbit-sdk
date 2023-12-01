@@ -3,11 +3,11 @@ import { erc, etherscan } from '@wagmi/cli/plugins';
 import { ParentChainId } from './src';
 import { sepolia, arbitrumSepolia } from './src/chains';
 
-if (typeof process.env.ETHERSCAN_API_KEY === 'undefined') {
-  throw new Error('Missing ETHERSCAN_API_KEY environment variable');
+if (typeof process.env.ARBISCAN_API_KEY === 'undefined') {
+  throw new Error('Missing ARBISCAN_API_KEY environment variable');
 }
 
-const etherscanApiKey: string = process.env.ETHERSCAN_API_KEY;
+const apiKey: string = process.env.ARBISCAN_API_KEY;
 
 function sleep(ms: number = 3_000) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -86,8 +86,8 @@ export default async function () {
         4626: false,
       }),
       etherscan({
-        chainId: sepolia.id,
-        apiKey: etherscanApiKey,
+        chainId: arbitrumSepolia.id,
+        apiKey,
         contracts,
         cacheDuration: 0,
       }),
