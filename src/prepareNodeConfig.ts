@@ -5,6 +5,8 @@ import {
 } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
+import { ParentChainId, validParentChainId } from './types/ParentChain';
+import { sepolia, arbitrumSepolia } from './chains';
 
 function sanitizePrivateKey(privateKey: string) {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
@@ -18,6 +20,17 @@ function stringifyBackendsJson(
   backendsJson: NodeConfigDataAvailabilityRpcAggregatorBackendsJson
 ): string {
   return JSON.stringify(backendsJson);
+}
+
+function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
+  // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
+  switch (parentChainId) {
+    case sepolia.id:
+      return false;
+
+    case arbitrumSepolia.id:
+      return true;
+  }
 }
 
 export function prepareNodeConfig({
@@ -37,12 +50,19 @@ export function prepareNodeConfig({
   parentChainId: number;
   parentChainRpcUrl: string;
 }): NodeConfig {
+  if (!validParentChainId(parentChainId)) {
+    throw new Error(
+      `[prepareNodeConfig] invalid parent chain id: ${parentChainId}`
+    );
+  }
+
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
         {
           'chain-id': chainConfig.chainId,
           'parent-chain-id': parentChainId,
+          'parent-chain-is-arbitrum': parentChainIsArbitrum(parentChainId),
           'chain-name': chainName,
           'chain-config': chainConfig,
           'rollup': {

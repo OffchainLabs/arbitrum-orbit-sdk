@@ -4,6 +4,7 @@ export type NodeConfigChainInfoJson = [
   {
     'chain-id': number;
     'parent-chain-id': number;
+    'parent-chain-is-arbitrum': boolean;
     'chain-name': string;
     'chain-config': ChainConfig;
     'rollup': {
