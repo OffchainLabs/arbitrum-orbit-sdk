@@ -6,6 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "rm -rf ./src/dist",
     "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./src/dist --declaration",
     "dev": "yarn build --watch",
     "generate": "wagmi generate",
