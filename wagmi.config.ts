@@ -43,10 +43,10 @@ const contracts: ContractConfig[] = [
   },
   {
     name: 'TokenBridgeCreator',
-    version: '1.1.1',
+    version: '1.1.2',
     address: {
-      [sepolia.id]: '0x52f5fFCdfE2AEA2dF283c95e6cc668fc84A54057',
-      [arbitrumSepolia.id]: '0xC35800028e31044173d37291F425DCc42D068c84',
+      [sepolia.id]: '0x7612718D3143C791B2Ff5c01a9a7D02CEf00AE9c',
+      [arbitrumSepolia.id]: '0xb462C69f8f638d2954c9618B03765FC1770190cF',
     },
   },
 ];
