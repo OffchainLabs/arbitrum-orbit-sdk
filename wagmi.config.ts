@@ -28,12 +28,14 @@ export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
 
 type ContractConfig = {
   name: string;
+  version?: string;
   address: Record<ParentChainId, `0x${string}`>;
 };
 
 const contracts: ContractConfig[] = [
   {
     name: 'RollupCreator',
+    version: '1.1.0',
     address: {
       [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
@@ -41,6 +43,7 @@ const contracts: ContractConfig[] = [
   },
   {
     name: 'TokenBridgeCreator',
+    version: '1.1.1',
     address: {
       [sepolia.id]: '0x52f5fFCdfE2AEA2dF283c95e6cc668fc84A54057',
       [arbitrumSepolia.id]: '0xC35800028e31044173d37291F425DCc42D068c84',
