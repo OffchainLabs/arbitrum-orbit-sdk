@@ -29,7 +29,7 @@ export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
 type ContractConfig = {
   name: string;
   version?: string;
-  address: Record<ParentChainId, `0x${string}`>;
+  address: Record<ParentChainId, `0x${string}`> | `0x${string}`;
 };
 
 const contracts: ContractConfig[] = [
@@ -49,6 +49,10 @@ const contracts: ContractConfig[] = [
       [arbitrumSepolia.id]: '0xb462C69f8f638d2954c9618B03765FC1770190cF',
     },
   },
+  {
+    name: 'ArbOwner',
+    address: '0x0000000000000000000000000000000000000070',
+  },
 ];
 
 function allEqual<T>(array: T[]) {
@@ -56,6 +60,12 @@ function allEqual<T>(array: T[]) {
 }
 
 export async function assertContractAbisMatch(contract: ContractConfig) {
+  // skip check when single address is provided
+  if (typeof contract.address === 'string') {
+    console.log(`- ${contract.name} ✔`);
+    return;
+  }
+
   const abis = await Promise.all(
     Object.entries(contract.address)
       // fetch abis for all chains
