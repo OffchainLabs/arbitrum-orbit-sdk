@@ -1,5 +1,5 @@
 import { Chain, createPublicClient, http } from 'viem';
-import { arbitrumGoerli } from 'viem/chains';
+import { arbitrumSepolia } from 'viem/chains';
 import {
   ChainConfig,
   createRollupPrepareTransaction,
@@ -14,7 +14,7 @@ function getRpcUrl(chain: Chain) {
 }
 
 // set the parent chain and create a public client for it
-const parentChain = arbitrumGoerli;
+const parentChain = arbitrumSepolia;
 const parentChainPublicClient = createPublicClient({
   chain: parentChain,
   transport: http(),
