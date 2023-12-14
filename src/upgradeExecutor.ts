@@ -4,9 +4,10 @@ import { upgradeExecutor } from './contracts';
 import { GetFunctionName } from './types/utils';
 
 export type UpgradeExecutorAbi = typeof upgradeExecutor.abi;
+export type UpgradeExecutorFunctionName = GetFunctionName<UpgradeExecutorAbi>;
 
 export function upgradeExecutorEncodeFunctionData<
-  TFunctionName extends GetFunctionName<UpgradeExecutorAbi>
+  TFunctionName extends UpgradeExecutorFunctionName
 >({
   functionName,
   args,
