@@ -30,6 +30,11 @@ import {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
 } from './setValidKeysetPrepareTransactionRequest';
+import {
+  upgradeExecutorEncodeFunctionData,
+  UpgradeExecutorAbi,
+} from './upgradeExecutor';
+
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
@@ -57,6 +62,10 @@ export {
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
+  //
+  upgradeExecutorEncodeFunctionData,
+  UpgradeExecutorAbi,
+  //
   CoreContracts,
   ChainConfig,
   ChainConfigArbitrumParams,

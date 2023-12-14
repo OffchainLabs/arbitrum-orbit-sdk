@@ -1,18 +1,7 @@
-import {
-  parseAbi,
-  encodeFunctionData,
-  EncodeFunctionDataParameters,
-} from 'viem';
+import { encodeFunctionData, GetFunctionArgs } from 'viem';
 
+import { upgradeExecutor } from './contracts';
 import { GetFunctionName } from './types/utils';
-
-export const upgradeExecutor = {
-  abi: parseAbi([
-    'function test(address something)',
-    'function execute(address upgrade, bytes upgradeCallData)',
-    'function executeCall(address target, bytes targetCallData)',
-  ]),
-};
 
 export type UpgradeExecutorAbi = typeof upgradeExecutor.abi;
 
@@ -21,20 +10,16 @@ export function upgradeExecutorEncodeFunctionData<
 >({
   functionName,
   args,
-}: EncodeFunctionDataParameters<UpgradeExecutorAbi, TFunctionName>) {
+}: { functionName: TFunctionName } & GetFunctionArgs<
+  UpgradeExecutorAbi,
+  TFunctionName
+>) {
+  // todo: fix this weird type issue
+  //
+  // @ts-ignore
   return encodeFunctionData({
     abi: upgradeExecutor.abi,
     functionName,
     args,
   });
 }
-
-upgradeExecutorEncodeFunctionData({
-  functionName: 'test',
-  args: [],
-});
-
-upgradeExecutorEncodeFunctionData({
-  functionName: 'execute',
-  args: [],
-});
