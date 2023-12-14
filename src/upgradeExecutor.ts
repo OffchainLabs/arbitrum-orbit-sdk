@@ -4,7 +4,7 @@ import {
   EncodeFunctionDataParameters,
 } from 'viem';
 
-import { GetFunctionName, Prettify } from './types/utils';
+import { GetFunctionName } from './types/utils';
 
 export const upgradeExecutor = {
   abi: parseAbi([
@@ -16,24 +16,12 @@ export const upgradeExecutor = {
 
 export type UpgradeExecutorAbi = typeof upgradeExecutor.abi;
 
-export type UpgradeExecutorFunctionName = GetFunctionName<UpgradeExecutorAbi>;
-
-export type UpgradeExecutorEncodeFunctionDataParameters<
-  TFunctionName extends
-    | UpgradeExecutorFunctionName
-    | undefined = UpgradeExecutorFunctionName
-> = Prettify<
-  Omit<EncodeFunctionDataParameters<UpgradeExecutorAbi, TFunctionName>, 'abi'>
->;
-
 export function upgradeExecutorEncodeFunctionData<
-  TFunctionName extends
-    | UpgradeExecutorFunctionName
-    | undefined = UpgradeExecutorFunctionName
+  TFunctionName extends GetFunctionName<UpgradeExecutorAbi>
 >({
   functionName,
   args,
-}: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>) {
+}: EncodeFunctionDataParameters<UpgradeExecutorAbi, TFunctionName>) {
   return encodeFunctionData({
     abi: upgradeExecutor.abi,
     functionName,
