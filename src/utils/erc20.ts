@@ -1,6 +1,6 @@
 import { Address, PublicClient, WalletClient, encodeFunctionData } from 'viem';
 
-import { erc20ABI } from '../generated';
+import { erc20 } from '../contracts';
 
 function approveEncodeFunctionData({
   spender,
@@ -10,7 +10,7 @@ function approveEncodeFunctionData({
   amount: bigint;
 }) {
   return encodeFunctionData({
-    abi: erc20ABI,
+    abi: erc20.abi,
     functionName: 'approve',
     args: [spender, amount],
   });
@@ -63,7 +63,7 @@ export async function approve({
 
   const { request } = await publicClient.simulateContract({
     address: address,
-    abi: erc20ABI,
+    abi: erc20.abi,
     functionName: 'approve',
     args: [spender, amount],
     account,
@@ -88,7 +88,7 @@ export async function fetchAllowance({
 }: FetchAllowanceProps) {
   return publicClient.readContract({
     address,
-    abi: erc20ABI,
+    abi: erc20.abi,
     functionName: 'allowance',
     args: [owner, spender],
   });

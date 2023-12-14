@@ -1,6 +1,6 @@
 import { PublicClient, WalletClient } from 'viem';
 
-import { upgradeExecutorABI } from './contracts';
+import { upgradeExecutor } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { CoreContracts } from './types/CoreContracts';
 import { setValidKeysetEncodeFunctionData } from './setValidKeysetEncodeFunctionData';
@@ -13,7 +13,7 @@ export type SetValidKeysetParams = {
 };
 
 export async function setValidKeyset({
-  coreContracts: { upgradeExecutor, sequencerInbox },
+  coreContracts,
   keyset,
   publicClient,
   walletClient,
@@ -30,11 +30,11 @@ export async function setValidKeyset({
   }
 
   const { request } = await publicClient.simulateContract({
-    address: upgradeExecutor,
-    abi: upgradeExecutorABI,
+    address: coreContracts.upgradeExecutor,
+    abi: upgradeExecutor.abi,
     functionName: 'executeCall',
     args: [
-      sequencerInbox, // target
+      coreContracts.sequencerInbox, // target
       setValidKeysetEncodeFunctionData(keyset), // targetCallData
     ],
     account,
