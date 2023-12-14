@@ -4,10 +4,7 @@ import {
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
-import {
-  prepareChainConfig,
-  PrepareChainConfigParams,
-} from './prepareChainConfig';
+import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
@@ -31,8 +28,10 @@ import {
   SetValidKeysetPrepareTransactionRequestParams,
 } from './setValidKeysetPrepareTransactionRequest';
 import {
-  upgradeExecutorEncodeFunctionData,
   UpgradeExecutorAbi,
+  UpgradeExecutorFunctionName,
+  upgradeExecutorEncodeFunctionData,
+  UpgradeExecutorEncodeFunctionDataParameters,
 } from './upgradeExecutor';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
@@ -63,8 +62,10 @@ export {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
   //
-  upgradeExecutorEncodeFunctionData,
   UpgradeExecutorAbi,
+  UpgradeExecutorFunctionName,
+  upgradeExecutorEncodeFunctionData,
+  UpgradeExecutorEncodeFunctionDataParameters,
   //
   CoreContracts,
   ChainConfig,
