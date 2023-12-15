@@ -1,9 +1,9 @@
 import { Address } from 'viem';
 
 import { validParentChainId } from './types/ParentChain';
-import { executeCallEncodeFunctionData } from './executeCallEncodeFunctionData';
 import { SetValidKeysetParams } from './setValidKeyset';
 import { setValidKeysetEncodeFunctionData } from './setValidKeysetEncodeFunctionData';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 
 export type SetValidKeysetPrepareTransactionRequestParams = Omit<
   SetValidKeysetParams,
@@ -27,10 +27,13 @@ export async function setValidKeysetPrepareTransactionRequest({
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: coreContracts.upgradeExecutor,
-    data: executeCallEncodeFunctionData([
-      coreContracts.sequencerInbox,
-      setValidKeysetEncodeFunctionData(keyset),
-    ]),
+    data: upgradeExecutorEncodeFunctionData({
+      functionName: 'executeCall',
+      args: [
+        coreContracts.sequencerInbox, // target
+        setValidKeysetEncodeFunctionData(keyset), // targetCallData
+      ],
+    }),
     account,
   });
 
