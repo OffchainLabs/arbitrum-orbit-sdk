@@ -7,6 +7,10 @@ import {
   tokenBridgeCreatorConfig,
 } from './generated';
 
+export const erc20 = {
+  abi: erc20ABI,
+};
+
 export const arbOwner = {
   ...arbOwnerConfig,
   address: Object.values(arbOwnerConfig.address)[0],
@@ -15,7 +19,9 @@ export const arbOwner = {
 export const rollupCreator = rollupCreatorConfig;
 export const tokenBridgeCreator = tokenBridgeCreatorConfig;
 
-export { erc20ABI };
-export const upgradeExecutorABI = parseAbi([
-  'function executeCall(address target, bytes targetCallData)',
-]);
+export const upgradeExecutor = {
+  abi: parseAbi([
+    'function execute(address upgrade, bytes upgradeCallData)',
+    'function executeCall(address target, bytes targetCallData)',
+  ]),
+};

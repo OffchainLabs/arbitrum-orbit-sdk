@@ -1,6 +1,6 @@
 import { Chain, createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { arbitrumGoerli } from 'viem/chains';
+import { arbitrumSepolia } from 'viem/chains';
 import {
   createRollupPrepareConfig,
   prepareChainConfig,
@@ -42,7 +42,7 @@ const validatorPrivateKey = withFallbackPrivateKey(process.env.VALIDATOR_PRIVATE
 const validator = privateKeyToAccount(validatorPrivateKey).address;
 
 // set the parent chain and create a public client for it
-const parentChain = arbitrumGoerli;
+const parentChain = arbitrumSepolia;
 const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
 
 // load the deployer account
