@@ -1,7 +1,10 @@
 import { erc, etherscan } from '@wagmi/cli/plugins';
+import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
 import { sepolia, arbitrumSepolia } from './src/chains';
+
+dotenv.config();
 
 if (typeof process.env.ARBISCAN_API_KEY === 'undefined') {
   throw new Error('Missing ARBISCAN_API_KEY environment variable');
