@@ -1,0 +1,49 @@
+name: Build, Test
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  ARBISCAN_API_KEY: ${{ secrets.ARBISCAN_API_KEY }}
+
+jobs:
+  install:
+    name: 'Install'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install node_modules
+        uses: OffchainLabs/actions/node-modules/install@main
+
+  test-unit:
+    name: Test (Unit)
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Restore node_modules
+        uses: OffchainLabs/actions/node-modules/restore@main
+
+      - name: Generate
+        run: yarn generate
+
+      - name: Build
+        run: yarn build
+
+      - name: Test
+        run: yarn test:unit
