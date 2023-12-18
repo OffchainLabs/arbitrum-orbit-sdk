@@ -16,6 +16,22 @@ const client = createPublicClient({
   transport: http(),
 }).extend(arbOwnerPublicActions);
 
+it('successfully fetches network fee receiver', async () => {
+  const result = await client.arbOwnerReadContract({
+    functionName: 'getNetworkFeeAccount',
+  });
+
+  expect(result).toEqual(owner.address);
+});
+
+it('succesfully fetches chain owners', async () => {
+  const result = await client.arbOwnerReadContract({
+    functionName: 'getAllChainOwners',
+  });
+
+  expect(result).toContain(owner.address);
+});
+
 it('succesfully adds chain owner', async () => {
   const isOwnerInitially = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
