@@ -36,6 +36,7 @@ import {
   upgradeExecutorEncodeFunctionData,
   UpgradeExecutorEncodeFunctionDataParameters,
 } from './upgradeExecutor';
+import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -45,6 +46,7 @@ import { prepareNodeConfig } from './prepareNodeConfig';
 import * as utils from './utils';
 
 export {
+  arbOwnerPublicActions,
   createRollup,
   createRollupPrepareTransactionRequest,
   createRollupPrepareConfig,
