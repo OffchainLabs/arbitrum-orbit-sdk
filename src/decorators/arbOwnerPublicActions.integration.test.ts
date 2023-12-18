@@ -34,6 +34,7 @@ it('succesfully adds chain owner', async () => {
 
   // submit tx to add chain owner
   await client.sendRawTransaction({
+    // @ts-ignore
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 
@@ -64,6 +65,7 @@ it('succesfully removes chain owner', async () => {
 
   // submit tx to remove chain owner
   await client.sendRawTransaction({
+    // @ts-ignore
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 
@@ -93,6 +95,7 @@ it('succesfully updates infra fee receiver', async () => {
 
   // submit tx to update infra fee receiver
   await client.sendRawTransaction({
+    // @ts-ignore
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 

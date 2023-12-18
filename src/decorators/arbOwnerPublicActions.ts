@@ -33,6 +33,7 @@ export function arbOwnerPublicActions<
   TChain extends Chain | undefined = Chain | undefined
 >(client: PublicClient<TTransport, TChain>): ArbOwnerPublicActions<TChain> {
   return {
+    // @ts-ignore
     arbOwnerReadContract: (args) => arbOwnerReadContract(client, args),
 
     arbOwnerPrepareTransactionRequest: (args) =>
