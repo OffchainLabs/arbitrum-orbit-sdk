@@ -56,6 +56,10 @@ const contracts: ContractConfig[] = [
     name: 'ArbOwner',
     address: '0x0000000000000000000000000000000000000070',
   },
+  {
+    name: 'ArbOwnerPublic',
+    address: '0x000000000000000000000000000000000000006b',
+  },
 ];
 
 function allEqual<T>(array: T[]) {

@@ -3,6 +3,7 @@ import { parseAbi } from 'viem';
 import {
   erc20ABI,
   arbOwnerConfig,
+  arbOwnerPublicConfig,
   rollupCreatorConfig,
   tokenBridgeCreatorConfig,
 } from './generated';
@@ -14,6 +15,11 @@ export const erc20 = {
 export const arbOwner = {
   ...arbOwnerConfig,
   address: Object.values(arbOwnerConfig.address)[0],
+} as const;
+
+export const arbOwnerPublic = {
+  ...arbOwnerPublicConfig,
+  address: Object.values(arbOwnerPublicConfig.address)[0],
 } as const;
 
 export const rollupCreator = rollupCreatorConfig;
