@@ -2,8 +2,8 @@ import { it, expect } from 'vitest';
 import { createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
-import { arbitrumLocal } from './testHelpers';
-import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
+import { arbitrumLocal } from '../testHelpers';
+import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 
 const devPrivateKey =
   '0xb6b15c8cb491557369f3c7d2c287b053eb229daa9c22138887752191c9520659';
