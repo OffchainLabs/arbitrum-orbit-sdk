@@ -4,6 +4,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  ARBISCAN_API_KEY: ${{ secrets.ARBISCAN_API_KEY }}
+
 jobs:
   install:
     name: 'Install'
@@ -35,6 +38,9 @@ jobs:
 
       - name: Restore node_modules
         uses: OffchainLabs/actions/node-modules/restore@main
+
+      - name: Generate
+        run: yarn generate
 
       - name: Build
         run: yarn build
