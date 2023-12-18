@@ -1,5 +1,5 @@
 {
-  "name": "custom-fee-token",
+  "name": "arb-owner",
   "private": true,
   "version": "0.0.0",
   "type": "module",
