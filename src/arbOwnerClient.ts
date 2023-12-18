@@ -7,7 +7,7 @@ import {
 } from 'viem';
 
 import { arbOwner } from './contracts';
-import { executeCallEncodeFunctionData } from './executeCallEncodeFunctionData';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { Prettify } from './types/utils';
 
 type ArbOwnerFunctionDataParameters = Prettify<
@@ -70,10 +70,13 @@ export function createArbOwnerClient({
 
       return {
         to: upgradeExecutor,
-        data: executeCallEncodeFunctionData([
-          arbOwner.address, // target
-          arbOwnerEncodeFunctionData(params), // targetCallData
-        ]),
+        data: upgradeExecutorEncodeFunctionData({
+          functionName: 'executeCall',
+          args: [
+            arbOwner.address, // target
+            arbOwnerEncodeFunctionData(params), // targetCallData
+          ],
+        }),
         value: BigInt(0),
       };
     },
