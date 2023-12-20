@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { createPublicClient, http, zeroAddress } from 'viem';
+import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
 import { generateChainId } from './utils';
@@ -65,6 +65,7 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
   expect(arg.validators).toEqual(validators);
   expect(arg.nativeToken).toEqual(zeroAddress);
   expect(arg.maxDataSize).toEqual(104_857n);
+  expect(arg.maxFeePerGasForRetryables).toEqual(parseGwei('0.1'));
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
