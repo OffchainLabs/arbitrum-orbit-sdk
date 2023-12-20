@@ -1,10 +1,11 @@
 import { it, expect } from 'vitest';
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, http, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
 import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareConfig } from './createRollupPrepareConfig';
+import { createRollupPrepareTransaction } from './createRollupPrepareTransaction';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
 
@@ -12,12 +13,15 @@ import { getTestPrivateKeyAccount } from './testHelpers';
 
 const deployer = getTestPrivateKeyAccount();
 
+const batchPoster = deployer.address;
+const validators = [deployer.address];
+
 const publicClient = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
 });
 
-it('successfully deploys eth rollup', async () => {
+it(`successfully deploys core contracts through rollup creator`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -27,16 +31,18 @@ it('successfully deploys eth rollup', async () => {
     arbitrum: { InitialChainOwner: deployer.address },
   });
 
+  const config = createRollupPrepareConfig({
+    chainId: BigInt(chainId),
+    owner: deployer.address,
+    chainConfig,
+  });
+
   // prepare the transaction for deploying the core contracts
   const request = await createRollupPrepareTransactionRequest({
     params: {
-      config: createRollupPrepareConfig({
-        chainId: BigInt(chainId),
-        owner: deployer.address,
-        chainConfig,
-      }),
-      batchPoster: deployer.address,
-      validators: [deployer.address],
+      config,
+      batchPoster,
+      validators,
     },
     account: deployer.address,
     publicClient,
@@ -46,6 +52,19 @@ it('successfully deploys eth rollup', async () => {
   const txHash = await publicClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(request),
   });
+
+  // get the transaction
+  const tx = createRollupPrepareTransaction(
+    await publicClient.getTransaction({ hash: txHash })
+  );
+
+  const [arg] = tx.getInputs();
+  // assert all inputs are correct
+  expect(arg.config).toEqual(config);
+  expect(arg.batchPoster).toEqual(batchPoster);
+  expect(arg.validators).toEqual(validators);
+  expect(arg.nativeToken).toEqual(zeroAddress);
+  expect(arg.maxDataSize).toEqual(104_857n);
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
