@@ -25,7 +25,7 @@ const blockExplorerApiUrls: Record<ParentChainId, string> = {
   // testnet
   [sepolia.id]: 'https://api-sepolia.etherscan.io/api',
   [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
-  // local nitro-testnode / fine to omit these as skip abi fetch
+  // local nitro-testnode / fine to omit these as we skip abi fetch
   [nitroTestnodeL1.id]: '',
   [nitroTestnodeL2.id]: '',
 };
