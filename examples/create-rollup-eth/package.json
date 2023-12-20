@@ -1,5 +1,5 @@
 {
-  "name": "eth-with-deterministic-factories",
+  "name": "create-rollup-eth",
   "private": true,
   "version": "0.0.0",
   "type": "module",
