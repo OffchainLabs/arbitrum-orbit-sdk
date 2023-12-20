@@ -17,7 +17,7 @@ const client = createPublicClient({
   transport: http(),
 });
 
-it('succesfully deploys eth rollup', async () => {
+it('successfully deploys eth rollup', async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
