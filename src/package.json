@@ -11,6 +11,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./chains": {
+      "types": "./dist/chains.d.ts",
+      "default": "./dist/chains.js"
+    },
     "./contracts": {
       "types": "./dist/contracts.d.ts",
       "default": "./dist/contracts.js"
@@ -22,6 +26,9 @@
   },
   "typesVersions": {
     "*": {
+      "chains": [
+        "./dist/chains.d.ts"
+      ],
       "contracts": [
         "./dist/contracts.d.ts"
       ],
