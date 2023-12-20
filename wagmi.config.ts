@@ -2,7 +2,12 @@ import { erc, etherscan } from '@wagmi/cli/plugins';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
-import { sepolia, arbitrumSepolia } from './src/chains';
+import {
+  sepolia,
+  arbitrumSepolia,
+  nitroTestnodeL1,
+  nitroTestnodeL2,
+} from './src/chains';
 
 dotenv.config();
 
@@ -17,8 +22,12 @@ function sleep(ms: number = 3_000) {
 }
 
 const blockExplorerApiUrls: Record<ParentChainId, string> = {
+  // testnet
   [sepolia.id]: 'https://api-sepolia.etherscan.io/api',
   [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
+  // local nitro-testnode / fine to omit these as skip abi fetch
+  [nitroTestnodeL1.id]: '',
+  [nitroTestnodeL2.id]: '',
 };
 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
@@ -40,16 +49,24 @@ const contracts: ContractConfig[] = [
     name: 'RollupCreator',
     version: '1.1.0',
     address: {
+      // testnet
       [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
+      // local nitro-testnode (on master)
+      [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
+      [nitroTestnodeL2.id]: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
     },
   },
   {
     name: 'TokenBridgeCreator',
     version: '1.1.2',
     address: {
+      // testnet
       [sepolia.id]: '0x7612718D3143C791B2Ff5c01a9a7D02CEf00AE9c',
       [arbitrumSepolia.id]: '0xb462C69f8f638d2954c9618B03765FC1770190cF',
+      // local nitro-testnode (on master) doesn't have these yet
+      [nitroTestnodeL1.id]: '0x0000000000000000000000000000000000000000',
+      [nitroTestnodeL2.id]: '0x0000000000000000000000000000000000000000',
     },
   },
   {
@@ -75,6 +92,11 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
 
   const abis = await Promise.all(
     Object.entries(contract.address)
+      // don't fetch abis for testnode
+      .filter(([chainIdString]) => {
+        const chainId = Number(chainIdString);
+        return chainId !== nitroTestnodeL1.id && chainId !== nitroTestnodeL2.id;
+      })
       // fetch abis for all chains
       .map(([chainId, address]) =>
         fetchAbi(Number(chainId) as ParentChainId, address)
