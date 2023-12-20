@@ -74,4 +74,5 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
   );
 
   expect(txReceipt.status).toEqual('success');
+  expect(txReceipt.getCoreContracts()).not.toThrowError();
 });
