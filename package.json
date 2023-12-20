@@ -11,6 +11,7 @@
     "dev": "yarn build --watch",
     "generate": "wagmi generate",
     "test:unit": "vitest unit.test",
+    "test:integration": "vitest integration.test",
     "postinstall": "patch-package"
   },
   "devDependencies": {
