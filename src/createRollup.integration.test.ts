@@ -63,8 +63,9 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
   expect(arg.config).toEqual(config);
   expect(arg.batchPoster).toEqual(batchPoster);
   expect(arg.validators).toEqual(validators);
-  expect(arg.nativeToken).toEqual(zeroAddress);
   expect(arg.maxDataSize).toEqual(104_857n);
+  expect(arg.nativeToken).toEqual(zeroAddress);
+  expect(arg.deployFactoriesToL2).toEqual(true);
   expect(arg.maxFeePerGasForRetryables).toEqual(parseGwei('0.1'));
 
   // get the transaction receipt after waiting for the transaction to complete
