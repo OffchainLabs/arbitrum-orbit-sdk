@@ -1,4 +1,4 @@
-import { Address, PublicClient, encodeFunctionData } from 'viem';
+import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
 
 import { CreateRollupParams } from './createRollup';
 import { defaults } from './createRollupDefaults';
@@ -35,6 +35,19 @@ export async function createRollupPrepareTransactionRequest({
     throw new Error('chainId is undefined');
   }
 
+  if (params.batchPoster === zeroAddress) {
+    throw new Error(`Param "batchPoster" can't be set to the zero address.`);
+  }
+
+  if (
+    params.validators.length === 0 ||
+    params.validators.includes(zeroAddress)
+  ) {
+    throw new Error(
+      `Param "validators" can't be empty or contain the zero address.`
+    );
+  }
+
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
   if (
@@ -42,7 +55,7 @@ export async function createRollupPrepareTransactionRequest({
     !isAnyTrustChainConfig(chainConfig)
   ) {
     throw new Error(
-      `Custom fee token can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`
+      `Param "nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`
     );
   }
 
