@@ -6,7 +6,12 @@ import {
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChainId, validParentChainId } from './types/ParentChain';
-import { sepolia, arbitrumSepolia } from './chains';
+import {
+  sepolia,
+  arbitrumSepolia,
+  nitroTestnodeL1,
+  nitroTestnodeL2,
+} from './chains';
 
 function sanitizePrivateKey(privateKey: string) {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
@@ -26,9 +31,11 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
     case sepolia.id:
+    case nitroTestnodeL1.id:
       return false;
 
     case arbitrumSepolia.id:
+    case nitroTestnodeL2.id:
       return true;
   }
 }
