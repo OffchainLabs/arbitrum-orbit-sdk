@@ -1,6 +1,5 @@
 import { it, expect } from 'vitest';
 import { createPublicClient, http } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from './chains';
 import { generateChainId } from './utils';
@@ -9,10 +8,11 @@ import { createRollupPrepareConfig } from './createRollupPrepareConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
 
-const deployerPrivateKey = '0xb6b15c8cb491557369f3c7d2c287b053eb229daa9c22138887752191c9520659';
-const deployer = privateKeyToAccount(deployerPrivateKey);
+import { getTestPrivateKeyAccount } from './testHelpers';
 
-const client = createPublicClient({
+const deployer = getTestPrivateKeyAccount();
+
+const publicClient = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
 });
@@ -39,17 +39,17 @@ it('successfully deploys eth rollup', async () => {
       validators: [deployer.address],
     },
     account: deployer.address,
-    publicClient: client,
+    publicClient,
   });
 
   // sign and send the transaction
-  const txHash = await client.sendRawTransaction({
+  const txHash = await publicClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(request),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await client.waitForTransactionReceipt({ hash: txHash })
+    await publicClient.waitForTransactionReceipt({ hash: txHash })
   );
 
   expect(txReceipt.status).toEqual('success');
