@@ -1,6 +1,6 @@
 # Verifying script for Orbit chains
 
-:warning: This script is a WIP. It fetches information from an orbit chain and its parent chain to verify that certain parameters are configured correctly, and display warnings if it finds something that should be notified. However, it is not thorough and it can present some false negatives.
+:warning: This script is a WIP. It fetches information from an orbit chain and its parent chain to verify that certain parameters are configured correctly, and display warnings if it finds something that should be notified. However, it is not thorough and it can present some false positives.
 
 ## Setup
 
