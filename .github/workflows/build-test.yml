@@ -71,7 +71,7 @@ jobs:
           # we have RollupCreator on L1 by default
           # --tokenbridge is there to ensure we have TokenBridgeCreator on L1
           # --l3node is there to ensure we have RollupCreator on L2
-          # --l3-token-bridg is there to ensure we have TokenBridgeCreator on L2
+          # --l3-token-bridge is there to ensure we have TokenBridgeCreator on L2
           args: '--tokenbridge --l3node --l3-token-bridge'
 
       - name: Copy .env
