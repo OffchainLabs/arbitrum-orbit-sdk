@@ -1,0 +1,15 @@
+{
+  "name": "verify-rollup",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "verifyRollup": "ts-node src/verify-rollup.ts",
+    "verifyTokenBridge": "ts-node src/verify-token-bridge.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "typescript": "^5.2.2",
+    "@arbitrum/sdk": "^3.1.13",
+    "ts-node": "^10.9.1"
+  }
+}
