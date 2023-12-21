@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install node_modules
         uses: OffchainLabs/actions/node-modules/install@main
@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Restore node_modules
         uses: OffchainLabs/actions/node-modules/restore@main
@@ -59,7 +59,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Restore node_modules
         uses: OffchainLabs/actions/node-modules/restore@main
@@ -67,7 +67,7 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
-          nitro-testnode-ref: 'use-tokenbridge-creator'
+          nitro-testnode-ref: use-tokenbridge-creator
           # we have RollupCreator on L1 by default
           # --tokenbridge is there to ensure we have TokenBridgeCreator on L1
           # --l3node is there to ensure we have RollupCreator on L2
