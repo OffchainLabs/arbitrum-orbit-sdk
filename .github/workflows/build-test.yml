@@ -59,6 +59,9 @@ jobs:
       - name: Check Docker Compose Version
         run: docker compose version
 
+      - name: Check Docker-Compose Version
+        run: docker-compose version
+
       - name: Checkout
         uses: actions/checkout@v3
 
