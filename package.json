@@ -12,13 +12,16 @@
     "generate": "wagmi generate",
     "test:unit": "vitest unit.test",
     "test:integration": "vitest integration.test",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "prettier": "prettier --write '**/*.{ts,ts,md,json,yml}'"
   },
   "devDependencies": {
+    "@offchainlabs/prettier-config": "0.2.1",
     "@wagmi/cli": "^1.5.2",
     "dotenv": "^16.3.1",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
+    "prettier": "^2.8.3",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }

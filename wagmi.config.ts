@@ -2,12 +2,7 @@ import { erc, etherscan } from '@wagmi/cli/plugins';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
-import {
-  sepolia,
-  arbitrumSepolia,
-  nitroTestnodeL1,
-  nitroTestnodeL2,
-} from './src/chains';
+import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './src/chains';
 
 dotenv.config();
 
@@ -33,7 +28,7 @@ const blockExplorerApiUrls: Record<ParentChainId, string> = {
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
   await (
     await fetch(
-      `${blockExplorerApiUrls[chainId]}?module=contract&action=getabi&format=raw&address=${address}&apikey=${process.env.ARBISCAN_API_KEY}`
+      `${blockExplorerApiUrls[chainId]}?module=contract&action=getabi&format=raw&address=${address}&apikey=${process.env.ARBISCAN_API_KEY}`,
     )
   ).json();
 }
@@ -98,9 +93,7 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
         return chainId !== nitroTestnodeL1.id && chainId !== nitroTestnodeL2.id;
       })
       // fetch abis for all chains
-      .map(([chainId, address]) =>
-        fetchAbi(Number(chainId) as ParentChainId, address)
-      )
+      .map(([chainId, address]) => fetchAbi(Number(chainId) as ParentChainId, address)),
   );
 
   // make sure all abis are the same

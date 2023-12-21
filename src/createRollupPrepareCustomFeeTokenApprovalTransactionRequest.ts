@@ -4,13 +4,12 @@ import { approvePrepareTransactionRequest } from './utils/erc20';
 import { validParentChainId } from './types/ParentChain';
 import { rollupCreator } from './contracts';
 
-export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams =
-  {
-    amount?: bigint;
-    nativeToken: Address;
-    account: Address;
-    publicClient: PublicClient;
-  };
+export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = {
+  amount?: bigint;
+  nativeToken: Address;
+  account: Address;
+  publicClient: PublicClient;
+};
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
   amount = maxInt256,

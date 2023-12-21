@@ -4,10 +4,7 @@ import {
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
-import {
-  prepareChainConfig,
-  PrepareChainConfigParams,
-} from './prepareChainConfig';
+import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
