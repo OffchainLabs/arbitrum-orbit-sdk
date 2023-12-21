@@ -67,7 +67,8 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
-          ref: 'use-tokenbridge-creator'
+          ref: use-tokenbridge-creator
+          args: --tokenbridge --l3node --l3-token-bridge
 
       - name: Copy .env
         run: cp ./.env.example ./.env
