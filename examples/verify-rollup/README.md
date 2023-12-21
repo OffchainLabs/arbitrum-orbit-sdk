@@ -16,7 +16,10 @@ yarn install
 cp .env.example .env
 ```
 
-3. Set env variables (Note that PARENT_CHAIN_TOKEN_BRIDGE_CREATOR is only needed for running the Token Bridge verification script)
+3. Set env variables: 
+    - Note that if ORBIT_CHAIN_RPC is empty the script won't fetch information from the Orbit chain and will not perform those verifications
+    - Note that PARENT_CHAIN_TOKEN_BRIDGE_CREATOR is only needed for running the Token Bridge verification script
+    - The rest of the variables must be present
 
 ## Rollup verification
 
