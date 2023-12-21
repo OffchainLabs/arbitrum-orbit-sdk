@@ -1,6 +1,6 @@
 import { Address, PublicClient, encodeFunctionData } from 'viem';
 
-import { CreateRollupParams } from './createRollup';
+import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollup';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
@@ -10,13 +10,11 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 
-function createRollupEncodeFunctionData(
-  params: CreateRollupParams & { maxDataSize: bigint }
-) {
+function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
     abi: rollupCreator.abi,
     functionName: 'createRollup',
-    args: [{ ...defaults, ...params }],
+    args,
   });
 }
 
@@ -47,12 +45,13 @@ export async function createRollupPrepareTransactionRequest({
   }
 
   const maxDataSize = createRollupGetMaxDataSize(chainId);
+  const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreator.address[chainId],
-    data: createRollupEncodeFunctionData({ ...params, maxDataSize }),
-    value: createRollupGetCallValue(params),
+    data: createRollupEncodeFunctionData([paramsWithDefaults]),
+    value: createRollupGetCallValue(paramsWithDefaults),
     account,
   });
 

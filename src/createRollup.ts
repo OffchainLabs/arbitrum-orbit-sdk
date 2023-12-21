@@ -58,13 +58,14 @@ export async function createRollup({
   }
 
   const maxDataSize = createRollupGetMaxDataSize(chainId);
+  const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
 
   const { request } = await publicClient.simulateContract({
     address: rollupCreator.address[chainId],
     abi: rollupCreator.abi,
     functionName: 'createRollup',
-    args: [{ ...defaults, ...params, maxDataSize }],
-    value: createRollupGetCallValue(params),
+    args: [paramsWithDefaults],
+    value: createRollupGetCallValue(paramsWithDefaults),
     account,
   });
 
