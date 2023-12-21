@@ -53,6 +53,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: install
     steps:
+      - name: Check Docker Version
+        run: docker --version
+
       - name: Checkout
         uses: actions/checkout@v3
 
