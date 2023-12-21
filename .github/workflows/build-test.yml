@@ -65,10 +65,10 @@ jobs:
         uses: OffchainLabs/actions/node-modules/restore@main
 
       - name: Set up the local node
-        uses: OffchainLabs/actions/run-nitro-test-node@debug
+        uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
-          # we have RollupCreator on L1 by default
-          # --l3node (ensure we have RollupCreator on L2)
+          # RollupCreator on L1 is deployed by default
+          # RollupCreator on L2 is deployed with --l3node
           l3-node: true
 
       - name: Copy .env
