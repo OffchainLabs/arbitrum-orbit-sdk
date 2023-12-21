@@ -67,13 +67,9 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@debug
         with:
-          nitro-testnode-ref: use-tokenbridge-creator
           # we have RollupCreator on L1 by default
           # --l3node (ensure we have RollupCreator on L2)
           l3-node: true
-          # --tokenbridge (ensure we have TokenBridgeCreator on L1)
-          # --l3-token-bridge (ensure we have TokenBridgeCreator on L2)
-          args: --tokenbridge --l3-token-bridge
 
       - name: Copy .env
         run: cp ./.env.example ./.env
