@@ -52,7 +52,7 @@ const contracts: ContractConfig[] = [
       // testnet
       [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
-      // local nitro-testnode (on "use-tokenbridge-creator" branch with --l3node flag)
+      // local nitro-testnode (on "use-tokenbridge-creator" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
       [nitroTestnodeL2.id]: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
     },
@@ -64,7 +64,7 @@ const contracts: ContractConfig[] = [
       // testnet
       [sepolia.id]: '0x7612718D3143C791B2Ff5c01a9a7D02CEf00AE9c',
       [arbitrumSepolia.id]: '0xb462C69f8f638d2954c9618B03765FC1770190cF',
-      // local nitro-testnode (on "use-tokenbridge-creator" branch with --l3node flag)
+      // local nitro-testnode (on "use-tokenbridge-creator" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x4a2ba922052ba54e29c5417bc979daaf7d5fe4f4',
       [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',
     },
