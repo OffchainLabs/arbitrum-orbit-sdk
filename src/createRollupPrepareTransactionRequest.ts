@@ -30,22 +30,22 @@ export async function createRollupPrepareTransactionRequest({
   const chainId = publicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
+    throw new Error(`"publicClient.chain" can't be undefined.`);
   }
 
   if (params.batchPoster === zeroAddress) {
-    throw new Error(`Param "batchPoster" can't be set to the zero address.`);
+    throw new Error(`"params.batchPoster" can't be set to the zero address.`);
   }
 
   if (params.validators.length === 0 || params.validators.includes(zeroAddress)) {
-    throw new Error(`Param "validators" can't be empty or contain the zero address.`);
+    throw new Error(`"params.validators" can't be empty or contain the zero address.`);
   }
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
   if (isCustomFeeTokenAddress(params.nativeToken) && !isAnyTrustChainConfig(chainConfig)) {
     throw new Error(
-      `Param "nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
+      `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
     );
   }
 

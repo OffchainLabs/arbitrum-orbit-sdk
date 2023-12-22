@@ -16,7 +16,7 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-it(`fails to prepare transaction request if "batchPoster" is set to the zero address`, async () => {
+it(`fails to prepare transaction request if "params.batchPoster" is set to the zero address`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -42,13 +42,11 @@ it(`fails to prepare transaction request if "batchPoster" is set to the zero add
         },
         account: deployer.address,
         publicClient,
-      })
-  ).rejects.toThrowError(
-    `Param "batchPoster" can't be set to the zero address.`
-  );
+      }),
+  ).rejects.toThrowError(`"params.batchPoster" can't be set to the zero address.`);
 });
 
-it(`fails to prepare transaction request if "validators" is set to an empty array`, async () => {
+it(`fails to prepare transaction request if "params.validators" is set to an empty array`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -74,13 +72,11 @@ it(`fails to prepare transaction request if "validators" is set to an empty arra
         },
         account: deployer.address,
         publicClient,
-      })
-  ).rejects.toThrowError(
-    `Param "validators" can't be empty or contain the zero address.`
-  );
+      }),
+  ).rejects.toThrowError(`"params.validators" can't be empty or contain the zero address.`);
 });
 
-it(`fails to prepare transaction request if "validators" includes the zero address`, async () => {
+it(`fails to prepare transaction request if "params.validators" includes the zero address`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -106,13 +102,11 @@ it(`fails to prepare transaction request if "validators" includes the zero addre
         },
         account: deployer.address,
         publicClient,
-      })
-  ).rejects.toThrowError(
-    `Param "validators" can't be empty or contain the zero address.`
-  );
+      }),
+  ).rejects.toThrowError(`"params.validators" can't be empty or contain the zero address.`);
 });
 
-it(`fails to prepare transaction request if "nativeToken" is custom and chain is not anytrust`, async () => {
+it(`fails to prepare transaction request if "params.nativeToken" is custom and chain is not anytrust`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -139,8 +133,8 @@ it(`fails to prepare transaction request if "nativeToken" is custom and chain is
         },
         account: deployer.address,
         publicClient,
-      })
+      }),
   ).rejects.toThrowError(
-    `Param "nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`
+    `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
   );
 });
