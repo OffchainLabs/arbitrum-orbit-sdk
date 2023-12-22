@@ -23,7 +23,7 @@ describe(`createRollup`, async () => {
     deployer,
     batchPoster,
     validators,
-    publicClient
+    publicClient,
   });
 
   it(`successfully deploys core contracts through rollup creator`, async () => {
@@ -36,20 +36,20 @@ describe(`createRollup`, async () => {
     expect(arg.nativeToken).toEqual(zeroAddress);
     expect(arg.deployFactoriesToL2).toEqual(true);
     expect(arg.maxFeePerGasForRetryables).toEqual(parseGwei('0.1'));
-  
+
     // assert the transaction executed successfully
     expect(createRollupInformation.transactionReceipt.status).toEqual('success');
 
     // assert the core contracts were successfully obtained
     expect(createRollupInformation.coreContracts).toBeDefined();
   });
-  
+
   it('finds the transaction hash that created a specified deployed rollup contract', async () => {
     const transactionHash = await createRollupFetchTransactionHash({
       rollupAddress: createRollupInformation.coreContracts.rollup,
       publicClient,
     });
-  
+
     expect(transactionHash).toEqual(createRollupInformation.transactionReceipt.transactionHash);
   });
 });

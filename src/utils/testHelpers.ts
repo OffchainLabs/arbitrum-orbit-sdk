@@ -1,33 +1,42 @@
-import { Address, PrivateKeyAccount, PublicClient } from "viem";
-import { CreateRollupPrepareConfigResult, createRollupPrepareConfig } from "../createRollupPrepareConfig";
-import { createRollupPrepareTransactionRequest } from "../createRollupPrepareTransactionRequest";
-import { prepareChainConfig } from "../prepareChainConfig";
-import { generateChainId } from "./generateChainId";
-import { CreateRollupTransaction, createRollupPrepareTransaction } from "../createRollupPrepareTransaction";
-import { CreateRollupTransactionReceipt, createRollupPrepareTransactionReceipt } from "../createRollupPrepareTransactionReceipt";
-import { CoreContracts } from "../types/CoreContracts";
+import { Address, PrivateKeyAccount, PublicClient } from 'viem';
+import {
+  CreateRollupPrepareConfigResult,
+  createRollupPrepareConfig,
+} from '../createRollupPrepareConfig';
+import { createRollupPrepareTransactionRequest } from '../createRollupPrepareTransactionRequest';
+import { prepareChainConfig } from '../prepareChainConfig';
+import { generateChainId } from './generateChainId';
+import {
+  CreateRollupTransaction,
+  createRollupPrepareTransaction,
+} from '../createRollupPrepareTransaction';
+import {
+  CreateRollupTransactionReceipt,
+  createRollupPrepareTransactionReceipt,
+} from '../createRollupPrepareTransactionReceipt';
+import { CoreContracts } from '../types/CoreContracts';
 
 export type CreateTestRollupParams = {
-    deployer: PrivateKeyAccount;
-    batchPoster: Address;
-    validators: Address[];
-    publicClient: PublicClient;
+  deployer: PrivateKeyAccount;
+  batchPoster: Address;
+  validators: Address[];
+  publicClient: PublicClient;
 };
 
 export type CreateTestRollupResult = {
-    config: CreateRollupPrepareConfigResult;
-    transaction: CreateRollupTransaction;
-    transactionReceipt: CreateRollupTransactionReceipt;
-    coreContracts: CoreContracts;
+  config: CreateRollupPrepareConfigResult;
+  transaction: CreateRollupTransaction;
+  transactionReceipt: CreateRollupTransactionReceipt;
+  coreContracts: CoreContracts;
 };
 
 export async function createTestRollup({
-    deployer,
-    batchPoster,
-    validators,
-    publicClient
+  deployer,
+  batchPoster,
+  validators,
+  publicClient,
 }: CreateTestRollupParams): Promise<CreateTestRollupResult> {
-    // generate a random chain id
+  // generate a random chain id
   const chainId = generateChainId();
 
   // create the chain config
@@ -68,11 +77,10 @@ export async function createTestRollup({
 
   const coreContracts = txReceipt.getCoreContracts();
 
-
   return {
     config,
     transaction: tx,
     transactionReceipt: txReceipt,
     coreContracts,
-  }
-};
+  };
+}
