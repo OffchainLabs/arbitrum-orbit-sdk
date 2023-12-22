@@ -2,12 +2,7 @@ import { erc, etherscan } from '@wagmi/cli/plugins';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
-import {
-  sepolia,
-  arbitrumSepolia,
-  nitroTestnodeL1,
-  nitroTestnodeL2,
-} from './src/chains';
+import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './src/chains';
 
 dotenv.config();
 
@@ -33,7 +28,7 @@ const blockExplorerApiUrls: Record<ParentChainId, string> = {
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
   await (
     await fetch(
-      `${blockExplorerApiUrls[chainId]}?module=contract&action=getabi&format=raw&address=${address}&apikey=${process.env.ARBISCAN_API_KEY}`
+      `${blockExplorerApiUrls[chainId]}?module=contract&action=getabi&format=raw&address=${address}&apikey=${process.env.ARBISCAN_API_KEY}`,
     )
   ).json();
 }
@@ -52,7 +47,7 @@ const contracts: ContractConfig[] = [
       // testnet
       [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
-      // local nitro-testnode (on "use-tokenbridge-creator" branch)
+      // local nitro-testnode (on "use-tokenbridge-creator" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
       [nitroTestnodeL2.id]: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
     },
@@ -64,7 +59,7 @@ const contracts: ContractConfig[] = [
       // testnet
       [sepolia.id]: '0x7612718D3143C791B2Ff5c01a9a7D02CEf00AE9c',
       [arbitrumSepolia.id]: '0xb462C69f8f638d2954c9618B03765FC1770190cF',
-      // local nitro-testnode (on "use-tokenbridge-creator" branch)
+      // local nitro-testnode (on "use-tokenbridge-creator" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x4a2ba922052ba54e29c5417bc979daaf7d5fe4f4',
       [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',
     },
@@ -98,9 +93,7 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
         return chainId !== nitroTestnodeL1.id && chainId !== nitroTestnodeL2.id;
       })
       // fetch abis for all chains
-      .map(([chainId, address]) =>
-        fetchAbi(Number(chainId) as ParentChainId, address)
-      )
+      .map(([chainId, address]) => fetchAbi(Number(chainId) as ParentChainId, address)),
   );
 
   // make sure all abis are the same
