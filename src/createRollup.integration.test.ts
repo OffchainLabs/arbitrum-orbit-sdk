@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
+import { Address, createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
 import { generateChainId } from './utils';
@@ -10,16 +10,24 @@ import { createRollupPrepareTransactionRequest } from './createRollupPrepareTran
 import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
 
 import { getTestPrivateKeyAccount } from './testHelpers';
-
-const deployer = getTestPrivateKeyAccount();
-
-const batchPoster = deployer.address;
-const validators = [deployer.address];
+import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 const publicClient = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
 });
+
+// Test inputs
+const deployer = getTestPrivateKeyAccount();
+const batchPoster = deployer.address;
+const validators = [deployer.address];
+
+// Test outputs (information of the created rollup, for next tests)
+type CreatedRollupInformation = {
+  rollupAddress: Address;
+  createdAtTransactionHash: `0x${string}`;
+};
+let createdRollupInformation: CreatedRollupInformation;
 
 it(`successfully deploys core contracts through rollup creator`, async () => {
   // generate a random chain id
@@ -72,5 +80,19 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
   );
 
   expect(txReceipt.status).toEqual('success');
-  expect(() => txReceipt.getCoreContracts()).not.toThrowError();
+  const coreContracts = txReceipt.getCoreContracts();
+  expect(coreContracts).toBeDefined();
+
+  // store rollup information for next tests
+  createdRollupInformation.rollupAddress = coreContracts.rollup;
+  createdRollupInformation.createdAtTransactionHash = txReceipt.transactionHash;
+});
+
+it('finds the transaction hash that created a specified deployed rollup contract', async () => {
+  const transactionHash = await createRollupFetchTransactionHash({
+    rollupAddress: createdRollupInformation.rollupAddress,
+    publicClient,
+  });
+
+  expect(transactionHash).toEqual(createdRollupInformation.createdAtTransactionHash);
 });
