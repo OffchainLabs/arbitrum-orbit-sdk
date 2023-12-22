@@ -5,8 +5,7 @@ export const defaults = {
   daoForkBlock: null,
   daoForkSupport: true,
   eip150Block: 0,
-  eip150Hash:
-    '0x0000000000000000000000000000000000000000000000000000000000000000',
+  eip150Hash: '0x0000000000000000000000000000000000000000000000000000000000000000',
   eip155Block: 0,
   eip158Block: 0,
   byzantiumBlock: 0,
@@ -37,9 +36,7 @@ export type PrepareChainConfigParams = Pick<ChainConfig, 'chainId'> &
       Partial<Omit<ChainConfigArbitrumParams, 'InitialChainOwner'>>;
   };
 
-export function prepareChainConfig(
-  params: PrepareChainConfigParams
-): ChainConfig {
+export function prepareChainConfig(params: PrepareChainConfigParams): ChainConfig {
   return {
     ...defaults,
     ...params,
