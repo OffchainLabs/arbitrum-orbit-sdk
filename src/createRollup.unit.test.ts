@@ -9,14 +9,15 @@ const publicClient = createPublicClient({
 });
 
 // Temporary test with https://arbiscan.io/tx/0xc8d7afcb2f7f7dc0883a938db4352813e17b7629850cdc54d8cc2eba7e10b095
-it ('finds the transaction hash that created a specified deployed rollup contract', async () => {
+it('finds the transaction hash that created a specified deployed rollup contract', async () => {
   const rollupAddress = '0x846387C3D6001F74170455B1074D01f05eB3067a';
-  const expectedTransactionHash = '0xc8d7afcb2f7f7dc0883a938db4352813e17b7629850cdc54d8cc2eba7e10b095';
+  const expectedTransactionHash =
+    '0xc8d7afcb2f7f7dc0883a938db4352813e17b7629850cdc54d8cc2eba7e10b095';
 
-  const transactionHash = await createRollupFetchTransactionHash(
+  const transactionHash = await createRollupFetchTransactionHash({
     rollupAddress,
-    publicClient
-  );
+    publicClient,
+  });
 
   expect(transactionHash).toEqual(expectedTransactionHash);
 });
