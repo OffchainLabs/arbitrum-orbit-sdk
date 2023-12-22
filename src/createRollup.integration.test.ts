@@ -24,10 +24,10 @@ const validators = [deployer.address];
 
 // Test outputs (information of the created rollup, for next tests)
 type CreatedRollupInformation = {
-  rollupAddress: Address;
-  createdAtTransactionHash: `0x${string}`;
+  rollupAddress?: Address;
+  createdAtTransactionHash?: `0x${string}`;
 };
-let createdRollupInformation: CreatedRollupInformation;
+const createdRollupInformation: CreatedRollupInformation = {};
 
 it(`successfully deploys core contracts through rollup creator`, async () => {
   // generate a random chain id
@@ -90,7 +90,7 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
 
 it('finds the transaction hash that created a specified deployed rollup contract', async () => {
   const transactionHash = await createRollupFetchTransactionHash({
-    rollupAddress: createdRollupInformation.rollupAddress,
+    rollupAddress: createdRollupInformation.rollupAddress!,
     publicClient,
   });
 
