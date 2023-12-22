@@ -13,8 +13,8 @@
     "test:unit": "vitest unit.test",
     "test:integration": "vitest integration.test",
     "postinstall": "patch-package",
-    "prettier:check": "prettier --check '**/*.{ts,ts,md,json,yml}'",
-    "prettier:format": "prettier --write '**/*.{ts,ts,md,json,yml}'"
+    "prettier:check": "prettier --check '**/*.{ts,md,json,yml}'",
+    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'"
   },
   "devDependencies": {
     "@offchainlabs/prettier-config": "0.2.1",
