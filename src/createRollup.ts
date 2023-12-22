@@ -20,10 +20,7 @@ export type CreateRollupFunctionInputs = GetFunctionArgs<
 
 type RequiredKeys = 'config' | 'batchPoster' | 'validators';
 
-export type CreateRollupParams = Pick<
-  CreateRollupFunctionInputs[0],
-  RequiredKeys
-> &
+export type CreateRollupParams = Pick<CreateRollupFunctionInputs[0], RequiredKeys> &
   Partial<Omit<CreateRollupFunctionInputs[0], RequiredKeys>>;
 
 export async function createRollup({
@@ -48,12 +45,9 @@ export async function createRollup({
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
-  if (
-    isCustomFeeTokenAddress(params.nativeToken) &&
-    !isAnyTrustChainConfig(chainConfig)
-  ) {
+  if (isCustomFeeTokenAddress(params.nativeToken) && !isAnyTrustChainConfig(chainConfig)) {
     throw new Error(
-      `Custom fee token can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`
+      `Custom fee token can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
     );
   }
 

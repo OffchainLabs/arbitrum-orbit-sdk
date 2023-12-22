@@ -1,10 +1,4 @@
-import {
-  TransactionReceipt,
-  getAbiItem,
-  getEventSelector,
-  Log,
-  decodeEventLog,
-} from 'viem';
+import { TransactionReceipt, getAbiItem, getEventSelector, Log, decodeEventLog } from 'viem';
 
 import { rollupCreator } from './contracts';
 import { CoreContracts } from './types/CoreContracts';
@@ -16,7 +10,7 @@ function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {
 
   if (typeof log === 'undefined') {
     throw new Error(
-      `No "RollupCreated" logs found in logs for transaction: ${txReceipt.transactionHash}`
+      `No "RollupCreated" logs found in logs for transaction: ${txReceipt.transactionHash}`,
     );
   }
 
@@ -27,9 +21,7 @@ function decodeRollupCreatedEventLog(log: Log<bigint, number>) {
   const decodedEventLog = decodeEventLog({ ...log, abi: rollupCreator.abi });
 
   if (decodedEventLog.eventName !== 'RollupCreated') {
-    throw new Error(
-      `Expected "RollupCreated" event but found: ${decodedEventLog.eventName}`
-    );
+    throw new Error(`Expected "RollupCreated" event but found: ${decodedEventLog.eventName}`);
   }
 
   return decodedEventLog;
@@ -40,7 +32,7 @@ export type CreateRollupTransactionReceipt = TransactionReceipt & {
 };
 
 export function createRollupPrepareTransactionReceipt(
-  txReceipt: TransactionReceipt
+  txReceipt: TransactionReceipt,
 ): CreateRollupTransactionReceipt {
   return {
     ...txReceipt,
