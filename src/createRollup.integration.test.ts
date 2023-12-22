@@ -1,22 +1,23 @@
-import { it, expect } from 'vitest';
-import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
+import { it, expect } from "vitest";
+import { createPublicClient, http, parseGwei, zeroAddress } from "viem";
 
-import { nitroTestnodeL2 } from './chains';
-import { generateChainId } from './utils';
-import { prepareChainConfig } from './prepareChainConfig';
-import { createRollupPrepareConfig } from './createRollupPrepareConfig';
-import { createRollupPrepareTransaction } from './createRollupPrepareTransaction';
-import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
-import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
+import { nitroTestnodeL2 } from "./chains";
+import { generateChainId } from "./utils";
+import { prepareChainConfig } from "./prepareChainConfig";
+import { createRollupPrepareConfig } from "./createRollupPrepareConfig";
+import { createRollupPrepareTransaction } from "./createRollupPrepareTransaction";
+import { createRollupPrepareTransactionRequest } from "./createRollupPrepareTransactionRequest";
+import { createRollupPrepareTransactionReceipt } from "./createRollupPrepareTransactionReceipt";
 
-import { getTestPrivateKeyAccount } from './testHelpers';
+import { getTestPrivateKeyAccount } from "./testHelpers";
+import { createOrbitClient } from "./orbitClient";
 
 const deployer = getTestPrivateKeyAccount();
 
 const batchPoster = deployer.address;
 const validators = [deployer.address];
 
-const publicClient = createPublicClient({
+const publicClient = createOrbitClient({
   chain: nitroTestnodeL2,
   transport: http(),
 });
@@ -66,12 +67,12 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
   expect(arg.maxDataSize).toEqual(104_857n);
   expect(arg.nativeToken).toEqual(zeroAddress);
   expect(arg.deployFactoriesToL2).toEqual(true);
-  expect(arg.maxFeePerGasForRetryables).toEqual(parseGwei('0.1'));
+  expect(arg.maxFeePerGasForRetryables).toEqual(parseGwei("0.1"));
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
     await publicClient.waitForTransactionReceipt({ hash: txHash })
   );
 
-  expect(txReceipt.status).toEqual('success');
+  expect(txReceipt.status).toEqual("success");
 });

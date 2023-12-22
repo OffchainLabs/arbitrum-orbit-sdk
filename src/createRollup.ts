@@ -1,24 +1,24 @@
-import { PublicClient, WalletClient, GetFunctionArgs } from 'viem';
+import { PublicClient, WalletClient, GetFunctionArgs } from "viem";
 
-import { rollupCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
-import { defaults } from './createRollupDefaults';
-import { createRollupGetCallValue } from './createRollupGetCallValue';
-import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
+import { getRollupCreatorAddressForChainId, rollupCreator } from "./contracts";
+import { validParentChainId } from "./types/ParentChain";
+import { defaults } from "./createRollupDefaults";
+import { createRollupGetCallValue } from "./createRollupGetCallValue";
+import { createRollupGetMaxDataSize } from "./createRollupGetMaxDataSize";
 import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
-} from './createRollupPrepareTransactionReceipt';
-import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
-import { ChainConfig } from './types/ChainConfig';
-import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
+} from "./createRollupPrepareTransactionReceipt";
+import { isCustomFeeTokenAddress } from "./utils/isCustomFeeTokenAddress";
+import { ChainConfig } from "./types/ChainConfig";
+import { isAnyTrustChainConfig } from "./utils/isAnyTrustChainConfig";
 
 export type CreateRollupFunctionInputs = GetFunctionArgs<
   typeof rollupCreator.abi,
-  'createRollup'
->['args'];
+  "createRollup"
+>["args"];
 
-type RequiredKeys = 'config' | 'batchPoster' | 'validators';
+type RequiredKeys = "config" | "batchPoster" | "validators";
 
 export type CreateRollupParams = Pick<
   CreateRollupFunctionInputs[0],
@@ -39,11 +39,11 @@ export async function createRollup({
   const account = walletClient.account?.address;
 
   if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
+    throw new Error("chainId is undefined");
   }
 
-  if (typeof account === 'undefined') {
-    throw new Error('account is undefined');
+  if (typeof account === "undefined") {
+    throw new Error("account is undefined");
   }
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
@@ -60,9 +60,9 @@ export async function createRollup({
   const maxDataSize = createRollupGetMaxDataSize(chainId);
 
   const { request } = await publicClient.simulateContract({
-    address: rollupCreator.address[chainId],
+    address: getRollupCreatorAddressForChainId(chainId),
     abi: rollupCreator.abi,
-    functionName: 'createRollup',
+    functionName: "createRollup",
     args: [{ ...defaults, ...params, maxDataSize }],
     value: createRollupGetCallValue(params),
     account,

@@ -1,16 +1,17 @@
-import { Chain, createPublicClient, http } from 'viem';
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { arbitrumSepolia } from 'viem/chains';
+import { Chain, http } from "viem";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { arbitrumSepolia } from "viem/chains";
 import {
   createRollupPrepareConfig,
   prepareChainConfig,
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
-} from '@arbitrum/orbit-sdk';
-import { generateChainId } from '@arbitrum/orbit-sdk/utils';
+  createOrbitClient,
+} from "@arbitrum/orbit-sdk";
+import { generateChainId } from "@arbitrum/orbit-sdk/utils";
 
 function sanitizePrivateKey(privateKey: string): `0x${string}` {
-  if (!privateKey.startsWith('0x')) {
+  if (!privateKey.startsWith("0x")) {
     return `0x${privateKey}`;
   }
 
@@ -18,7 +19,7 @@ function sanitizePrivateKey(privateKey: string): `0x${string}` {
 }
 
 function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
-  if (typeof privateKey === 'undefined') {
+  if (typeof privateKey === "undefined") {
     return generatePrivateKey();
   }
 
@@ -29,24 +30,35 @@ function getBlockExplorerUrl(chain: Chain) {
   return chain.blockExplorers?.default.url;
 }
 
-if (typeof process.env.DEPLOYER_PRIVATE_KEY === 'undefined') {
-  throw new Error(`Please provide the "DEPLOYER_PRIVATE_KEY" environment variable`);
+if (typeof process.env.DEPLOYER_PRIVATE_KEY === "undefined") {
+  throw new Error(
+    `Please provide the "DEPLOYER_PRIVATE_KEY" environment variable`
+  );
 }
 
 // load or generate a random batch poster account
-const batchPosterPrivateKey = withFallbackPrivateKey(process.env.BATCH_POSTER_PRIVATE_KEY);
+const batchPosterPrivateKey = withFallbackPrivateKey(
+  process.env.BATCH_POSTER_PRIVATE_KEY
+);
 const batchPoster = privateKeyToAccount(batchPosterPrivateKey).address;
 
 // load or generate a random validator account
-const validatorPrivateKey = withFallbackPrivateKey(process.env.VALIDATOR_PRIVATE_KEY);
+const validatorPrivateKey = withFallbackPrivateKey(
+  process.env.VALIDATOR_PRIVATE_KEY
+);
 const validator = privateKeyToAccount(validatorPrivateKey).address;
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
+const parentChainPublicClient = createOrbitClient({
+  chain: parentChain,
+  transport: http(),
+});
 
 // load the deployer account
-const deployer = privateKeyToAccount(sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY));
+const deployer = privateKeyToAccount(
+  sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY)
+);
 
 async function main() {
   // generate a random chain id
@@ -55,7 +67,10 @@ async function main() {
   // create the chain config
   const chainConfig = prepareChainConfig({
     chainId,
-    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
+    arbitrum: {
+      InitialChainOwner: deployer.address,
+      DataAvailabilityCommittee: true,
+    },
   });
 
   // prepare the transaction for deploying the core contracts
@@ -83,7 +98,11 @@ async function main() {
     await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash })
   );
 
-  console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
+  console.log(
+    `Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${
+      txReceipt.transactionHash
+    }`
+  );
 }
 
 main();
