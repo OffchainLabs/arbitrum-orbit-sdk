@@ -79,7 +79,7 @@ jobs:
         uses: OffchainLabs/actions/node-modules/restore@main
 
       - name: Set up the local node
-        uses: OffchainLabs/actions/run-nitro-test-node@debug
+        uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
           # todo: update once merged
           nitro-testnode-ref: 937af32a3c92a9913121fb64229e2c6f91065ac2
