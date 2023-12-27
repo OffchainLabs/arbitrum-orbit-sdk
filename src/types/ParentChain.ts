@@ -1,3 +1,4 @@
+import { PublicClient } from 'viem';
 import { chains } from '../chains';
 
 export type ParentChain = (typeof chains)[number];
@@ -9,3 +10,11 @@ export function validParentChainId(
   const ids = chains.map((chain) => chain.id) as Number[];
   return ids.includes(Number(parentChainId));
 }
+
+export const validateParentChainId = (client: PublicClient): ParentChainId => {
+  const chainId = client.chain?.id;
+  if (!validParentChainId(chainId)) {
+    throw new Error('chainId is undefined');
+  }
+  return chainId;
+};

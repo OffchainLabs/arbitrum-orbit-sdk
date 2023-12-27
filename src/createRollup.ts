@@ -1,7 +1,7 @@
 import { PublicClient, WalletClient, GetFunctionArgs } from 'viem';
 
 import { rollupCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
+import { validateParentChainId } from './types/ParentChain';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
@@ -32,12 +32,8 @@ export async function createRollup({
   publicClient: PublicClient;
   walletClient: WalletClient;
 }): Promise<CreateRollupTransactionReceipt> {
-  const chainId = publicClient.chain?.id;
+  const chainId = validateParentChainId(publicClient);
   const account = walletClient.account?.address;
-
-  if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
-  }
 
   if (typeof account === 'undefined') {
     throw new Error('account is undefined');
