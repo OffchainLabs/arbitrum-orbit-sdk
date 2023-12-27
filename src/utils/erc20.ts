@@ -2,13 +2,7 @@ import { Address, PublicClient, WalletClient, encodeFunctionData } from 'viem';
 
 import { erc20 } from '../contracts';
 
-function approveEncodeFunctionData({
-  spender,
-  amount,
-}: {
-  spender: Address;
-  amount: bigint;
-}) {
+function approveEncodeFunctionData({ spender, amount }: { spender: Address; amount: bigint }) {
   return encodeFunctionData({
     abi: erc20.abi,
     functionName: 'approve',

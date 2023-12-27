@@ -55,9 +55,7 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
   });
 
   // get the transaction
-  const tx = createRollupPrepareTransaction(
-    await publicClient.getTransaction({ hash: txHash })
-  );
+  const tx = createRollupPrepareTransaction(await publicClient.getTransaction({ hash: txHash }));
 
   const [arg] = tx.getInputs();
   // assert all inputs are correct
@@ -71,8 +69,9 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await publicClient.waitForTransactionReceipt({ hash: txHash })
+    await publicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
-  expect(txReceipt.status).toEqual("success");
+  expect(txReceipt.status).toEqual('success');
+  expect(() => txReceipt.getCoreContracts()).not.toThrowError();
 });

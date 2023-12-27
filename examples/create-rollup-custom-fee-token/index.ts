@@ -84,10 +84,9 @@ async function main() {
   };
 
   if (!(await createRollupEnoughCustomFeeTokenAllowance(allowanceParams))) {
-    const approvalTxRequest =
-      await createRollupPrepareCustomFeeTokenApprovalTransactionRequest(
-        allowanceParams
-      );
+    const approvalTxRequest = await createRollupPrepareCustomFeeTokenApprovalTransactionRequest(
+      allowanceParams,
+    );
 
     // sign and send the transaction
     const approvalTxHash = await parentChainPublicClient.sendRawTransaction({
@@ -98,13 +97,13 @@ async function main() {
     const approvalTxReceipt = createRollupPrepareTransactionReceipt(
       await parentChainPublicClient.waitForTransactionReceipt({
         hash: approvalTxHash,
-      })
+      }),
     );
 
     console.log(
       `Tokens approved in ${getBlockExplorerUrl(parentChain)}/tx/${
         approvalTxReceipt.transactionHash
-      }`
+      }`,
     );
   }
 
@@ -132,7 +131,7 @@ async function main() {
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash })
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   console.log(

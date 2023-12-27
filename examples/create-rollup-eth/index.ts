@@ -95,7 +95,7 @@ async function main() {
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash })
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   console.log(

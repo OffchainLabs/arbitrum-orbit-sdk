@@ -1,23 +1,21 @@
 import { Address, PublicClient, encodeFunctionData } from "viem";
 
-import { CreateRollupParams } from "./createRollup";
-import { defaults } from "./createRollupDefaults";
-import { createRollupGetCallValue } from "./createRollupGetCallValue";
-import { createRollupGetMaxDataSize } from "./createRollupGetMaxDataSize";
-import { rollupCreator } from "./contracts";
-import { validParentChainId } from "./types/ParentChain";
-import { isCustomFeeTokenAddress } from "./utils/isCustomFeeTokenAddress";
-import { ChainConfig } from "./types/ChainConfig";
-import { isAnyTrustChainConfig } from "./utils/isAnyTrustChainConfig";
-import { OrbitClient } from "./orbitClient";
+import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollup';
+import { defaults } from './createRollupDefaults';
+import { createRollupGetCallValue } from './createRollupGetCallValue';
+import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
+import { rollupCreator } from './contracts';
+import { validParentChainId } from './types/ParentChain';
+import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { ChainConfig } from './types/ChainConfig';
+import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
+import { OrbitClient } from './orbitClient';
 
-function createRollupEncodeFunctionData(
-  params: CreateRollupParams & { maxDataSize: bigint }
-) {
+function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
     abi: rollupCreator.abi,
-    functionName: "createRollup",
-    args: [{ ...defaults, ...params }],
+    functionName: 'createRollup',
+    args,
   });
 }
 
@@ -34,22 +32,20 @@ export async function createRollupPrepareTransactionRequest({
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
-  if (
-    isCustomFeeTokenAddress(params.nativeToken) &&
-    !isAnyTrustChainConfig(chainConfig)
-  ) {
+  if (isCustomFeeTokenAddress(params.nativeToken) && !isAnyTrustChainConfig(chainConfig)) {
     throw new Error(
-      `Custom fee token can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`
+      `Custom fee token can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
     );
   }
 
   const maxDataSize = createRollupGetMaxDataSize(chainId);
+  const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: publicClient.getRollupCreatorAddress(),
-    data: createRollupEncodeFunctionData({ ...params, maxDataSize }),
-    value: createRollupGetCallValue(params),
+    data: createRollupEncodeFunctionData([paramsWithDefaults]),
+    value: createRollupGetCallValue(paramsWithDefaults),
     account,
   });
 

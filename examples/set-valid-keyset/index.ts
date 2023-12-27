@@ -60,9 +60,7 @@ async function main() {
   });
 
   console.log(
-    `Keyset updated in ${getBlockExplorerUrl(parentChain)}/tx/${
-      txReceipt.transactionHash
-    }`
+    `Keyset updated in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`,
   );
 }
 

@@ -5,13 +5,12 @@ import { validParentChainId } from "./types/ParentChain";
 import { getRollupCreatorAddressForChainId, rollupCreator } from "./contracts";
 import { OrbitClient } from "./orbitClient";
 
-export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams =
-  {
-    amount?: bigint;
-    nativeToken: Address;
-    account: Address;
-    publicClient: OrbitClient;
-  };
+export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = {
+  amount?: bigint;
+  nativeToken: Address;
+  account: Address;
+  publicClient: OrbitClient;
+};
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
   amount = maxInt256,

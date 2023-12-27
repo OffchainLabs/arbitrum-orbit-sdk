@@ -2,16 +2,11 @@ import {
   NodeConfig,
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
-} from "./types/NodeConfig";
-import { ChainConfig } from "./types/ChainConfig";
-import { CoreContracts } from "./types/CoreContracts";
-import { ParentChainId, validParentChainId } from "./types/ParentChain";
-import {
-  sepolia,
-  arbitrumSepolia,
-  nitroTestnodeL1,
-  nitroTestnodeL2,
-} from "./chains";
+} from './types/NodeConfig';
+import { ChainConfig } from './types/ChainConfig';
+import { CoreContracts } from './types/CoreContracts';
+import { ParentChainId, validParentChainId } from './types/ParentChain';
+import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 
 function sanitizePrivateKey(privateKey: string) {
   return privateKey.startsWith("0x") ? privateKey.slice(2) : privateKey;
@@ -22,7 +17,7 @@ function stringifyInfoJson(infoJson: NodeConfigChainInfoJson): string {
 }
 
 function stringifyBackendsJson(
-  backendsJson: NodeConfigDataAvailabilityRpcAggregatorBackendsJson
+  backendsJson: NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
 ): string {
   return JSON.stringify(backendsJson);
 }
@@ -59,9 +54,7 @@ export function prepareNodeConfig({
   parentChainRpcUrl: string;
 }): NodeConfig {
   if (!validParentChainId(parentChainId)) {
-    throw new Error(
-      `[prepareNodeConfig] invalid parent chain id: ${parentChainId}`
-    );
+    throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
   }
 
   const config: NodeConfig = {
