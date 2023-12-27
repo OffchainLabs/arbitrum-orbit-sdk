@@ -1,10 +1,8 @@
 import { Address, PublicClient } from 'viem';
 
-import { rollupCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
 import { deterministicFactoriesDeploymentEstimatedFees } from './constants';
-import { getRollupCreatorAddress, getValidChainId } from './utils/getters';
+import { getRollupCreatorAddress } from './utils/getters';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams = {
   nativeToken: Address;

@@ -1,6 +1,6 @@
 import { Address } from 'viem';
 
-import { validParentChainId } from './types/ParentChain';
+import { validateParentChainId } from './types/ParentChain';
 import { SetValidKeysetParams } from './setValidKeyset';
 import { setValidKeysetEncodeFunctionData } from './setValidKeysetEncodeFunctionData';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
@@ -18,11 +18,7 @@ export async function setValidKeysetPrepareTransactionRequest({
   account,
   publicClient,
 }: SetValidKeysetPrepareTransactionRequestParams) {
-  const chainId = publicClient.chain?.id;
-
-  if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
-  }
+  const chainId = validateParentChainId(publicClient);
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,

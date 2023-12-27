@@ -5,11 +5,11 @@ import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
 import { rollupCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
+import { validateParentChainId } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
-import { getRollupCreatorAddress, getValidChainId } from './utils/getters';
+import { getRollupCreatorAddress } from './utils/getters';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -28,7 +28,7 @@ export async function createRollupPrepareTransactionRequest({
   account: Address;
   publicClient: PublicClient;
 }) {
-  const chainId = getValidChainId(publicClient);
+  const chainId = validateParentChainId(publicClient);
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
