@@ -1,4 +1,4 @@
-import { PublicClient, PublicClientConfig, createPublicClient } from 'viem';
+import { Client, PublicClient, PublicClientConfig, createPublicClient } from 'viem';
 import { rollupCreator } from './contracts';
 import { ParentChainId, validParentChainId } from './types/ParentChain';
 
@@ -7,24 +7,23 @@ export interface OrbitClient extends PublicClient {
   getValidChainId(): ParentChainId;
 }
 
+const validateClientChainId = (client: Client) => {
+  const chainId = client.chain?.id;
+  if (!validParentChainId(chainId)) {
+    throw new Error('chainId is undefined');
+  }
+  return chainId;
+};
+
 export function createOrbitClient({ chain, transport }: PublicClientConfig): OrbitClient {
   return createPublicClient({
     chain,
     transport,
-  }).extend((client) => ({
+  }).extend((client: Client) => ({
     getRollupCreatorAddress: () => {
-      const chainId = client.chain?.id;
-      if (!validParentChainId(chainId)) {
-        throw new Error('chainId is undefined');
-      }
+      const chainId = validateClientChainId(client);
       return rollupCreator.address[chainId];
     },
-    getValidChainId: () => {
-      const chainId = client.chain?.id;
-      if (!validParentChainId(chainId)) {
-        throw new Error('chainId is undefined');
-      }
-      return chainId;
-    },
+    getValidChainId: () => validateClientChainId(client),
   }));
 }
