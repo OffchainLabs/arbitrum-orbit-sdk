@@ -17,7 +17,7 @@ const deployer = getTestPrivateKeyAccount();
 const batchPoster = deployer.address;
 const validators = [deployer.address];
 
-const publicClient = createOrbitClient({
+const orbitClient = createOrbitClient({
   chain: nitroTestnodeL2,
   transport: http(),
 });
@@ -46,16 +46,16 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
       validators,
     },
     account: deployer.address,
-    publicClient,
+    orbitClient: orbitClient,
   });
 
   // sign and send the transaction
-  const txHash = await publicClient.sendRawTransaction({
+  const txHash = await orbitClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(request),
   });
 
   // get the transaction
-  const tx = createRollupPrepareTransaction(await publicClient.getTransaction({ hash: txHash }));
+  const tx = createRollupPrepareTransaction(await orbitClient.getTransaction({ hash: txHash }));
 
   const [arg] = tx.getInputs();
   // assert all inputs are correct
@@ -69,7 +69,7 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await publicClient.waitForTransactionReceipt({ hash: txHash }),
+    await orbitClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   expect(txReceipt.status).toEqual('success');

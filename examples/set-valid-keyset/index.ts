@@ -25,7 +25,7 @@ const keyset =
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createOrbitClient({
+const parentChainOrbitClient = createOrbitClient({
   chain: parentChain,
   transport: http(),
 });
@@ -42,16 +42,16 @@ async function main() {
     },
     keyset,
     account: deployer.address,
-    publicClient: parentChainPublicClient,
+    publicClient: parentChainOrbitClient,
   });
 
   // sign and send the transaction
-  const txHash = await parentChainPublicClient.sendRawTransaction({
+  const txHash = await parentChainOrbitClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(txRequest),
   });
 
   // wait for the transaction receipt
-  const txReceipt = await parentChainPublicClient.waitForTransactionReceipt({
+  const txReceipt = await parentChainOrbitClient.waitForTransactionReceipt({
     hash: txHash,
   });
 

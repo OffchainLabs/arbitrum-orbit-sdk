@@ -7,24 +7,24 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = 
   amount?: bigint;
   nativeToken: Address;
   account: Address;
-  publicClient: OrbitClient;
+  orbitClient: OrbitClient;
 };
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
   amount = maxInt256,
   nativeToken,
   account,
-  publicClient,
+  orbitClient,
 }: CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams) {
-  const chainId = publicClient.getValidChainId();
-  const spender = publicClient.getRollupCreatorAddress();
+  const chainId = orbitClient.getValidChainId();
+  const spender = orbitClient.getRollupCreatorAddress();
 
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner: account,
     spender,
     amount,
-    publicClient,
+    publicClient: orbitClient,
   });
 
   return { ...request, chainId };

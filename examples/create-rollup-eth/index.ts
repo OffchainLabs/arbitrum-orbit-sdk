@@ -44,7 +44,7 @@ const validator = privateKeyToAccount(validatorPrivateKey).address;
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createOrbitClient({
+const parentChainOrbitClient = createOrbitClient({
   chain: parentChain,
   transport: http(),
 });
@@ -77,17 +77,17 @@ async function main() {
       validators: [validator],
     },
     account: deployer.address,
-    publicClient: parentChainPublicClient,
+    publicClient: parentChainOrbitClient,
   });
 
   // sign and send the transaction
-  const txHash = await parentChainPublicClient.sendRawTransaction({
+  const txHash = await parentChainOrbitClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(request),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
+    await parentChainOrbitClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);

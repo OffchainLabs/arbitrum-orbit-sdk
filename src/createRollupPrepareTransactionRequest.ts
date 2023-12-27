@@ -21,13 +21,13 @@ function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
 export async function createRollupPrepareTransactionRequest({
   params,
   account,
-  publicClient,
+  orbitClient,
 }: {
   params: CreateRollupParams;
   account: Address;
-  publicClient: OrbitClient;
+  orbitClient: OrbitClient;
 }) {
-  const chainId = publicClient.getValidChainId();
+  const chainId = orbitClient.getValidChainId();
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
@@ -40,9 +40,9 @@ export async function createRollupPrepareTransactionRequest({
   const maxDataSize = createRollupGetMaxDataSize(chainId);
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
 
-  const request = await publicClient.prepareTransactionRequest({
-    chain: publicClient.chain,
-    to: publicClient.getRollupCreatorAddress(),
+  const request = await orbitClient.prepareTransactionRequest({
+    chain: orbitClient.chain,
+    to: orbitClient.getRollupCreatorAddress(),
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
     value: createRollupGetCallValue(paramsWithDefaults),
     account,
