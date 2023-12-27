@@ -1,30 +1,30 @@
-import { Address, maxInt256 } from 'viem';
+import { Address, PublicClient, maxInt256 } from 'viem';
 
-import { OrbitClient } from './orbitClient';
 import { approvePrepareTransactionRequest } from './utils/erc20';
+import { validParentChainId } from './types/ParentChain';
+import { rollupCreator } from './contracts';
+import { getRollupCreatorAddress, getValidChainId } from './utils/getters';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = {
   amount?: bigint;
   nativeToken: Address;
   account: Address;
-  orbitClient: OrbitClient;
+  publicClient: PublicClient;
 };
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
   amount = maxInt256,
   nativeToken,
   account,
-  orbitClient,
+  publicClient,
 }: CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams) {
-  const chainId = orbitClient.getValidChainId();
-  const spender = orbitClient.getRollupCreatorAddress();
-
+  const chainId = getValidChainId(publicClient);
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner: account,
-    spender,
+    spender: getRollupCreatorAddress(publicClient),
     amount,
-    publicClient: orbitClient,
+    publicClient,
   });
 
   return { ...request, chainId };

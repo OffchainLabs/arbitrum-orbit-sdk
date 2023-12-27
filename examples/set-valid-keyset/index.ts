@@ -1,8 +1,7 @@
-import { Chain, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import { setValidKeysetPrepareTransactionRequest } from '@arbitrum/orbit-sdk';
-import { createOrbitClient } from '@arbitrum/orbit-sdk/dist';
 
 function sanitizePrivateKey(privateKey: string): `0x${string}` {
   if (!privateKey.startsWith('0x')) {
@@ -25,10 +24,7 @@ const keyset =
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainOrbitClient = createOrbitClient({
-  chain: parentChain,
-  transport: http(),
-});
+const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
 
 // load the deployer account
 const deployer = privateKeyToAccount(sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY));
@@ -42,18 +38,16 @@ async function main() {
     },
     keyset,
     account: deployer.address,
-    publicClient: parentChainOrbitClient,
+    publicClient: parentChainPublicClient,
   });
 
   // sign and send the transaction
-  const txHash = await parentChainOrbitClient.sendRawTransaction({
+  const txHash = await parentChainPublicClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(txRequest),
   });
 
   // wait for the transaction receipt
-  const txReceipt = await parentChainOrbitClient.waitForTransactionReceipt({
-    hash: txHash,
-  });
+  const txReceipt = await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash });
 
   console.log(
     `Keyset updated in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`,

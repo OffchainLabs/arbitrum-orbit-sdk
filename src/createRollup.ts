@@ -1,6 +1,7 @@
-import { WalletClient, GetFunctionArgs } from 'viem';
+import { PublicClient, WalletClient, GetFunctionArgs } from 'viem';
 
 import { rollupCreator } from './contracts';
+import { validParentChainId } from './types/ParentChain';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
@@ -11,7 +12,7 @@ import {
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
-import type { OrbitClient } from './orbitClient';
+import { getValidChainId } from './utils/getters';
 
 export type CreateRollupFunctionInputs = GetFunctionArgs<
   typeof rollupCreator.abi,
@@ -25,15 +26,19 @@ export type CreateRollupParams = Pick<CreateRollupFunctionInputs[0], RequiredKey
 
 export async function createRollup({
   params,
-  orbitClient,
+  publicClient,
   walletClient,
 }: {
   params: CreateRollupParams;
-  orbitClient: OrbitClient;
+  publicClient: PublicClient;
   walletClient: WalletClient;
 }): Promise<CreateRollupTransactionReceipt> {
-  const chainId = orbitClient.getValidChainId();
+  const chainId = getValidChainId(publicClient);
   const account = walletClient.account?.address;
+
+  if (!validParentChainId(chainId)) {
+    throw new Error('chainId is undefined');
+  }
 
   if (typeof account === 'undefined') {
     throw new Error('account is undefined');
@@ -50,8 +55,8 @@ export async function createRollup({
   const maxDataSize = createRollupGetMaxDataSize(chainId);
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
 
-  const { request } = await orbitClient.simulateContract({
-    address: orbitClient.getRollupCreatorAddress(),
+  const { request } = await publicClient.simulateContract({
+    address: rollupCreator.address[chainId],
     abi: rollupCreator.abi,
     functionName: 'createRollup',
     args: [paramsWithDefaults],
@@ -60,7 +65,7 @@ export async function createRollup({
   });
 
   const hash = await walletClient.writeContract(request);
-  const txReceipt = await orbitClient.waitForTransactionReceipt({ hash });
+  const txReceipt = await publicClient.waitForTransactionReceipt({ hash });
 
   return createRollupPrepareTransactionReceipt(txReceipt);
 }

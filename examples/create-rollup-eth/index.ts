@@ -1,4 +1,4 @@
-import { Chain, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import {
@@ -6,7 +6,6 @@ import {
   prepareChainConfig,
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
-  createOrbitClient,
 } from '@arbitrum/orbit-sdk';
 import { generateChainId } from '@arbitrum/orbit-sdk/utils';
 
@@ -44,10 +43,7 @@ const validator = privateKeyToAccount(validatorPrivateKey).address;
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainOrbitClient = createOrbitClient({
-  chain: parentChain,
-  transport: http(),
-});
+const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
 
 // load the deployer account
 const deployer = privateKeyToAccount(sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY));
@@ -59,10 +55,7 @@ async function main() {
   // create the chain config
   const chainConfig = prepareChainConfig({
     chainId,
-    arbitrum: {
-      InitialChainOwner: deployer.address,
-      DataAvailabilityCommittee: true,
-    },
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
   });
 
   // prepare the transaction for deploying the core contracts
@@ -77,17 +70,17 @@ async function main() {
       validators: [validator],
     },
     account: deployer.address,
-    publicClient: parentChainOrbitClient,
+    publicClient: parentChainPublicClient,
   });
 
   // sign and send the transaction
-  const txHash = await parentChainOrbitClient.sendRawTransaction({
+  const txHash = await parentChainPublicClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(request),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainOrbitClient.waitForTransactionReceipt({ hash: txHash }),
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);

@@ -1,11 +1,10 @@
-import { Chain, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 import {
   ChainConfig,
   createRollupPrepareTransaction,
   createRollupPrepareTransactionReceipt,
   prepareNodeConfig,
-  createOrbitClient,
 } from '@arbitrum/orbit-sdk';
 
 import { writeFile } from 'fs/promises';
@@ -16,7 +15,7 @@ function getRpcUrl(chain: Chain) {
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createOrbitClient({
+const parentChainPublicClient = createPublicClient({
   chain: parentChain,
   transport: http(),
 });

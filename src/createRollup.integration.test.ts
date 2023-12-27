@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { http, parseGwei, zeroAddress } from 'viem';
+import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
 import { generateChainId } from './utils';
@@ -10,14 +10,13 @@ import { createRollupPrepareTransactionRequest } from './createRollupPrepareTran
 import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
 
 import { getTestPrivateKeyAccount } from './testHelpers';
-import { createOrbitClient } from './orbitClient';
 
 const deployer = getTestPrivateKeyAccount();
 
 const batchPoster = deployer.address;
 const validators = [deployer.address];
 
-const orbitClient = createOrbitClient({
+const publicClient = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
 });
@@ -46,16 +45,16 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
       validators,
     },
     account: deployer.address,
-    orbitClient: orbitClient,
+    publicClient,
   });
 
   // sign and send the transaction
-  const txHash = await orbitClient.sendRawTransaction({
+  const txHash = await publicClient.sendRawTransaction({
     serializedTransaction: await deployer.signTransaction(request),
   });
 
   // get the transaction
-  const tx = createRollupPrepareTransaction(await orbitClient.getTransaction({ hash: txHash }));
+  const tx = createRollupPrepareTransaction(await publicClient.getTransaction({ hash: txHash }));
 
   const [arg] = tx.getInputs();
   // assert all inputs are correct
@@ -69,7 +68,7 @@ it(`successfully deploys core contracts through rollup creator`, async () => {
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await orbitClient.waitForTransactionReceipt({ hash: txHash }),
+    await publicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   expect(txReceipt.status).toEqual('success');

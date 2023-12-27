@@ -1,14 +1,15 @@
-import { Address, encodeFunctionData } from 'viem';
+import { Address, PublicClient, encodeFunctionData } from 'viem';
 
 import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollup';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
 import { rollupCreator } from './contracts';
+import { validParentChainId } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
-import { OrbitClient } from './orbitClient';
+import { getRollupCreatorAddress, getValidChainId } from './utils/getters';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -21,13 +22,13 @@ function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
 export async function createRollupPrepareTransactionRequest({
   params,
   account,
-  orbitClient,
+  publicClient,
 }: {
   params: CreateRollupParams;
   account: Address;
-  orbitClient: OrbitClient;
+  publicClient: PublicClient;
 }) {
-  const chainId = orbitClient.getValidChainId();
+  const chainId = getValidChainId(publicClient);
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
@@ -40,9 +41,9 @@ export async function createRollupPrepareTransactionRequest({
   const maxDataSize = createRollupGetMaxDataSize(chainId);
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
 
-  const request = await orbitClient.prepareTransactionRequest({
-    chain: orbitClient.chain,
-    to: orbitClient.getRollupCreatorAddress(),
+  const request = await publicClient.prepareTransactionRequest({
+    chain: publicClient.chain,
+    to: getRollupCreatorAddress(publicClient),
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
     value: createRollupGetCallValue(paramsWithDefaults),
     account,

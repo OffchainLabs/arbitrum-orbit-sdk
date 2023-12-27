@@ -1,4 +1,4 @@
-import { Chain, http, Address } from 'viem';
+import { Chain, createPublicClient, http, Address } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import {
@@ -8,7 +8,6 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
-  createOrbitClient,
 } from '@arbitrum/orbit-sdk';
 import { generateChainId } from '@arbitrum/orbit-sdk/utils';
 
@@ -46,7 +45,7 @@ const validator = privateKeyToAccount(validatorPrivateKey).address;
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createOrbitClient({
+const parentChainPublicClient = createPublicClient({
   chain: parentChain,
   transport: http(),
 });

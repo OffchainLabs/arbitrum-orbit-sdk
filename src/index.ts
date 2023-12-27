@@ -40,7 +40,6 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import * as utils from './utils';
-import { createOrbitClient, OrbitClient } from './orbitClient';
 
 export {
   createRollup,
@@ -77,7 +76,4 @@ export {
   NodeConfigChainInfoJson,
   prepareNodeConfig,
   utils,
-  createOrbitClient,
 };
-
-export type { OrbitClient };

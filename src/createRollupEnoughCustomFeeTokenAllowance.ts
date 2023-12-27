@@ -1,25 +1,27 @@
-import { Address } from 'viem';
+import { Address, PublicClient } from 'viem';
 
+import { rollupCreator } from './contracts';
+import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
 import { deterministicFactoriesDeploymentEstimatedFees } from './constants';
-import { OrbitClient } from './orbitClient';
+import { getRollupCreatorAddress, getValidChainId } from './utils/getters';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams = {
   nativeToken: Address;
   account: Address;
-  orbitClient: OrbitClient;
+  publicClient: PublicClient;
 };
 
 export async function createRollupEnoughCustomFeeTokenAllowance({
   nativeToken,
   account,
-  orbitClient,
+  publicClient,
 }: CreateRollupEnoughCustomFeeTokenAllowanceParams) {
   const allowance = await fetchAllowance({
     address: nativeToken,
     owner: account,
-    spender: orbitClient.getRollupCreatorAddress(),
-    publicClient: orbitClient,
+    spender: getRollupCreatorAddress(publicClient),
+    publicClient,
   });
 
   return allowance >= deterministicFactoriesDeploymentEstimatedFees;
