@@ -34,10 +34,11 @@ export async function createRollupFetchTransactionHash({
 }: CreateRollupFetchTransactionHashParams) {
   // Find the RollupInitialized event from that Rollup contract
   const chainId = await publicClient.getChainId();
-  const fromBlock = (chainId in Object.keys(deploymentBlockNumber.RollupCreator))
-    ? deploymentBlockNumber.RollupCreator[chainId as ParentChainId]
-    : 'earliest';
-  
+  const fromBlock =
+    chainId in Object.keys(deploymentBlockNumber.RollupCreator)
+      ? deploymentBlockNumber.RollupCreator[chainId as ParentChainId]
+      : 'earliest';
+
   const rollupInitializedEvents = await publicClient.getLogs({
     address: rollupAddress,
     event: RollupInitializedEventAbi,

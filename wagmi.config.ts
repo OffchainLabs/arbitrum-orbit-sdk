@@ -1,6 +1,6 @@
 import { Plugin } from '@wagmi/cli';
 import { erc, etherscan } from '@wagmi/cli/plugins';
-import dedent from "dedent";
+import dedent from 'dedent';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
@@ -131,21 +131,23 @@ type DeploymentBlockNumberPluginConfig = {
 };
 type DeploymentBlockNumberPluginResult = Required<Pick<Plugin, 'run'>> & Omit<Plugin, 'run'>;
 
-function deploymentBlockNumberPlugin(config: DeploymentBlockNumberPluginConfig): DeploymentBlockNumberPluginResult {
+function deploymentBlockNumberPlugin(
+  config: DeploymentBlockNumberPluginConfig,
+): DeploymentBlockNumberPluginResult {
   return {
-    name: "DeploymentBlockNumber",
+    name: 'DeploymentBlockNumber',
     async run({ contracts, isTypeScript, outputs }) {
       const pluginOutput = dedent`
         export const deploymentBlockNumber = {
           ${config.contracts.map((contract) => {
-            return (typeof contract.deploymentBlockNumber === 'bigint')
+            return typeof contract.deploymentBlockNumber === 'bigint'
               ? `${contract.name}: ${contract.deploymentBlockNumber}n`
               : dedent`
                 ${contract.name}: {
                   ${Object.keys(contract.deploymentBlockNumber).map((parentChainId) => {
                     return `${parentChainId}: ${contract.deploymentBlockNumber[parentChainId]}n`;
                   })}
-                }`
+                }`;
           })}
         } as const
       `;
@@ -153,8 +155,8 @@ function deploymentBlockNumberPlugin(config: DeploymentBlockNumberPluginConfig):
       return {
         content: pluginOutput,
       };
-    }
-  }
+    },
+  };
 }
 
 export default async function () {
@@ -180,8 +182,8 @@ export default async function () {
         cacheDuration: 0,
       }),
       deploymentBlockNumberPlugin({
-        contracts
-      })
+        contracts,
+      }),
     ],
   };
 }
