@@ -1,14 +1,14 @@
-import { Address, PublicClient } from "viem";
+import { Address } from 'viem';
 
-import { getRollupCreatorAddressForChainId, rollupCreator } from "./contracts";
-import { validParentChainId } from "./types/ParentChain";
-import { fetchAllowance } from "./utils/erc20";
-import { deterministicFactoriesDeploymentEstimatedFees } from "./constants";
+import { validParentChainId } from './types/ParentChain';
+import { fetchAllowance } from './utils/erc20';
+import { deterministicFactoriesDeploymentEstimatedFees } from './constants';
+import { OrbitClient } from './orbitClient';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams = {
   nativeToken: Address;
   account: Address;
-  publicClient: PublicClient;
+  publicClient: OrbitClient;
 };
 
 export async function createRollupEnoughCustomFeeTokenAllowance({
@@ -19,13 +19,13 @@ export async function createRollupEnoughCustomFeeTokenAllowance({
   const chainId = publicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
-    throw new Error("chainId is undefined");
+    throw new Error('chainId is undefined');
   }
 
   const allowance = await fetchAllowance({
     address: nativeToken,
     owner: account,
-    spender: getRollupCreatorAddressForChainId(chainId),
+    spender: publicClient.getRollupCreatorAddress(),
     publicClient,
   });
 

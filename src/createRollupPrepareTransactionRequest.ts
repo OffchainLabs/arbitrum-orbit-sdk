@@ -1,11 +1,10 @@
-import { Address, PublicClient, encodeFunctionData } from "viem";
+import { Address, encodeFunctionData } from 'viem';
 
 import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollup';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
 import { rollupCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';

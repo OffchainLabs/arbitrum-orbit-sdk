@@ -9,7 +9,7 @@ import { ParentChainId, validParentChainId } from './types/ParentChain';
 import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 
 function sanitizePrivateKey(privateKey: string) {
-  return privateKey.startsWith("0x") ? privateKey.slice(2) : privateKey;
+  return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
 }
 
 function stringifyInfoJson(infoJson: NodeConfigChainInfoJson): string {
@@ -24,7 +24,6 @@ function stringifyBackendsJson(
 
 function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
-
   switch (parentChainId) {
     case sepolia.id:
     case nitroTestnodeL1.id:
@@ -58,89 +57,89 @@ export function prepareNodeConfig({
   }
 
   const config: NodeConfig = {
-    chain: {
-      "info-json": stringifyInfoJson([
+    'chain': {
+      'info-json': stringifyInfoJson([
         {
-          "chain-id": chainConfig.chainId,
-          "parent-chain-id": parentChainId,
-          "parent-chain-is-arbitrum": parentChainIsArbitrum(parentChainId),
-          "chain-name": chainName,
-          "chain-config": chainConfig,
-          rollup: {
-            bridge: coreContracts.bridge,
-            inbox: coreContracts.inbox,
-            "sequencer-inbox": coreContracts.sequencerInbox,
-            rollup: coreContracts.rollup,
-            "validator-utils": coreContracts.validatorUtils,
-            "validator-wallet-creator": coreContracts.validatorWalletCreator,
-            "deployed-at": coreContracts.deployedAtBlockNumber,
+          'chain-id': chainConfig.chainId,
+          'parent-chain-id': parentChainId,
+          'parent-chain-is-arbitrum': parentChainIsArbitrum(parentChainId),
+          'chain-name': chainName,
+          'chain-config': chainConfig,
+          'rollup': {
+            'bridge': coreContracts.bridge,
+            'inbox': coreContracts.inbox,
+            'sequencer-inbox': coreContracts.sequencerInbox,
+            'rollup': coreContracts.rollup,
+            'validator-utils': coreContracts.validatorUtils,
+            'validator-wallet-creator': coreContracts.validatorWalletCreator,
+            'deployed-at': coreContracts.deployedAtBlockNumber,
           },
         },
       ]),
-      name: chainName,
+      'name': chainName,
     },
-    "parent-chain": {
+    'parent-chain': {
       connection: {
         url: parentChainRpcUrl,
       },
     },
-    http: {
-      addr: "0.0.0.0",
+    'http': {
+      addr: '0.0.0.0',
       port: 8449,
-      vhosts: "*",
-      corsdomain: "*",
-      api: ["eth", "net", "web3", "arb", "debug"],
+      vhosts: '*',
+      corsdomain: '*',
+      api: ['eth', 'net', 'web3', 'arb', 'debug'],
     },
-    node: {
-      "forwarding-target": "",
-      sequencer: {
-        "max-tx-data-size": 85000,
-        enable: true,
-        dangerous: {
-          "no-coordinator": true,
+    'node': {
+      'forwarding-target': '',
+      'sequencer': {
+        'max-tx-data-size': 85000,
+        'enable': true,
+        'dangerous': {
+          'no-coordinator': true,
         },
-        "max-block-speed": "250ms",
+        'max-block-speed': '250ms',
       },
-      "delayed-sequencer": {
+      'delayed-sequencer': {
         enable: true,
       },
-      "batch-poster": {
-        "max-size": 90000,
-        enable: true,
-        "parent-chain-wallet": {
-          "private-key": sanitizePrivateKey(batchPosterPrivateKey),
-        },
-      },
-      staker: {
-        enable: true,
-        strategy: "MakeNodes",
-        "parent-chain-wallet": {
-          "private-key": sanitizePrivateKey(validatorPrivateKey),
+      'batch-poster': {
+        'max-size': 90000,
+        'enable': true,
+        'parent-chain-wallet': {
+          'private-key': sanitizePrivateKey(batchPosterPrivateKey),
         },
       },
-      caching: {
+      'staker': {
+        'enable': true,
+        'strategy': 'MakeNodes',
+        'parent-chain-wallet': {
+          'private-key': sanitizePrivateKey(validatorPrivateKey),
+        },
+      },
+      'caching': {
         archive: true,
       },
     },
   };
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
-    config.node["data-availability"] = {
-      enable: true,
-      "sequencer-inbox-address": coreContracts.sequencerInbox,
-      "parent-chain-node-url": parentChainRpcUrl,
-      "rest-aggregator": {
+    config.node['data-availability'] = {
+      'enable': true,
+      'sequencer-inbox-address': coreContracts.sequencerInbox,
+      'parent-chain-node-url': parentChainRpcUrl,
+      'rest-aggregator': {
         enable: true,
-        urls: "http://localhost:9876",
+        urls: 'http://localhost:9876',
       },
-      "rpc-aggregator": {
-        enable: true,
-        "assumed-honest": 1,
-        backends: stringifyBackendsJson([
+      'rpc-aggregator': {
+        'enable': true,
+        'assumed-honest': 1,
+        'backends': stringifyBackendsJson([
           {
-            url: "http://localhost:9876",
+            url: 'http://localhost:9876',
             pubkey:
-              "YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
             signermask: 1,
           },
         ]),

@@ -1,4 +1,4 @@
-import { parseAbi } from "viem";
+import { parseAbi } from 'viem';
 
 import {
   erc20ABI,
@@ -6,7 +6,7 @@ import {
   arbOwnerPublicConfig,
   rollupCreatorConfig,
   tokenBridgeCreatorConfig,
-} from "./generated";
+} from './generated';
 
 export const erc20 = {
   abi: erc20ABI,
@@ -25,13 +25,9 @@ export const arbOwnerPublic = {
 export const rollupCreator = rollupCreatorConfig;
 export const tokenBridgeCreator = tokenBridgeCreatorConfig;
 
-export const getRollupCreatorAddressForChainId = (
-  chainId: keyof typeof rollupCreator.address
-) => rollupCreator.address[chainId];
-
 export const upgradeExecutor = {
   abi: parseAbi([
-    "function execute(address upgrade, bytes upgradeCallData)",
-    "function executeCall(address target, bytes targetCallData)",
+    'function execute(address upgrade, bytes upgradeCallData)',
+    'function executeCall(address target, bytes targetCallData)',
   ]),
 };

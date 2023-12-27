@@ -1,9 +1,7 @@
-import { Address, PublicClient, maxInt256 } from "viem";
+import { Address, maxInt256 } from 'viem';
 
-import { approvePrepareTransactionRequest } from "./utils/erc20";
-import { validParentChainId } from "./types/ParentChain";
-import { getRollupCreatorAddressForChainId, rollupCreator } from "./contracts";
-import { OrbitClient } from "./orbitClient";
+import { OrbitClient } from './orbitClient';
+import { approvePrepareTransactionRequest } from './utils/erc20';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = {
   amount?: bigint;
