@@ -1,4 +1,6 @@
+import { Plugin } from '@wagmi/cli';
 import { erc, etherscan } from '@wagmi/cli/plugins';
+import dedent from "dedent";
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
@@ -123,6 +125,38 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
   console.log(`- ${contract.name} ✔`);
 }
 
+// https://wagmi.sh/cli/plugins#creating-plugins
+type DeploymentBlockNumberPluginConfig = {
+  contracts: ContractConfig[];
+};
+type DeploymentBlockNumberPluginResult = Required<Pick<Plugin, 'run'>> & Omit<Plugin, 'run'>;
+
+function deploymentBlockNumberPlugin(config: DeploymentBlockNumberPluginConfig): DeploymentBlockNumberPluginResult {
+  return {
+    name: "DeploymentBlockNumber",
+    async run({ contracts, isTypeScript, outputs }) {
+      const pluginOutput = dedent`
+        export const deploymentBlockNumber = {
+          ${config.contracts.map((contract) => {
+            return (typeof contract.deploymentBlockNumber === 'bigint')
+              ? `${contract.name}: ${contract.deploymentBlockNumber}n`
+              : dedent`
+                ${contract.name}: {
+                  ${Object.keys(contract.deploymentBlockNumber).map((parentChainId) => {
+                    return `${parentChainId}: ${contract.deploymentBlockNumber[parentChainId]}n`;
+                  })}
+                }`
+          })}
+        } as const
+      `;
+
+      return {
+        content: pluginOutput,
+      };
+    }
+  }
+}
+
 export default async function () {
   console.log(`Checking if contract ABIs match...`);
 
@@ -145,6 +179,9 @@ export default async function () {
         contracts,
         cacheDuration: 0,
       }),
+      deploymentBlockNumberPlugin({
+        contracts
+      })
     ],
   };
 }
