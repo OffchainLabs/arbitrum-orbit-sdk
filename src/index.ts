@@ -39,6 +39,7 @@ import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
+import { createTokenBridgePrepareTransactionRequest } from './createTokenBridge';
 import * as utils from './utils';
 
 export {
@@ -76,4 +77,5 @@ export {
   NodeConfigChainInfoJson,
   prepareNodeConfig,
   utils,
+  createTokenBridgePrepareTransactionRequest,
 };
