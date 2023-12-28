@@ -120,6 +120,7 @@ export const createTokenBridgeGetInputs = async (
     retryableFee: retryableFee.toBigInt(),
   };
 };
+
 /**
  * Use already deployed L1TokenBridgeCreator to create and init token bridge contracts.
  * Function first gets estimates for 2 retryable tickets - one for deploying L2 factory and
@@ -141,7 +142,11 @@ export const createTokenBridge = async (
 ) => {
   const gasPrice = await l2Provider.getGasPrice();
   //// run retryable estimate for deploying L2 factory
-  const deployFactoryGasParams = await getEstimateForDeployingFactory(l1Signer, l2Provider);
+  const deployFactoryGasParams = await getEstimateForDeployingFactory(
+    await l1Signer.getAddress(),
+    l1Signer.provider!,
+    l2Provider,
+  );
   const maxGasForFactory = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
   const maxSubmissionCostForFactory = deployFactoryGasParams.maxSubmissionCost;
   //// run retryable estimate for deploying L2 contracts
