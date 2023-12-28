@@ -3,7 +3,7 @@ import { Address, PublicClient, encodeFunctionData } from 'viem';
 import { tokenBridgeCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
-import { publicClientToProvider } from './compat/publicClientToProvider';
+import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
 export async function createTokenBridgePrepareTransactionRequest({
   params,
