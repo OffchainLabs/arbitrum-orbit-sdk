@@ -1,13 +1,9 @@
-import { Address, PublicClient, encodeFunctionData, parseEther, zeroAddress } from 'viem';
-import { readContract } from 'viem/actions';
-import { ethers, BigNumber, ContractFactory } from 'ethers';
-import { L1ToL2MessageGasEstimator } from '@arbitrum/sdk';
-import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
+import { Address, PublicClient, encodeFunctionData } from 'viem';
+import { BigNumber } from 'ethers';
 
 import { tokenBridgeCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { publicClientToProvider } from './compat/publicClientToProvider';
-import { deployFactoryEstimateGas } from './createTokenBridgeEstimateGas';
 
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 
@@ -26,40 +22,37 @@ function convertInputs(inputs: {
 }
 
 export async function createTokenBridgePrepareTransactionRequest({
-  parentPublicClient,
-  orbitPublicClient,
   params,
+  parentChainPublicClient,
+  childChainPublicClient,
   account,
 }: {
-  parentPublicClient: PublicClient;
-  orbitPublicClient: PublicClient;
   params: { rollup: Address; rollupOwner: Address };
+  parentChainPublicClient: PublicClient;
+  childChainPublicClient: PublicClient;
   account: Address;
 }) {
-  const chainId = parentPublicClient.chain?.id;
+  const chainId = parentChainPublicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
     throw new Error('chainId is undefined');
   }
 
-  const l1DeployerAddress = account;
-  const l1Provider = new ethers.providers.StaticJsonRpcProvider('http://127.0.0.1:8545');
-  const l2Provider = new ethers.providers.StaticJsonRpcProvider('http://127.0.0.1:8547');
-
-  const l1TokenBridgeCreatorAddress = tokenBridgeCreator.address[chainId];
+  const parentChainProvider = publicClientToProvider(parentChainPublicClient);
+  const childChainProvider = publicClientToProvider(childChainPublicClient);
 
   const { inbox, maxGasForContracts, gasPrice, retryableFee } = convertInputs(
     await createTokenBridgeGetInputs(
-      l1DeployerAddress,
-      l1Provider,
-      l2Provider,
-      l1TokenBridgeCreatorAddress,
+      account,
+      parentChainProvider,
+      childChainProvider,
+      tokenBridgeCreator.address[chainId],
       params.rollup,
     ),
   );
 
-  return parentPublicClient.prepareTransactionRequest({
-    chain: parentPublicClient.chain,
+  const request = await parentChainPublicClient.prepareTransactionRequest({
+    chain: parentChainPublicClient.chain,
     to: tokenBridgeCreator.address[chainId],
     data: encodeFunctionData({
       abi: tokenBridgeCreator.abi,
@@ -69,4 +62,6 @@ export async function createTokenBridgePrepareTransactionRequest({
     value: retryableFee,
     account: account,
   });
+
+  return { ...request, chainId };
 }

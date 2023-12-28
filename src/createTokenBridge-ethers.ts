@@ -105,13 +105,6 @@ export const createTokenBridgeGetInputs = async (
   // get inbox from rollup contract
   const inbox = await RollupAdminLogic__factory.connect(rollupAddress, l1Provider).inbox();
 
-  console.log({
-    inbox,
-    maxGasForContracts,
-    gasPrice,
-    retryableFee,
-  });
-
   return {
     inbox,
     maxGasForContracts,

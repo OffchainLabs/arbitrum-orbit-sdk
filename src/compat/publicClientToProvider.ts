@@ -1,14 +1,12 @@
 import { PublicClient } from 'viem';
 import { providers } from 'ethers';
 
+// based on https://wagmi.sh/react/ethers-adapters#reference-implementation
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
 
-  console.log({ transport: transport.url });
-  const transportUrl = chain?.rpcUrls.default.http[0] ?? 'http://localhost:8545';
-
   if (typeof chain === 'undefined') {
-    throw new Error(`[publicClientToProvider] chain is undefined`);
+    throw new Error(`[publicClientToProvider] "chain" is undefined`);
   }
 
   const network = {
@@ -17,5 +15,5 @@ export function publicClientToProvider(publicClient: PublicClient) {
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
 
-  return new providers.StaticJsonRpcProvider(transportUrl, network);
+  return new providers.StaticJsonRpcProvider(transport.url, network);
 }
