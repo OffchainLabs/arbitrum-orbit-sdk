@@ -18,7 +18,9 @@ const nitroTestnodeL2Client = createPublicClient({
 });
 
 it(`successfully deploys token bridge contracts on parent chain`, async () => {
-  const createRollupTxReceipt = await testSetupCreateRollup();
+  const createRollupTxReceipt = await testSetupCreateRollup({
+    publicClient: nitroTestnodeL1Client,
+  });
   const { rollup } = createRollupTxReceipt.getCoreContracts();
 
   const txRequest = await createTokenBridgePrepareTransactionRequest({

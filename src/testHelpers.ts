@@ -1,5 +1,7 @@
+import { PublicClient } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
+
 import {
   CreateRollupTransactionReceipt,
   createRollupPrepareTransactionReceipt,
@@ -8,8 +10,6 @@ import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareConfig } from './createRollupPrepareConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
-import { createPublicClient, http } from 'viem';
-import { nitroTestnodeL1 } from './chains';
 
 config();
 
@@ -31,12 +31,13 @@ function sanitizePrivateKey(privateKey: string): `0x${string}` {
   return privateKey as `0x${string}`;
 }
 
-export async function testSetupCreateRollup(): Promise<CreateRollupTransactionReceipt> {
-  const publicClient = createPublicClient({
-    chain: nitroTestnodeL1,
-    transport: http(),
-  });
+export type TestSetupCreateRollupParameters = {
+  publicClient: PublicClient;
+};
 
+export async function testSetupCreateRollup({
+  publicClient,
+}: TestSetupCreateRollupParameters): Promise<CreateRollupTransactionReceipt> {
   const deployer = getTestPrivateKeyAccount();
 
   // generate a random chain id
