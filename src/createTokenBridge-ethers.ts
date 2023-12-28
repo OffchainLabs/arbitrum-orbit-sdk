@@ -12,6 +12,7 @@ import {
 import { exit } from 'process';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
+import { Address } from 'viem';
 
 type NamedFactory = ContractFactory & { contractName: string };
 const NamedFactoryInstance = (contractJson: {
@@ -37,8 +38,15 @@ const IInbox__factory = NamedFactoryInstance(IInbox);
 import IERC20Bridge from '@arbitrum/nitro-contracts/build/contracts/src/bridge/IERC20Bridge.sol/IERC20Bridge.json';
 const IERC20Bridge__factory = NamedFactoryInstance(IERC20Bridge);
 import IERC20 from '@arbitrum/nitro-contracts/build/contracts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json';
-import { ProviderConnectInfo } from 'viem';
+
 const IERC20__factory = NamedFactoryInstance(IERC20);
+
+export type CreateTokenBridgeGetInputsResult = {
+  inbox: Address;
+  maxGasForContracts: bigint;
+  gasPrice: bigint;
+  retryableFee: bigint;
+};
 
 export const createTokenBridgeGetInputs = async (
   l1DeployerAddress: string,
@@ -46,7 +54,7 @@ export const createTokenBridgeGetInputs = async (
   l2Provider: ethers.providers.JsonRpcProvider,
   l1TokenBridgeCreatorAddress: string,
   rollupAddress: string,
-) => {
+): Promise<CreateTokenBridgeGetInputsResult> => {
   await registerNewNetwork(l1Provider, l2Provider, rollupAddress);
 
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
@@ -106,10 +114,10 @@ export const createTokenBridgeGetInputs = async (
   const inbox = await RollupAdminLogic__factory.connect(rollupAddress, l1Provider).inbox();
 
   return {
-    inbox,
-    maxGasForContracts,
-    gasPrice,
-    retryableFee,
+    inbox: inbox as Address,
+    maxGasForContracts: maxGasForContracts.toBigInt(),
+    gasPrice: gasPrice.toBigInt(),
+    retryableFee: retryableFee.toBigInt(),
   };
 };
 /**

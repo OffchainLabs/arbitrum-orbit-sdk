@@ -1,25 +1,9 @@
 import { Address, PublicClient, encodeFunctionData } from 'viem';
-import { BigNumber } from 'ethers';
 
 import { tokenBridgeCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
-import { publicClientToProvider } from './compat/publicClientToProvider';
-
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
-
-function convertInputs(inputs: {
-  inbox: string;
-  gasPrice: BigNumber;
-  maxGasForContracts: BigNumber;
-  retryableFee: BigNumber;
-}) {
-  return {
-    inbox: inputs.inbox as Address,
-    maxGasForContracts: inputs.maxGasForContracts.toBigInt(),
-    gasPrice: inputs.gasPrice.toBigInt(),
-    retryableFee: inputs.retryableFee.toBigInt(),
-  };
-}
+import { publicClientToProvider } from './compat/publicClientToProvider';
 
 export async function createTokenBridgePrepareTransactionRequest({
   params,
@@ -41,14 +25,12 @@ export async function createTokenBridgePrepareTransactionRequest({
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
   const childChainProvider = publicClientToProvider(childChainPublicClient);
 
-  const { inbox, maxGasForContracts, gasPrice, retryableFee } = convertInputs(
-    await createTokenBridgeGetInputs(
-      account,
-      parentChainProvider,
-      childChainProvider,
-      tokenBridgeCreator.address[chainId],
-      params.rollup,
-    ),
+  const { inbox, maxGasForContracts, gasPrice, retryableFee } = await createTokenBridgeGetInputs(
+    account,
+    parentChainProvider,
+    childChainProvider,
+    tokenBridgeCreator.address[chainId],
+    params.rollup,
   );
 
   const request = await parentChainPublicClient.prepareTransactionRequest({
@@ -59,6 +41,7 @@ export async function createTokenBridgePrepareTransactionRequest({
       functionName: 'createTokenBridge',
       args: [inbox, params.rollupOwner, maxGasForContracts, gasPrice],
     }),
+    // todo: should be 0 for custom gas token
     value: retryableFee,
     account: account,
   });
