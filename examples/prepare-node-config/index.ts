@@ -26,12 +26,12 @@ async function main() {
 
   // get the transaction
   const tx = createRollupPrepareTransaction(
-    await parentChainPublicClient.getTransaction({ hash: txHash })
+    await parentChainPublicClient.getTransaction({ hash: txHash }),
   );
 
   // get the transaction receipt
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainPublicClient.getTransactionReceipt({ hash: txHash })
+    await parentChainPublicClient.getTransactionReceipt({ hash: txHash }),
   );
 
   // get the chain config from the transaction inputs

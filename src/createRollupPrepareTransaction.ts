@@ -14,9 +14,7 @@ export type CreateRollupTransaction = Transaction & {
   getInputs(): CreateRollupFunctionInputs;
 };
 
-export function createRollupPrepareTransaction(
-  tx: Transaction
-): CreateRollupTransaction {
+export function createRollupPrepareTransaction(tx: Transaction): CreateRollupTransaction {
   return {
     ...tx,
     getInputs: function () {
@@ -29,9 +27,7 @@ export function createRollupPrepareTransaction(
       }
 
       if (typeof args === 'undefined') {
-        throw new Error(
-          `[createRollupPrepareTransaction] failed to decode function data`
-        );
+        throw new Error(`[createRollupPrepareTransaction] failed to decode function data`);
       }
 
       return args;

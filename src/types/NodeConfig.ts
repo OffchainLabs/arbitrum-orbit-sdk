@@ -16,7 +16,7 @@ export type NodeConfigChainInfoJson = [
       'validator-wallet-creator': string;
       'deployed-at': number;
     };
-  }
+  },
 ];
 
 export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = [
@@ -24,7 +24,7 @@ export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = [
     url: string;
     pubkey: string;
     signermask: number;
-  }
+  },
 ];
 
 export type NodeConfig = {

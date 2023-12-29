@@ -5,7 +5,4 @@ export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
 
-export type GetFunctionName<TAbi extends Abi> = Extract<
-  TAbi[number],
-  { type: 'function' }
->['name'];
+export type GetFunctionName<TAbi extends Abi> = Extract<TAbi[number], { type: 'function' }>['name'];
