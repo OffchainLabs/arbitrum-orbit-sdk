@@ -71,6 +71,12 @@ type RoleGrantedLogArgs = {
   sender: `0x${string}`;
 };
 
+type RoleRevokedLogArgs = {
+  role: `0x${string}`;
+  account: `0x${string}`;
+  sender: `0x${string}`;
+};
+
 type SetValidKeysetLogArgs = {
   keysetHash: `0x${string}`;
   keysetBytes: `0x${string}`;
@@ -139,7 +145,7 @@ const RoleRevokedEventAbi: AbiEventItem = {
       type: 'address',
     },
   ],
-  name: 'RoleGranted',
+  name: 'RoleRevoked',
   type: 'event',
 };
 
@@ -248,12 +254,15 @@ export const getUpgradeExecutorPrivilegedAccounts = async (
   }
 
   roleRevokedEvents.forEach((roleRevokedEvent) => {
-    const account = (roleRevokedEvent.args as RoleGrantedLogArgs).account;
-    const role = (roleRevokedEvent.args as RoleGrantedLogArgs).role;
+    const account = (roleRevokedEvent.args as RoleRevokedLogArgs).account;
+    const role = (roleRevokedEvent.args as RoleRevokedLogArgs).role;
 
     const roleIndex = privilegedAccounts[account].findIndex((accRole) => accRole == role);
     if (roleIndex >= 0) {
-      privilegedAccounts[account] = privilegedAccounts[account].splice(roleIndex, 1);
+      privilegedAccounts[account].splice(roleIndex, 1);
+      if (privilegedAccounts[account].length === 0) {
+        delete privilegedAccounts[account];
+      }
     }
   });
 
