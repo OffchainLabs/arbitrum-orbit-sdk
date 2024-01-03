@@ -19,13 +19,18 @@ export type NodeConfigChainInfoJson = [
   },
 ];
 
-export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = [
+export type BackendsData = 
+  {
+    url: string;
+    pubkey: string;
+  }[];
+
+export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = 
   {
     url: string;
     pubkey: string;
     signermask: number;
-  },
-];
+  }[];
 
 export type NodeConfig = {
   'chain': {

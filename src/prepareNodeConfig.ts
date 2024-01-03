@@ -2,6 +2,7 @@ import {
   NodeConfig,
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
+  BackendsData
 } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -43,6 +44,8 @@ export function prepareNodeConfig({
   validatorPrivateKey,
   parentChainId,
   parentChainRpcUrl,
+  assumedHonest,
+  backendsData,
 }: {
   chainName: string;
   chainConfig: ChainConfig;
@@ -51,6 +54,8 @@ export function prepareNodeConfig({
   validatorPrivateKey: string;
   parentChainId: number;
   parentChainRpcUrl: string;
+  assumedHonest?: number;
+  backendsData: BackendsData;
 }): NodeConfig {
   if (!validParentChainId(parentChainId)) {
     throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
@@ -124,6 +129,24 @@ export function prepareNodeConfig({
   };
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
+    let backends: NodeConfigDataAvailabilityRpcAggregatorBackendsJson;
+    if (assumedHonest !== undefined && backendsData && backendsData.length > 0) {
+      backends = backendsData.map((backend, index) => ({
+        url: backend.url,
+        pubkey: backend.pubkey,
+        signermask: 1 << index, // 2^n
+      }));
+    } else {
+      backends = [
+        {
+          url: 'http://localhost:9876',
+          pubkey:
+            'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
+          signermask: 1,
+        },
+      ];
+    }
+
     config.node['data-availability'] = {
       'enable': true,
       'sequencer-inbox-address': coreContracts.sequencerInbox,
@@ -135,14 +158,7 @@ export function prepareNodeConfig({
       'rpc-aggregator': {
         'enable': true,
         'assumed-honest': 1,
-        'backends': stringifyBackendsJson([
-          {
-            url: 'http://localhost:9876',
-            pubkey:
-              'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
-            signermask: 1,
-          },
-        ]),
+        'backends': stringifyBackendsJson(backends),
       },
     };
   }
