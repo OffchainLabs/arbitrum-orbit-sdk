@@ -16,7 +16,7 @@ function uint16ToBigEndian(value: number): Uint8Array {
   return new Uint8Array(buffer);
 }
 
-export function prepareKeyset(publicKeys: string[], assumedHonest: number): string {
+export function prepareKeyset(publicKeys: string[], assumedHonest: number): `0x${string}` {
   const numberOfMembers = publicKeys.length;
   const membersBuffer: Uint8Array[] = [];
 
@@ -49,5 +49,5 @@ export function prepareKeyset(publicKeys: string[], assumedHonest: number): stri
     offset += arr.length;
   }
 
-  return Array.from(result).map(byteToHex).join('');
+  return `0x${Array.from(result).map(byteToHex).join('')}`;
 }
