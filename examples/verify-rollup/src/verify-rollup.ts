@@ -1,7 +1,7 @@
 import { OrbitHandler } from './lib/client';
 import { factoryDeploymentsHandler } from './partial-handlers/factoryDeployments';
 import { precompilesHandler } from './partial-handlers/precompiles';
-import { rollupHandler } from './partial-handlers/rollup';
+import { rollupHandler, wasmModuleRootHandler } from './partial-handlers/rollup';
 import 'dotenv/config';
 
 if (!process.env.PARENT_CHAIN_ID || !process.env.ROLLUP_ADDRESS) {
@@ -24,10 +24,10 @@ const main = async () => {
     process.env.ROLLUP_ADDRESS as `0x${string}`,
   );
 
-  // const wasmModuleRootMessage = await wasmModuleRootHandler(
-  //   orbitHandler,
-  //   process.env.ROLLUP_ADDRESS as `0x${string}`,
-  // );
+  const wasmModuleRootMessage = await wasmModuleRootHandler(
+    orbitHandler,
+    process.env.ROLLUP_ADDRESS as `0x${string}`,
+  );
 
   // Precompiles information
   const precompilesWarningMessages = await precompilesHandler(orbitHandler);
@@ -38,7 +38,7 @@ const main = async () => {
   // Rendering warning messages
   const warningMessages = [
     ...rollupWarningMessages,
-    // wasmModuleRootMessage,
+    wasmModuleRootMessage,
     ...precompilesWarningMessages,
     ...factoryDeploymentWarningMessages,
   ];
