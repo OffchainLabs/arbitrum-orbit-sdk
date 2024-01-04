@@ -24,6 +24,11 @@ const main = async () => {
     process.env.ROLLUP_ADDRESS as `0x${string}`,
   );
 
+  // const wasmModuleRootMessage = await wasmModuleRootHandler(
+  //   orbitHandler,
+  //   process.env.ROLLUP_ADDRESS as `0x${string}`,
+  // );
+
   // Precompiles information
   const precompilesWarningMessages = await precompilesHandler(orbitHandler);
 
@@ -33,6 +38,7 @@ const main = async () => {
   // Rendering warning messages
   const warningMessages = [
     ...rollupWarningMessages,
+    // wasmModuleRootMessage,
     ...precompilesWarningMessages,
     ...factoryDeploymentWarningMessages,
   ];

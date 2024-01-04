@@ -13,9 +13,39 @@ import {
 } from '../lib/utils';
 import { zeroAddress } from 'viem';
 import { SequencerInbox__factory } from '@arbitrum/sdk/dist/lib/abi/factories/SequencerInbox__factory';
+import { currentMainnetWasmModuleRootIndex, WASMModuleRoots } from '../lib/constants';
 
 // Constants
 const minConfirmPeriodBlocks = BigInt((24 * 60 * 60) / 12.5); // 1 day
+
+export const wasmModuleRootHandler = async (
+  orbitHandler: OrbitHandler,
+  rollupAddress: `0x${string}`,
+): Promise<string> => {
+  let warningMessage: string = '';
+
+  // get the wasmModuleRoot of the given orbit chain
+  const moduleRoot = (await orbitHandler.readContract(
+    'parent',
+    rollupAddress,
+    [...RollupCore__factory.abi, ...Ownable__factory.abi] as Abi,
+    'wasmModuleRoot',
+  )) as `0x${string}`;
+
+  const index = WASMModuleRoots.indexOf(moduleRoot);
+
+  // check if this wasmModuleRoot belongs to one of mainnet version
+  if (0 <= index) {
+    console.log('The state transition function is standard version');
+    // check if the rollups' arbos version is latest or not
+    if (index < currentMainnetWasmModuleRootIndex) {
+      warningMessage = 'Arbos version is old';
+    }
+  } else {
+    warningMessage = `The node is using a customized state transition function, the wasmModule root is ${moduleRoot}`;
+  }
+  return warningMessage;
+};
 
 export const rollupHandler = async (
   orbitHandler: OrbitHandler,
