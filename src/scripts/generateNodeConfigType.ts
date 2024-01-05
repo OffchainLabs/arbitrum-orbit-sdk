@@ -120,6 +120,8 @@ function getType(something: any) {
       type: getType(value),
       //@ts-ignore
       docs: value.docs,
+      // make it optional
+      hasQuestionToken: true,
     })),
   });
 }
