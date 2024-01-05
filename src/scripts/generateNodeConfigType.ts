@@ -35,7 +35,7 @@ function parseCliOptions(fileContents: string): CliOption[] {
     uint: 'number',
     uint32: 'number',
     float: 'number',
-    duration: 'number',
+    duration: 'string',
     boolean: 'boolean',
   };
 
