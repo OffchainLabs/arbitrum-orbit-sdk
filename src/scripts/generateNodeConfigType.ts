@@ -4,8 +4,8 @@ import { Project, Writers } from 'ts-morph';
 
 const { objectType } = Writers;
 
-const nitroNodeImage = 'offchainlabs/nitro-node:v2.1.2-4c55843-dev';
-const nitroNodeHelpOutputFile = 'nitro-node-help-output.txt';
+const nitroNodeImage = `offchainlabs/nitro-node:v2.1.3-e815395`;
+const nitroNodeHelpOutputFile = `${nitroNodeImage.replace('/', '-')}-help.txt`;
 
 function generateHeader() {
   return [
