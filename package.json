@@ -10,6 +10,7 @@
     "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./src/dist --declaration",
     "dev": "yarn build --watch",
     "generate": "wagmi generate",
+    "generate:node-config": "node ./src/dist/scripts/generateNodeConfigType.js",
     "test:unit": "vitest unit.test",
     "test:integration": "vitest integration.test",
     "postinstall": "patch-package",
