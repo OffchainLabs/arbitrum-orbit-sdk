@@ -134,7 +134,7 @@ function main() {
   const cliOptions = parseCliOptions(content);
   const obj = createCliOptionsNestedObject(cliOptions);
 
-  const sourceFile = new Project().createSourceFile('./src/types/NodeConfig-Generated.ts', '', {
+  const sourceFile = new Project().createSourceFile('./src/types/NodeConfig.generated.ts', '', {
     overwrite: true,
   });
 

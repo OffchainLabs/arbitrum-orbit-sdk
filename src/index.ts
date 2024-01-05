@@ -37,7 +37,7 @@ import {
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
-import { NodeConfig } from './types/NodeConfig-Generated';
+import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import { prepareKeyset } from './prepareKeyset';

@@ -1,4 +1,4 @@
-import { NodeConfig } from './types/NodeConfig-Generated';
+import { NodeConfig } from './types/NodeConfig.generated';
 import {
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
