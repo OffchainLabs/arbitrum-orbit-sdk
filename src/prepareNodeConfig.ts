@@ -1,5 +1,5 @@
+import { NodeConfig } from './types/NodeConfig-Generated';
 import {
-  NodeConfig,
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
 } from './types/NodeConfig';
@@ -124,7 +124,7 @@ export function prepareNodeConfig({
   };
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
-    config.node['data-availability'] = {
+    config.node!['data-availability'] = {
       'enable': true,
       'sequencer-inbox-address': coreContracts.sequencerInbox,
       'parent-chain-node-url': parentChainRpcUrl,

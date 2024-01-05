@@ -29,14 +29,14 @@ type CliOption = {
 function parseCliOptions(fileContents: string): CliOption[] {
   const types: Record<string, string | undefined> = {
     string: 'string',
-    strings: 'string[]',
-    stringArray: 'string[]',
+    strings: 'string[] | string',
+    stringArray: 'string[] | string',
     int: 'number',
     uint: 'number',
     uint32: 'number',
     float: 'number',
-    duration: 'string',
     boolean: 'boolean',
+    duration: 'string',
   };
 
   // split into lines
