@@ -1,5 +1,12 @@
-import { Address, encodeFunctionData, EncodeFunctionDataParameters, keccak256, PublicClient, toHex } from 'viem';
-import { AbiEvent } from 'abitype'
+import {
+  Address,
+  encodeFunctionData,
+  EncodeFunctionDataParameters,
+  keccak256,
+  PublicClient,
+  toHex,
+} from 'viem';
+import { AbiEvent } from 'abitype';
 import { upgradeExecutor } from './contracts';
 import { GetFunctionName, Prettify } from './types/utils';
 
@@ -91,7 +98,7 @@ const RoleRevokedEventAbi: AbiEvent = {
       type: 'address',
     },
   ],
-  name: 'RoleGranted',
+  name: 'RoleRevoked',
   type: 'event',
 };
 
@@ -142,9 +149,14 @@ export async function upgradeExecutorFetchPrivilegedAccounts({
     const account = (roleRevokedEvent.args as RoleRevokedLogArgs).account;
     const role = (roleRevokedEvent.args as RoleRevokedLogArgs).role;
 
-    const roleIndex = upgradeExecutorPrivilegedAccounts[account].findIndex((accRole) => accRole == role);
+    const roleIndex = upgradeExecutorPrivilegedAccounts[account].findIndex(
+      (accRole) => accRole == role,
+    );
     if (roleIndex >= 0) {
-      upgradeExecutorPrivilegedAccounts[account] = upgradeExecutorPrivilegedAccounts[account].splice(roleIndex, 1);
+      upgradeExecutorPrivilegedAccounts[account].splice(roleIndex, 1);
+      if (upgradeExecutorPrivilegedAccounts[account].length === 0) {
+        delete upgradeExecutorPrivilegedAccounts[account];
+      }
     }
   });
 
@@ -153,4 +165,3 @@ export async function upgradeExecutorFetchPrivilegedAccounts({
 function hex(arg0: string): `0x${string}` | Uint8Array {
   throw new Error('Function not implemented.');
 }
-

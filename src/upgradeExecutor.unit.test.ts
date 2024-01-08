@@ -1,5 +1,10 @@
 import { it, expect } from 'vitest';
-import { upgradeExecutorEncodeFunctionData, upgradeExecutorFetchPrivilegedAccounts, UPGRADE_EXECUTOR_ROLE_ADMIN, UPGRADE_EXECUTOR_ROLE_EXECUTOR } from './upgradeExecutor';
+import {
+  upgradeExecutorEncodeFunctionData,
+  upgradeExecutorFetchPrivilegedAccounts,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+} from './upgradeExecutor';
 import { createPublicClient, http } from 'viem';
 import { arbitrum } from 'viem/chains';
 
@@ -24,9 +29,9 @@ it('upgradeExecutorEncodeFunctionData', () => {
 });
 
 // Temporary test with https://arbiscan.io/address/0x0611b78A42903a537BE7a2f9a8783BE39AC63cD9#events
-it ('it fetches the right privileged accounts from an UpgradeExecutor', async () => {
+it('it fetches the right privileged accounts from an UpgradeExecutor', async () => {
   const upgradeExecutorAddress = '0x0611b78A42903a537BE7a2f9a8783BE39AC63cD9';
-  const chainOwner = '0xD1C955A1544cF449F4a8463E9fE2AC4Ff0798E05';
+  const chainOwner = '0x46A78349aBA0369D18292a285DE6d5FC5CC2de5c';
 
   const privilegedAccounts = await upgradeExecutorFetchPrivilegedAccounts({
     upgradeExecutorAddress,
