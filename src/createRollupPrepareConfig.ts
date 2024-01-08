@@ -6,16 +6,10 @@ import { prepareChainConfig } from './prepareChainConfig';
 
 type RequiredKeys = 'chainId' | 'owner';
 
-export type CreateRollupPrepareConfigResult =
-  CreateRollupFunctionInputs[0]['config'];
+export type CreateRollupPrepareConfigResult = CreateRollupFunctionInputs[0]['config'];
 
-export type CreateRollupPrepareConfigParams = Pick<
-  CreateRollupPrepareConfigResult,
-  RequiredKeys
-> &
-  Partial<
-    Omit<CreateRollupPrepareConfigResult | 'chainConfig', RequiredKeys>
-  > & {
+export type CreateRollupPrepareConfigParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys> &
+  Partial<Omit<CreateRollupPrepareConfigResult | 'chainConfig', RequiredKeys>> & {
     chainConfig?: ChainConfig;
   };
 
@@ -50,7 +44,7 @@ export function createRollupPrepareConfig({
         prepareChainConfig({
           chainId: Number(params.chainId),
           arbitrum: { InitialChainOwner: params.owner },
-        })
+        }),
     ),
   };
 }

@@ -33,11 +33,6 @@ const nitroTestnodeL2 = defineChain({
   testnet: true,
 });
 
-export const chains = [
-  sepolia,
-  arbitrumSepolia,
-  nitroTestnodeL1,
-  nitroTestnodeL2,
-] as const;
+export const chains = [sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2] as const;
 
 export { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 };

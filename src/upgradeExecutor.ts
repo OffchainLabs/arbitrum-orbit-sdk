@@ -8,17 +8,12 @@ export type UpgradeExecutorAbi = typeof upgradeExecutor.abi;
 export type UpgradeExecutorFunctionName = GetFunctionName<UpgradeExecutorAbi>;
 
 export type UpgradeExecutorEncodeFunctionDataParameters<
-  TFunctionName extends UpgradeExecutorFunctionName
-> = Prettify<
-  Omit<EncodeFunctionDataParameters<UpgradeExecutorAbi, TFunctionName>, 'abi'>
->;
+  TFunctionName extends UpgradeExecutorFunctionName,
+> = Prettify<Omit<EncodeFunctionDataParameters<UpgradeExecutorAbi, TFunctionName>, 'abi'>>;
 
 export function upgradeExecutorEncodeFunctionData<
-  TFunctionName extends UpgradeExecutorFunctionName
->({
-  functionName,
-  args,
-}: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>) {
+  TFunctionName extends UpgradeExecutorFunctionName,
+>({ functionName, args }: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>) {
   // todo: fix this weird type issue
   //
   // @ts-ignore
