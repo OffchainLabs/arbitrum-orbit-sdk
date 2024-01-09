@@ -4,6 +4,7 @@ import { createPublicClient, http } from 'viem';
 import { nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 import { getTestPrivateKeyAccount, testSetupCreateRollup } from './testHelpers';
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridge';
+import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 
 const deployer = getTestPrivateKeyAccount();
 
@@ -36,7 +37,12 @@ it(`successfully deploys token bridge contracts on parent chain`, async () => {
   });
 
   // get the transaction receipt after waiting for the transaction to complete
-  const txReceipt = await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: txHash });
+  const txReceipt = createTokenBridgePrepareTransactionReceipt(
+    await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: txHash }),
+  );
 
   expect(txReceipt.status).toEqual('success');
+  expect(
+    async () => await txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client }),
+  ).not.toThrow();
 });
