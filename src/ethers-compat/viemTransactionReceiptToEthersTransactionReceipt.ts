@@ -1,8 +1,23 @@
-import { TransactionReceipt as ViemTransactionReceipt } from 'viem';
-import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
+import { TransactionReceipt as ViemTransactionReceipt, Log as ViemLog } from 'viem';
+import {
+  TransactionReceipt as EthersTransactionReceipt,
+  Log as EthersLog,
+} from '@ethersproject/abstract-provider';
 import { BigNumber } from 'ethers';
 
-import { viemLogToEthersLog } from './viemLogToEthersLog';
+function viemLogToEthersLog(log: ViemLog): EthersLog {
+  return {
+    blockNumber: Number(log.blockNumber),
+    blockHash: log.blockHash!,
+    transactionIndex: log.transactionIndex!,
+    removed: log.removed,
+    address: log.address,
+    data: log.data,
+    topics: log.topics,
+    transactionHash: log.transactionHash!,
+    logIndex: log.logIndex!,
+  };
+}
 
 export function viemTransactionReceiptToEthersTransactionReceipt(
   receipt: ViemTransactionReceipt,
