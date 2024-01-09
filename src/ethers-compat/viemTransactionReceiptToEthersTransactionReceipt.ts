@@ -1,7 +1,4 @@
-import {
-  TransactionReceipt as ViemTransactionReceipt,
-  TransactionType as ViemTransactionType,
-} from 'viem';
+import { TransactionReceipt as ViemTransactionReceipt } from 'viem';
 import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
 import { BigNumber } from 'ethers';
 
