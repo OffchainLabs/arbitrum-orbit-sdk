@@ -42,7 +42,12 @@ it(`successfully deploys token bridge contracts on parent chain`, async () => {
   );
 
   expect(txReceipt.status).toEqual('success');
-  expect(
-    async () => await txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client }),
-  ).not.toThrow();
+  expect(async () => {
+    const retryables = await txReceipt.waitForRetryables({
+      orbitPublicClient: nitroTestnodeL2Client,
+    });
+
+    console.log(`Retryable 1: ${retryables[0].transactionHash}`);
+    console.log(`Retryable 2: ${retryables[1].transactionHash}`);
+  }).not.toThrow();
 });
