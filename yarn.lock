@@ -35,10 +35,10 @@
     async-mutex "^0.4.0"
     ethers "^5.1.0"
 
-"@arbitrum/token-bridge-contracts@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@arbitrum/token-bridge-contracts/-/token-bridge-contracts-1.1.2.tgz#af41dd507e55d28823721872a7f263548770522d"
-  integrity sha512-k7AZXiB2HFecJ1KfaDBqgOKe3Loo1ttGLC7hUOVB+0YrihIR6cYpJRuqKSKK4YCy+FF21AUDtaG3x57OFM667Q==
+"@arbitrum/token-bridge-contracts@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@arbitrum/token-bridge-contracts/-/token-bridge-contracts-1.2.0.tgz#b1dc02e123393848d0d8e5c167028bafa0ac8229"
+  integrity sha512-GdPn6nIlhkuacgvXZkmYLmNdmOcxVoHEfkEHtNlaBnMqS+HPXEA8keqZDesBHkQ96b9PCwwCegNEx/ZjM+Rq+g==
   dependencies:
     "@arbitrum/nitro-contracts" "^1.0.0-beta.8"
     "@offchainlabs/upgrade-executor" "1.1.0-beta.0"
@@ -658,6 +658,7 @@
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@offchainlabs/prettier-config/-/prettier-config-0.2.1.tgz#e3b57e013935269d84bf6379cdc529b3bbca9ae5"
   integrity sha512-VjE4Hahx9ipTheXJVlt7tFtHeMVvlYUkKNT4uxnAK4i4qrLcqhlm/4GE9mueOS/Syi2/gzDKvNH0nk6+ts2IrA==
+
 "@offchainlabs/upgrade-executor@1.1.0-beta.0":
   version "1.1.0-beta.0"
   resolved "https://registry.yarnpkg.com/@offchainlabs/upgrade-executor/-/upgrade-executor-1.1.0-beta.0.tgz#c4b1375176546a18aaef01a43956abfb58250e0a"
