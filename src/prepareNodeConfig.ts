@@ -55,7 +55,7 @@ export function prepareNodeConfig({
   parentChainId: number;
   parentChainRpcUrl: string;
   assumedHonest?: number;
-  backendsData: BackendsData;
+  backendsData?: BackendsData;
 }): NodeConfig {
   if (!validParentChainId(parentChainId)) {
     throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
@@ -130,12 +130,14 @@ export function prepareNodeConfig({
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
     let backends: NodeConfigDataAvailabilityRpcAggregatorBackendsJson;
+    let restUrls: string[] = ['http://localhost:9876']
     if (assumedHonest !== undefined && backendsData && backendsData.length > 0) {
       backends = backendsData.map((backend, index) => ({
-        url: backend.url,
+        url: backend.urlRpc,
         pubkey: backend.pubkey,
         signermask: 1 << index, // 2^n
       }));
+      restUrls = backendsData.map(backend => backend.urlRest);
     } else {
       backends = [
         {
@@ -153,11 +155,11 @@ export function prepareNodeConfig({
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: 'http://localhost:9876',
+        urls: restUrls,
       },
       'rpc-aggregator': {
         'enable': true,
-        'assumed-honest': 1,
+        'assumed-honest': assumedHonest || 1,
         'backends': stringifyBackendsJson(backends),
       },
     };

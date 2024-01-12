@@ -21,7 +21,8 @@ export type NodeConfigChainInfoJson = [
 
 export type BackendsData = 
   {
-    url: string;
+    urlRest: string;
+    urlRpc: string;
     pubkey: string;
   }[];
 
@@ -88,7 +89,7 @@ export type NodeConfig = {
       'parent-chain-node-url': string;
       'rest-aggregator': {
         enable: boolean;
-        urls: string;
+        urls: string[];
       };
       'rpc-aggregator': {
         'enable': boolean;
