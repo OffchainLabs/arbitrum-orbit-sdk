@@ -18,5 +18,5 @@ export const WASMModuleRoots = [
 ];
 
 export const currentMainnetWasmModuleRootIndex = WASMModuleRoots.indexOf(
-  '0x5eF0D09d1E6204141B4d37530808eD19f60FBa35',
+  '0x6b94a7fc388fd8ef3def759297828dc311761e88d8179c7ee8d3887dc554f3c3',
 );
