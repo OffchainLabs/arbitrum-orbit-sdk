@@ -22,7 +22,7 @@ const parentChainPublicClient = createPublicClient({
 
 async function main() {
   // tx hash for the transaction to create rollup
-  const txHash = '0x22bb24020ee839e4a266960aa73c6bf5b02621e2de3f2a755c9f2869014140d7';
+  const txHash = '0x668c555942aa34c4eb09fb3ad8a95544246b54dba5977e74669e5c8c07af35c2';
 
   // get the transaction
   const tx = createRollupPrepareTransaction(

@@ -2,7 +2,7 @@ import {
   NodeConfig,
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
-  BackendsData
+  BackendsData,
 } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -130,14 +130,14 @@ export function prepareNodeConfig({
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
     let backends: NodeConfigDataAvailabilityRpcAggregatorBackendsJson;
-    let restUrls: string[] = ['http://localhost:9876']
+    let restUrls: string[] = ['http://localhost:9876'];
     if (assumedHonest !== undefined && backendsData && backendsData.length > 0) {
       backends = backendsData.map((backend, index) => ({
         url: backend.urlRpc,
         pubkey: backend.pubkey,
         signermask: 1 << index, // 2^n
       }));
-      restUrls = backendsData.map(backend => backend.urlRest);
+      restUrls = backendsData.map((backend) => backend.urlRest);
     } else {
       backends = [
         {
