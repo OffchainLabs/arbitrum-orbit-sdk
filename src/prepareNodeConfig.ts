@@ -46,7 +46,7 @@ export function prepareNodeConfig({
   parentChainRpcUrl,
   assumedHonest,
   backendsData,
-  onlineUrlList
+  onlineUrlList,
 }: {
   chainName: string;
   chainConfig: ChainConfig;
@@ -168,7 +168,7 @@ export function prepareNodeConfig({
     // Check if onlineUrlList is provided and not empty
     if (onlineUrlList && onlineUrlList.length > 0 && config.node['data-availability']) {
       config.node['data-availability']['rest-aggregator']['online-url-list'] = onlineUrlList;
-}
+    }
   }
 
   return config;

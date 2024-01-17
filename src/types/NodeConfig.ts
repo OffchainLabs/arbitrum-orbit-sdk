@@ -86,9 +86,9 @@ export type NodeConfig = {
       'sequencer-inbox-address': string;
       'parent-chain-node-url': string;
       'rest-aggregator': {
-        enable: boolean;
-        "online-url-list"?: string;
-        urls: string[];
+        'enable': boolean;
+        'online-url-list'?: string;
+        'urls': string[];
       };
       'rpc-aggregator': {
         'enable': boolean;
