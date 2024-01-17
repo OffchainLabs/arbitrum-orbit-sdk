@@ -46,6 +46,7 @@ export function prepareNodeConfig({
   parentChainRpcUrl,
   assumedHonest,
   backendsData,
+  onlineUrlList
 }: {
   chainName: string;
   chainConfig: ChainConfig;
@@ -56,6 +57,7 @@ export function prepareNodeConfig({
   parentChainRpcUrl: string;
   assumedHonest?: number;
   backendsData?: BackendsData;
+  onlineUrlList?: string;
 }): NodeConfig {
   if (!validParentChainId(parentChainId)) {
     throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
@@ -163,6 +165,10 @@ export function prepareNodeConfig({
         'backends': stringifyBackendsJson(backends),
       },
     };
+    // Check if onlineUrlList is provided and not empty
+    if (onlineUrlList && onlineUrlList.length > 0 && config.node['data-availability']) {
+      config.node['data-availability']['rest-aggregator']['online-url-list'] = onlineUrlList;
+}
   }
 
   return config;

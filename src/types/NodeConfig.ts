@@ -87,6 +87,7 @@ export type NodeConfig = {
       'parent-chain-node-url': string;
       'rest-aggregator': {
         enable: boolean;
+        "online-url-list"?: string;
         urls: string[];
       };
       'rpc-aggregator': {
