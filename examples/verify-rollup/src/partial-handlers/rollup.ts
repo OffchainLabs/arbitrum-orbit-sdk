@@ -487,7 +487,9 @@ export const rollupHandler = async (
     console.log('The state transition function is standard version');
     // check if the rollups' arbos version is latest or not
     if (index < currentMainnetWasmModuleRootIndex) {
-      warningMessages.push('Arbos version is old');
+      warningMessages.push(
+        `Arbos version is old, Rollup wasmModuleRoot is ${moduleRoot}. Latest standard wasmModuleRoot is ${WASMModuleRoots[currentMainnetWasmModuleRootIndex]}.`,
+      );
     }
   } else {
     console.log('The state transition function is not standard version');
