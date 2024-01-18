@@ -16,7 +16,7 @@ import { SequencerInbox__factory } from '@arbitrum/sdk/dist/lib/abi/factories/Se
 import { currentMainnetWasmModuleRootIndex, WASMModuleRoots } from '../lib/constants';
 
 // Constants
-const minConfirmPeriodBlocks = BigInt((24 * 60 * 60) / 12.5); // 1 day
+const minConfirmPeriodBlocks = 45818;
 
 export const rollupHandler = async (
   orbitHandler: OrbitHandler,
