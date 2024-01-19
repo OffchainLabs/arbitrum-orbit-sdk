@@ -16,7 +16,7 @@ import { zeroAddress } from 'viem';
 import { SequencerInbox__factory } from '@arbitrum/sdk/dist/lib/abi/factories/SequencerInbox__factory';
 import { WASMModuleRoots } from '../lib/constants';
 import { createPublicClient, http } from 'viem';
-import { arbitrum } from 'viem/chains';
+import { mainnet, arbitrum } from 'viem/chains';
 
 // Constants
 const minConfirmPeriodBlocks = 45818;
@@ -476,7 +476,7 @@ export const rollupHandler = async (
   //
 
   const parentChainPublicClient = createPublicClient({
-    chain: arbitrum,
+    chain: mainnet,
     transport: http(),
   });
 
