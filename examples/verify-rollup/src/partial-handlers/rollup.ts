@@ -482,11 +482,11 @@ export const rollupHandler = async (
 
   const l2Network = await getL2Network(arbitrum.id);
 
-  const mainnetModuleRoot = await parentChainPublicClient.readContract({
+  const mainnetModuleRoot = (await parentChainPublicClient.readContract({
     address: l2Network.ethBridge.rollup as `0x${string}`,
     abi: RollupCore__factory.abi,
     functionName: 'wasmModuleRoot',
-  });
+  })) as `0x${string}`;
 
   let currentMainnetWasmModuleRootIndex = WASMModuleRoots.indexOf(mainnetModuleRoot);
 
