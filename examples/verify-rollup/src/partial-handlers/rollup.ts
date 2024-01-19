@@ -482,6 +482,7 @@ export const rollupHandler = async (
 
   const l2Network = await getL2Network(arbitrum.id);
 
+  // get the wasmModuleRoot of arb1
   const mainnetModuleRoot = (await parentChainPublicClient.readContract({
     address: l2Network.ethBridge.rollup as `0x${string}`,
     abi: RollupCore__factory.abi,
@@ -490,31 +491,36 @@ export const rollupHandler = async (
 
   let currentMainnetWasmModuleRootIndex = WASMModuleRoots.indexOf(mainnetModuleRoot);
 
-  // get the wasmModuleRoot of the given orbit chain
-  const moduleRoot = (await orbitHandler.readContract(
-    'parent',
-    rollupAddress,
-    [...RollupCore__factory.abi, ...Ownable__factory.abi] as Abi,
-    'wasmModuleRoot',
-  )) as `0x${string}`;
+  if (currentMainnetWasmModuleRootIndex === -1) {
+    console.log('This script version is old, need to update wasm module lsit');
+  } else {
+    // get the wasmModuleRoot of the given orbit chain
+    const moduleRoot = (await orbitHandler.readContract(
+      'parent',
+      rollupAddress,
+      [...RollupCore__factory.abi, ...Ownable__factory.abi] as Abi,
+      'wasmModuleRoot',
+    )) as `0x${string}`;
 
-  const index = WASMModuleRoots.indexOf(moduleRoot);
+    const index = WASMModuleRoots.indexOf(moduleRoot);
 
-  // check if this wasmModuleRoot belongs to one of mainnet version
-  if (0 <= index) {
-    console.log('The state transition function is standard version');
-    // check if the rollups' arbos version is latest or not
-    if (index < currentMainnetWasmModuleRootIndex) {
+    // check if this wasmModuleRoot belongs to one of mainnet version
+    if (0 <= index) {
+      console.log('The state transition function is standard version');
+      // check if the rollups' arbos version is latest or not
+      if (index < currentMainnetWasmModuleRootIndex) {
+        warningMessages.push(
+          `Arbos version is old, Rollup wasmModuleRoot is ${moduleRoot}. Latest standard wasmModuleRoot is ${WASMModuleRoots[currentMainnetWasmModuleRootIndex]}.`,
+        );
+      }
+    } else {
+      console.log('The state transition function is not standard version');
       warningMessages.push(
-        `Arbos version is old, Rollup wasmModuleRoot is ${moduleRoot}. Latest standard wasmModuleRoot is ${WASMModuleRoots[currentMainnetWasmModuleRootIndex]}.`,
+        `The node is using a customized state transition function, the wasmModule root is ${moduleRoot}`,
       );
     }
-  } else {
-    console.log('The state transition function is not standard version');
-    warningMessages.push(
-      `The node is using a customized state transition function, the wasmModule root is ${moduleRoot}`,
-    );
   }
+
   console.log('');
 
   return warningMessages;
