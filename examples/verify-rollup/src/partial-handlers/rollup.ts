@@ -1,5 +1,6 @@
 import { RollupCore__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupCore__factory';
 import { Ownable__factory } from '@arbitrum/sdk/dist/lib/abi/factories/Ownable__factory';
+import { getL2Network } from '@arbitrum/sdk';
 import { OrbitHandler } from '../lib/client';
 import { Abi, AbiEventItem, RollupInformationFromRollupCreatedEvent } from '../lib/types';
 import {
@@ -13,7 +14,9 @@ import {
 } from '../lib/utils';
 import { zeroAddress } from 'viem';
 import { SequencerInbox__factory } from '@arbitrum/sdk/dist/lib/abi/factories/SequencerInbox__factory';
-import { currentMainnetWasmModuleRootIndex, WASMModuleRoots } from '../lib/constants';
+import { WASMModuleRoots } from '../lib/constants';
+import { createPublicClient, http } from 'viem';
+import { arbitrum } from 'viem/chains';
 
 // Constants
 const minConfirmPeriodBlocks = 45818;
@@ -472,6 +475,20 @@ export const rollupHandler = async (
   // STF verification
   //
 
+  const parentChainPublicClient = createPublicClient({
+    chain: arbitrum,
+    transport: http(),
+  });
+
+  const l2Network = await getL2Network(arbitrum.id);
+
+  const mainnetModuleRoot = (await parentChainPublicClient.readContract(
+    l2Network.ethBridge.rollup,
+    [...RollupCore__factory.abi, ...Ownable__factory.abi] as Abi,
+    'wasmModuleRoot',
+  )) as `0x${string}`;
+
+  let currentMainnetWasmModuleRootIndex = WASMModuleRoots.indexOf(mainnetModuleRoot);
   // get the wasmModuleRoot of the given orbit chain
   const moduleRoot = (await orbitHandler.readContract(
     'parent',
