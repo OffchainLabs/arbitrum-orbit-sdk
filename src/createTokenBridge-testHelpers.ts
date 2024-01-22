@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem';
+import { PublicClient, Address } from 'viem';
 import { exec } from 'node:child_process';
 import { promisify } from 'util';
 
@@ -11,7 +11,7 @@ export async function deployTokenBridgeCreator({
   publicClient,
 }: {
   publicClient: PublicClient;
-}): Promise<string> {
+}): Promise<Address> {
   // https://github.com/OffchainLabs/token-bridge-contracts/blob/main/scripts/local-deployment/deployCreatorAndCreateTokenBridge.ts#L109C19-L109C61
   const weth = '0x05EcEffc7CBA4e43a410340E849052AD43815aCA';
 
@@ -29,5 +29,5 @@ export async function deployTokenBridgeCreator({
     throw Error(`Failed to parse token bridge creator address from output: ${stdout}`);
   }
 
-  return match[1];
+  return match[1] as Address;
 }
