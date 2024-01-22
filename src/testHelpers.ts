@@ -13,14 +13,16 @@ import { createRollupPrepareTransactionRequest } from './createRollupPrepareTran
 
 config();
 
-export function getTestPrivateKeyAccount(): PrivateKeyAccount {
+export function getTestPrivateKeyAccount(): PrivateKeyAccount & { privateKey: `0x${string}` } {
   const privateKey = process.env.PRIVATE_KEY;
 
   if (typeof privateKey === 'undefined') {
     throw Error(`missing PRIVATE_KEY env variable`);
   }
 
-  return privateKeyToAccount(sanitizePrivateKey(privateKey));
+  const sanitizedPrivateKey = sanitizePrivateKey(privateKey);
+
+  return { ...privateKeyToAccount(sanitizedPrivateKey), privateKey: sanitizedPrivateKey };
 }
 
 function sanitizePrivateKey(privateKey: string): `0x${string}` {
