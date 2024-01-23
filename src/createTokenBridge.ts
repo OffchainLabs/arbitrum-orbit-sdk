@@ -42,8 +42,11 @@ export async function createTokenBridgePrepareTransactionRequest({
       args: [inbox, params.rollupOwner, maxGasForContracts, gasPrice],
     }),
     // todo: should be 0 for custom gas token
-    value: retryableFee,
+    // todo: add the padding inside "createTokenBridgeGetInputs"
+    value: retryableFee * BigInt(2),
     account: account,
+    // todo: don't hardcode
+    gas: 6_000_000n,
   });
 
   return { ...request, chainId };

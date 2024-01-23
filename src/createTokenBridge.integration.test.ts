@@ -2,9 +2,10 @@ import { it, expect } from 'vitest';
 import { createPublicClient, http } from 'viem';
 
 import { nitroTestnodeL1, nitroTestnodeL2 } from './chains';
-import { getTestPrivateKeyAccount, testSetupCreateRollup } from './testHelpers';
+import { getTestPrivateKeyAccount } from './testHelpers';
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridge';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
+import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 
 const deployer = getTestPrivateKeyAccount();
 
@@ -19,8 +20,14 @@ const nitroTestnodeL2Client = createPublicClient({
 });
 
 it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
+  // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
+  const tokenBridgeCreator = await deployTokenBridgeCreator({
+    publicClient: nitroTestnodeL1Client,
+  });
+
   const txRequest = await createTokenBridgePrepareTransactionRequest({
     params: {
+      // this is the rollup for the nitro testnode L2
       rollup: '0x05e720d41d78ad9e43cd599e2fbf924dac867124',
       // https://github.com/OffchainLabs/nitro-testnode/blob/master/test-node.bash#L363
       // https://github.com/OffchainLabs/nitro-testnode/blob/master/scripts/accounts.ts#L35
@@ -31,9 +38,12 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
     account: deployer.address,
   });
 
+  // update the transaction request to use the fresh token bridge creator
+  const txRequestToFreshTokenBridgeCreator = { ...txRequest, to: tokenBridgeCreator };
+
   // sign and send the transaction
   const txHash = await nitroTestnodeL1Client.sendRawTransaction({
-    serializedTransaction: await deployer.signTransaction(txRequest),
+    serializedTransaction: await deployer.signTransaction(txRequestToFreshTokenBridgeCreator),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
@@ -41,14 +51,11 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
     await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: txHash }),
   );
 
+  function waitForRetryables() {
+    return txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client });
+  }
+
   expect(txReceipt.status).toEqual('success');
-
-  await expect(async () => {
-    const retryables = await txReceipt.waitForRetryables({
-      orbitPublicClient: nitroTestnodeL2Client,
-    });
-
-    console.log(`Retryable 1: ${retryables[0].transactionHash}`);
-    console.log(`Retryable 2: ${retryables[1].transactionHash}`);
-  }).rejects.not.toThrowError();
+  // assert promise is resolved with 2 retryables
+  await expect(waitForRetryables()).resolves.toHaveLength(2);
 });
