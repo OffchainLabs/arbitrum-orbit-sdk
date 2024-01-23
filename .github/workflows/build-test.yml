@@ -82,6 +82,8 @@ jobs:
         uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
           nitro-testnode-ref: master
+          # don't deploy the regular token bridge using arbitrum-sdk, as it will be deployed through the TokenBridgeCreator
+          no-token-bridge: true
           # RollupCreator on L1 is deployed by default
           # RollupCreator on L2 is deployed with --l3node
           l3-node: true
