@@ -5,5 +5,6 @@ export default defineConfig({
     globals: true,
     // allow tests to run for 5 minutes as retryables can take a while
     testTimeout: 300_000,
+    sequence: { concurrent: false },
   },
 });
