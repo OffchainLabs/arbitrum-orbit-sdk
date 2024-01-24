@@ -1,7 +1,7 @@
 import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
-import { deploymentBlockNumber } from './generated';
 import { ParentChainId } from './types/ParentChain';
+import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 
 export type CreateRollupFetchTransactionHashParams = {
   rollupAddress: Address;
@@ -28,6 +28,14 @@ const RollupInitializedEventAbi: AbiEvent = {
   type: 'event',
 };
 
+const earliestRollupCreatorDeploymentBlockNumber = {
+  // testnet
+  [sepolia.id]: 4741823n,
+  [arbitrumSepolia.id]: 654628n,
+  [nitroTestnodeL1.id]: 0n,
+  [nitroTestnodeL2.id]: 0n,
+};
+
 export async function createRollupFetchTransactionHash({
   rollupAddress,
   publicClient,
@@ -35,8 +43,8 @@ export async function createRollupFetchTransactionHash({
   // Find the RollupInitialized event from that Rollup contract
   const chainId = await publicClient.getChainId();
   const fromBlock =
-    chainId in Object.keys(deploymentBlockNumber.RollupCreator)
-      ? deploymentBlockNumber.RollupCreator[chainId as ParentChainId]
+    chainId in Object.keys(earliestRollupCreatorDeploymentBlockNumber)
+      ? earliestRollupCreatorDeploymentBlockNumber[chainId as ParentChainId]
       : 'earliest';
 
   const rollupInitializedEvents = await publicClient.getLogs({

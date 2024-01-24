@@ -39,7 +39,6 @@ type ContractConfig = {
   name: string;
   version?: string;
   address: Record<ParentChainId, `0x${string}`> | `0x${string}`;
-  deploymentBlockNumber: Record<ParentChainId, bigint> | bigint;
 };
 
 const contracts: ContractConfig[] = [
@@ -54,14 +53,6 @@ const contracts: ContractConfig[] = [
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
       [nitroTestnodeL2.id]: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
     },
-    deploymentBlockNumber: {
-      // testnet
-      [sepolia.id]: 4741823n,
-      [arbitrumSepolia.id]: 654628n,
-      // local nitro-testnode (on "use-tokenbridge-creator" branch with --tokenbridge --l3node --l3-token-bridge flags)
-      [nitroTestnodeL1.id]: 0n,
-      [nitroTestnodeL2.id]: 0n,
-    },
   },
   {
     name: 'TokenBridgeCreator',
@@ -74,24 +65,14 @@ const contracts: ContractConfig[] = [
       [nitroTestnodeL1.id]: '0x4a2ba922052ba54e29c5417bc979daaf7d5fe4f4',
       [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',
     },
-    deploymentBlockNumber: {
-      // testnet
-      [sepolia.id]: 4840577n,
-      [arbitrumSepolia.id]: 1633247n,
-      // local nitro-testnode (on "use-tokenbridge-creator" branch with --tokenbridge --l3node --l3-token-bridge flags)
-      [nitroTestnodeL1.id]: 0n,
-      [nitroTestnodeL2.id]: 0n,
-    },
   },
   {
     name: 'ArbOwner',
     address: '0x0000000000000000000000000000000000000070',
-    deploymentBlockNumber: 0n,
   },
   {
     name: 'ArbOwnerPublic',
     address: '0x000000000000000000000000000000000000006b',
-    deploymentBlockNumber: 0n,
   },
 ];
 
@@ -125,40 +106,6 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
   console.log(`- ${contract.name} ✔`);
 }
 
-// https://wagmi.sh/cli/plugins#creating-plugins
-type DeploymentBlockNumberPluginConfig = {
-  contracts: ContractConfig[];
-};
-type DeploymentBlockNumberPluginResult = Required<Pick<Plugin, 'run'>> & Omit<Plugin, 'run'>;
-
-function deploymentBlockNumberPlugin(
-  config: DeploymentBlockNumberPluginConfig,
-): DeploymentBlockNumberPluginResult {
-  return {
-    name: 'DeploymentBlockNumber',
-    async run({ contracts, isTypeScript, outputs }) {
-      const pluginOutput = dedent`
-        export const deploymentBlockNumber = {
-          ${config.contracts.map((contract) => {
-            return typeof contract.deploymentBlockNumber === 'bigint'
-              ? `${contract.name}: ${contract.deploymentBlockNumber}n`
-              : dedent`
-                ${contract.name}: {
-                  ${Object.keys(contract.deploymentBlockNumber).map((parentChainId) => {
-                    return `${parentChainId}: ${contract.deploymentBlockNumber[parentChainId]}n`;
-                  })}
-                }`;
-          })}
-        } as const
-      `;
-
-      return {
-        content: pluginOutput,
-      };
-    },
-  };
-}
-
 export default async function () {
   console.log(`Checking if contract ABIs match...`);
 
@@ -180,9 +127,6 @@ export default async function () {
         apiKey,
         contracts,
         cacheDuration: 0,
-      }),
-      deploymentBlockNumberPlugin({
-        contracts,
       }),
     ],
   };
