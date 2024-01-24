@@ -1,12 +1,14 @@
 import { it, expect } from 'vitest';
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, http, parseAbi, zeroAddress } from 'viem';
 import { execSync } from 'node:child_process';
 
 import { nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 import { getTestPrivateKeyAccount } from './testHelpers';
-import { createTokenBridgePrepareTransactionRequest } from './createTokenBridge';
+import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
+import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
+import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 
 function getRollupData() {
   const containers = [
@@ -91,4 +93,101 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   expect(txReceipt.status).toEqual('success');
   // assert promise is resolved with 2 retryables
   await expect(waitForRetryables()).resolves.toHaveLength(2);
+
+  // get contracts
+  const coreContracts = await createRollupFetchCoreContracts({
+    rollup,
+    publicClient: nitroTestnodeL1Client,
+  });
+
+  const tokenBridgeContracts = await createTokenBridgeFetchTokenBridgeContracts({
+    inbox: coreContracts.inbox,
+    parentChainPublicClient: nitroTestnodeL1Client,
+  });
+
+  // check parent chain contracts
+
+  // parent chain router
+  const [
+    inboxFromParentChainRouter,
+    routerFromParentChainRouter,
+    defaultGatewayFromParentChainRouter,
+    counterpartGatewayFromParentChainRouter,
+  ] = await Promise.all(
+    ['inbox', 'router', 'defaultGateway', 'counterpartGateway'].map(async (functionName) => {
+      const address = await nitroTestnodeL1Client.readContract({
+        address: tokenBridgeContracts.parentChainContracts.router,
+        abi: parseAbi([
+          'function inbox() public view returns (address)',
+          'function router() public view returns (address)',
+          'function defaultGateway() public view returns (address)',
+          'function counterpartGateway() public view returns (address)',
+        ]),
+        functionName: functionName as 'inbox' | 'router' | 'defaultGateway' | 'counterpartGateway',
+      });
+
+      return address;
+    }),
+  );
+  expect(inboxFromParentChainRouter).toEqual(coreContracts.inbox);
+  expect(routerFromParentChainRouter).toEqual(zeroAddress);
+  expect(defaultGatewayFromParentChainRouter).toEqual(
+    tokenBridgeContracts.parentChainContracts.standardGateway,
+  );
+  expect(counterpartGatewayFromParentChainRouter).toEqual(
+    tokenBridgeContracts.childChainContracts.router,
+  );
+
+  // parent chain standard gateway
+  const [
+    inboxFromParentChainStandardGateway,
+    routerFromParentChainStandardGateway,
+    counterpartGatewayFromParentChainStandardGateway,
+    whitelistFromParentChainStandardGateway,
+    l2BeaconProxyFactoryFromParentChainStandardGateway,
+    cloneableProxyHashFromParentChainStandardGateway,
+  ] = await Promise.all(
+    [
+      'inbox',
+      'router',
+      'counterpartGateway',
+      'whitelist',
+      'l2BeaconProxyFactory',
+      'cloneableProxyHash',
+    ].map(async (functionName) => {
+      const address = await nitroTestnodeL1Client.readContract({
+        address: tokenBridgeContracts.parentChainContracts.standardGateway,
+        abi: parseAbi([
+          'function inbox() public view returns (address)',
+          'function router() public view returns (address)',
+          'function counterpartGateway() public view returns (address)',
+          'function whitelist() public view returns (address)',
+          'function l2BeaconProxyFactory() public view returns (address)',
+          'function cloneableProxyHash() public view returns (address)',
+        ]),
+        functionName: functionName as
+          | 'inbox'
+          | 'router'
+          | 'counterpartGateway'
+          | 'whitelist'
+          | 'l2BeaconProxyFactory'
+          | 'cloneableProxyHash',
+      });
+
+      return address;
+    }),
+  );
+  expect(inboxFromParentChainStandardGateway).toEqual(coreContracts.inbox);
+  expect(routerFromParentChainStandardGateway).toEqual(
+    tokenBridgeContracts.parentChainContracts.router,
+  );
+  expect(counterpartGatewayFromParentChainStandardGateway).toEqual(
+    tokenBridgeContracts.childChainContracts.standardGateway,
+  );
+  expect(whitelistFromParentChainStandardGateway).toEqual(zeroAddress);
+  // expect(l2BeaconProxyFactoryFromParentChainStandardGateway).toEqual(tokenBridgeContracts.childChainContracts.router);
+  // expect(cloneableProxyHashFromParentChainStandardGateway).toEqual(tokenBridgeContracts.childChainContracts.router);
+
+  console.log(tokenBridgeContracts);
+  expect(true).toEqual(true);
 });
