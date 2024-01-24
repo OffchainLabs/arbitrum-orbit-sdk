@@ -22,6 +22,10 @@ import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
 } from './createRollupPrepareTransactionReceipt';
+import {
+  createRollupFetchTransactionHash,
+  CreateRollupFetchTransactionHashParams,
+} from './createRollupFetchTransactionHash';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -58,6 +62,8 @@ export {
   CreateRollupTransaction,
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
+  createRollupFetchTransactionHash,
+  CreateRollupFetchTransactionHashParams,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
