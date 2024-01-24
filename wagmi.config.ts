@@ -1,6 +1,4 @@
-import { Plugin } from '@wagmi/cli';
 import { erc, etherscan } from '@wagmi/cli/plugins';
-import dedent from 'dedent';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
