@@ -46,7 +46,7 @@ describe(`createRollup`, async () => {
 
   it('finds the transaction hash that created a specified deployed rollup contract', async () => {
     const transactionHash = await createRollupFetchTransactionHash({
-      rollupAddress: createRollupInformation.coreContracts.rollup,
+      rollup: createRollupInformation.coreContracts.rollup,
       publicClient,
     });
 

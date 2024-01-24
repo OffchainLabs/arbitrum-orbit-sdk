@@ -4,7 +4,7 @@ import { ParentChainId } from './types/ParentChain';
 import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 
 export type CreateRollupFetchTransactionHashParams = {
-  rollupAddress: Address;
+  rollup: Address;
   publicClient: PublicClient;
 };
 
@@ -37,7 +37,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
 };
 
 export async function createRollupFetchTransactionHash({
-  rollupAddress,
+  rollup,
   publicClient,
 }: CreateRollupFetchTransactionHashParams) {
   // Find the RollupInitialized event from that Rollup contract
@@ -48,14 +48,14 @@ export async function createRollupFetchTransactionHash({
       : 'earliest';
 
   const rollupInitializedEvents = await publicClient.getLogs({
-    address: rollupAddress,
+    address: rollup,
     event: RollupInitializedEventAbi,
     fromBlock,
     toBlock: 'latest',
   });
   if (rollupInitializedEvents.length !== 1) {
     throw new Error(
-      `Expected to find 1 RollupInitialized event for rollup address ${rollupAddress} but found ${rollupInitializedEvents.length}`,
+      `Expected to find 1 RollupInitialized event for rollup address ${rollup} but found ${rollupInitializedEvents.length}`,
     );
   }
 
@@ -63,7 +63,7 @@ export async function createRollupFetchTransactionHash({
   const transactionHash = rollupInitializedEvents[0].transactionHash;
   if (!transactionHash) {
     throw new Error(
-      `No transactionHash found in RollupInitialized event for rollup address ${rollupAddress}`,
+      `No transactionHash found in RollupInitialized event for rollup address ${rollup}`,
     );
   }
 
