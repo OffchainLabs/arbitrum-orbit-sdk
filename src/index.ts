@@ -44,6 +44,8 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
+import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
+import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
@@ -86,4 +88,6 @@ export {
   prepareKeyset,
   utils,
   createTokenBridgePrepareTransactionRequest,
+  createTokenBridgePrepareTransactionReceipt,
+  createTokenBridgeFetchTokenBridgeContracts,
 };

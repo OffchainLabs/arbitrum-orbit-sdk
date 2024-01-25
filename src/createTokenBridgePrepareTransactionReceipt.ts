@@ -1,10 +1,46 @@
-import { PublicClient, TransactionReceipt } from 'viem';
+import {
+  Log,
+  PublicClient,
+  TransactionReceipt,
+  decodeEventLog,
+  getAbiItem,
+  getEventSelector,
+} from 'viem';
 import { L1ToL2MessageStatus, L1TransactionReceipt } from '@arbitrum/sdk';
 import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
 
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { viemTransactionReceiptToEthersTransactionReceipt } from './ethers-compat/viemTransactionReceiptToEthersTransactionReceipt';
 import { ethersTransactionReceiptToViemTransactionReceipt } from './ethers-compat/ethersTransactionReceiptToViemTransactionReceipt';
+import { TokenBridgeContracts } from './types/TokenBridgeContracts';
+import { tokenBridgeCreator } from './contracts';
+import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
+
+function findOrbitTokenBridgeCreatedEventLog(txReceipt: TransactionReceipt) {
+  const abiItem = getAbiItem({ abi: tokenBridgeCreator.abi, name: 'OrbitTokenBridgeCreated' });
+  const eventSelector = getEventSelector(abiItem);
+  const log = txReceipt.logs.find((log) => log.topics[0] === eventSelector);
+
+  if (typeof log === 'undefined') {
+    throw new Error(
+      `No "OrbitTokenBridgeCreated" logs found in logs for transaction: ${txReceipt.transactionHash}`,
+    );
+  }
+
+  return log;
+}
+
+function decodeOrbitTokenBridgeCreatedEventLog(log: Log<bigint, number>) {
+  const decodedEventLog = decodeEventLog({ ...log, abi: tokenBridgeCreator.abi });
+
+  if (decodedEventLog.eventName !== 'OrbitTokenBridgeCreated') {
+    throw new Error(
+      `Expected "OrbitTokenBridgeCreated" event but found: ${decodedEventLog.eventName}`,
+    );
+  }
+
+  return decodedEventLog;
+}
 
 type RedeemedRetryableTicket = {
   status: L1ToL2MessageStatus.REDEEMED;
@@ -17,8 +53,13 @@ export type WaitForRetryablesParameters = {
 
 export type WaitForRetryablesResult = [TransactionReceipt, TransactionReceipt];
 
+type GetTokenBridgeContractsParameters = {
+  parentChainPublicClient: PublicClient;
+};
+
 export type CreateTokenBridgeTransactionReceipt = TransactionReceipt & {
   waitForRetryables(params: WaitForRetryablesParameters): Promise<void>;
+  getTokenBridgeContracts(): TokenBridgeContracts;
 };
 
 export function createTokenBridgePrepareTransactionReceipt(txReceipt: TransactionReceipt) {
@@ -53,6 +94,18 @@ export function createTokenBridgePrepareTransactionReceipt(txReceipt: Transactio
             ethersTransactionReceiptToViemTransactionReceipt(result.l2TxReceipt),
           ) as WaitForRetryablesResult
       );
+    },
+    getTokenBridgeContracts: async function ({
+      parentChainPublicClient,
+    }: GetTokenBridgeContractsParameters): Promise<TokenBridgeContracts> {
+      const eventLog = findOrbitTokenBridgeCreatedEventLog(txReceipt);
+      const decodedEventLog = decodeOrbitTokenBridgeCreatedEventLog(eventLog);
+      const { inbox } = decodedEventLog.args;
+
+      return await createTokenBridgeFetchTokenBridgeContracts({
+        inbox,
+        parentChainPublicClient,
+      });
     },
   };
 }

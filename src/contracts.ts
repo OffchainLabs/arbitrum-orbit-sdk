@@ -1,4 +1,4 @@
-import { Abi, parseAbi } from 'viem';
+import { parseAbi } from 'viem';
 
 import {
   erc20ABI,
