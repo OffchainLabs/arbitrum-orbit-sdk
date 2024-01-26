@@ -13,7 +13,7 @@ import {
 } from '../lib/utils';
 import { zeroAddress } from 'viem';
 import { SequencerInbox__factory } from '@arbitrum/sdk/dist/lib/abi/factories/SequencerInbox__factory';
-import { currentMainnetWasmModuleRootIndex, WASMModuleRoots } from '../lib/constants';
+import { WASMModuleRoots } from '../lib/constants';
 
 // Constants
 const minConfirmPeriodBlocks = 45818;
@@ -481,14 +481,15 @@ export const rollupHandler = async (
   )) as `0x${string}`;
 
   const index = WASMModuleRoots.indexOf(moduleRoot);
+  const latestWasmModuleRootIndex = WASMModuleRoots.length - 1;
 
   // check if this wasmModuleRoot belongs to one of mainnet version
   if (0 <= index) {
     console.log('The state transition function is standard version');
     // check if the rollups' arbos version is latest or not
-    if (index < currentMainnetWasmModuleRootIndex) {
+    if (index < latestWasmModuleRootIndex) {
       warningMessages.push(
-        `Arbos version is old, Rollup wasmModuleRoot is ${moduleRoot}. Latest standard wasmModuleRoot is ${WASMModuleRoots[currentMainnetWasmModuleRootIndex]}.`,
+        `Arbos version is old, Rollup wasmModuleRoot is ${moduleRoot}. Latest standard wasmModuleRoot is ${WASMModuleRoots[latestWasmModuleRootIndex]}.`,
       );
     }
   } else {
