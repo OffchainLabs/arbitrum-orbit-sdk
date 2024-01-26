@@ -13,6 +13,7 @@ if (!process.env.PARENT_CHAIN_ID || !process.env.ROLLUP_ADDRESS) {
 // Get the orbit handler
 const orbitHandler = new OrbitHandler(
   Number(process.env.PARENT_CHAIN_ID),
+  process.env.PARENT_CHAIN_RPC ?? undefined,
   process.env.ORBIT_CHAIN_ID ? Number(process.env.ORBIT_CHAIN_ID) : undefined,
   process.env.ORBIT_CHAIN_RPC ?? undefined,
 );
