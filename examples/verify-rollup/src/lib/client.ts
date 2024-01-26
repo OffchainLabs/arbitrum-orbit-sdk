@@ -8,12 +8,12 @@ export class OrbitHandler {
   parentChainPublicClient: PublicClient;
   orbitPublicClient: PublicClient | undefined;
 
-  constructor(parentChainId: number, orbitChainId?: number, orbitChainRpc?: string) {
+  constructor(parentChainId: number, parentChainRpc?: string, orbitChainId?: number, orbitChainRpc?: string) {
     // Create parent chain client
     const parentChainInformation = getChainInfoFromChainId(parentChainId);
     this.parentChainPublicClient = createPublicClient({
       chain: parentChainInformation,
-      transport: http(),
+      transport: http(parentChainRpc),
     });
 
     // Create orbit chain client
