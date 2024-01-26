@@ -35,6 +35,7 @@ import {
   decodeEventLog,
   getAddress,
   trim,
+  pad,
   decodeFunctionData,
   zeroAddress,
 } from 'viem';
@@ -279,7 +280,7 @@ export const getCurrentAdminOfContract = async (
   if (!adminAddress) {
     return getAddress('0x');
   }
-  return getAddress(trim(adminAddress));
+  return getAddress(pad(trim(adminAddress), { size: 20 }));
 };
 
 export const getLogicAddressOfContract = async (
