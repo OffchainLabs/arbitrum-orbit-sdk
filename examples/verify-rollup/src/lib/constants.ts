@@ -16,7 +16,3 @@ export const WASMModuleRoots = [
   '0xf559b6d4fa869472dabce70fe1c15221bdda837533dfd891916836975b434dec', // consensus-v10.3
   '0xf4389b835497a910d7ba3ebfb77aa93da985634f3c052de1290360635be40c4a', // consensus-v11
 ];
-
-export const currentMainnetWasmModuleRootIndex = WASMModuleRoots.indexOf(
-  '0x6b94a7fc388fd8ef3def759297828dc311761e88d8179c7ee8d3887dc554f3c3',
-);
