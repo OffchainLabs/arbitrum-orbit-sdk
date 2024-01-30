@@ -3,7 +3,7 @@ import { Address, PublicClient } from 'viem';
 import { tokenBridgeCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
-import { tokenBridgeDeploymentEstimatedFees } from './constants';
+import { createTokenBridgeEstimatedFees } from './constants';
 
 export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
   nativeToken: Address;
@@ -29,5 +29,5 @@ export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
     publicClient,
   });
 
-  return allowance >= tokenBridgeDeploymentEstimatedFees;
+  return allowance >= createTokenBridgeEstimatedFees;
 }

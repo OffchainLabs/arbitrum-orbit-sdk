@@ -92,6 +92,14 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
     parentChainPublicClient: nitroTestnodeL1Client,
     childChainPublicClient: nitroTestnodeL2Client,
     account: deployer.address,
+    gasOverrides: {
+      gasLimit: {
+        minimum: 6_000_000n,
+      },
+      retryableTicketFees: {
+        percentIncrease: 100n,
+      },
+    },
   });
 
   // update the transaction request to use the fresh token bridge creator
@@ -178,22 +186,20 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   expect(fundTxReceipt.status).toEqual('success');
 
   // -----------------------------
-  // 2. check token bridge creator allowance
+  // 2. check the new token bridge creator allowance
+  // NOTE: We will estimate the token bridge creation through the canonical TokenBridgeCreator
+  //       and we will later change the destination address to the new deployed TokenBridgeCreator.
+  //       Thus, we need to give allowance to both TokenBridgeCreators
   const allowanceParams = {
     nativeToken: testnodeInformation.l3NativeToken,
     account: l3RollupOwner.address,
     publicClient: nitroTestnodeL2Client,
   };
+
+  // 2.a. Approval for canonical TokenBridgeCreator (only if needed)
   if (!(await createTokenBridgeEnoughCustomFeeTokenAllowance(allowanceParams))) {
     const approvalTxRequest =
       await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
-
-    // update the transaction request to use the fresh token bridge creator
-    approvalTxRequest.data = encodeFunctionData({
-      abi: erc20.abi,
-      functionName: 'approve',
-      args: [tokenBridgeCreator, maxInt256],
-    });
 
     // sign and send the transaction
     const approvalTxHash = await nitroTestnodeL2Client.sendRawTransaction({
@@ -207,6 +213,35 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
     expect(approvalTxReceipt.status).toEqual('success');
   }
 
+  // 2.b. Approval for the new TokenBridgeCreator
+  const approvalForNewTokenBridgeCreatorTxRequest =
+    await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
+
+  // update the transaction request to use the fresh token bridge creator
+  approvalForNewTokenBridgeCreatorTxRequest.data = encodeFunctionData({
+    abi: erc20.abi,
+    functionName: 'approve',
+    args: [tokenBridgeCreator, maxInt256],
+  });
+  // also update the gas used since we estimated an update of the mapping of allowances (to the canonical TokenBridgeCreator),
+  // but we will now be adding a new element to that mapping (hence the extra cost of gas)
+  approvalForNewTokenBridgeCreatorTxRequest.gas =
+    approvalForNewTokenBridgeCreatorTxRequest.gas! * 2n;
+
+  // sign and send the transaction
+  const approvalForNewTokenBridgeCreatorTxHash = await nitroTestnodeL2Client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(
+      approvalForNewTokenBridgeCreatorTxRequest,
+    ),
+  });
+
+  // get the transaction receipt after waiting for the transaction to complete
+  const approvalForNewTokenBridgeCreatorTxReceipt =
+    await nitroTestnodeL2Client.waitForTransactionReceipt({
+      hash: approvalForNewTokenBridgeCreatorTxHash,
+    });
+  expect(approvalForNewTokenBridgeCreatorTxReceipt.status).toEqual('success');
+
   // -----------------------------
   // 3. create the token bridge
   const txRequest = await createTokenBridgePrepareTransactionRequest({
@@ -217,6 +252,14 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
     parentChainPublicClient: nitroTestnodeL2Client,
     childChainPublicClient: nitroTestnodeL3Client,
     account: l3RollupOwner.address,
+    gasOverrides: {
+      gasLimit: {
+        minimum: 6_000_000n,
+      },
+      retryableTicketFees: {
+        percentIncrease: 100n,
+      },
+    },
   });
 
   // update the transaction request to use the fresh token bridge creator
