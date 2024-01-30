@@ -2,10 +2,10 @@ import { PublicClient, Address } from 'viem';
 import { exec } from 'node:child_process';
 import { promisify } from 'util';
 
-import { getTestPrivateKeyAccount } from './testHelpers';
+import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 
 const execPromise = promisify(exec);
-const deployer = getTestPrivateKeyAccount();
+const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 
 export async function deployTokenBridgeCreator({
   publicClient,
@@ -18,7 +18,7 @@ export async function deployTokenBridgeCreator({
   const { stdout } = await execPromise(`
       docker run --rm --net=host \
         -e BASECHAIN_RPC=${publicClient.transport.url} \
-        -e BASECHAIN_DEPLOYER_KEY=${deployer.privateKey} \
+        -e BASECHAIN_DEPLOYER_KEY=${testnodeAccounts.deployer.privateKey} \
         -e BASECHAIN_WETH=${weth} \
         -e GAS_LIMIT_FOR_L2_FACTORY_DEPLOYMENT=10000000 \
         $(docker build -q token-bridge-contracts) deploy:token-bridge-creator`);

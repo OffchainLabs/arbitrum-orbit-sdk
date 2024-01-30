@@ -1,7 +1,13 @@
 import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
 import { ParentChainId } from './types/ParentChain';
-import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './chains';
+import {
+  sepolia,
+  arbitrumSepolia,
+  nitroTestnodeL1,
+  nitroTestnodeL2,
+  nitroTestnodeL3,
+} from './chains';
 
 export type CreateRollupFetchTransactionHashParams = {
   rollup: Address;
@@ -34,6 +40,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [arbitrumSepolia.id]: 654628n,
   [nitroTestnodeL1.id]: 0n,
   [nitroTestnodeL2.id]: 0n,
+  [nitroTestnodeL3.id]: 0n,
 };
 
 export async function createRollupFetchTransactionHash({

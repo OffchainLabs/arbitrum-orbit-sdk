@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
-import { getTestPrivateKeyAccount } from './testHelpers';
+import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { createTestRollup } from './utils/testHelpers';
 
@@ -13,9 +13,10 @@ const publicClient = createPublicClient({
 });
 
 // test inputs
-const deployer = getTestPrivateKeyAccount();
-const batchPoster = deployer.address;
-const validators = [deployer.address];
+const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
+const deployer = testnodeAccounts.deployer;
+const batchPoster = testnodeAccounts.deployer.address;
+const validators = [testnodeAccounts.deployer.address];
 
 describe(`createRollup`, async () => {
   // create test rollup

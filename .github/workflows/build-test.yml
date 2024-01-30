@@ -85,6 +85,10 @@ jobs:
           # RollupCreator on L1 is deployed by default
           # RollupCreator on L2 is deployed with --l3node
           l3-node: true
+          # L3 node with custom fee token when using --l3-fee-token
+          # TokenBridgeCreator on L1 is deployed with --tokenbridge
+          # TokenBridgeCreator on L2 is deployed with --l3-token-bridge
+          args: --l3-fee-token --tokenbridge --l3-token-bridge
 
       - name: Copy .env
         run: cp ./.env.example ./.env
