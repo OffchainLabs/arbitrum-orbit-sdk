@@ -82,6 +82,7 @@ jobs:
         uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
           nitro-testnode-ref: master
+          no-token-bridge: true
           # RollupCreator on L1 is deployed by default
           # RollupCreator on L2 is deployed with --l3node
           l3-node: true
