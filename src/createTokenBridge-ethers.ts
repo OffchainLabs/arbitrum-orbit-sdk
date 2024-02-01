@@ -343,7 +343,9 @@ export const getEstimateForSettingGateway = async (
     };
 
     if (gasOverrides.retryableTicketGasLimit.minimum) {
-      gasOverridesForEstimation.gasLimit.min = BigNumber.from(gasOverrides.retryableTicketGasLimit.minimum);
+      gasOverridesForEstimation.gasLimit.min = BigNumber.from(
+        gasOverrides.retryableTicketGasLimit.minimum,
+      );
     }
 
     if (gasOverrides.retryableTicketGasLimit.percentIncrease) {
