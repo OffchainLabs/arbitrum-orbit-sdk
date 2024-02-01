@@ -113,7 +113,11 @@ async function main() {
     await parentChainPublicClient.waitForTransactionReceipt({ hash: setWethGatewayTxHash }),
   );
 
-  console.log(`Weth gateway set in ${getBlockExplorerUrl(parentChain)}/tx/${setWethGatewayTxReceipt.transactionHash}`);
+  console.log(
+    `Weth gateway set in ${getBlockExplorerUrl(parentChain)}/tx/${
+      setWethGatewayTxReceipt.transactionHash
+    }`,
+  );
 
   // Wait for retryables to execute
   await setWethGatewayTxReceipt.waitForRetryables({ orbitPublicClient: childChainPublicClient });
