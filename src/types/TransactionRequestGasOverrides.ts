@@ -5,5 +5,6 @@ type GasOverrideOptions = {
 
 export type TransactionRequestGasOverrides = {
   gasLimit?: GasOverrideOptions;
+  retryableTicketGasLimit?: GasOverrideOptions;
   retryableTicketFees?: GasOverrideOptions;
 };

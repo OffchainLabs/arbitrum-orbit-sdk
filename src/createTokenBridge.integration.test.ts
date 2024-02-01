@@ -161,8 +161,8 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
     childChainPublicClient: nitroTestnodeL2Client,
     account: l2RollupOwner.address,
     gasOverrides: {
-      gasLimit: {
-        percentIncrease: 200n,
+      retryableTicketGasLimit: {
+        minimum: 100_000n,
       },
     },
   });

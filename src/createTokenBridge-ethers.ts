@@ -336,19 +336,19 @@ export const getEstimateForSettingGateway = async (
 
   // applying gas overrides
   const gasOverridesForEstimation: GasOverrides = {};
-  if (gasOverrides && gasOverrides.gasLimit) {
+  if (gasOverrides && gasOverrides.retryableTicketGasLimit) {
     gasOverridesForEstimation.gasLimit = {
       min: undefined,
       percentIncrease: undefined,
     };
 
-    if (gasOverrides.gasLimit.minimum) {
-      gasOverridesForEstimation.gasLimit.min = BigNumber.from(gasOverrides.gasLimit.minimum);
+    if (gasOverrides.retryableTicketGasLimit.minimum) {
+      gasOverridesForEstimation.gasLimit.min = BigNumber.from(gasOverrides.retryableTicketGasLimit.minimum);
     }
 
-    if (gasOverrides.gasLimit.percentIncrease) {
+    if (gasOverrides.retryableTicketGasLimit.percentIncrease) {
       gasOverridesForEstimation.gasLimit.percentIncrease = BigNumber.from(
-        gasOverrides.gasLimit.percentIncrease,
+        gasOverrides.retryableTicketGasLimit.percentIncrease,
       );
     }
   }
