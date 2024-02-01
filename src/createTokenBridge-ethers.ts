@@ -38,6 +38,8 @@ const IInbox__factory = NamedFactoryInstance(IInbox);
 import IERC20Bridge from '@arbitrum/nitro-contracts/build/contracts/src/bridge/IERC20Bridge.sol/IERC20Bridge.json';
 const IERC20Bridge__factory = NamedFactoryInstance(IERC20Bridge);
 import IERC20 from '@arbitrum/nitro-contracts/build/contracts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json';
+import { TransactionRequestGasOverrides } from './types/TransactionRequestGasOverrides';
+import { GasOverrides } from '@arbitrum/sdk/dist/lib/message/L1ToL2MessageGasEstimator';
 
 const IERC20__factory = NamedFactoryInstance(IERC20);
 
@@ -318,6 +320,59 @@ export const getEstimateForDeployingFactory = async (
   );
 
   return deployFactoryGasParams;
+};
+
+export const getEstimateForSettingGateway = async (
+  l1ChainOwnerAddress: Address,
+  l1UpgradeExecutorAddress: Address,
+  l1GatewayRouterAddress: Address,
+  setGatewaysCalldata: `0x${string}`,
+  l1Provider: ethers.providers.Provider,
+  l2Provider: ethers.providers.Provider,
+  gasOverrides?: TransactionRequestGasOverrides,
+) => {
+  //// run retryable estimate for setting a token gateway in the router
+  const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
+
+  // applying gas overrides
+  const gasOverridesForEstimation: GasOverrides = {};
+  if (gasOverrides && gasOverrides.gasLimit) {
+    gasOverridesForEstimation.gasLimit = {
+      min: undefined,
+      percentIncrease: undefined,
+    };
+
+    if (gasOverrides.gasLimit.minimum) {
+      gasOverridesForEstimation.gasLimit.min = BigNumber.from(gasOverrides.gasLimit.minimum);
+    }
+
+    if (gasOverrides.gasLimit.percentIncrease) {
+      gasOverridesForEstimation.gasLimit.percentIncrease = BigNumber.from(
+        gasOverrides.gasLimit.percentIncrease,
+      );
+    }
+  }
+
+  const setGatewaysGasParams = await l1ToL2MsgGasEstimate.estimateAll(
+    {
+      from: l1UpgradeExecutorAddress,
+      to: l1GatewayRouterAddress,
+      l2CallValue: BigNumber.from(0),
+      excessFeeRefundAddress: l1ChainOwnerAddress,
+      callValueRefundAddress: l1ChainOwnerAddress,
+      data: setGatewaysCalldata,
+    },
+    await getBaseFee(l1Provider),
+    l1Provider,
+    gasOverridesForEstimation,
+  );
+
+  return {
+    gasLimit: setGatewaysGasParams.gasLimit.toBigInt(),
+    maxFeePerGas: setGatewaysGasParams.maxFeePerGas.toBigInt(),
+    maxSubmissionCost: setGatewaysGasParams.maxSubmissionCost.toBigInt(),
+    deposit: setGatewaysGasParams.deposit.toBigInt(),
+  };
 };
 
 export const getSigner = (provider: JsonRpcProvider, key?: string) => {

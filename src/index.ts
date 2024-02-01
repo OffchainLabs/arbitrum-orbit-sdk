@@ -26,6 +26,7 @@ import {
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
 } from './createRollupFetchTransactionHash';
+import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -54,6 +55,8 @@ import {
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
+import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
+import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
@@ -75,6 +78,7 @@ export {
   CreateRollupTransactionReceipt,
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
+  createRollupFetchCoreContracts,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
@@ -103,4 +107,6 @@ export {
   createTokenBridgePrepareTransactionRequest,
   createTokenBridgePrepareTransactionReceipt,
   createTokenBridgeFetchTokenBridgeContracts,
+  createTokenBridgePrepareSetWethGatewayTransactionRequest,
+  createTokenBridgePrepareSetWethGatewayTransactionReceipt,
 };

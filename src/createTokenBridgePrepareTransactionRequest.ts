@@ -6,16 +6,7 @@ import { validParentChainId } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
-
-type GasOverrideOptions = {
-  minimum?: bigint;
-  percentIncrease?: bigint;
-};
-
-export type TransactionRequestGasOverrides = {
-  gasLimit?: GasOverrideOptions;
-  retryableTicketFees?: GasOverrideOptions;
-};
+import { TransactionRequestGasOverrides } from './types/TransactionRequestGasOverrides';
 
 export async function createTokenBridgePrepareTransactionRequest({
   params,

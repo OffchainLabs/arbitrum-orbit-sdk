@@ -4,6 +4,7 @@ import {
   encodeFunctionData,
   http,
   maxInt256,
+  parseAbi,
   parseEther,
   zeroAddress,
 } from 'viem';
@@ -17,6 +18,8 @@ import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 import { createTokenBridgeEnoughCustomFeeTokenAllowance } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { erc20 } from './contracts';
+import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
+import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 
 type TestnodeInformation = {
   rollup: `0x${string}`;
@@ -149,6 +152,46 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   expect(tokenBridgeContracts.childChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.childChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.childChainContracts.multicall).not.toEqual(zeroAddress);
+
+  // set weth gateway
+  // -----------------------------
+  const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
+    rollup: testnodeInformation.rollup,
+    parentChainPublicClient: nitroTestnodeL1Client,
+    childChainPublicClient: nitroTestnodeL2Client,
+    account: l2RollupOwner.address,
+    gasOverrides: {
+      gasLimit: {
+        percentIncrease: 200n,
+      },
+    },
+  });
+
+  // sign and send the transaction
+  const setWethGatewayTxHash = await nitroTestnodeL1Client.sendRawTransaction({
+    serializedTransaction: await l2RollupOwner.signTransaction(setWethGatewayTxRequest),
+  });
+
+  // get the transaction receipt after waiting for the transaction to complete
+  const setWethGatewayTxReceipt = createTokenBridgePrepareSetWethGatewayTransactionReceipt(
+    await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: setWethGatewayTxHash }),
+  );
+
+  function waitForRetryablesOfSetWethGateway() {
+    return setWethGatewayTxReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client });
+  }
+
+  expect(setWethGatewayTxReceipt.status).toEqual('success');
+  await expect(waitForRetryablesOfSetWethGateway()).resolves.toHaveLength(1);
+
+  // verify weth gateway
+  const registeredWethGateway = await nitroTestnodeL1Client.readContract({
+    address: tokenBridgeContracts.parentChainContracts.router,
+    abi: parseAbi(['function l1TokenToGateway(address) view returns (address)']),
+    functionName: 'l1TokenToGateway',
+    args: [tokenBridgeContracts.parentChainContracts.weth],
+  });
+  expect(registeredWethGateway).toEqual(tokenBridgeContracts.parentChainContracts.wethGateway);
 });
 
 it(`successfully deploys token bridge contracts with a custom fee token through token bridge creator`, async () => {
@@ -305,4 +348,9 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   expect(tokenBridgeContracts.childChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.childChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.childChainContracts.multicall).not.toEqual(zeroAddress);
+
+  // verify weth gateway and token contracts
+  expect(tokenBridgeContracts.parentChainContracts.wethGateway).toEqual(zeroAddress);
+  expect(tokenBridgeContracts.childChainContracts.wethGateway).toEqual(zeroAddress);
+  expect(tokenBridgeContracts.childChainContracts.weth).toEqual(zeroAddress);
 });
