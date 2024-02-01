@@ -2,6 +2,8 @@ import { Chain, createPublicClient, http, defineChain } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import {
+  createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+  createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareTransactionReceipt,
   createTokenBridgePrepareTransactionRequest,
 } from '@arbitrum/orbit-sdk';
@@ -84,6 +86,37 @@ async function main() {
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
+
+  // waiting for retryables to execute, to prevent race conditions
+  await txReceipt.waitForRetryables({ orbitPublicClient: childChainPublicClient });
+
+  // set weth gateway
+  const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
+    rollup: process.env.ROLLUP_ADDRESS as `0x${string}`,
+    parentChainPublicClient,
+    childChainPublicClient,
+    account: rollupOwner.address,
+    gasOverrides: {
+      retryableTicketGasLimit: {
+        percentIncrease: 200n,
+      },
+    },
+  });
+
+  // sign and send the transaction
+  const setWethGatewayTxHash = await parentChainPublicClient.sendRawTransaction({
+    serializedTransaction: await rollupOwner.signTransaction(setWethGatewayTxRequest),
+  });
+
+  // get the transaction receipt after waiting for the transaction to complete
+  const setWethGatewayTxReceipt = createTokenBridgePrepareSetWethGatewayTransactionReceipt(
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: setWethGatewayTxHash }),
+  );
+
+  console.log(`Weth gateway set in ${getBlockExplorerUrl(parentChain)}/tx/${setWethGatewayTxReceipt.transactionHash}`);
+
+  // Wait for retryables to execute
+  await setWethGatewayTxReceipt.waitForRetryables({ orbitPublicClient: childChainPublicClient });
 }
 
 main();
