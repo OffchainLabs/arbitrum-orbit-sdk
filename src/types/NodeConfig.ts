@@ -48,15 +48,7 @@ export type NodeConfig = {
     api: string[];
   };
   'node': {
-    'forwarding-target': string;
-    'sequencer': {
-      'max-tx-data-size': number;
-      'enable': boolean;
-      'dangerous': {
-        'no-coordinator': boolean;
-      };
-      'max-block-speed': string;
-    };
+    'sequencer': boolean;
     'delayed-sequencer': {
       enable: boolean;
     };
@@ -74,9 +66,6 @@ export type NodeConfig = {
         'private-key': string;
       };
     };
-    'caching': {
-      archive: boolean;
-    };
     'data-availability'?: {
       'enable': boolean;
       'sequencer-inbox-address': string;
@@ -93,6 +82,20 @@ export type NodeConfig = {
          */
         'backends': string;
       };
+    };
+    'dangerous': {
+      'no-sequencer-coordinator': boolean;
+    };
+  };
+  'execution': {
+    'forwarding-target': string;
+    'sequencer': {
+      'max-tx-data-size': number;
+      'enable': boolean;
+      'max-block-speed': string;
+    };
+    'caching': {
+      archive: boolean;
     };
   };
 };

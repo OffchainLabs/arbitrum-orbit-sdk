@@ -91,15 +91,7 @@ export function prepareNodeConfig({
       api: ['eth', 'net', 'web3', 'arb', 'debug'],
     },
     'node': {
-      'forwarding-target': '',
-      'sequencer': {
-        'max-tx-data-size': 85000,
-        'enable': true,
-        'dangerous': {
-          'no-coordinator': true,
-        },
-        'max-block-speed': '250ms',
-      },
+      'sequencer': true,
       'delayed-sequencer': {
         enable: true,
       },
@@ -116,6 +108,17 @@ export function prepareNodeConfig({
         'parent-chain-wallet': {
           'private-key': sanitizePrivateKey(validatorPrivateKey),
         },
+      },
+      'dangerous': {
+        'no-sequencer-coordinator': true,
+      },
+    },
+    'execution': {
+      'forwarding-target': '',
+      'sequencer': {
+        'enable': true,
+        'max-tx-data-size': 85000,
+        'max-block-speed': '250ms',
       },
       'caching': {
         archive: true,
