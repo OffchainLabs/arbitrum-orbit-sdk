@@ -93,7 +93,7 @@ export function prepareNodeConfig({
     'node': {
       'sequencer': true,
       'delayed-sequencer': {
-        enable: true,
+        'enable': true,
         'use-merge-finality': false,
       },
       'batch-poster': {

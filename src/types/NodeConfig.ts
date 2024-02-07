@@ -50,7 +50,7 @@ export type NodeConfig = {
   'node': {
     'sequencer': boolean;
     'delayed-sequencer': {
-      enable: boolean;
+      'enable': boolean;
       'use-merge-finality': boolean;
     };
     'batch-poster': {
