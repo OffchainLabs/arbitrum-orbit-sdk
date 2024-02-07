@@ -51,6 +51,7 @@ export type NodeConfig = {
     'sequencer': boolean;
     'delayed-sequencer': {
       enable: boolean;
+      'use-merge-finality': boolean;
     };
     'batch-poster': {
       'max-size': number;
