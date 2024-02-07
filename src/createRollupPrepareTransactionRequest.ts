@@ -9,6 +9,7 @@ import { validParentChainId } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
+import { fetchDecimals } from './utils/erc20';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -43,10 +44,20 @@ export async function createRollupPrepareTransactionRequest({
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
-  if (isCustomFeeTokenAddress(params.nativeToken) && !isAnyTrustChainConfig(chainConfig)) {
-    throw new Error(
-      `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
-    );
+  if (isCustomFeeTokenAddress(params.nativeToken)) {
+    // custom fee token is only allowed for anytrust chains
+    if (!isAnyTrustChainConfig(chainConfig)) {
+      throw new Error(
+        `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
+      );
+    }
+
+    // custom fee token is only allowed to have 18 decimals
+    if ((await fetchDecimals({ address: params.nativeToken, publicClient })) !== 18) {
+      throw new Error(
+        `"params.nativeToken" can only be configured with a token that uses 18 decimals.`,
+      );
+    }
   }
 
   const maxDataSize = createRollupGetMaxDataSize(chainId);

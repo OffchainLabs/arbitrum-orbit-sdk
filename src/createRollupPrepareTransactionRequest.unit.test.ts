@@ -1,5 +1,6 @@
 import { it, expect } from 'vitest';
-import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
+import { createPublicClient, http, zeroAddress } from 'viem';
+import { arbitrumSepolia } from 'viem/chains';
 
 import { nitroTestnodeL2 } from './chains';
 import { generateChainId } from './utils';
@@ -136,5 +137,43 @@ it(`fails to prepare transaction request if "params.nativeToken" is custom and c
       }),
   ).rejects.toThrowError(
     `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
+  );
+});
+
+it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 decimals`, async () => {
+  const arbitrumSepoliaPublicClient = createPublicClient({
+    chain: arbitrumSepolia,
+    transport: http(),
+  });
+
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
+  });
+
+  // prepare the transaction for deploying the core contracts
+  await expect(
+    async () =>
+      await createRollupPrepareTransactionRequest({
+        params: {
+          config: createRollupPrepareConfig({
+            chainId: BigInt(chainId),
+            owner: deployer.address,
+            chainConfig,
+          }),
+          batchPoster: deployer.address,
+          validators: [deployer.address],
+          // USDC on Arbitrum Sepolia has 6 decimals
+          nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
+        },
+        account: deployer.address,
+        publicClient: arbitrumSepoliaPublicClient,
+      }),
+  ).rejects.toThrowError(
+    `"params.nativeToken" can only be configured with a token that uses 18 decimals.`,
   );
 });
