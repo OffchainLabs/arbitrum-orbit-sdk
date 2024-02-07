@@ -40,8 +40,8 @@ if (typeof process.env.ORBIT_CHAIN_RPC === 'undefined') {
 const parentChain = arbitrumSepolia;
 const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
 
-// define chain config for the child chain
-const childChain = defineChain({
+// define chain config for the orbit chain
+const orbitChain = defineChain({
   id: Number(process.env.ORBIT_CHAIN_ID),
   network: 'Orbit chain',
   name: 'orbit',
@@ -56,7 +56,7 @@ const childChain = defineChain({
   },
   testnet: true,
 });
-const childChainPublicClient = createPublicClient({ chain: childChain, transport: http() });
+const orbitChainPublicClient = createPublicClient({ chain: orbitChain, transport: http() });
 
 // load the rollup owner account
 const rollupOwner = privateKeyToAccount(sanitizePrivateKey(process.env.ROLLUP_OWNER_PRIVATE_KEY));
@@ -69,7 +69,7 @@ async function main() {
       rollupOwner: rollupOwner.address,
     },
     parentChainPublicClient,
-    childChainPublicClient,
+    orbitChainPublicClient,
     account: rollupOwner.address,
   });
 

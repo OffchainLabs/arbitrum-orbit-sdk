@@ -9,7 +9,7 @@ type TokenBridgeParentChainContracts = {
   multicall: Address;
 };
 
-type TokenBridgeChildChainContracts = {
+type TokenBridgeOrbitChainContracts = {
   router: Address;
   standardGateway: Address;
   customGateway: Address;
@@ -23,5 +23,5 @@ type TokenBridgeChildChainContracts = {
 
 export type TokenBridgeContracts = {
   parentChainContracts: TokenBridgeParentChainContracts;
-  childChainContracts: TokenBridgeChildChainContracts;
+  orbitChainContracts: TokenBridgeOrbitChainContracts;
 };

@@ -3,7 +3,7 @@ import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
 config();
 
-// Source: https://github.com/OffchainLabs/nitro-testnode/blob/master/scripts/accounts.ts#L28
+// Source: https://github.com/OffchainLabs/nitro-testnode/blob/release/scripts/accounts.ts#L28
 type NitroTestNodePrivateKeyAccounts = {
   // funnel
   deployer: PrivateKeyAccount & { privateKey: `0x${string}` };

@@ -102,7 +102,7 @@ export function createTokenBridgePrepareTransactionReceipt(txReceipt: Transactio
       const decodedEventLog = decodeOrbitTokenBridgeCreatedEventLog(eventLog);
       const { inbox } = decodedEventLog.args;
 
-      return await createTokenBridgeFetchTokenBridgeContracts({
+      return createTokenBridgeFetchTokenBridgeContracts({
         inbox,
         parentChainPublicClient,
       });

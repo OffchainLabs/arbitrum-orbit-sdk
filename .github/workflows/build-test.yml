@@ -81,7 +81,7 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
-          nitro-testnode-ref: master
+          nitro-testnode-ref: release
           # don't deploy the regular token bridge using arbitrum-sdk, as it will be deployed through the TokenBridgeCreator
           no-token-bridge: true
           # RollupCreator on L1 is deployed by default
