@@ -22,6 +22,10 @@ import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
 } from './createRollupPrepareTransactionReceipt';
+import {
+  createRollupFetchTransactionHash,
+  CreateRollupFetchTransactionHashParams,
+} from './createRollupFetchTransactionHash';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -39,6 +43,7 @@ import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
+import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
 export {
@@ -57,6 +62,8 @@ export {
   CreateRollupTransaction,
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
+  createRollupFetchTransactionHash,
+  CreateRollupFetchTransactionHashParams,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
@@ -75,5 +82,6 @@ export {
   NodeConfig,
   NodeConfigChainInfoJson,
   prepareNodeConfig,
+  prepareKeyset,
   utils,
 };
