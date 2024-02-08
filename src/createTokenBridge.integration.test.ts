@@ -17,9 +17,9 @@ import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgeP
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 import { createTokenBridgeEnoughCustomFeeTokenAllowance } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
-import { erc20 } from './contracts';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
+import { erc20 } from './contracts';
 
 type TestnodeInformation = {
   rollup: `0x${string}`;
@@ -156,7 +156,6 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   expect(tokenBridgeContracts.orbitChainContracts.multicall).not.toEqual(zeroAddress);
 
   // set weth gateway
-  // -----------------------------
   const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
     rollup: testnodeInformation.rollup,
     parentChainPublicClient: nitroTestnodeL1Client,
@@ -179,12 +178,12 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
     await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: setWethGatewayTxHash }),
   );
 
-  function waitForRetryablesOfSetWethGateway() {
-    return setWethGatewayTxReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client });
-  }
-
-  expect(setWethGatewayTxReceipt.status).toEqual('success');
-  await expect(waitForRetryablesOfSetWethGateway()).resolves.toHaveLength(1);
+  // checking retryables execution
+  const orbitChainSetGatewayRetryableReceipt = await setWethGatewayTxReceipt.waitForRetryables({
+    orbitPublicClient: nitroTestnodeL2Client,
+  });
+  expect(orbitChainSetGatewayRetryableReceipt).toHaveLength(1);
+  expect(orbitChainSetGatewayRetryableReceipt[0].status).toEqual('success');
 
   // verify weth gateway
   const registeredWethGateway = await nitroTestnodeL1Client.readContract({

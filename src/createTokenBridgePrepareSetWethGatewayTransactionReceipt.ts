@@ -30,9 +30,9 @@ export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
       orbitPublicClient,
     }: WaitForRetryablesParameters): Promise<WaitForRetryablesResult> {
       const ethersTxReceipt = viemTransactionReceiptToEthersTransactionReceipt(txReceipt);
-      const l1TxReceipt = new L1TransactionReceipt(ethersTxReceipt);
+      const parentChainTxReceipt = new L1TransactionReceipt(ethersTxReceipt);
       const orbitProvider = publicClientToProvider(orbitPublicClient);
-      const messages = await l1TxReceipt.getL1ToL2Messages(orbitProvider);
+      const messages = await parentChainTxReceipt.getL1ToL2Messages(orbitProvider);
       const messagesResults = await Promise.all(messages.map((message) => message.waitForStatus()));
 
       if (messagesResults.length !== 1) {
