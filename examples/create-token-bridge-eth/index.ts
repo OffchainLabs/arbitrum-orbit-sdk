@@ -130,7 +130,9 @@ async function main() {
   );
 
   // Wait for retryables to execute
-  const orbitChainSetWethGatewayRetryableReceipt = await setWethGatewayTxReceipt.waitForRetryables({ orbitPublicClient: orbitChainPublicClient });
+  const orbitChainSetWethGatewayRetryableReceipt = await setWethGatewayTxReceipt.waitForRetryables({
+    orbitPublicClient: orbitChainPublicClient,
+  });
   console.log(`Retryables executed`);
   console.log(
     `Transaction hash for retryable is ${orbitChainSetWethGatewayRetryableReceipt.transactionHash}`,

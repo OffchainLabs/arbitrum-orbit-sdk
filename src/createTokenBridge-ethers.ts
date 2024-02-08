@@ -24,7 +24,6 @@ const NamedFactoryInstance = (contractJson: {
 // import from token-bridge-contracts directly to make sure the bytecode is the same
 const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBridgeFactory);
 
-
 export type CreateTokenBridgeGetInputsResult = {
   inbox: Address;
   maxGasForContracts: bigint;
@@ -149,9 +148,7 @@ export const getEstimateForSettingGateway = async (
     };
 
     if (retryableGasOverrides.gasLimit.base) {
-      gasOverridesForEstimation.gasLimit.min = BigNumber.from(
-        retryableGasOverrides.gasLimit.base,
-      );
+      gasOverridesForEstimation.gasLimit.min = BigNumber.from(retryableGasOverrides.gasLimit.base);
     }
 
     if (retryableGasOverrides.gasLimit.percentIncrease) {
