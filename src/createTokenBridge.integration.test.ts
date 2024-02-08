@@ -56,7 +56,6 @@ function getInformationFromTestnode(): TestnodeInformation {
 }
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
-const deployer = testnodeAccounts.deployer;
 const l2RollupOwner = testnodeAccounts.l2RollupOwner;
 const l3RollupOwner = testnodeAccounts.l3RollupOwner;
 const l3TokenBridgeDeployer = testnodeAccounts.l3TokenBridgeDeployer;
