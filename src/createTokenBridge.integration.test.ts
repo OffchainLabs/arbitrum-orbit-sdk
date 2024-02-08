@@ -118,7 +118,9 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   expect(txReceipt.status).toEqual('success');
 
   // checking retryables execution
-  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client });
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({
+    orbitPublicClient: nitroTestnodeL2Client,
+  });
   expect(orbitChainRetryableReceipts).toHaveLength(2);
   expect(orbitChainRetryableReceipts[0].status).toEqual('success');
   expect(orbitChainRetryableReceipts[1].status).toEqual('success');
@@ -279,7 +281,9 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   expect(txReceipt.status).toEqual('success');
 
   // checking retryables execution
-  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL3Client });
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({
+    orbitPublicClient: nitroTestnodeL3Client,
+  });
   expect(orbitChainRetryableReceipts).toHaveLength(2);
   expect(orbitChainRetryableReceipts[0].status).toEqual('success');
   expect(orbitChainRetryableReceipts[1].status).toEqual('success');
