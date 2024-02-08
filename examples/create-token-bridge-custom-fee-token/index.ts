@@ -113,6 +113,7 @@ async function main() {
   });
 
   // sign and send the transaction
+  console.log(`Deploying the TokenBridge...`);
   const txHash = await parentChainPublicClient.sendRawTransaction({
     serializedTransaction: await rollupOwner.signTransaction(txRequest),
   });
@@ -121,8 +122,20 @@ async function main() {
   const txReceipt = createTokenBridgePrepareTransactionReceipt(
     await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
-
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
+
+  // wait for retryables to execute
+  console.log(`Waiting for retryable tickets to execute on the Orbit chain...`);
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({ orbitPublicClient: orbitChainPublicClient });
+  console.log(`Retryables executed`);
+  console.log(`Transaction hash for first retryable is ${orbitChainRetryableReceipts[0].transactionHash}`);
+  console.log(`Transaction hash for second retryable is ${orbitChainRetryableReceipts[1].transactionHash}`);
+
+  // fetching the TokenBridge contracts
+  const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
+    parentChainPublicClient,
+  });
+  console.log(`TokenBridge contracts:`, tokenBridgeContracts);
 }
 
 main();

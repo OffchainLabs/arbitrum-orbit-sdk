@@ -115,14 +115,13 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   const txReceipt = createTokenBridgePrepareTransactionReceipt(
     await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: txHash }),
   );
-
-  function waitForRetryables() {
-    return txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client });
-  }
-
   expect(txReceipt.status).toEqual('success');
-  // assert promise is resolved with 2 retryables
-  await expect(waitForRetryables()).resolves.toHaveLength(2);
+
+  // checking retryables execution
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client });
+  expect(orbitChainRetryableReceipts).toHaveLength(2);
+  expect(orbitChainRetryableReceipts[0].status).toEqual('success');
+  expect(orbitChainRetryableReceipts[1].status).toEqual('success');
 
   // get contracts
   const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
@@ -277,14 +276,13 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   const txReceipt = createTokenBridgePrepareTransactionReceipt(
     await nitroTestnodeL2Client.waitForTransactionReceipt({ hash: txHash }),
   );
-
-  function waitForRetryables() {
-    return txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL3Client });
-  }
-
   expect(txReceipt.status).toEqual('success');
-  // assert promise is resolved with 2 retryables
-  await expect(waitForRetryables()).resolves.toHaveLength(2);
+
+  // checking retryables execution
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL3Client });
+  expect(orbitChainRetryableReceipts).toHaveLength(2);
+  expect(orbitChainRetryableReceipts[0].status).toEqual('success');
+  expect(orbitChainRetryableReceipts[1].status).toEqual('success');
 
   // get contracts
   const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
