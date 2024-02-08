@@ -134,7 +134,7 @@ export function prepareNodeConfig({
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: 'http://localhost:9876',
+        urls: 'http://localhost:9877',
       },
       'rpc-aggregator': {
         'enable': true,
