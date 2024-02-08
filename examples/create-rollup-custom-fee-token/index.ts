@@ -10,6 +10,8 @@ import {
   createRollupPrepareTransactionReceipt,
 } from '@arbitrum/orbit-sdk';
 import { generateChainId } from '@arbitrum/orbit-sdk/utils';
+import { config } from 'dotenv';
+config();
 
 function sanitizePrivateKey(privateKey: string): `0x${string}` {
   if (!privateKey.startsWith('0x')) {
@@ -20,7 +22,7 @@ function sanitizePrivateKey(privateKey: string): `0x${string}` {
 }
 
 function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
-  if (typeof privateKey === 'undefined') {
+  if (typeof privateKey === 'undefined' || privateKey === '') {
     return generatePrivateKey();
   }
 
@@ -33,6 +35,10 @@ function getBlockExplorerUrl(chain: Chain) {
 
 if (typeof process.env.DEPLOYER_PRIVATE_KEY === 'undefined') {
   throw new Error(`Please provide the "DEPLOYER_PRIVATE_KEY" environment variable`);
+}
+
+if (typeof process.env.CUSTOM_FEE_TOKEN_ADDRESS === 'undefined') {
+  throw new Error(`Please provide the "CUSTOM_FEE_TOKEN_ADDRESS" environment variable`);
 }
 
 // load or generate a random batch poster account
@@ -57,7 +63,7 @@ async function main() {
   // generate a random chain id
   const chainId = generateChainId();
   // set the custom fee token
-  const nativeToken: Address = '0xf861378b543525ae0c47d33c90c954dc774ac1f9';
+  const nativeToken: Address = process.env.CUSTOM_FEE_TOKEN_ADDRESS as `0x${string}`;
 
   // create the chain config
   const chainConfig = prepareChainConfig({
