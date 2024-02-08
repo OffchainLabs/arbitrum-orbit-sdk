@@ -59,7 +59,6 @@ function getInformationFromTestnode(): TestnodeInformation {
 }
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
-const deployer = testnodeAccounts.deployer;
 const l2RollupOwner = testnodeAccounts.l2RollupOwner;
 const l3RollupOwner = testnodeAccounts.l3RollupOwner;
 const l3TokenBridgeDeployer = testnodeAccounts.l3TokenBridgeDeployer;
@@ -93,13 +92,15 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
       rollupOwner: l2RollupOwner.address,
     },
     parentChainPublicClient: nitroTestnodeL1Client,
-    childChainPublicClient: nitroTestnodeL2Client,
-    account: deployer.address,
+    orbitChainPublicClient: nitroTestnodeL2Client,
+    account: l2RollupOwner.address,
     gasOverrides: {
       gasLimit: {
-        minimum: 6_000_000n,
+        base: 6_000_000n,
       },
-      retryableTicketFees: {
+    },
+    retryableGasOverrides: {
+      deposit: {
         percentIncrease: 100n,
       },
     },
@@ -110,21 +111,22 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
 
   // sign and send the transaction
   const txHash = await nitroTestnodeL1Client.sendRawTransaction({
-    serializedTransaction: await deployer.signTransaction(txRequestToFreshTokenBridgeCreator),
+    serializedTransaction: await l2RollupOwner.signTransaction(txRequestToFreshTokenBridgeCreator),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createTokenBridgePrepareTransactionReceipt(
     await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: txHash }),
   );
-
-  function waitForRetryables() {
-    return txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL2Client });
-  }
-
   expect(txReceipt.status).toEqual('success');
-  // assert promise is resolved with 2 retryables
-  await expect(waitForRetryables()).resolves.toHaveLength(2);
+
+  // checking retryables execution
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({
+    orbitPublicClient: nitroTestnodeL2Client,
+  });
+  expect(orbitChainRetryableReceipts).toHaveLength(2);
+  expect(orbitChainRetryableReceipts[0].status).toEqual('success');
+  expect(orbitChainRetryableReceipts[1].status).toEqual('success');
 
   // get contracts
   const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
@@ -141,17 +143,17 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   expect(tokenBridgeContracts.parentChainContracts.weth).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.parentChainContracts.multicall).not.toEqual(zeroAddress);
 
-  // child chain contracts
-  expect(Object.keys(tokenBridgeContracts.childChainContracts)).toHaveLength(9);
-  expect(tokenBridgeContracts.childChainContracts.router).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.standardGateway).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.customGateway).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.wethGateway).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.weth).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.proxyAdmin).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.multicall).not.toEqual(zeroAddress);
+  // orbit chain contracts
+  expect(Object.keys(tokenBridgeContracts.orbitChainContracts)).toHaveLength(9);
+  expect(tokenBridgeContracts.orbitChainContracts.router).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.standardGateway).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.customGateway).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.wethGateway).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.weth).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.proxyAdmin).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.multicall).not.toEqual(zeroAddress);
 
   // set weth gateway
   // -----------------------------
@@ -235,11 +237,11 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   //       Thus, we need to give allowance to both TokenBridgeCreators
   const allowanceParams = {
     nativeToken: testnodeInformation.l3NativeToken,
-    account: l3RollupOwner.address,
+    owner: l3RollupOwner.address,
     publicClient: nitroTestnodeL2Client,
   };
 
-  // 2.a. Approval for canonical TokenBridgeCreator (only if needed)
+  // 2.a. Approval for canonical TokenBridgeCreator (gas estimation is still done through it, so we need allowance)
   if (!(await createTokenBridgeEnoughCustomFeeTokenAllowance(allowanceParams))) {
     const approvalTxRequest =
       await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
@@ -293,13 +295,15 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
       rollupOwner: l3RollupOwner.address,
     },
     parentChainPublicClient: nitroTestnodeL2Client,
-    childChainPublicClient: nitroTestnodeL3Client,
+    orbitChainPublicClient: nitroTestnodeL3Client,
     account: l3RollupOwner.address,
     gasOverrides: {
       gasLimit: {
-        minimum: 6_000_000n,
+        base: 6_000_000n,
       },
-      retryableTicketFees: {
+    },
+    retryableGasOverrides: {
+      deposit: {
         percentIncrease: 100n,
       },
     },
@@ -317,14 +321,15 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   const txReceipt = createTokenBridgePrepareTransactionReceipt(
     await nitroTestnodeL2Client.waitForTransactionReceipt({ hash: txHash }),
   );
-
-  function waitForRetryables() {
-    return txReceipt.waitForRetryables({ orbitPublicClient: nitroTestnodeL3Client });
-  }
-
   expect(txReceipt.status).toEqual('success');
-  // assert promise is resolved with 2 retryables
-  await expect(waitForRetryables()).resolves.toHaveLength(2);
+
+  // checking retryables execution
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({
+    orbitPublicClient: nitroTestnodeL3Client,
+  });
+  expect(orbitChainRetryableReceipts).toHaveLength(2);
+  expect(orbitChainRetryableReceipts[0].status).toEqual('success');
+  expect(orbitChainRetryableReceipts[1].status).toEqual('success');
 
   // get contracts
   const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
@@ -339,18 +344,18 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   expect(tokenBridgeContracts.parentChainContracts.customGateway).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.parentChainContracts.multicall).not.toEqual(zeroAddress);
 
-  // child chain contracts
-  expect(Object.keys(tokenBridgeContracts.childChainContracts)).toHaveLength(9);
-  expect(tokenBridgeContracts.childChainContracts.router).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.standardGateway).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.customGateway).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.proxyAdmin).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.multicall).not.toEqual(zeroAddress);
+  // orbit chain contracts
+  expect(Object.keys(tokenBridgeContracts.orbitChainContracts)).toHaveLength(9);
+  expect(tokenBridgeContracts.orbitChainContracts.router).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.standardGateway).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.customGateway).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.proxyAdmin).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.multicall).not.toEqual(zeroAddress);
 
-  // verify weth gateway and token contracts
+  // wethGateway and weth should be the zeroAddress on custom-fee-token chains
   expect(tokenBridgeContracts.parentChainContracts.wethGateway).toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.wethGateway).toEqual(zeroAddress);
-  expect(tokenBridgeContracts.childChainContracts.weth).toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.wethGateway).toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.weth).toEqual(zeroAddress);
 });

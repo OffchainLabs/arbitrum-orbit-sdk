@@ -3,17 +3,17 @@ import { Address, PublicClient } from 'viem';
 import { tokenBridgeCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
-import { createTokenBridgeEstimatedFees } from './constants';
+import { createTokenBridgeDefaultRetryablesFees } from './constants';
 
 export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
   nativeToken: Address;
-  account: Address;
+  owner: Address;
   publicClient: PublicClient;
 };
 
 export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
   nativeToken,
-  account,
+  owner,
   publicClient,
 }: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams) {
   const chainId = publicClient.chain?.id;
@@ -24,10 +24,10 @@ export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
 
   const allowance = await fetchAllowance({
     address: nativeToken,
-    owner: account,
+    owner,
     spender: tokenBridgeCreator.address[chainId],
     publicClient,
   });
 
-  return allowance >= createTokenBridgeEstimatedFees;
+  return allowance >= createTokenBridgeDefaultRetryablesFees;
 }

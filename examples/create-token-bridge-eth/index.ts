@@ -42,8 +42,8 @@ if (typeof process.env.ORBIT_CHAIN_RPC === 'undefined') {
 const parentChain = arbitrumSepolia;
 const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
 
-// define chain config for the child chain
-const childChain = defineChain({
+// define chain config for the orbit chain
+const orbitChain = defineChain({
   id: Number(process.env.ORBIT_CHAIN_ID),
   network: 'Orbit chain',
   name: 'orbit',
@@ -58,7 +58,7 @@ const childChain = defineChain({
   },
   testnet: true,
 });
-const childChainPublicClient = createPublicClient({ chain: childChain, transport: http() });
+const orbitChainPublicClient = createPublicClient({ chain: orbitChain, transport: http() });
 
 // load the rollup owner account
 const rollupOwner = privateKeyToAccount(sanitizePrivateKey(process.env.ROLLUP_OWNER_PRIVATE_KEY));
@@ -71,11 +71,12 @@ async function main() {
       rollupOwner: rollupOwner.address,
     },
     parentChainPublicClient,
-    childChainPublicClient,
+    orbitChainPublicClient,
     account: rollupOwner.address,
   });
 
   // sign and send the transaction
+  console.log(`Deploying the TokenBridge...`);
   const txHash = await parentChainPublicClient.sendRawTransaction({
     serializedTransaction: await rollupOwner.signTransaction(txRequest),
   });
@@ -84,17 +85,26 @@ async function main() {
   const txReceipt = createTokenBridgePrepareTransactionReceipt(
     await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
-
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
 
-  // waiting for retryables to execute, to prevent race conditions
-  await txReceipt.waitForRetryables({ orbitPublicClient: childChainPublicClient });
+  // wait for retryables to execute
+  console.log(`Waiting for retryable tickets to execute on the Orbit chain...`);
+  const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({
+    orbitPublicClient: orbitChainPublicClient,
+  });
+  console.log(`Retryables executed`);
+  console.log(
+    `Transaction hash for first retryable is ${orbitChainRetryableReceipts[0].transactionHash}`,
+  );
+  console.log(
+    `Transaction hash for second retryable is ${orbitChainRetryableReceipts[1].transactionHash}`,
+  );
 
   // set weth gateway
   const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
     rollup: process.env.ROLLUP_ADDRESS as `0x${string}`,
     parentChainPublicClient,
-    childChainPublicClient,
+    orbitChainPublicClient,
     account: rollupOwner.address,
     gasOverrides: {
       retryableTicketGasLimit: {
@@ -120,7 +130,17 @@ async function main() {
   );
 
   // Wait for retryables to execute
-  await setWethGatewayTxReceipt.waitForRetryables({ orbitPublicClient: childChainPublicClient });
+  const orbitChainSetWethGatewayRetryableReceipt = await setWethGatewayTxReceipt.waitForRetryables({ orbitPublicClient: orbitChainPublicClient });
+  console.log(`Retryables executed`);
+  console.log(
+    `Transaction hash for retryable is ${orbitChainSetWethGatewayRetryableReceipt.transactionHash}`,
+  );
+
+  // fetching the TokenBridge contracts
+  const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
+    parentChainPublicClient,
+  });
+  console.log(`TokenBridge contracts:`, tokenBridgeContracts);
 }
 
 main();

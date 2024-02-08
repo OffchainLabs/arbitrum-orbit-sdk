@@ -1,15 +1,7 @@
 /* eslint-disable no-empty */
-import { BigNumber, ContractFactory, Signer, Wallet, ethers } from 'ethers';
+import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import {
-  L1Network,
-  L1ToL2MessageGasEstimator,
-  L1ToL2MessageStatus,
-  L1TransactionReceipt,
-  L2Network,
-  addCustomNetwork,
-} from '@arbitrum/sdk';
-import { exit } from 'process';
+import { L1Network, L1ToL2MessageGasEstimator, L2Network, addCustomNetwork } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import { Address } from 'viem';
@@ -29,19 +21,9 @@ const NamedFactoryInstance = (contractJson: {
 import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
 import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
 const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBridgeFactory);
-import L2ERC20Gateway from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/gateway/L2ERC20Gateway.sol/L2ERC20Gateway.json';
-const L2ERC20Gateway__factory = NamedFactoryInstance(L2ERC20Gateway);
-
-// import from nitro-contracts directly to make sure the bytecode is the same
-import IInbox from '@arbitrum/nitro-contracts/build/contracts/src/bridge/IInbox.sol/IInbox.json';
-const IInbox__factory = NamedFactoryInstance(IInbox);
-import IERC20Bridge from '@arbitrum/nitro-contracts/build/contracts/src/bridge/IERC20Bridge.sol/IERC20Bridge.json';
-const IERC20Bridge__factory = NamedFactoryInstance(IERC20Bridge);
-import IERC20 from '@arbitrum/nitro-contracts/build/contracts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json';
 import { TransactionRequestGasOverrides } from './types/TransactionRequestGasOverrides';
 import { GasOverrides } from '@arbitrum/sdk/dist/lib/message/L1ToL2MessageGasEstimator';
 
-const IERC20__factory = NamedFactoryInstance(IERC20);
 
 export type CreateTokenBridgeGetInputsResult = {
   inbox: Address;
@@ -123,183 +105,7 @@ export const createTokenBridgeGetInputs = async (
   };
 };
 
-/**
- * Use already deployed L1TokenBridgeCreator to create and init token bridge contracts.
- * Function first gets estimates for 2 retryable tickets - one for deploying L2 factory and
- * one for deploying L2 side of token bridge. Then it creates retryables, waits for
- * until they're executed, and finally it picks up addresses of new contracts.
- *
- * @param l1Signer
- * @param l2Provider
- * @param l1TokenBridgeCreator
- * @param rollupAddress
- * @returns
- */
-export const createTokenBridge = async (
-  l1Signer: Signer,
-  l2Provider: ethers.providers.Provider,
-  l1TokenBridgeCreator: ethers.Contract,
-  rollupAddress: string,
-  childChainId: number,
-) => {
-  const gasPrice = await l2Provider.getGasPrice();
-  //// run retryable estimate for deploying L2 factory
-  const deployFactoryGasParams = await getEstimateForDeployingFactory(
-    await l1Signer.getAddress(),
-    l1Signer.provider!,
-    l2Provider,
-  );
-  const maxGasForFactory = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
-  const maxSubmissionCostForFactory = deployFactoryGasParams.maxSubmissionCost;
-  //// run retryable estimate for deploying L2 contracts
-  //// we do this estimate using L2 factory template on L1 because on L2 factory does not yet exist
-  const l2FactoryTemplate = L2AtomicTokenBridgeFactory__factory.attach(
-    await l1TokenBridgeCreator.l2TokenBridgeFactoryTemplate(),
-  ).connect(l1Signer);
-  const l2Code = {
-    router: await l1Signer.provider?.getCode(await l1TokenBridgeCreator.l2RouterTemplate()),
-    standardGateway: await l1Signer.provider?.getCode(
-      await l1TokenBridgeCreator.l2StandardGatewayTemplate(),
-    ),
-    customGateway: await l1Signer.provider?.getCode(
-      await l1TokenBridgeCreator.l2CustomGatewayTemplate(),
-    ),
-    wethGateway: await l1Signer.provider?.getCode(
-      await l1TokenBridgeCreator.l2WethGatewayTemplate(),
-    ),
-    aeWeth: await l1Signer.provider?.getCode(await l1TokenBridgeCreator.l2WethTemplate()),
-    upgradeExecutor: await l1Signer.provider?.getCode(
-      (
-        await l1TokenBridgeCreator.l1Templates()
-      ).upgradeExecutor,
-    ),
-    multicall: await l1Signer.provider?.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
-  };
-  const gasEstimateToDeployContracts = await l2FactoryTemplate.estimateGas.deployL2Contracts(
-    l2Code,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-  );
-  const maxGasForContracts = gasEstimateToDeployContracts.mul(2);
-  const maxSubmissionCostForContracts = deployFactoryGasParams.maxSubmissionCost.mul(2);
-  let retryableFee = maxSubmissionCostForFactory
-    .add(maxSubmissionCostForContracts)
-    .add(maxGasForFactory.mul(gasPrice))
-    .add(maxGasForContracts.mul(gasPrice));
-
-  // get inbox from rollup contract
-  const inbox = await RollupAdminLogic__factory.connect(rollupAddress, l1Signer.provider!).inbox();
-  // if fee token is used approve the fee
-  const feeToken = await _getFeeToken(inbox, l1Signer.provider!);
-  if (feeToken != ethers.constants.AddressZero) {
-    await (
-      await IERC20__factory.attach(feeToken)
-        .connect(l1Signer)
-        .attach(feeToken)
-        .approve(l1TokenBridgeCreator.address, retryableFee)
-    ).wait();
-    retryableFee = BigNumber.from(0);
-  }
-  /// do it - create token bridge
-  const receipt = await (
-    await l1TokenBridgeCreator.createTokenBridge(
-      inbox,
-      await l1Signer.getAddress(),
-      maxGasForContracts,
-      gasPrice,
-      { value: retryableFee },
-    )
-  ).wait();
-  console.log('Deployment TX:', receipt.transactionHash);
-
-  /// wait for execution of both tickets
-  const l1TxReceipt = new L1TransactionReceipt(receipt);
-  const messages = await l1TxReceipt.getL1ToL2Messages(l2Provider);
-  const messageResults = await Promise.all(messages.map((message) => message.waitForStatus()));
-
-  // if both tickets are not redeemed log it and exit
-  if (
-    messageResults[0].status !== L1ToL2MessageStatus.REDEEMED ||
-    messageResults[1].status !== L1ToL2MessageStatus.REDEEMED
-  ) {
-    console.log(
-      `Retryable ticket (ID ${messages[0].retryableCreationId}) status: ${
-        L1ToL2MessageStatus[messageResults[0].status]
-      }`,
-    );
-    console.log(
-      `Retryable ticket (ID ${messages[1].retryableCreationId}) status: ${
-        L1ToL2MessageStatus[messageResults[1].status]
-      }`,
-    );
-    exit();
-  }
-
-  /// pick up L2 factory address from 1st ticket
-  const l2AtomicTokenBridgeFactory = L2AtomicTokenBridgeFactory__factory.attach(
-    messageResults[0].l2TxReceipt.contractAddress,
-  ).connect(l2Provider);
-  console.log('L2AtomicTokenBridgeFactory', l2AtomicTokenBridgeFactory.address);
-
-  /// pick up L1 contracts from events
-  const {
-    router: l1Router,
-    standardGateway: l1StandardGateway,
-    customGateway: l1CustomGateway,
-    wethGateway: l1WethGateway,
-    proxyAdmin: l1ProxyAdmin,
-  } = getParsedLogs(receipt.logs, l1TokenBridgeCreator.interface, 'OrbitTokenBridgeCreated')[0]
-    .args;
-
-  /// pick up L2 contracts
-  const l2Router = await l1TokenBridgeCreator.getCanonicalL2RouterAddress(childChainId);
-  const l2StandardGateway = L2ERC20Gateway__factory.attach(
-    await l1TokenBridgeCreator.getCanonicalL2StandardGatewayAddress(childChainId),
-  ).connect(l2Provider);
-  const beaconProxyFactory = await l2StandardGateway.beaconProxyFactory();
-  const l2CustomGateway = await l1TokenBridgeCreator.getCanonicalL2CustomGatewayAddress(
-    childChainId,
-  );
-
-  const isUsingFeeToken = feeToken != ethers.constants.AddressZero;
-  const l2WethGateway = isUsingFeeToken
-    ? ethers.constants.AddressZero
-    : await l1TokenBridgeCreator.getCanonicalL2WethGatewayAddress(childChainId);
-  const l1Weth = await l1TokenBridgeCreator.l1Weth();
-  const l2Weth = isUsingFeeToken
-    ? ethers.constants.AddressZero
-    : await l1TokenBridgeCreator.getCanonicalL2WethAddress(childChainId);
-  const l2ProxyAdmin = await l1TokenBridgeCreator.getCanonicalL2ProxyAdminAddress(childChainId);
-
-  const l1MultiCall = await l1TokenBridgeCreator.l1Multicall();
-  const l2Multicall = await l1TokenBridgeCreator.getCanonicalL2Multicall(childChainId);
-
-  return {
-    l1Router,
-    l1StandardGateway,
-    l1CustomGateway,
-    l1WethGateway,
-    l1ProxyAdmin,
-    l2Router,
-    l2StandardGateway: l2StandardGateway.address,
-    l2CustomGateway,
-    l2WethGateway,
-    l1Weth,
-    l2Weth,
-    beaconProxyFactory,
-    l2ProxyAdmin,
-    l1MultiCall,
-    l2Multicall,
-  };
-};
-
-export const getEstimateForDeployingFactory = async (
+const getEstimateForDeployingFactory = async (
   l1DeployerAddress: string,
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,

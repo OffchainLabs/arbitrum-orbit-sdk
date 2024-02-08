@@ -7,14 +7,14 @@ import { tokenBridgeCreator } from './contracts';
 export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams = {
   amount?: bigint;
   nativeToken: Address;
-  account: Address;
+  owner: Address;
   publicClient: PublicClient;
 };
 
 export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest({
   amount = maxInt256,
   nativeToken,
-  account,
+  owner,
   publicClient,
 }: CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams) {
   const chainId = publicClient.chain?.id;
@@ -25,7 +25,7 @@ export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionR
 
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
-    owner: account,
+    owner,
     spender: tokenBridgeCreator.address[chainId],
     amount,
     publicClient,

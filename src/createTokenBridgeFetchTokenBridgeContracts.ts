@@ -47,37 +47,37 @@ export async function createTokenBridgeFetchTokenBridgeContracts({
     multicall: parentChainMulticall,
   };
 
-  // getting child chain addresses
+  // getting orbit chain addresses
   const [
-    childChainRouter,
-    childChainStandardGateway,
-    childChainCustomGateway,
-    childChainWethGateway,
-    childChainWeth,
-    childChainProxyAdmin,
-    childChainBeaconProxyFactory,
-    childChainUpgradeExecutor,
-    childChainMulticall,
+    orbitChainRouter,
+    orbitChainStandardGateway,
+    orbitChainCustomGateway,
+    orbitChainWethGateway,
+    orbitChainWeth,
+    orbitChainProxyAdmin,
+    orbitChainBeaconProxyFactory,
+    orbitChainUpgradeExecutor,
+    orbitChainMulticall,
   ] = await parentChainPublicClient.readContract({
     address: tokenBridgeCreator.address[chainId],
     abi: tokenBridgeCreator.abi,
     functionName: 'inboxToL2Deployment',
     args: [inbox],
   });
-  const childChainContracts = {
-    router: childChainRouter,
-    standardGateway: childChainStandardGateway,
-    customGateway: childChainCustomGateway,
-    wethGateway: childChainWethGateway,
-    weth: childChainWeth,
-    proxyAdmin: childChainProxyAdmin,
-    beaconProxyFactory: childChainBeaconProxyFactory,
-    upgradeExecutor: childChainUpgradeExecutor,
-    multicall: childChainMulticall,
+  const orbitChainContracts = {
+    router: orbitChainRouter,
+    standardGateway: orbitChainStandardGateway,
+    customGateway: orbitChainCustomGateway,
+    wethGateway: orbitChainWethGateway,
+    weth: orbitChainWeth,
+    proxyAdmin: orbitChainProxyAdmin,
+    beaconProxyFactory: orbitChainBeaconProxyFactory,
+    upgradeExecutor: orbitChainUpgradeExecutor,
+    multicall: orbitChainMulticall,
   };
 
   return {
     parentChainContracts,
-    childChainContracts,
+    orbitChainContracts,
   };
 }
