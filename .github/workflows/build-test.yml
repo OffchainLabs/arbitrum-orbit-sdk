@@ -53,6 +53,9 @@ jobs:
       - name: Restore node_modules
         uses: OffchainLabs/actions/node-modules/restore@main
 
+      - name: Copy .env
+        run: cp ./.env.example ./.env
+
       - name: Generate
         run: yarn generate
 
