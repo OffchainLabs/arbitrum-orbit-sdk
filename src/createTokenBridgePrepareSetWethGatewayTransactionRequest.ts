@@ -7,14 +7,14 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { getEstimateForSettingGateway } from './createTokenBridge-ethers';
-import { TransactionRequestGasOverrides } from './types/TransactionRequestGasOverrides';
+import { TransactionRequestRetryableGasOverrides } from './utils/gasOverrides';
 
 export type CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams = {
   rollup: Address;
   parentChainPublicClient: PublicClient;
-  childChainPublicClient: PublicClient;
+  orbitChainPublicClient: PublicClient;
   account: Address;
-  gasOverrides?: TransactionRequestGasOverrides;
+  retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
 };
 
 const parentChainGatewayRouterAbi = [
@@ -81,9 +81,9 @@ const parentChainGatewayRouterAbi = [
 export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   rollup,
   parentChainPublicClient,
-  childChainPublicClient,
+  orbitChainPublicClient,
   account,
-  gasOverrides,
+  retryableGasOverrides,
 }: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams) {
   const chainId = parentChainPublicClient.chain?.id;
 
@@ -132,7 +132,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
 
   // ethers providers
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
-  const childChainProvider = publicClientToProvider(childChainPublicClient);
+  const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
 
   // encode data for the setGateways call
   // (we first encode dummy data, to get the retryable message estimates)
@@ -153,8 +153,8 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     tokenBridgeContracts.parentChainContracts.router,
     setGatewaysDummyCalldata,
     parentChainProvider,
-    childChainProvider,
-    gasOverrides,
+    orbitChainProvider,
+    retryableGasOverrides,
   );
 
   // (and then we encode the real data, to send the transaction)

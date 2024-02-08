@@ -160,11 +160,11 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
     rollup: testnodeInformation.rollup,
     parentChainPublicClient: nitroTestnodeL1Client,
-    childChainPublicClient: nitroTestnodeL2Client,
+    orbitChainPublicClient: nitroTestnodeL2Client,
     account: l2RollupOwner.address,
-    gasOverrides: {
-      retryableTicketGasLimit: {
-        minimum: 100_000n,
+    retryableGasOverrides: {
+      gasLimit: {
+        base: 100_000n,
       },
     },
   });

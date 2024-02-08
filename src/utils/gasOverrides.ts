@@ -8,6 +8,7 @@ export type TransactionRequestGasOverrides = {
 };
 
 export type TransactionRequestRetryableGasOverrides = {
+  gasLimit?: GasOverrideOptions;
   deposit?: GasOverrideOptions;
 };
 

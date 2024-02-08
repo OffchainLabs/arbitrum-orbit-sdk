@@ -1,10 +1,14 @@
 /* eslint-disable no-empty */
+import { Address } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { L1Network, L1ToL2MessageGasEstimator, L2Network, addCustomNetwork } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
-import { Address } from 'viem';
+import { GasOverrides } from '@arbitrum/sdk/dist/lib/message/L1ToL2MessageGasEstimator';
+import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
+import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
+import { TransactionRequestRetryableGasOverrides } from './utils/gasOverrides';
 
 type NamedFactory = ContractFactory & { contractName: string };
 const NamedFactoryInstance = (contractJson: {
@@ -18,11 +22,7 @@ const NamedFactoryInstance = (contractJson: {
 };
 
 // import from token-bridge-contracts directly to make sure the bytecode is the same
-import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
-import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
 const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBridgeFactory);
-import { TransactionRequestGasOverrides } from './types/TransactionRequestGasOverrides';
-import { GasOverrides } from '@arbitrum/sdk/dist/lib/message/L1ToL2MessageGasEstimator';
 
 
 export type CreateTokenBridgeGetInputsResult = {
@@ -135,28 +135,28 @@ export const getEstimateForSettingGateway = async (
   setGatewaysCalldata: `0x${string}`,
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,
-  gasOverrides?: TransactionRequestGasOverrides,
+  retryableGasOverrides?: TransactionRequestRetryableGasOverrides,
 ) => {
   //// run retryable estimate for setting a token gateway in the router
   const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
 
   // applying gas overrides
   const gasOverridesForEstimation: GasOverrides = {};
-  if (gasOverrides && gasOverrides.retryableTicketGasLimit) {
+  if (retryableGasOverrides && retryableGasOverrides.gasLimit) {
     gasOverridesForEstimation.gasLimit = {
       min: undefined,
       percentIncrease: undefined,
     };
 
-    if (gasOverrides.retryableTicketGasLimit.minimum) {
+    if (retryableGasOverrides.gasLimit.base) {
       gasOverridesForEstimation.gasLimit.min = BigNumber.from(
-        gasOverrides.retryableTicketGasLimit.minimum,
+        retryableGasOverrides.gasLimit.base,
       );
     }
 
-    if (gasOverrides.retryableTicketGasLimit.percentIncrease) {
+    if (retryableGasOverrides.gasLimit.percentIncrease) {
       gasOverridesForEstimation.gasLimit.percentIncrease = BigNumber.from(
-        gasOverrides.retryableTicketGasLimit.percentIncrease,
+        retryableGasOverrides.gasLimit.percentIncrease,
       );
     }
   }
@@ -182,40 +182,6 @@ export const getEstimateForSettingGateway = async (
     deposit: setGatewaysGasParams.deposit.toBigInt(),
   };
 };
-
-export const getSigner = (provider: JsonRpcProvider, key?: string) => {
-  if (!key && !provider) throw new Error('Provide at least one of key or provider.');
-  if (key) return new Wallet(key).connect(provider);
-  else return provider.getSigner(0);
-};
-
-export const getParsedLogs = (
-  logs: ethers.providers.Log[],
-  iface: ethers.utils.Interface,
-  eventName: string,
-) => {
-  const eventFragment = iface.getEvent(eventName);
-  const parsedLogs = logs
-    .filter((curr: any) => curr.topics[0] === iface.getEventTopic(eventFragment))
-    .map((curr: any) => iface.parseLog(curr));
-  return parsedLogs;
-};
-
-const _getFeeToken = async (inbox: string, l1Provider: ethers.providers.Provider) => {
-  const bridge = await IInbox__factory.attach(inbox).connect(l1Provider).bridge();
-
-  let feeToken = ethers.constants.AddressZero;
-
-  try {
-    feeToken = await IERC20Bridge__factory.attach(bridge).connect(l1Provider).nativeToken();
-  } catch {}
-
-  return feeToken;
-};
-
-export function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 const registerNewNetwork = async (
   l1Provider: JsonRpcProvider,
