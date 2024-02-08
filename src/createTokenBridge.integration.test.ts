@@ -109,7 +109,7 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
 
   // sign and send the transaction
   const txHash = await nitroTestnodeL1Client.sendRawTransaction({
-    serializedTransaction: await deployer.signTransaction(txRequestToFreshTokenBridgeCreator),
+    serializedTransaction: await l2RollupOwner.signTransaction(txRequestToFreshTokenBridgeCreator),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
