@@ -2,7 +2,6 @@ import { it, expect } from 'vitest';
 import { createPublicClient, http, zeroAddress } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
-import { nitroTestnodeL2 } from './chains';
 import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareConfig } from './createRollupPrepareConfig';
@@ -13,7 +12,7 @@ import { getTestPrivateKeyAccount } from './testHelpers';
 const deployer = getTestPrivateKeyAccount();
 
 const publicClient = createPublicClient({
-  chain: nitroTestnodeL2,
+  chain: arbitrumSepolia,
   transport: http(),
 });
 
@@ -166,7 +165,7 @@ it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 
         nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
       },
       account: deployer.address,
-      publicClient: arbitrumSepoliaPublicClient,
+      publicClient,
     }),
   ).rejects.toThrowError(
     `"params.nativeToken" can only be configured with a token that uses 18 decimals.`,
