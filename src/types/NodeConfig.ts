@@ -19,13 +19,17 @@ export type NodeConfigChainInfoJson = [
   },
 ];
 
-export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = [
-  {
-    url: string;
-    pubkey: string;
-    signermask: number;
-  },
-];
+export type BackendsData = {
+  urlRest: string;
+  urlRpc: string;
+  pubkey: string;
+}[];
+
+export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = {
+  url: string;
+  pubkey: string;
+  signermask: number;
+}[];
 
 export type NodeConfig = {
   'chain': {
@@ -82,8 +86,9 @@ export type NodeConfig = {
       'sequencer-inbox-address': string;
       'parent-chain-node-url': string;
       'rest-aggregator': {
-        enable: boolean;
-        urls: string;
+        'enable': boolean;
+        'online-url-list'?: string;
+        'urls': string[];
       };
       'rpc-aggregator': {
         'enable': boolean;

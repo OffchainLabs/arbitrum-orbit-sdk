@@ -2,6 +2,7 @@ import {
   NodeConfig,
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
+  BackendsData,
 } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -52,6 +53,9 @@ export function prepareNodeConfig({
   validatorPrivateKey,
   parentChainId,
   parentChainRpcUrl,
+  assumedHonest,
+  backendsData,
+  onlineUrlList,
 }: {
   chainName: string;
   chainConfig: ChainConfig;
@@ -60,6 +64,9 @@ export function prepareNodeConfig({
   validatorPrivateKey: string;
   parentChainId: number;
   parentChainRpcUrl: string;
+  assumedHonest?: number;
+  backendsData?: BackendsData;
+  onlineUrlList?: string;
 }): NodeConfig {
   if (!validParentChainId(parentChainId)) {
     throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
@@ -133,27 +140,44 @@ export function prepareNodeConfig({
   };
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
+    let backends: NodeConfigDataAvailabilityRpcAggregatorBackendsJson;
+    let restUrls: string[] = ['http://localhost:9876'];
+    if (assumedHonest !== undefined && backendsData && backendsData.length > 0) {
+      backends = backendsData.map((backend, index) => ({
+        url: backend.urlRpc,
+        pubkey: backend.pubkey,
+        signermask: 1 << index, // 2^n
+      }));
+      restUrls = backendsData.map((backend) => backend.urlRest);
+    } else {
+      backends = [
+        {
+          url: 'http://localhost:9876',
+          pubkey:
+            'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
+          signermask: 1,
+        },
+      ];
+    }
+
     config.node['data-availability'] = {
       'enable': true,
       'sequencer-inbox-address': coreContracts.sequencerInbox,
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: 'http://localhost:9876',
+        urls: restUrls,
       },
       'rpc-aggregator': {
         'enable': true,
-        'assumed-honest': 1,
-        'backends': stringifyBackendsJson([
-          {
-            url: 'http://localhost:9876',
-            pubkey:
-              'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
-            signermask: 1,
-          },
-        ]),
+        'assumed-honest': assumedHonest || 1,
+        'backends': stringifyBackendsJson(backends),
       },
     };
+    // Check if onlineUrlList is provided and not empty
+    if (onlineUrlList && onlineUrlList.length > 0 && config.node['data-availability']) {
+      config.node['data-availability']['rest-aggregator']['online-url-list'] = onlineUrlList;
+    }
   }
 
   return config;
