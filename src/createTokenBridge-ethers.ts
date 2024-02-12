@@ -60,7 +60,7 @@ export const createTokenBridgeGetInputs = async (
     l2Provider,
     retryableGasOverrides,
   );
-  const maxSubmissionCostForFactory = deployFactoryGasParams.maxSubmissionCost;
+  const maxSubmissionCostForFactory = deployFactoryGasParams.maxSubmissionCost.mul(2);
 
   //// hard-coded value, we don't need to apply overrides here
   const maxGasForFactory = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
@@ -110,8 +110,8 @@ export const createTokenBridgeGetInputs = async (
         )
       : gasEstimateToDeployContracts;
 
-  const maxSubmissionCostForContracts = deployFactoryGasParams.maxSubmissionCost;
-  
+  const maxSubmissionCostForContracts = deployFactoryGasParams.maxSubmissionCost.mul(2);
+
   let retryableFee = maxSubmissionCostForFactory
     .add(maxSubmissionCostForContracts)
     .add(maxGasForFactory.mul(gasPrice))

@@ -102,7 +102,7 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
         base: 20_000_000n,
       },
       maxSubmissionFee: {
-        base: parseGwei('75000'),
+        base: parseGwei('40000'),
       },
     },
   });
@@ -264,8 +264,11 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
       },
     },
     retryableGasOverrides: {
-      deposit: {
-        percentIncrease: 100n,
+      gasLimit: {
+        base: 20_000_000n,
+      },
+      maxSubmissionFee: {
+        base: parseGwei('40000'),
       },
     },
   });
