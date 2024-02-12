@@ -12,7 +12,7 @@ import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
 import {
   TransactionRequestGasOverrides,
   TransactionRequestRetryableGasOverrides,
-  applyGasOverrides,
+  applyPercentIncrease,
 } from './utils/gasOverrides';
 
 export async function createTokenBridgePrepareTransactionRequest({
@@ -45,6 +45,7 @@ export async function createTokenBridgePrepareTransactionRequest({
     orbitChainProvider,
     tokenBridgeCreator.address[chainId],
     params.rollup,
+    retryableGasOverrides,
   );
 
   const chainUsesCustomFee = await isCustomFeeTokenChain({
@@ -66,19 +67,9 @@ export async function createTokenBridgePrepareTransactionRequest({
 
   // potential gas overrides (gas limit)
   if (gasOverrides && gasOverrides.gasLimit) {
-    request.gas = applyGasOverrides({
-      gasOverrides: gasOverrides.gasLimit,
-      estimatedGas: request.gas,
-      defaultGas: createTokenBridgeDefaultGasLimit,
-    });
-  }
-
-  // potential retryable gas overrides (deposit)
-  if (retryableGasOverrides && retryableGasOverrides.deposit) {
-    request.value = applyGasOverrides({
-      gasOverrides: retryableGasOverrides.deposit,
-      estimatedGas: request.value,
-      defaultGas: createTokenBridgeDefaultRetryablesFees,
+    request.gas = applyPercentIncrease({
+      base: gasOverrides.gasLimit.base ?? request.gas ?? createTokenBridgeDefaultGasLimit,
+      percentIncrease: gasOverrides.gasLimit.percentIncrease,
     });
   }
 

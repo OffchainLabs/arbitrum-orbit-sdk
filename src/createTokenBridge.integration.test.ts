@@ -5,6 +5,7 @@ import {
   http,
   maxInt256,
   parseEther,
+  parseGwei,
   zeroAddress,
 } from 'viem';
 import { execSync } from 'node:child_process';
@@ -97,8 +98,11 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
       },
     },
     retryableGasOverrides: {
-      deposit: {
-        percentIncrease: 100n,
+      gasLimit: {
+        base: 20_000_000n,
+      },
+      maxSubmissionFee: {
+        base: parseGwei('75000'),
       },
     },
   });
