@@ -10,10 +10,18 @@ import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
 import {
+  GasOverrideOptions,
   TransactionRequestGasOverrides,
-  TransactionRequestRetryableGasOverrides,
   applyPercentIncrease,
 } from './utils/gasOverrides';
+
+export type TransactionRequestRetryableGasOverrides = {
+  maxSubmissionCostForFactory?: GasOverrideOptions;
+  maxGasForFactory?: GasOverrideOptions;
+  maxSubmissionCostForContracts?: GasOverrideOptions;
+  maxGasForContracts?: GasOverrideOptions;
+  maxGasPrice?: bigint;
+};
 
 export async function createTokenBridgePrepareTransactionRequest({
   params,

@@ -98,11 +98,17 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
       },
     },
     retryableGasOverrides: {
-      gasLimit: {
+      maxGasForFactory: {
         base: 20_000_000n,
       },
-      maxSubmissionFee: {
-        base: parseGwei('40000'),
+      maxGasForContracts: {
+        base: 20_000_000n,
+      },
+      maxSubmissionCostForFactory: {
+        base: 4_000_000_000_000n,
+      },
+      maxSubmissionCostForContracts: {
+        base: 4_000_000_000_000n,
       },
     },
   });
@@ -264,11 +270,17 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
       },
     },
     retryableGasOverrides: {
-      gasLimit: {
+      maxGasForFactory: {
         base: 20_000_000n,
       },
-      maxSubmissionFee: {
-        base: parseGwei('40000'),
+      maxGasForContracts: {
+        base: 20_000_000n,
+      },
+      maxSubmissionCostForFactory: {
+        base: 4_000_000_000_000n,
+      },
+      maxSubmissionCostForContracts: {
+        base: 4_000_000_000_000n,
       },
     },
   });

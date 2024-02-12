@@ -1,17 +1,10 @@
-type GasOverrideOptions = {
+export type GasOverrideOptions = {
   base?: bigint;
   percentIncrease?: bigint;
 };
 
 export type TransactionRequestGasOverrides = {
   gasLimit?: GasOverrideOptions;
-};
-
-export type TransactionRequestRetryableGasOverrides = {
-  gasLimit?: GasOverrideOptions;
-  maxSubmissionFee?: GasOverrideOptions;
-  maxFeePerGas?: GasOverrideOptions;
-  deposit?: GasOverrideOptions;
 };
 
 export function applyPercentIncrease({

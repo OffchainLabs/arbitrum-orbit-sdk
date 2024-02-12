@@ -4,14 +4,11 @@ import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { L1Network, L1ToL2MessageGasEstimator, L2Network, addCustomNetwork } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
-import { GasOverrides } from '@arbitrum/sdk/dist/lib/message/L1ToL2MessageGasEstimator';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
 import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
-import {
-  TransactionRequestRetryableGasOverrides,
-  applyPercentIncrease,
-} from './utils/gasOverrides';
+import { applyPercentIncrease } from './utils/gasOverrides';
+import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrepareTransactionRequest';
 
 type NamedFactory = ContractFactory & { contractName: string };
 const NamedFactoryInstance = (contractJson: {
@@ -58,12 +55,9 @@ export const createTokenBridgeGetInputs = async (
     l1DeployerAddress,
     l1Provider,
     l2Provider,
-    retryableGasOverrides,
   );
-  const maxSubmissionCostForFactory = deployFactoryGasParams.maxSubmissionCost.mul(2);
-
-  //// hard-coded value, we don't need to apply overrides here
-  const maxGasForFactory = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
+  const maxSubmissionCostForFactoryEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
+  const maxGasForFactoryEstimation = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
 
   //// run retryable estimate for deploying L2 contracts
   //// we do this estimate using L2 factory template on L1 because on L2 factory does not yet exist
@@ -96,26 +90,66 @@ export const createTokenBridgeGetInputs = async (
     ethers.Wallet.createRandom().address,
     ethers.Wallet.createRandom().address,
   );
+  const maxSubmissionCostForContractsEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
 
-  //// apply gas overrides (gasLimit)
-  const maxGasForContracts =
-    retryableGasOverrides && retryableGasOverrides.gasLimit
+  //// apply gas overrides
+  const maxSubmissionCostForFactory =
+    retryableGasOverrides && retryableGasOverrides.maxSubmissionCostForFactory
       ? BigNumber.from(
           applyPercentIncrease({
             base:
-              retryableGasOverrides.gasLimit.base ??
+              retryableGasOverrides.maxSubmissionCostForFactory.base ??
+              BigInt(maxSubmissionCostForFactoryEstimation.toNumber()),
+            percentIncrease: retryableGasOverrides.maxSubmissionCostForFactory.percentIncrease,
+          }),
+        )
+      : maxSubmissionCostForFactoryEstimation;
+
+  const maxGasForFactory =
+    retryableGasOverrides && retryableGasOverrides.maxGasForFactory
+      ? BigNumber.from(
+          applyPercentIncrease({
+            base:
+              retryableGasOverrides.maxGasForFactory.base ??
+              BigInt(maxGasForFactoryEstimation.toNumber()),
+            percentIncrease: retryableGasOverrides.maxGasForFactory.percentIncrease,
+          }),
+        )
+      : maxGasForFactoryEstimation;
+
+  const maxSubmissionCostForContracts =
+    retryableGasOverrides && retryableGasOverrides.maxSubmissionCostForContracts
+      ? BigNumber.from(
+          applyPercentIncrease({
+            base:
+              retryableGasOverrides.maxSubmissionCostForContracts.base ??
+              BigInt(maxSubmissionCostForContractsEstimation.toNumber()),
+            percentIncrease: retryableGasOverrides.maxSubmissionCostForContracts.percentIncrease,
+          }),
+        )
+      : maxSubmissionCostForContractsEstimation;
+
+  const maxGasForContracts =
+    retryableGasOverrides && retryableGasOverrides.maxGasForContracts
+      ? BigNumber.from(
+          applyPercentIncrease({
+            base:
+              retryableGasOverrides.maxGasForContracts.base ??
               BigInt(gasEstimateToDeployContracts.toNumber()),
-            percentIncrease: retryableGasOverrides.gasLimit.percentIncrease,
+            percentIncrease: retryableGasOverrides.maxGasForContracts.percentIncrease,
           }),
         )
       : gasEstimateToDeployContracts;
 
-  const maxSubmissionCostForContracts = deployFactoryGasParams.maxSubmissionCost.mul(2);
+  const maxGasPrice =
+    retryableGasOverrides && retryableGasOverrides.maxGasPrice
+      ? retryableGasOverrides.maxGasPrice
+      : gasPrice;
 
   let retryableFee = maxSubmissionCostForFactory
     .add(maxSubmissionCostForContracts)
-    .add(maxGasForFactory.mul(gasPrice))
-    .add(maxGasForContracts.mul(gasPrice));
+    .add(maxGasForFactory.mul(maxGasPrice))
+    .add(maxGasForContracts.mul(maxGasPrice));
 
   // get inbox from rollup contract
   const inbox = await RollupAdminLogic__factory.connect(rollupAddress, l1Provider).inbox();
@@ -128,86 +162,13 @@ export const createTokenBridgeGetInputs = async (
   };
 };
 
-const formatGasOverrides = (
-  retryableGasOverrides: TransactionRequestRetryableGasOverrides,
-): GasOverrides => {
-  const gasOverridesForEstimation: GasOverrides = {};
-
-  if (retryableGasOverrides) {
-    // gasLimit
-    if (retryableGasOverrides.gasLimit) {
-      gasOverridesForEstimation.gasLimit = {
-        base: retryableGasOverrides.gasLimit.base
-          ? BigNumber.from(retryableGasOverrides.gasLimit.base)
-          : undefined,
-        percentIncrease: retryableGasOverrides.gasLimit.percentIncrease
-          ? BigNumber.from(retryableGasOverrides.gasLimit.percentIncrease)
-          : undefined,
-      };
-    }
-
-    // maxSubmissionFee
-    if (retryableGasOverrides.maxSubmissionFee) {
-      gasOverridesForEstimation.maxSubmissionFee = {
-        base: retryableGasOverrides.maxSubmissionFee.base
-          ? BigNumber.from(retryableGasOverrides.maxSubmissionFee.base)
-          : undefined,
-        percentIncrease: retryableGasOverrides.maxSubmissionFee.percentIncrease
-          ? BigNumber.from(retryableGasOverrides.maxSubmissionFee.percentIncrease)
-          : undefined,
-      };
-    }
-
-    // maxFeePerGas
-    if (retryableGasOverrides.maxFeePerGas && retryableGasOverrides.maxFeePerGas.percentIncrease) {
-      gasOverridesForEstimation.maxFeePerGas = {
-        base: retryableGasOverrides.maxFeePerGas.base
-          ? BigNumber.from(retryableGasOverrides.maxFeePerGas.base)
-          : undefined,
-        percentIncrease: retryableGasOverrides.maxFeePerGas.percentIncrease
-          ? BigNumber.from(retryableGasOverrides.maxFeePerGas.percentIncrease)
-          : undefined,
-      };
-    }
-
-    // deposit
-    if (retryableGasOverrides.deposit) {
-      gasOverridesForEstimation.deposit = {
-        base: undefined,
-      };
-
-      if (retryableGasOverrides.deposit.base) {
-        gasOverridesForEstimation.deposit.base = BigNumber.from(retryableGasOverrides.deposit.base);
-
-        // Note: To send the override to the Arbitrum SDK, this percentIncrease is only valid if there's a base
-        //       (the Arbitrum SDK does not allow a percentIncrease in the deposit, only a base)
-        if (retryableGasOverrides.deposit.percentIncrease) {
-          gasOverridesForEstimation.deposit.base = BigNumber.from(
-            retryableGasOverrides.deposit.base +
-              (retryableGasOverrides.deposit.base * retryableGasOverrides.deposit.percentIncrease) /
-                100n,
-          );
-        }
-      }
-    }
-  }
-
-  return gasOverridesForEstimation;
-};
-
 const getEstimateForDeployingFactory = async (
   l1DeployerAddress: string,
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,
-  retryableGasOverrides?: TransactionRequestRetryableGasOverrides,
 ) => {
   //// run retryable estimate for deploying L2 factory
   const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
-
-  // applying gas overrides
-  const gasOverridesForEstimation: GasOverrides = retryableGasOverrides
-    ? formatGasOverrides(retryableGasOverrides)
-    : {};
 
   const deployFactoryGasParams = await l1ToL2MsgGasEstimate.estimateAll(
     {
@@ -220,7 +181,6 @@ const getEstimateForDeployingFactory = async (
     },
     await getBaseFee(l1Provider),
     l1Provider,
-    gasOverridesForEstimation,
   );
 
   return deployFactoryGasParams;
