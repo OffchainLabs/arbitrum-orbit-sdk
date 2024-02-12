@@ -13,6 +13,7 @@ import {
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
+  nitroTestnodeL3,
 } from './chains';
 
 function sanitizePrivateKey(privateKey: string) {
@@ -40,6 +41,7 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
     case arbitrumOne.id:
     case arbitrumSepolia.id:
     case nitroTestnodeL2.id:
+    case nitroTestnodeL3.id:
       return true;
   }
 }

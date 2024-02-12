@@ -41,6 +41,11 @@
   "author": "Offchain Labs, Inc.",
   "license": "Apache-2.0",
   "peerDependencies": {
-    "viem": "^1.18.0"
+    "viem": "^1.20.0"
+  },
+  "dependencies": {
+    "@arbitrum/sdk": "^3.1.13",
+    "@arbitrum/token-bridge-contracts": "^1.2.0",
+    "ethers": "^5.7.2"
   }
 }
