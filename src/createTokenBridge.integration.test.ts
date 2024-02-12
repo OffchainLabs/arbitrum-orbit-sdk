@@ -5,7 +5,6 @@ import {
   http,
   maxInt256,
   parseEther,
-  parseGwei,
   zeroAddress,
 } from 'viem';
 import { execSync } from 'node:child_process';
