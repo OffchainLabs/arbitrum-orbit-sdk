@@ -56,9 +56,6 @@ jobs:
       - name: Copy .env
         run: cp ./.env.example ./.env
 
-      - name: Generate
-        run: yarn generate
-
       - name: Build
         run: yarn build
 
@@ -95,9 +92,6 @@ jobs:
 
       - name: Copy .env
         run: cp ./.env.example ./.env
-
-      - name: Generate
-        run: yarn generate
 
       - name: Build
         run: yarn build
