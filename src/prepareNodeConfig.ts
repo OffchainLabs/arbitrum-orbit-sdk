@@ -9,6 +9,7 @@ import { ParentChainId, validParentChainId } from './types/ParentChain';
 import {
   mainnet,
   arbitrumOne,
+  arbitrumNova,
   sepolia,
   arbitrumSepolia,
   nitroTestnodeL1,
@@ -40,6 +41,7 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
       return false;
 
     case arbitrumOne.id:
+    case arbitrumNova.id:
     case arbitrumSepolia.id:
     case nitroTestnodeL2.id:
     case nitroTestnodeL3.id:

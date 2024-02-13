@@ -1,5 +1,11 @@
 import { defineChain } from 'viem';
-import { mainnet, arbitrum as arbitrumOne, sepolia, arbitrumSepolia } from 'viem/chains';
+import {
+  mainnet,
+  arbitrum as arbitrumOne,
+  arbitrumNova,
+  sepolia,
+  arbitrumSepolia,
+} from 'viem/chains';
 
 const nitroTestnodeL1 = defineChain({
   id: 1_337,
@@ -54,6 +60,7 @@ export const chains = [
   // mainnet
   mainnet,
   arbitrumOne,
+  arbitrumNova,
   // testnet
   sepolia,
   arbitrumSepolia,
@@ -67,6 +74,7 @@ export {
   // mainnet
   mainnet,
   arbitrumOne,
+  arbitrumNova,
   // testnet
   sepolia,
   arbitrumSepolia,
