@@ -2,14 +2,7 @@ import { Chain, createPublicClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import { setValidKeysetPrepareTransactionRequest } from '@arbitrum/orbit-sdk';
-
-function sanitizePrivateKey(privateKey: string): `0x${string}` {
-  if (!privateKey.startsWith('0x')) {
-    return `0x${privateKey}`;
-  }
-
-  return privateKey as `0x${string}`;
-}
+import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 
 function getBlockExplorerUrl(chain: Chain) {
   return chain.blockExplorers?.default.url;
