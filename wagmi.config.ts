@@ -5,6 +5,7 @@ import { ParentChainId } from './src';
 import {
   mainnet,
   arbitrumOne,
+  arbitrumNova,
   sepolia,
   arbitrumSepolia,
   nitroTestnodeL1,
@@ -28,6 +29,7 @@ const blockExplorerApiUrls: Record<ParentChainId, string> = {
   // mainnet
   [mainnet.id]: 'https://etherscan.io/api',
   [arbitrumOne.id]: 'https://arbiscan.io/api',
+  [arbitrumNova.id]: 'https://api-nova.arbiscan.io/api',
   // testnet
   [sepolia.id]: 'https://api-sepolia.etherscan.io/api',
   [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
@@ -59,6 +61,7 @@ const contracts: ContractConfig[] = [
       // mainnet
       [mainnet.id]: '0x90d68b056c411015eae3ec0b98ad94e2c91419f1',
       [arbitrumOne.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
+      [arbitrumNova.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
       // testnet
       [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
@@ -75,6 +78,7 @@ const contracts: ContractConfig[] = [
       // mainnet
       [mainnet.id]: '0x60D9A46F24D5a35b95A78Dd3E793e55D94EE0660',
       [arbitrumOne.id]: '0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e',
+      [arbitrumNova.id]: '0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14',
       // testnet
       [sepolia.id]: '0x7edb2dfBeEf9417e0454A80c51EE0C034e45a570',
       [arbitrumSepolia.id]: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
