@@ -2,7 +2,13 @@
 import { Address } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { L1Network, L1ToL2MessageGasEstimator, L2Network, addCustomNetwork } from '@arbitrum/sdk';
+import {
+  L1Network,
+  L1ToL2MessageGasEstimator,
+  L2Network,
+  addCustomNetwork,
+  constants as arbitrumSdkConstants,
+} from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
@@ -223,6 +229,7 @@ const registerNewNetwork = async (
     isCustom: true,
     name: 'OrbitChain',
     partnerChainID: l1NetworkInfo.chainId,
+    partnerChainIDs: [],
     retryableLifetimeSeconds: 7 * 24 * 60 * 60,
     nitroGenesisBlock: 0,
     nitroGenesisL1Block: 0,
@@ -243,6 +250,7 @@ const registerNewNetwork = async (
       l2Weth: '',
       l2WethGateway: '',
     },
+    blockTime: arbitrumSdkConstants.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
   };
 
   // register - needed for retryables
