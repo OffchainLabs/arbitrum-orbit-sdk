@@ -7,9 +7,10 @@ import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareConfig } from './createRollupPrepareConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 
-import { getTestPrivateKeyAccount } from './testHelpers';
+import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 
-const deployer = getTestPrivateKeyAccount();
+const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
+const deployer = testnodeAccounts.deployer;
 
 const publicClient = createPublicClient({
   chain: arbitrumSepolia,
