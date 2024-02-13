@@ -5,16 +5,9 @@ import {
   createTokenBridgePrepareTransactionReceipt,
   createTokenBridgePrepareTransactionRequest,
 } from '@arbitrum/orbit-sdk';
+import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
 config();
-
-function sanitizePrivateKey(privateKey: string): `0x${string}` {
-  if (!privateKey.startsWith('0x')) {
-    return `0x${privateKey}`;
-  }
-
-  return privateKey as `0x${string}`;
-}
 
 function getBlockExplorerUrl(chain: Chain) {
   return chain.blockExplorers?.default.url;

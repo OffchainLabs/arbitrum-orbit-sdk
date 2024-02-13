@@ -9,15 +9,7 @@ import {
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
 } from '@arbitrum/orbit-sdk';
-import { generateChainId } from '@arbitrum/orbit-sdk/utils';
-
-function sanitizePrivateKey(privateKey: string): `0x${string}` {
-  if (!privateKey.startsWith('0x')) {
-    return `0x${privateKey}`;
-  }
-
-  return privateKey as `0x${string}`;
-}
+import { sanitizePrivateKey, generateChainId } from '@arbitrum/orbit-sdk/utils';
 
 function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
   if (typeof privateKey === 'undefined') {

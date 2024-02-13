@@ -16,6 +16,7 @@ import {
   nitroTestnodeL3,
 } from './chains';
 
+// this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
 }

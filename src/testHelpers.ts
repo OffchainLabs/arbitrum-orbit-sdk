@@ -1,6 +1,9 @@
 import { sha256, toBytes } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
+
+import { sanitizePrivateKey } from './utils';
+
 config();
 
 // Source: https://github.com/OffchainLabs/nitro-testnode/blob/release/scripts/accounts.ts#L28
@@ -52,12 +55,4 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
       privateKey: l3TokenBridgeDeployerPrivateKey,
     },
   };
-}
-
-function sanitizePrivateKey(privateKey: string): `0x${string}` {
-  if (!privateKey.startsWith('0x')) {
-    return `0x${privateKey}`;
-  }
-
-  return privateKey as `0x${string}`;
 }
