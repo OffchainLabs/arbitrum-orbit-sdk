@@ -22,6 +22,10 @@
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "default": "./dist/constants.js"
     }
   },
   "typesVersions": {
@@ -34,6 +38,9 @@
       ],
       "utils": [
         "./dist/utils/index.d.ts"
+      ],
+      "constants": [
+        "./dist/constants.d.ts"
       ]
     }
   },
