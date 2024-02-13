@@ -5,6 +5,7 @@ import { ParentChainId } from './types/ParentChain';
 import {
   mainnet,
   arbitrumOne,
+  arbitrumNova,
   sepolia,
   arbitrumSepolia,
   nitroTestnodeL1,
@@ -41,6 +42,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   // mainnet
   [mainnet.id]: 18736164n,
   [arbitrumOne.id]: 150599584n,
+  [arbitrumNova.id]: 47798739n,
   // testnet
   [sepolia.id]: 4741823n,
   [arbitrumSepolia.id]: 654628n,
