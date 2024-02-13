@@ -102,17 +102,10 @@ export function prepareNodeConfig({
       api: ['eth', 'net', 'web3', 'arb', 'debug'],
     },
     'node': {
-      'forwarding-target': '',
-      'sequencer': {
-        'max-tx-data-size': 85000,
-        'enable': true,
-        'dangerous': {
-          'no-coordinator': true,
-        },
-        'max-block-speed': '250ms',
-      },
+      'sequencer': true,
       'delayed-sequencer': {
-        enable: true,
+        'enable': true,
+        'use-merge-finality': false,
       },
       'batch-poster': {
         'max-size': 90000,
@@ -128,6 +121,17 @@ export function prepareNodeConfig({
           'private-key': sanitizePrivateKey(validatorPrivateKey),
         },
       },
+      'dangerous': {
+        'no-sequencer-coordinator': true,
+      },
+    },
+    'execution': {
+      'forwarding-target': '',
+      'sequencer': {
+        'enable': true,
+        'max-tx-data-size': 85000,
+        'max-block-speed': '250ms',
+      },
       'caching': {
         archive: true,
       },
@@ -141,7 +145,7 @@ export function prepareNodeConfig({
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: 'http://localhost:9876',
+        urls: 'http://localhost:9877',
       },
       'rpc-aggregator': {
         'enable': true,
