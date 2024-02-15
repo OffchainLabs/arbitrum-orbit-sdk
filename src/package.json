@@ -1,7 +1,7 @@
 {
   "name": "@arbitrum/orbit-sdk",
   "description": "TypeScript SDK for building Arbitrum Orbit chains",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "main": "./dist/index.js",
   "files": [
     "./dist"
@@ -11,6 +11,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./chains": {
+      "types": "./dist/chains.d.ts",
+      "default": "./dist/chains.js"
+    },
     "./contracts": {
       "types": "./dist/contracts.d.ts",
       "default": "./dist/contracts.js"
@@ -18,15 +22,25 @@
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "default": "./dist/constants.js"
     }
   },
   "typesVersions": {
     "*": {
+      "chains": [
+        "./dist/chains.d.ts"
+      ],
       "contracts": [
         "./dist/contracts.d.ts"
       ],
       "utils": [
         "./dist/utils/index.d.ts"
+      ],
+      "constants": [
+        "./dist/constants.d.ts"
       ]
     }
   },
@@ -34,6 +48,11 @@
   "author": "Offchain Labs, Inc.",
   "license": "Apache-2.0",
   "peerDependencies": {
-    "viem": "^1.18.0"
+    "viem": "^1.20.0"
+  },
+  "dependencies": {
+    "@arbitrum/sdk": "^3.2.0",
+    "@arbitrum/token-bridge-contracts": "^1.2.1",
+    "ethers": "^5.7.2"
   }
 }

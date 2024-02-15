@@ -4,10 +4,7 @@ import {
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
-import {
-  prepareChainConfig,
-  PrepareChainConfigParams,
-} from './prepareChainConfig';
+import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
@@ -25,6 +22,10 @@ import {
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
 } from './createRollupPrepareTransactionReceipt';
+import {
+  createRollupFetchTransactionHash,
+  CreateRollupFetchTransactionHashParams,
+} from './createRollupFetchTransactionHash';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -43,6 +44,18 @@ import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
+import {
+  createTokenBridgeEnoughCustomFeeTokenAllowance,
+  CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
+} from './createTokenBridgeEnoughCustomFeeTokenAllowance';
+import {
+  createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
+  CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
+} from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
+import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
+import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
+import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
+import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
 export {
@@ -62,6 +75,8 @@ export {
   CreateRollupTransaction,
   createRollupPrepareTransactionReceipt,
   CreateRollupTransactionReceipt,
+  createRollupFetchTransactionHash,
+  CreateRollupFetchTransactionHashParams,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
@@ -80,5 +95,14 @@ export {
   NodeConfig,
   NodeConfigChainInfoJson,
   prepareNodeConfig,
+  prepareKeyset,
   utils,
+  //
+  createTokenBridgeEnoughCustomFeeTokenAllowance,
+  CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
+  createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
+  CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
+  createTokenBridgePrepareTransactionRequest,
+  createTokenBridgePrepareTransactionReceipt,
+  createTokenBridgeFetchTokenBridgeContracts,
 };

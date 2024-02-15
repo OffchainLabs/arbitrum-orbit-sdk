@@ -2,13 +2,7 @@ import { Address, PublicClient, WalletClient, encodeFunctionData } from 'viem';
 
 import { erc20 } from '../contracts';
 
-function approveEncodeFunctionData({
-  spender,
-  amount,
-}: {
-  spender: Address;
-  amount: bigint;
-}) {
+function approveEncodeFunctionData({ spender, amount }: { spender: Address; amount: bigint }) {
   return encodeFunctionData({
     abi: erc20.abi,
     functionName: 'approve',
@@ -91,5 +85,19 @@ export async function fetchAllowance({
     abi: erc20.abi,
     functionName: 'allowance',
     args: [owner, spender],
+  });
+}
+
+export function fetchDecimals({
+  address,
+  publicClient,
+}: {
+  address: Address;
+  publicClient: PublicClient;
+}) {
+  return publicClient.readContract({
+    address,
+    abi: erc20.abi,
+    functionName: 'decimals',
   });
 }

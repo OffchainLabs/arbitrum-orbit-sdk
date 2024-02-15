@@ -7,15 +7,7 @@ import {
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
 } from '@arbitrum/orbit-sdk';
-import { generateChainId } from '@arbitrum/orbit-sdk/utils';
-
-function sanitizePrivateKey(privateKey: string): `0x${string}` {
-  if (!privateKey.startsWith('0x')) {
-    return `0x${privateKey}`;
-  }
-
-  return privateKey as `0x${string}`;
-}
+import { sanitizePrivateKey, generateChainId } from '@arbitrum/orbit-sdk/utils';
 
 function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
   if (typeof privateKey === 'undefined') {
@@ -68,7 +60,6 @@ async function main() {
       }),
       batchPoster,
       validators: [validator],
-      nativeToken: '0xf861378b543525ae0c47d33c90c954dc774ac1f9', // $ARB
     },
     account: deployer.address,
     publicClient: parentChainPublicClient,
@@ -81,7 +72,7 @@ async function main() {
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash })
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);

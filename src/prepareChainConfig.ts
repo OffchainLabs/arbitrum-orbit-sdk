@@ -5,8 +5,7 @@ export const defaults = {
   daoForkBlock: null,
   daoForkSupport: true,
   eip150Block: 0,
-  eip150Hash:
-    '0x0000000000000000000000000000000000000000000000000000000000000000',
+  eip150Hash: '0x0000000000000000000000000000000000000000000000000000000000000000',
   eip155Block: 0,
   eip158Block: 0,
   byzantiumBlock: 0,
@@ -24,7 +23,7 @@ export const defaults = {
     EnableArbOS: true,
     AllowDebugPrecompiles: false,
     DataAvailabilityCommittee: false,
-    InitialArbOSVersion: 10,
+    InitialArbOSVersion: 11,
     GenesisBlockNum: 0,
     MaxCodeSize: 24_576,
     MaxInitCodeSize: 49_152,
@@ -37,9 +36,7 @@ export type PrepareChainConfigParams = Pick<ChainConfig, 'chainId'> &
       Partial<Omit<ChainConfigArbitrumParams, 'InitialChainOwner'>>;
   };
 
-export function prepareChainConfig(
-  params: PrepareChainConfigParams
-): ChainConfig {
+export function prepareChainConfig(params: PrepareChainConfigParams): ChainConfig {
   return {
     ...defaults,
     ...params,
