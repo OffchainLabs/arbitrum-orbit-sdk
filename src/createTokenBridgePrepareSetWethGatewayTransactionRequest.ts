@@ -166,34 +166,30 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   const gasLimit =
     retryableGasOverrides && retryableGasOverrides.gasLimit
       ? applyPercentIncrease({
-            base:
-              retryableGasOverrides.gasLimit.base ??
-              retryableTicketGasEstimates.gasLimit,
-            percentIncrease: retryableGasOverrides.gasLimit.percentIncrease,
-          })
+          base: retryableGasOverrides.gasLimit.base ?? retryableTicketGasEstimates.gasLimit,
+          percentIncrease: retryableGasOverrides.gasLimit.percentIncrease,
+        })
       : retryableTicketGasEstimates.gasLimit;
-    
+
   const maxFeePerGas =
-      retryableGasOverrides && retryableGasOverrides.maxFeePerGas
-        ? applyPercentIncrease({
-              base:
-                retryableGasOverrides.maxFeePerGas.base ??
-                retryableTicketGasEstimates.maxFeePerGas,
-              percentIncrease: retryableGasOverrides.maxFeePerGas.percentIncrease,
-            })
-        : retryableTicketGasEstimates.maxFeePerGas;
+    retryableGasOverrides && retryableGasOverrides.maxFeePerGas
+      ? applyPercentIncrease({
+          base: retryableGasOverrides.maxFeePerGas.base ?? retryableTicketGasEstimates.maxFeePerGas,
+          percentIncrease: retryableGasOverrides.maxFeePerGas.percentIncrease,
+        })
+      : retryableTicketGasEstimates.maxFeePerGas;
 
   const maxSubmissionCost =
-        retryableGasOverrides && retryableGasOverrides.maxSubmissionCost
-          ? applyPercentIncrease({
-                base:
-                  retryableGasOverrides.maxSubmissionCost.base ??
-                  retryableTicketGasEstimates.maxSubmissionCost,
-                percentIncrease: retryableGasOverrides.maxSubmissionCost.percentIncrease,
-              })
-          : retryableTicketGasEstimates.maxSubmissionCost;
-  
-  const deposit = (gasLimit * maxFeePerGas) + maxSubmissionCost;
+    retryableGasOverrides && retryableGasOverrides.maxSubmissionCost
+      ? applyPercentIncrease({
+          base:
+            retryableGasOverrides.maxSubmissionCost.base ??
+            retryableTicketGasEstimates.maxSubmissionCost,
+          percentIncrease: retryableGasOverrides.maxSubmissionCost.percentIncrease,
+        })
+      : retryableTicketGasEstimates.maxSubmissionCost;
+
+  const deposit = gasLimit * maxFeePerGas + maxSubmissionCost;
 
   // (and then we encode the real data, to send the transaction)
   const setGatewaysCalldata = encodeFunctionData({
