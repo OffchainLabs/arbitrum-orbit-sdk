@@ -1,4 +1,4 @@
-type GasOverrideOptions = {
+export type GasOverrideOptions = {
   base?: bigint;
   percentIncrease?: bigint;
 };
@@ -7,23 +7,12 @@ export type TransactionRequestGasOverrides = {
   gasLimit?: GasOverrideOptions;
 };
 
-export type TransactionRequestRetryableGasOverrides = {
-  gasLimit?: GasOverrideOptions;
-  deposit?: GasOverrideOptions;
-};
-
-export function applyGasOverrides({
-  gasOverrides,
-  estimatedGas,
-  defaultGas,
+export function applyPercentIncrease({
+  base,
+  percentIncrease = 0n,
 }: {
-  gasOverrides: GasOverrideOptions;
-  estimatedGas?: bigint;
-  defaultGas: bigint;
+  base: bigint;
+  percentIncrease?: bigint;
 }) {
-  const baseEstimatedGas = gasOverrides.base ?? estimatedGas ?? defaultGas;
-
-  return gasOverrides.percentIncrease
-    ? baseEstimatedGas + (baseEstimatedGas * gasOverrides.percentIncrease) / 100n
-    : baseEstimatedGas;
+  return base + (base * percentIncrease) / 100n;
 }

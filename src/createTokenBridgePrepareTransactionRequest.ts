@@ -10,10 +10,18 @@ import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
 import {
+  GasOverrideOptions,
   TransactionRequestGasOverrides,
-  TransactionRequestRetryableGasOverrides,
-  applyGasOverrides,
+  applyPercentIncrease,
 } from './utils/gasOverrides';
+
+export type TransactionRequestRetryableGasOverrides = {
+  maxSubmissionCostForFactory?: GasOverrideOptions;
+  maxGasForFactory?: GasOverrideOptions;
+  maxSubmissionCostForContracts?: GasOverrideOptions;
+  maxGasForContracts?: GasOverrideOptions;
+  maxGasPrice?: bigint;
+};
 
 export async function createTokenBridgePrepareTransactionRequest({
   params,
@@ -45,6 +53,7 @@ export async function createTokenBridgePrepareTransactionRequest({
     orbitChainProvider,
     tokenBridgeCreator.address[chainId],
     params.rollup,
+    retryableGasOverrides,
   );
 
   const chainUsesCustomFee = await isCustomFeeTokenChain({
@@ -66,19 +75,9 @@ export async function createTokenBridgePrepareTransactionRequest({
 
   // potential gas overrides (gas limit)
   if (gasOverrides && gasOverrides.gasLimit) {
-    request.gas = applyGasOverrides({
-      gasOverrides: gasOverrides.gasLimit,
-      estimatedGas: request.gas,
-      defaultGas: createTokenBridgeDefaultGasLimit,
-    });
-  }
-
-  // potential retryable gas overrides (deposit)
-  if (retryableGasOverrides && retryableGasOverrides.deposit) {
-    request.value = applyGasOverrides({
-      gasOverrides: retryableGasOverrides.deposit,
-      estimatedGas: request.value,
-      defaultGas: createTokenBridgeDefaultRetryablesFees,
+    request.gas = applyPercentIncrease({
+      base: gasOverrides.gasLimit.base ?? request.gas ?? createTokenBridgeDefaultGasLimit,
+      percentIncrease: gasOverrides.gasLimit.percentIncrease,
     });
   }
 

@@ -4,7 +4,6 @@ import {
   encodeFunctionData,
   http,
   maxInt256,
-  parseAbi,
   parseEther,
   zeroAddress,
 } from 'viem';
@@ -17,8 +16,6 @@ import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgeP
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 import { createTokenBridgeEnoughCustomFeeTokenAllowance } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
-import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
-import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { erc20 } from './contracts';
 
 type TestnodeInformation = {
@@ -100,8 +97,17 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
       },
     },
     retryableGasOverrides: {
-      deposit: {
-        percentIncrease: 100n,
+      maxGasForFactory: {
+        base: 20_000_000n,
+      },
+      maxGasForContracts: {
+        base: 20_000_000n,
+      },
+      maxSubmissionCostForFactory: {
+        base: 4_000_000_000_000n,
+      },
+      maxSubmissionCostForContracts: {
+        base: 4_000_000_000_000n,
       },
     },
   });
@@ -302,8 +308,17 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
       },
     },
     retryableGasOverrides: {
-      deposit: {
-        percentIncrease: 100n,
+      maxGasForFactory: {
+        base: 20_000_000n,
+      },
+      maxGasForContracts: {
+        base: 20_000_000n,
+      },
+      maxSubmissionCostForFactory: {
+        base: 4_000_000_000_000n,
+      },
+      maxSubmissionCostForContracts: {
+        base: 4_000_000_000_000n,
       },
     },
   });
@@ -354,7 +369,6 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   expect(tokenBridgeContracts.orbitChainContracts.multicall).not.toEqual(zeroAddress);
 
   // wethGateway and weth should be the zeroAddress on custom-fee-token chains
-  expect(tokenBridgeContracts.parentChainContracts.wethGateway).toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.wethGateway).toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.weth).toEqual(zeroAddress);
 });

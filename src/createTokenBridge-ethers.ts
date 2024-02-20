@@ -2,13 +2,19 @@
 import { Address } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { L1Network, L1ToL2MessageGasEstimator, L2Network, addCustomNetwork } from '@arbitrum/sdk';
+import {
+  L1Network,
+  L1ToL2MessageGasEstimator,
+  L2Network,
+  addCustomNetwork,
+  constants as arbitrumSdkConstants,
+} from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
-import { GasOverrides } from '@arbitrum/sdk/dist/lib/message/L1ToL2MessageGasEstimator';
 import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
 import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
-import { TransactionRequestRetryableGasOverrides } from './utils/gasOverrides';
+import { applyPercentIncrease } from './utils/gasOverrides';
+import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrepareTransactionRequest';
 
 type NamedFactory = ContractFactory & { contractName: string };
 const NamedFactoryInstance = (contractJson: {
@@ -37,6 +43,7 @@ export const createTokenBridgeGetInputs = async (
   l2Provider: ethers.providers.JsonRpcProvider,
   l1TokenBridgeCreatorAddress: string,
   rollupAddress: string,
+  retryableGasOverrides?: TransactionRequestRetryableGasOverrides,
 ): Promise<CreateTokenBridgeGetInputsResult> => {
   await registerNewNetwork(l1Provider, l2Provider, rollupAddress);
 
@@ -46,15 +53,18 @@ export const createTokenBridgeGetInputs = async (
   );
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
 
+  //// gasPrice
   const gasPrice = await l2Provider.getGasPrice();
+
   //// run retryable estimate for deploying L2 factory
   const deployFactoryGasParams = await getEstimateForDeployingFactory(
     l1DeployerAddress,
     l1Provider,
     l2Provider,
   );
-  const maxGasForFactory = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
-  const maxSubmissionCostForFactory = deployFactoryGasParams.maxSubmissionCost;
+  const maxSubmissionCostForFactoryEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
+  const maxGasForFactoryEstimation = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
+
   //// run retryable estimate for deploying L2 contracts
   //// we do this estimate using L2 factory template on L1 because on L2 factory does not yet exist
   const l2FactoryTemplate = L2AtomicTokenBridgeFactory__factory.attach(
@@ -86,12 +96,66 @@ export const createTokenBridgeGetInputs = async (
     ethers.Wallet.createRandom().address,
     ethers.Wallet.createRandom().address,
   );
-  const maxGasForContracts = gasEstimateToDeployContracts.mul(2);
-  const maxSubmissionCostForContracts = deployFactoryGasParams.maxSubmissionCost.mul(2);
+  const maxSubmissionCostForContractsEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
+
+  //// apply gas overrides
+  const maxSubmissionCostForFactory =
+    retryableGasOverrides && retryableGasOverrides.maxSubmissionCostForFactory
+      ? BigNumber.from(
+          applyPercentIncrease({
+            base:
+              retryableGasOverrides.maxSubmissionCostForFactory.base ??
+              BigInt(maxSubmissionCostForFactoryEstimation.toNumber()),
+            percentIncrease: retryableGasOverrides.maxSubmissionCostForFactory.percentIncrease,
+          }),
+        )
+      : maxSubmissionCostForFactoryEstimation;
+
+  const maxGasForFactory =
+    retryableGasOverrides && retryableGasOverrides.maxGasForFactory
+      ? BigNumber.from(
+          applyPercentIncrease({
+            base:
+              retryableGasOverrides.maxGasForFactory.base ??
+              BigInt(maxGasForFactoryEstimation.toNumber()),
+            percentIncrease: retryableGasOverrides.maxGasForFactory.percentIncrease,
+          }),
+        )
+      : maxGasForFactoryEstimation;
+
+  const maxSubmissionCostForContracts =
+    retryableGasOverrides && retryableGasOverrides.maxSubmissionCostForContracts
+      ? BigNumber.from(
+          applyPercentIncrease({
+            base:
+              retryableGasOverrides.maxSubmissionCostForContracts.base ??
+              BigInt(maxSubmissionCostForContractsEstimation.toNumber()),
+            percentIncrease: retryableGasOverrides.maxSubmissionCostForContracts.percentIncrease,
+          }),
+        )
+      : maxSubmissionCostForContractsEstimation;
+
+  const maxGasForContracts =
+    retryableGasOverrides && retryableGasOverrides.maxGasForContracts
+      ? BigNumber.from(
+          applyPercentIncrease({
+            base:
+              retryableGasOverrides.maxGasForContracts.base ??
+              BigInt(gasEstimateToDeployContracts.toNumber()),
+            percentIncrease: retryableGasOverrides.maxGasForContracts.percentIncrease,
+          }),
+        )
+      : gasEstimateToDeployContracts;
+
+  const maxGasPrice =
+    retryableGasOverrides && retryableGasOverrides.maxGasPrice
+      ? retryableGasOverrides.maxGasPrice
+      : gasPrice;
+
   let retryableFee = maxSubmissionCostForFactory
     .add(maxSubmissionCostForContracts)
-    .add(maxGasForFactory.mul(gasPrice))
-    .add(maxGasForContracts.mul(gasPrice));
+    .add(maxGasForFactory.mul(maxGasPrice))
+    .add(maxGasForContracts.mul(maxGasPrice));
 
   // get inbox from rollup contract
   const inbox = await RollupAdminLogic__factory.connect(rollupAddress, l1Provider).inbox();
@@ -111,6 +175,7 @@ const getEstimateForDeployingFactory = async (
 ) => {
   //// run retryable estimate for deploying L2 factory
   const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
+
   const deployFactoryGasParams = await l1ToL2MsgGasEstimate.estimateAll(
     {
       from: ethers.Wallet.createRandom().address,
@@ -217,6 +282,7 @@ const registerNewNetwork = async (
     isCustom: true,
     name: 'OrbitChain',
     partnerChainID: l1NetworkInfo.chainId,
+    partnerChainIDs: [],
     retryableLifetimeSeconds: 7 * 24 * 60 * 60,
     nitroGenesisBlock: 0,
     nitroGenesisL1Block: 0,
@@ -237,6 +303,7 @@ const registerNewNetwork = async (
       l2Weth: '',
       l2WethGateway: '',
     },
+    blockTime: arbitrumSdkConstants.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
   };
 
   // register - needed for retryables

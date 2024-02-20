@@ -1,7 +1,11 @@
 import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
+
 import { ParentChainId } from './types/ParentChain';
 import {
+  mainnet,
+  arbitrumOne,
+  arbitrumNova,
   sepolia,
   arbitrumSepolia,
   nitroTestnodeL1,
@@ -35,9 +39,14 @@ const RollupInitializedEventAbi: AbiEvent = {
 };
 
 const earliestRollupCreatorDeploymentBlockNumber = {
+  // mainnet
+  [mainnet.id]: 18736164n,
+  [arbitrumOne.id]: 150599584n,
+  [arbitrumNova.id]: 47798739n,
   // testnet
   [sepolia.id]: 4741823n,
   [arbitrumSepolia.id]: 654628n,
+  // local nitro-testnode
   [nitroTestnodeL1.id]: 0n,
   [nitroTestnodeL2.id]: 0n,
   [nitroTestnodeL3.id]: 0n,

@@ -1,22 +1,26 @@
 diff --git a/node_modules/@wagmi/cli/dist/plugins/index.d.ts b/node_modules/@wagmi/cli/dist/plugins/index.d.ts
-index 04a78d1..61ce4fa 100644
+index 04a78d1..0eb6430 100644
 --- a/node_modules/@wagmi/cli/dist/plugins/index.d.ts
 +++ b/node_modules/@wagmi/cli/dist/plugins/index.d.ts
-@@ -120,6 +120,7 @@ declare const apiUrls: {
+@@ -119,7 +119,9 @@ declare const apiUrls: {
+     137: string;
      80001: string;
      42161: string;
++    42170: string;
      421613: string;
 +    421614: string;
      56: string;
      97: string;
      128: string;
 diff --git a/node_modules/@wagmi/cli/dist/plugins/index.js b/node_modules/@wagmi/cli/dist/plugins/index.js
-index 8e23da2..8056121 100644
+index 8e23da2..bd8221d 100644
 --- a/node_modules/@wagmi/cli/dist/plugins/index.js
 +++ b/node_modules/@wagmi/cli/dist/plugins/index.js
-@@ -1387,6 +1387,7 @@ var apiUrls = {
+@@ -1386,7 +1386,9 @@ var apiUrls = {
+   [137]: "https://api.polygonscan.com/api",
    [80001]: "https://api-testnet.polygonscan.com/api",
    [42161]: "https://api.arbiscan.io/api",
++  [42170]: "https://api-nova.arbiscan.io/api",
    [421613]: "https://api-goerli.arbiscan.io/api",
 +  [421614]: "https://api-sepolia.arbiscan.io/api",
    [56]: "https://api.bscscan.com/api",

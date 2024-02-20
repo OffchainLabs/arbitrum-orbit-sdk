@@ -3,7 +3,7 @@ import { Address, PublicClient } from 'viem';
 import { rollupCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
-import { deterministicFactoriesDeploymentEstimatedFees } from './constants';
+import { createRollupDefaultRetryablesFees } from './constants';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams = {
   nativeToken: Address;
@@ -29,5 +29,5 @@ export async function createRollupEnoughCustomFeeTokenAllowance({
     publicClient,
   });
 
-  return allowance >= deterministicFactoriesDeploymentEstimatedFees;
+  return allowance >= createRollupDefaultRetryablesFees;
 }

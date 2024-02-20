@@ -7,6 +7,9 @@ import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChainId, validParentChainId } from './types/ParentChain';
 import {
+  mainnet,
+  arbitrumOne,
+  arbitrumNova,
   sepolia,
   arbitrumSepolia,
   nitroTestnodeL1,
@@ -14,6 +17,7 @@ import {
   nitroTestnodeL3,
 } from './chains';
 
+// this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
 }
@@ -31,10 +35,13 @@ function stringifyBackendsJson(
 function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
+    case mainnet.id:
     case sepolia.id:
     case nitroTestnodeL1.id:
       return false;
 
+    case arbitrumOne.id:
+    case arbitrumNova.id:
     case arbitrumSepolia.id:
     case nitroTestnodeL2.id:
     case nitroTestnodeL3.id:
@@ -98,17 +105,10 @@ export function prepareNodeConfig({
       api: ['eth', 'net', 'web3', 'arb', 'debug'],
     },
     'node': {
-      'forwarding-target': '',
-      'sequencer': {
-        'max-tx-data-size': 85000,
-        'enable': true,
-        'dangerous': {
-          'no-coordinator': true,
-        },
-        'max-block-speed': '250ms',
-      },
+      'sequencer': true,
       'delayed-sequencer': {
-        enable: true,
+        'enable': true,
+        'use-merge-finality': false,
       },
       'batch-poster': {
         'max-size': 90000,
@@ -124,6 +124,17 @@ export function prepareNodeConfig({
           'private-key': sanitizePrivateKey(validatorPrivateKey),
         },
       },
+      'dangerous': {
+        'no-sequencer-coordinator': true,
+      },
+    },
+    'execution': {
+      'forwarding-target': '',
+      'sequencer': {
+        'enable': true,
+        'max-tx-data-size': 85000,
+        'max-block-speed': '250ms',
+      },
       'caching': {
         archive: true,
       },
@@ -137,7 +148,7 @@ export function prepareNodeConfig({
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: 'http://localhost:9876',
+        urls: 'http://localhost:9877',
       },
       'rpc-aggregator': {
         'enable': true,
