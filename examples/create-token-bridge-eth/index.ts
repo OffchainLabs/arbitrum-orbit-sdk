@@ -92,6 +92,33 @@ async function main() {
   console.log(
     `Transaction hash for second retryable is ${orbitChainRetryableReceipts[1].transactionHash}`,
   );
+  if (orbitChainRetryableReceipts[0].status !== 'success') {
+    throw new Error(
+      `First retryable status is not success: ${orbitChainRetryableReceipts[0].status}. Aborting...`,
+    );
+  }
+  if (orbitChainRetryableReceipts[1].status !== 'success') {
+    throw new Error(
+      `Second retryable status is not success: ${orbitChainRetryableReceipts[1].status}. Aborting...`,
+    );
+  }
+
+  // fetching the TokenBridge contracts
+  const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
+    parentChainPublicClient,
+  });
+  console.log(`TokenBridge contracts:`, tokenBridgeContracts);
+
+  // verifying L2 contract existence
+  const orbitChainRouterBytecode = await orbitChainPublicClient.getBytecode({
+    address: tokenBridgeContracts.orbitChainContracts.router,
+  });
+
+  if (!orbitChainRouterBytecode || orbitChainRouterBytecode == '0x') {
+    throw new Error(
+      `TokenBridge deployment seems to have failed since orbit chain contracts do not have code`,
+    );
+  }
 
   // set weth gateway
   const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
@@ -99,8 +126,8 @@ async function main() {
     parentChainPublicClient,
     orbitChainPublicClient,
     account: rollupOwner.address,
-    gasOverrides: {
-      retryableTicketGasLimit: {
+    retryableGasOverrides: {
+      gasLimit: {
         percentIncrease: 200n,
       },
     },
@@ -128,14 +155,13 @@ async function main() {
   });
   console.log(`Retryables executed`);
   console.log(
-    `Transaction hash for retryable is ${orbitChainSetWethGatewayRetryableReceipt.transactionHash}`,
+    `Transaction hash for retryable is ${orbitChainSetWethGatewayRetryableReceipt[0].transactionHash}`,
   );
-
-  // fetching the TokenBridge contracts
-  const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
-    parentChainPublicClient,
-  });
-  console.log(`TokenBridge contracts:`, tokenBridgeContracts);
+  if (orbitChainSetWethGatewayRetryableReceipt[0].status !== 'success') {
+    throw new Error(
+      `Retryable status is not success: ${orbitChainSetWethGatewayRetryableReceipt[0].status}. Aborting...`,
+    );
+  }
 }
 
 main();
