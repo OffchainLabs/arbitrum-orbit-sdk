@@ -1,21 +1,21 @@
 import { Address, PublicClient } from 'viem';
 
-import { rollupCreator } from './contracts';
+import { tokenBridgeCreator } from './contracts';
 import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
-import { createRollupDefaultRetryablesFees } from './constants';
+import { createTokenBridgeDefaultRetryablesFees } from './constants';
 
-export type CreateRollupEnoughCustomFeeTokenAllowanceParams = {
+export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
   nativeToken: Address;
-  account: Address;
+  owner: Address;
   publicClient: PublicClient;
 };
 
-export async function createRollupEnoughCustomFeeTokenAllowance({
+export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
   nativeToken,
-  account,
+  owner,
   publicClient,
-}: CreateRollupEnoughCustomFeeTokenAllowanceParams) {
+}: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams) {
   const chainId = publicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
@@ -24,10 +24,10 @@ export async function createRollupEnoughCustomFeeTokenAllowance({
 
   const allowance = await fetchAllowance({
     address: nativeToken,
-    owner: account,
-    spender: rollupCreator.address[chainId],
+    owner,
+    spender: tokenBridgeCreator.address[chainId],
     publicClient,
   });
 
-  return allowance >= createRollupDefaultRetryablesFees;
+  return allowance >= createTokenBridgeDefaultRetryablesFees;
 }

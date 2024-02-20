@@ -1,8 +1,9 @@
-import { Address, PublicClient, maxInt256 } from 'viem';
+import { Address, PublicClient } from 'viem';
 
 import { approvePrepareTransactionRequest } from './utils/erc20';
 import { validParentChainId } from './types/ParentChain';
 import { rollupCreator } from './contracts';
+import { createRollupDefaultRetryablesFees } from './constants';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = {
   amount?: bigint;
@@ -12,7 +13,7 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = 
 };
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
-  amount = maxInt256,
+  amount = createRollupDefaultRetryablesFees,
   nativeToken,
   account,
   publicClient,

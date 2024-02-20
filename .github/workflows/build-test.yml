@@ -53,8 +53,8 @@ jobs:
       - name: Restore node_modules
         uses: OffchainLabs/actions/node-modules/restore@main
 
-      - name: Generate
-        run: yarn generate
+      - name: Copy .env
+        run: cp ./.env.example ./.env
 
       - name: Build
         run: yarn build
@@ -81,22 +81,17 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
-          # todo: update once merged
-          nitro-testnode-ref: 937af32a3c92a9913121fb64229e2c6f91065ac2
-          # don't deploy the regular token bridge using arbitrum-sdk, as it will be deployed through the TokenBridgeCreator
-          no-token-bridge: true
+          nitro-testnode-ref: release
+          # Use simple mode
+          no-simple: false
           # RollupCreator on L1 is deployed by default
           # RollupCreator on L2 is deployed with --l3node
           l3-node: true
-          # TokenBridgeCreator on L1 is deployed with --tokenbridge
-          # TokenBridgeCreator on L2 is deployed with --l3-token-bridge
-          args: --tokenbridge --l3-token-bridge
+          # L3 node with custom fee token when using --l3-fee-token
+          args: --l3-fee-token
 
       - name: Copy .env
         run: cp ./.env.example ./.env
-
-      - name: Generate
-        run: yarn generate
 
       - name: Build
         run: yarn build
