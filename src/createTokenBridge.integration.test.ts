@@ -6,6 +6,7 @@ import {
   maxInt256,
   parseEther,
   zeroAddress,
+  parseAbi,
 } from 'viem';
 import { execSync } from 'node:child_process';
 
@@ -17,6 +18,8 @@ import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 import { createTokenBridgeEnoughCustomFeeTokenAllowance } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { erc20 } from './contracts';
+import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
+import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 
 type TestnodeInformation = {
   rollup: `0x${string}`;

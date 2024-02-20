@@ -7,7 +7,13 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { getEstimateForSettingGateway } from './createTokenBridge-ethers';
-import { TransactionRequestRetryableGasOverrides } from './utils/gasOverrides';
+import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
+
+export type TransactionRequestRetryableGasOverrides = {
+  gasLimit?: GasOverrideOptions;
+  maxFeePerGas?: GasOverrideOptions;
+  maxSubmissionCost?: GasOverrideOptions;
+};
 
 export type CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams = {
   rollup: Address;
@@ -154,8 +160,40 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     setGatewaysDummyCalldata,
     parentChainProvider,
     orbitChainProvider,
-    retryableGasOverrides,
   );
+
+  //// apply gas overrides
+  const gasLimit =
+    retryableGasOverrides && retryableGasOverrides.gasLimit
+      ? applyPercentIncrease({
+            base:
+              retryableGasOverrides.gasLimit.base ??
+              retryableTicketGasEstimates.gasLimit,
+            percentIncrease: retryableGasOverrides.gasLimit.percentIncrease,
+          })
+      : retryableTicketGasEstimates.gasLimit;
+    
+  const maxFeePerGas =
+      retryableGasOverrides && retryableGasOverrides.maxFeePerGas
+        ? applyPercentIncrease({
+              base:
+                retryableGasOverrides.maxFeePerGas.base ??
+                retryableTicketGasEstimates.maxFeePerGas,
+              percentIncrease: retryableGasOverrides.maxFeePerGas.percentIncrease,
+            })
+        : retryableTicketGasEstimates.maxFeePerGas;
+
+  const maxSubmissionCost =
+        retryableGasOverrides && retryableGasOverrides.maxSubmissionCost
+          ? applyPercentIncrease({
+                base:
+                  retryableGasOverrides.maxSubmissionCost.base ??
+                  retryableTicketGasEstimates.maxSubmissionCost,
+                percentIncrease: retryableGasOverrides.maxSubmissionCost.percentIncrease,
+              })
+          : retryableTicketGasEstimates.maxSubmissionCost;
+  
+  const deposit = (gasLimit * maxFeePerGas) + maxSubmissionCost;
 
   // (and then we encode the real data, to send the transaction)
   const setGatewaysCalldata = encodeFunctionData({
@@ -164,9 +202,9 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     args: [
       [tokenBridgeContracts.parentChainContracts.weth],
       [tokenBridgeContracts.parentChainContracts.wethGateway],
-      retryableTicketGasEstimates.gasLimit, // _maxGas
-      retryableTicketGasEstimates.maxFeePerGas, // _gasPriceBid
-      retryableTicketGasEstimates.maxSubmissionCost, // _maxSubmissionCost
+      gasLimit, // _maxGas
+      maxFeePerGas, // _gasPriceBid
+      maxSubmissionCost, // _maxSubmissionCost
     ],
   });
 
@@ -181,7 +219,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
         setGatewaysCalldata, // targetCallData
       ],
     }),
-    value: retryableTicketGasEstimates.deposit,
+    value: deposit,
     account,
   });
 

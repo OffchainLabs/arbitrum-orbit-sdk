@@ -199,29 +199,9 @@ export const getEstimateForSettingGateway = async (
   setGatewaysCalldata: `0x${string}`,
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,
-  retryableGasOverrides?: TransactionRequestRetryableGasOverrides,
 ) => {
   //// run retryable estimate for setting a token gateway in the router
   const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
-
-  // applying gas overrides
-  const gasOverridesForEstimation: GasOverrides = {};
-  if (retryableGasOverrides && retryableGasOverrides.gasLimit) {
-    gasOverridesForEstimation.gasLimit = {
-      min: undefined,
-      percentIncrease: undefined,
-    };
-
-    if (retryableGasOverrides.gasLimit.base) {
-      gasOverridesForEstimation.gasLimit.min = BigNumber.from(retryableGasOverrides.gasLimit.base);
-    }
-
-    if (retryableGasOverrides.gasLimit.percentIncrease) {
-      gasOverridesForEstimation.gasLimit.percentIncrease = BigNumber.from(
-        retryableGasOverrides.gasLimit.percentIncrease,
-      );
-    }
-  }
 
   const setGatewaysGasParams = await l1ToL2MsgGasEstimate.estimateAll(
     {
@@ -234,7 +214,6 @@ export const getEstimateForSettingGateway = async (
     },
     await getBaseFee(l1Provider),
     l1Provider,
-    gasOverridesForEstimation,
   );
 
   return {
