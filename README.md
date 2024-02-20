@@ -27,20 +27,6 @@ Then, run the integration tests:
 yarn test:integration
 ```
 
-## Run integration tests
-
-Clone the branch `main` of [nitro-testnode](https://github.com/OffchainLabs/nitro-testnode), and run the testnode using the following arguments:
-
-```bash
-./test-node.bash --init --tokenbridge --l3node --l3-fee-token --l3-token-bridge
-```
-
-Then, run the integration tests:
-
-```bash
-yarn test:integration
-```
-
 ## Examples
 
 See [examples](./examples).
