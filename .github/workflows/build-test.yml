@@ -80,6 +80,46 @@ jobs:
 
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@main
+
+      - name: Generate
+        run: yarn generate
+        with:
+          nitro-testnode-ref: release
+          # Use simple mode
+          no-simple: false
+          # RollupCreator on L1 is deployed by default
+          # RollupCreator on L2 is deployed with --l3node
+          l3-node: true
+          # L3 node with custom fee token when using --l3-fee-token
+          args: --l3-fee-token
+
+      - name: Copy .env
+        run: cp ./.env.example ./.env
+
+      - name: Build
+        run: yarn build
+
+      - name: Test
+        run: yarn test:integration
+
+  test-integration:
+    name: Test (Integration)
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Restore node_modules
+        uses: OffchainLabs/actions/node-modules/restore@main
+
+      - name: Set up the local node
+        uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
           nitro-testnode-ref: transfer-ownership
           # Use simple mode
