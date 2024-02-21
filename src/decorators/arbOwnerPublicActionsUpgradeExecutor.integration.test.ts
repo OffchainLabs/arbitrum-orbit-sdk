@@ -1,21 +1,15 @@
 import { it, expect } from 'vitest';
-import { createPublicClient, http, zeroAddress } from 'viem';
+import { Address, createPublicClient, http, zeroAddress } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-
 import { arbitrumLocal } from '../testHelpers';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 
-import { createTokenBridgePrepareTransactionRequest } from '../createTokenBridgePrepareTransactionRequest';
-import { createTokenBridgePrepareTransactionReceipt } from '../createTokenBridgePrepareTransactionReceipt';
-import { deployTokenBridgeCreator } from '../createTokenBridge-testHelpers';
-import { execSync } from 'node:child_process';
-import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
-import { nitroTestnodeL1, nitroTestnodeL2 } from '../chains';
-import { upgradeExecutor } from '../contracts';
-
-
+// L2 Owner Private Key
 const devPrivateKey =
-  '0xb6b15c8cb491557369f3c7d2c287b053eb229daa9c22138887752191c9520659';
+  '0xdc04c5399f82306ec4b4d654a342f40e2e0620fe39950d967e1e574b32d4dd36';
+
+// L3 Upgrade Executor Address
+let upgradeExecutorAddress:Address = '0xc9875f9588b765A81c212E211B8bB00Fe6af2ac9'
 
 const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
@@ -25,144 +19,39 @@ const client = createPublicClient({
   transport: http(),
 }).extend(arbOwnerPublicActions);
 
-type TestnodeInformation = {
-  rollup: `0x${string}`;
-  l3Rollup: `0x${string}`;
-  l3NativeToken: `0x${string}`;
-};
-
-function getInformationFromTestnode(): TestnodeInformation {
-  const containers = [
-    'nitro_sequencer_1',
-    'nitro-sequencer-1',
-    'nitro-testnode-sequencer-1',
-    'nitro-testnode_sequencer_1',
-  ];
-
-  for (const container of containers) {
-    try {
-      const deploymentJson = JSON.parse(
-        execSync('docker exec ' + container + ' cat /config/deployment.json').toString(),
-      );
-
-      const l3DeploymentJson = JSON.parse(
-        execSync('docker exec ' + container + ' cat /config/l3deployment.json').toString(),
-      );
-
-      return {
-        rollup: deploymentJson['rollup'],
-        l3Rollup: l3DeploymentJson['rollup'],
-        l3NativeToken: l3DeploymentJson['native-token'],
-      };
-    } catch {
-      // empty on purpose
-    }
-  }
-
-  throw new Error('nitro-testnode sequencer not found');
-}
-
-const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
-const l2RollupOwner = testnodeAccounts.l2RollupOwner;
-
-const nitroTestnodeL1Client = createPublicClient({
-  chain: nitroTestnodeL1,
-  transport: http(nitroTestnodeL1.rpcUrls.default.http[0]),
-});
-
-const nitroTestnodeL2Client = createPublicClient({
-  chain: nitroTestnodeL2,
-  transport: http(nitroTestnodeL2.rpcUrls.default.http[0]),
-});
-
-async function deployTokenBridge (){ 
-  const testnodeInformation = getInformationFromTestnode();
-  
-// deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
-const tokenBridgeCreator = await deployTokenBridgeCreator({
-  publicClient: nitroTestnodeL1Client,
-});
-
-const txRequest = await createTokenBridgePrepareTransactionRequest({
-  params: {
-    rollup: testnodeInformation.rollup,
-    rollupOwner: l2RollupOwner.address,
-  },
-  parentChainPublicClient: nitroTestnodeL1Client,
-  orbitChainPublicClient: nitroTestnodeL2Client,
-  account: l2RollupOwner.address,
-  gasOverrides: {
-    gasLimit: {
-      base: 6_000_000n,
-    },
-  },
-  retryableGasOverrides: {
-    maxGasForFactory: {
-      base: 20_000_000n,
-    },
-    maxGasForContracts: {
-      base: 20_000_000n,
-    },
-    maxSubmissionCostForFactory: {
-      base: 4_000_000_000_000n,
-    },
-    maxSubmissionCostForContracts: {
-      base: 4_000_000_000_000n,
-    },
-  },
-});
-
-// update the transaction request to use the fresh token bridge creator
-const txRequestToFreshTokenBridgeCreator = { ...txRequest, to: tokenBridgeCreator };
-
-// sign and send the transaction
-const txHash = await nitroTestnodeL1Client.sendRawTransaction({
-  serializedTransaction: await l2RollupOwner.signTransaction(txRequestToFreshTokenBridgeCreator),
-});
-
-// get the transaction receipt after waiting for the transaction to complete
-const txReceipt = createTokenBridgePrepareTransactionReceipt(
-  await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: txHash }),
-);
-// checking retryables execution
-const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({
-  orbitPublicClient: nitroTestnodeL2Client,
-});
-// get contracts
-const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
-  parentChainPublicClient: nitroTestnodeL1Client,
-});
-
-return tokenBridgeContracts.orbitChainContracts.upgradeExecutor
-}
-
-it('successfully fetches network fee receiver', async () => {
-  const result = await client.arbOwnerReadContract({
-    functionName: 'getNetworkFeeAccount',
+it('succesfully adds chain owner using upgrade executor', async () => {
+  // adding l3 upgrade executor as l3 chain owner
+  const transactionRequest1 = await client.arbOwnerPrepareTransactionRequest({
+    functionName: 'addChainOwner',
+    args: [upgradeExecutorAddress],
+    upgradeExecutor: false,
+    account: owner.address,
   });
 
-  expect(result).toEqual(owner.address);
-});
-
-it('succesfully fetches chain owners', async () => {
-  const result = await client.arbOwnerReadContract({
-    functionName: 'getAllChainOwners',
+  // submit tx to add upgrade executor as chain owner
+  await client.sendRawTransaction({
+    // @ts-ignore
+    serializedTransaction: await owner.signTransaction(transactionRequest1),
   });
 
-  expect(result).toContain(owner.address);
-});
+  // Checks if upgrade executor is added successfully
+  const isOwnerUpgradeExecutor = await client.arbOwnerReadContract({
+    functionName: 'isChainOwner',
+    args: [upgradeExecutorAddress],
+  });
 
-it('succesfully adds chain owner', async () => {
-  const upgradeExecutorAddress = await deployTokenBridge()
+  expect(isOwnerUpgradeExecutor).toEqual(true);
+
+  // Checks if random address is not a chain owner yet
   const isOwnerInitially = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
     args: [randomAccount.address],
   });
 
-  // assert account is not already an owner
   expect(isOwnerInitially).toEqual(false);
 
-  const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
+  // Adding random address as chain owner using upgrade executor
+  const transactionRequest2 = await client.arbOwnerPrepareTransactionRequest({
     functionName: 'addChainOwner',
     args: [randomAccount.address],
     upgradeExecutor: upgradeExecutorAddress,
@@ -172,9 +61,8 @@ it('succesfully adds chain owner', async () => {
   // submit tx to add chain owner
   await client.sendRawTransaction({
     // @ts-ignore
-    serializedTransaction: await owner.signTransaction(transactionRequest),
+    serializedTransaction: await owner.signTransaction(transactionRequest2),
   });
-
   const isOwner = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
     args: [randomAccount.address],
@@ -185,13 +73,12 @@ it('succesfully adds chain owner', async () => {
 });
 
 it('succesfully removes chain owner', async () => {
-  const upgradeExecutorAddress = await deployTokenBridge()
   const isOwnerInitially = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
     args: [randomAccount.address],
   });
 
-  // assert account is an owner
+  // assert account is an owner 
   expect(isOwnerInitially).toEqual(true);
 
   const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
@@ -217,7 +104,6 @@ it('succesfully removes chain owner', async () => {
 });
 
 it('succesfully updates infra fee receiver', async () => {
-  const upgradeExecutorAddress = await deployTokenBridge()
   const initialInfraFeeReceiver = await client.arbOwnerReadContract({
     functionName: 'getInfraFeeAccount',
   });

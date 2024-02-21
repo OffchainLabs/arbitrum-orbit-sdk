@@ -6,7 +6,7 @@ import { arbitrumLocal } from '../testHelpers';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 
 const devPrivateKey =
-  '0xb6b15c8cb491557369f3c7d2c287b053eb229daa9c22138887752191c9520659';
+  '0xdc04c5399f82306ec4b4d654a342f40e2e0620fe39950d967e1e574b32d4dd36';
 
 const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
