@@ -109,6 +109,7 @@ export function prepareNodeConfig({
       'delayed-sequencer': {
         'enable': true,
         'use-merge-finality': false,
+        'finalize-distance': 1,
       },
       'batch-poster': {
         'max-size': 90000,
