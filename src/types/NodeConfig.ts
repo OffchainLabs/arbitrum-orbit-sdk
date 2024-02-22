@@ -52,6 +52,7 @@ export type NodeConfig = {
     'delayed-sequencer': {
       'enable': boolean;
       'use-merge-finality': boolean;
+      'finalize-distance': number;
     };
     'batch-poster': {
       'max-size': number;
