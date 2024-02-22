@@ -58,7 +58,18 @@ function parseCliOptions(fileContents: string): CliOption[] {
   let lines = fileContents.split('\n');
   // trim whitespaces
   lines = lines.map((line) => line.trim());
+  // special case for flags with comments that span multiple lines
+  // todo: generalize this so it automatically detects and merges multi-line comments??
+  lines = lines.map((line, lineIndex) => {
+    // this comment spans 3 lines
+    if (line.includes('max-fee-cap-formula')) {
+      return `${line} ${lines[lineIndex + 1]} ${lines[lineIndex + 2]}`;
+    }
+
+    return line;
+  });
   // only leave lines that start with "--", e.g. "--auth.addr string" but exclude "--help" and "--dev"
+
   lines = lines.filter(
     (line) => line.startsWith('--') && !line.includes('--help') && !line.includes('--dev'),
   );
