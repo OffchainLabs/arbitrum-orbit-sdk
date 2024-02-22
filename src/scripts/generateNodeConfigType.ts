@@ -115,25 +115,21 @@ type CliOptionNestedObject = {
 };
 
 function createCliOptionsNestedObject(options: CliOption[]): CliOptionNestedObject {
-  const result: CliOption | CliOptionNestedObject = {};
+  const result: CliOptionNestedObject = {};
 
   options.forEach((option) => {
-    let path = option.name.split('.');
+    let paths = option.name.split('.');
     let current: CliOptionNestedObject = result;
 
-    for (let i = 0; i < path.length; i++) {
-      const pathIndex = path[i];
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths[i];
+      const pathIsFinal = i === paths.length - 1;
 
-      if (!current[pathIndex]) {
-        if (i === path.length - 1) {
-          current[pathIndex] = option;
-        } else {
-          current[pathIndex] = {};
-        }
+      if (typeof current[path] === 'undefined') {
+        current[path] = pathIsFinal ? option : {};
       }
 
-      // @ts-ignore
-      current = current[pathIndex];
+      current = current[path] as CliOptionNestedObject;
     }
   });
 
@@ -144,16 +140,27 @@ function isCliOption(value: CliOption | CliOptionNestedObject): value is CliOpti
   return 'type' in value;
 }
 
+function getDocs(value: CliOption | CliOptionNestedObject): string[] {
+  if (isCliOption(value)) {
+    return value.docs;
+  }
+
+  // docs only available for "primitive" properties, not objects
+  return [];
+}
+
 function getTypeRecursively(value: CliOption | CliOptionNestedObject): string | WriterFunction {
+  // if we reached the "primitive" property, we can just return its type
   if (isCliOption(value)) {
     return value.type;
   }
 
+  // if not, recursively figure out the type for each of the object's properties
   return objectType({
     properties: Object.entries(value).map(([currentKey, currentValue]) => ({
       name: `'${currentKey}'`,
       type: getTypeRecursively(currentValue),
-      docs: (currentValue.docs ?? []) as string[],
+      docs: getDocs(currentValue),
       // make it optional
       hasQuestionToken: true,
     })),
@@ -163,15 +170,16 @@ function getTypeRecursively(value: CliOption | CliOptionNestedObject): string | 
 function main() {
   // run --help on the nitro binary and save the output to a file
   execSync(`docker run --rm ${nitroNodeImage} --help >& ${nitroNodeHelpOutputFile}`);
+
   // read and parse the file
   const content = readFileSync(nitroNodeHelpOutputFile, 'utf8');
   const cliOptions = parseCliOptions(content);
   const cliOptionsNestedObject = createCliOptionsNestedObject(cliOptions);
 
+  // create the new source file
   const sourceFile = new Project().createSourceFile('./src/types/NodeConfig.generated.ts', '', {
     overwrite: true,
   });
-
   // append header
   sourceFile.insertText(0, generateHeader());
   // append NodeConfig type declaration
@@ -181,9 +189,10 @@ function main() {
     docs: ['Nitro node configuration options'],
     isExported: true,
   });
+
   // save file to disk
   sourceFile.saveSync();
-
+  // remove output file that we used for parsing
   rmSync(nitroNodeHelpOutputFile);
 }
 
