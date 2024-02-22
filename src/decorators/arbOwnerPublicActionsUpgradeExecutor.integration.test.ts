@@ -80,7 +80,7 @@ it('succesfully removes chain owner', async () => {
   expect(isOwner).toEqual(false);
 });
 
-it('succesfully updates infra fee receiver', async () => {
+it('successfully updates infra fee receiver', async () => {
   const initialInfraFeeReceiver = await client.arbOwnerReadContract({
     functionName: 'getInfraFeeAccount',
   });
