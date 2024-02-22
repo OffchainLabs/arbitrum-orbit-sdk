@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { readFileSync, rmSync } from 'fs';
-import { Project, Writers } from 'ts-morph';
+import { Project, WriterFunction, Writers } from 'ts-morph';
 
 const { objectType } = Writers;
 
@@ -110,44 +110,50 @@ function parseCliOptions(fileContents: string): CliOption[] {
   });
 }
 
-type CliOptionNestedObject = any;
+type CliOptionNestedObject = {
+  [key: string]: CliOption | CliOptionNestedObject;
+};
 
 function createCliOptionsNestedObject(options: CliOption[]): CliOptionNestedObject {
-  const result: CliOptionNestedObject = {};
+  const result: CliOption | CliOptionNestedObject = {};
 
   options.forEach((option) => {
     let path = option.name.split('.');
-    let current = result;
+    let current: CliOptionNestedObject = result;
 
     for (let i = 0; i < path.length; i++) {
-      if (!current[path[i]]) {
+      const pathIndex = path[i];
+
+      if (!current[pathIndex]) {
         if (i === path.length - 1) {
-          current[path[i]] = option;
+          current[pathIndex] = option;
         } else {
-          current[path[i]] = {};
+          current[pathIndex] = {};
         }
       }
 
-      current = current[path[i]];
+      // @ts-ignore
+      current = current[pathIndex];
     }
   });
 
   return result;
 }
 
-//@ts-ignore
-function getType(something: any) {
-  if (typeof something === 'object' && 'type' in something) {
-    return something.type;
+function isCliOption(value: CliOption | CliOptionNestedObject): value is CliOption {
+  return 'type' in value;
+}
+
+function getTypeRecursively(value: CliOption | CliOptionNestedObject): string | WriterFunction {
+  if (isCliOption(value)) {
+    return value.type;
   }
 
   return objectType({
-    //@ts-ignore
-    properties: Object.entries(something).map(([key, value]) => ({
-      name: `'${key}'`,
-      type: getType(value),
-      //@ts-ignore
-      docs: value.docs,
+    properties: Object.entries(value).map(([currentKey, currentValue]) => ({
+      name: `'${currentKey}'`,
+      type: getTypeRecursively(currentValue),
+      docs: (currentValue.docs ?? []) as string[],
       // make it optional
       hasQuestionToken: true,
     })),
@@ -160,7 +166,7 @@ function main() {
   // read and parse the file
   const content = readFileSync(nitroNodeHelpOutputFile, 'utf8');
   const cliOptions = parseCliOptions(content);
-  const obj = createCliOptionsNestedObject(cliOptions);
+  const cliOptionsNestedObject = createCliOptionsNestedObject(cliOptions);
 
   const sourceFile = new Project().createSourceFile('./src/types/NodeConfig.generated.ts', '', {
     overwrite: true,
@@ -171,8 +177,7 @@ function main() {
   // append NodeConfig type declaration
   sourceFile.addTypeAlias({
     name: 'NodeConfig',
-    // @ts-ignore
-    type: getType(obj),
+    type: getTypeRecursively(cliOptionsNestedObject),
     docs: ['Nitro node configuration options'],
     isExported: true,
   });
