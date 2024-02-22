@@ -58,8 +58,10 @@ function parseCliOptions(fileContents: string): CliOption[] {
   let lines = fileContents.split('\n');
   // trim whitespaces
   lines = lines.map((line) => line.trim());
-  // only leave lines that start with "--", i.e. the flag
-  lines = lines.filter((line) => line.startsWith('--'));
+  // only leave lines that start with "--", e.g. "--auth.addr string" but exclude "--help" and "--dev"
+  lines = lines.filter(
+    (line) => line.startsWith('--') && !line.includes('--help') && !line.includes('--dev'),
+  );
   // sanitize the boolean types
   lines = lines.map((line) => {
     let split = line.split(' ');
