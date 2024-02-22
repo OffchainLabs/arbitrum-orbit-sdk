@@ -1,47 +1,25 @@
 import { it, expect } from 'vitest';
 import { Address, createPublicClient, http, zeroAddress } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { arbitrumLocal } from '../testHelpers';
+import { orbitLocal} from '../testHelpers';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 
-// L2 Owner Private Key
+// L3 Owner Private Key
 const devPrivateKey =
-  '0xdc04c5399f82306ec4b4d654a342f40e2e0620fe39950d967e1e574b32d4dd36';
+  '0xecdf21cb41c65afb51f91df408b7656e2c8739a5877f2814add0afd780cc210e';
 
 // L3 Upgrade Executor Address
-let upgradeExecutorAddress:Address = '0xc9875f9588b765A81c212E211B8bB00Fe6af2ac9'
+let upgradeExecutorAddress:Address = '0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b'
 
 const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
 const client = createPublicClient({
-  chain: arbitrumLocal,
+  chain: orbitLocal,
   transport: http(),
 }).extend(arbOwnerPublicActions);
 
 it('succesfully adds chain owner using upgrade executor', async () => {
-  // adding l3 upgrade executor as l3 chain owner
-  const transactionRequest1 = await client.arbOwnerPrepareTransactionRequest({
-    functionName: 'addChainOwner',
-    args: [upgradeExecutorAddress],
-    upgradeExecutor: false,
-    account: owner.address,
-  });
-
-  // submit tx to add upgrade executor as chain owner
-  await client.sendRawTransaction({
-    // @ts-ignore
-    serializedTransaction: await owner.signTransaction(transactionRequest1),
-  });
-
-  // Checks if upgrade executor is added successfully
-  const isOwnerUpgradeExecutor = await client.arbOwnerReadContract({
-    functionName: 'isChainOwner',
-    args: [upgradeExecutorAddress],
-  });
-
-  expect(isOwnerUpgradeExecutor).toEqual(true);
-
   // Checks if random address is not a chain owner yet
   const isOwnerInitially = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
@@ -67,7 +45,6 @@ it('succesfully adds chain owner using upgrade executor', async () => {
     functionName: 'isChainOwner',
     args: [randomAccount.address],
   });
-
   // assert account is now owner
   expect(isOwner).toEqual(true);
 });
@@ -131,3 +108,4 @@ it('succesfully updates infra fee receiver', async () => {
   // assert account is now infra fee receiver
   expect(infraFeeReceiver).toEqual(randomAccount.address);
 });
+

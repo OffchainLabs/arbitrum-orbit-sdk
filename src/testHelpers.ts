@@ -28,6 +28,27 @@ export const arbitrumLocal: Chain = {
   },
 };
 
+export const orbitLocal: Chain = {
+  id: 333_333,
+  name: 'Orbit Local',
+  network: 'orbit-local',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['http://127.0.0.1:3347'],
+    },
+    public: {
+      http: ['http://127.0.0.1:3347'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Blockscout',
+      url: 'http://127.0.0.1:4000',
+    },
+  },
+};
+
 // Source: https://github.com/OffchainLabs/nitro-testnode/blob/release/scripts/accounts.ts#L28
 type NitroTestNodePrivateKeyAccounts = {
   // funnel

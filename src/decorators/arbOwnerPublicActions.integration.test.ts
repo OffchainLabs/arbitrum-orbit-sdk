@@ -5,6 +5,7 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumLocal } from '../testHelpers';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 
+// l2 owner private key
 const devPrivateKey =
   '0xdc04c5399f82306ec4b4d654a342f40e2e0620fe39950d967e1e574b32d4dd36';
 
