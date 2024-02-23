@@ -5,12 +5,14 @@ import { Project, WriterFunction, Writers } from 'ts-morph';
 const { objectType } = Writers;
 
 function getNitroNodeImageTag(): string {
+  const defaultNitroNodeTag = 'v2.2.5-a20a1c7';
   const argv = process.argv.slice(2);
 
   if (argv.length < 2 || argv[0] !== '--nitro-node-tag') {
-    throw new Error(
-      `You must specify the nitro node image tag, e.g. "--nitro-node-tag v2.1.3-e815395"`,
+    console.log(
+      `Using default nitro-node tag since none was provided. If you want to specify a tag, you can do "--nitro-node-tag v2.2.2-8f33fea".`,
     );
+    return defaultNitroNodeTag;
   }
 
   return argv[1];
@@ -20,7 +22,7 @@ const nitroNodeTag = getNitroNodeImageTag();
 const nitroNodeImage = `offchainlabs/nitro-node:${nitroNodeTag}`;
 const nitroNodeHelpOutputFile = `${nitroNodeImage.replace('/', '-')}-help.txt`;
 
-console.log(`Using image ${nitroNodeImage}`);
+console.log(`Using image "${nitroNodeImage}".`);
 
 function generateHeader() {
   return [
