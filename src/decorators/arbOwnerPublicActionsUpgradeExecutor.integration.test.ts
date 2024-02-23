@@ -1,8 +1,9 @@
 import { it, expect } from 'vitest';
-import { Address, createPublicClient, http, zeroAddress } from 'viem';
+import { Address, createPublicClient, http, parseGwei, Client } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { orbitLocal} from '../testHelpers';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
+import { arbGasInfoPublicActions } from './arbGasInfoPublicActions';
 
 // L3 Owner Private Key
 const devPrivateKey =
@@ -14,10 +15,17 @@ let upgradeExecutorAddress:Address = '0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b
 const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
+// Client for arb owner public actions
 const client = createPublicClient({
   chain: orbitLocal,
   transport: http(),
 }).extend(arbOwnerPublicActions);
+
+// Client for arb gas info public actions
+const client2 = createPublicClient({
+  chain: orbitLocal,
+  transport: http(),
+}).extend(arbGasInfoPublicActions);
 
 it('succesfully adds chain owner using upgrade executor', async () => {
   // Checks if random address is not a chain owner yet
@@ -109,3 +117,25 @@ it('successfully updates infra fee receiver', async () => {
   expect(infraFeeReceiver).toEqual(randomAccount.address);
 });
 
+it('successfully updates L2 Base Fee Estimate Inertia on Orbit chain', async () => { 
+  const l2BaseFeeEstimateInertia = BigInt(9)
+  const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
+    functionName: 'setL1BaseFeeEstimateInertia',
+    args: [l2BaseFeeEstimateInertia],
+    upgradeExecutor: upgradeExecutorAddress,
+    account: owner.address,
+  });
+
+  // submit tx to update infra fee receiver
+  await client.sendRawTransaction({
+    // @ts-ignore
+    serializedTransaction: await owner.signTransaction(transactionRequest),
+  });
+
+  const newL2BaseFeeEstimateInertia = await client2.arbGasInfoReadContract({
+    functionName: 'getL1BaseFeeEstimateInertia',
+  });
+
+  // assert account is now infra fee receiver
+  expect(newL2BaseFeeEstimateInertia).toEqual(l2BaseFeeEstimateInertia);
+});
