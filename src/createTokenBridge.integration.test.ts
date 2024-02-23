@@ -110,14 +110,12 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
         base: 4_000_000_000_000n,
       },
     },
+    tokenBridgeCreatorOverride: tokenBridgeCreator,
   });
-
-  // update the transaction request to use the fresh token bridge creator
-  const txRequestToFreshTokenBridgeCreator = { ...txRequest, to: tokenBridgeCreator };
 
   // sign and send the transaction
   const txHash = await nitroTestnodeL1Client.sendRawTransaction({
-    serializedTransaction: await l2RollupOwner.signTransaction(txRequestToFreshTokenBridgeCreator),
+    serializedTransaction: await l2RollupOwner.signTransaction(txRequest),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
@@ -282,14 +280,12 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
         base: 4_000_000_000_000n,
       },
     },
+    tokenBridgeCreatorOverride: tokenBridgeCreator,
   });
-
-  // update the transaction request to use the fresh token bridge creator
-  const txRequestToFreshTokenBridgeCreator = { ...txRequest, to: tokenBridgeCreator };
 
   // sign and send the transaction
   const txHash = await nitroTestnodeL2Client.sendRawTransaction({
-    serializedTransaction: await l3RollupOwner.signTransaction(txRequestToFreshTokenBridgeCreator),
+    serializedTransaction: await l3RollupOwner.signTransaction(txRequest),
   });
 
   // get the transaction receipt after waiting for the transaction to complete

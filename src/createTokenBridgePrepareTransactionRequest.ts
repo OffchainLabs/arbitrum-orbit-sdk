@@ -30,6 +30,7 @@ export async function createTokenBridgePrepareTransactionRequest({
   account,
   gasOverrides,
   retryableGasOverrides,
+  tokenBridgeCreatorOverride,
 }: {
   params: { rollup: Address; rollupOwner: Address };
   parentChainPublicClient: PublicClient;
@@ -37,6 +38,10 @@ export async function createTokenBridgePrepareTransactionRequest({
   account: Address;
   gasOverrides?: TransactionRequestGasOverrides;
   retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
+  /**
+   * Specifies a custom address for the TokenBridgeCreator. By default, the address will be automatically detected based on the provided chain.
+   */
+  tokenBridgeCreatorOverride?: Address;
 }) {
   const chainId = parentChainPublicClient.chain?.id;
 
@@ -63,7 +68,7 @@ export async function createTokenBridgePrepareTransactionRequest({
 
   const request = await parentChainPublicClient.prepareTransactionRequest({
     chain: parentChainPublicClient.chain,
-    to: tokenBridgeCreator.address[chainId],
+    to: tokenBridgeCreatorOverride ?? tokenBridgeCreator.address[chainId],
     data: encodeFunctionData({
       abi: tokenBridgeCreator.abi,
       functionName: 'createTokenBridge',
@@ -71,12 +76,16 @@ export async function createTokenBridgePrepareTransactionRequest({
     }),
     value: chainUsesCustomFee ? 0n : retryableFee,
     account: account,
+    // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
+    // we'll set the actual value in the code below
+    gas: typeof gasOverrides?.gasLimit?.base !== 'undefined' ? 0n : undefined,
   });
 
   // potential gas overrides (gas limit)
   if (gasOverrides && gasOverrides.gasLimit) {
     request.gas = applyPercentIncrease({
-      base: gasOverrides.gasLimit.base ?? request.gas ?? createTokenBridgeDefaultGasLimit,
+      // the ! is here because we should let it error in case we don't have the estimated gas
+      base: gasOverrides.gasLimit.base ?? request.gas!,
       percentIncrease: gasOverrides.gasLimit.percentIncrease,
     });
   }
