@@ -171,7 +171,7 @@ function getTypeRecursively(value: CliOption | CliOptionNestedObject): string | 
 
 function main() {
   // run --help on the nitro binary and save the output to a file
-  execSync(`docker run --rm ${nitroNodeImage} --help >& ${nitroNodeHelpOutputFile}`);
+  execSync(`docker run --rm ${nitroNodeImage} --help > ${nitroNodeHelpOutputFile} 2>&1`);
 
   // read and parse the file
   const content = readFileSync(nitroNodeHelpOutputFile, 'utf8');
