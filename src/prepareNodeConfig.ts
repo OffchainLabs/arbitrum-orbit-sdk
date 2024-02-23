@@ -1,5 +1,5 @@
+import { NodeConfig } from './types/NodeConfig.generated';
 import {
-  NodeConfig,
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
 } from './types/NodeConfig';
@@ -100,8 +100,8 @@ export function prepareNodeConfig({
     'http': {
       addr: '0.0.0.0',
       port: 8449,
-      vhosts: '*',
-      corsdomain: '*',
+      vhosts: ['*'],
+      corsdomain: ['*'],
       api: ['eth', 'net', 'web3', 'arb', 'debug'],
     },
     'node': {
@@ -143,13 +143,13 @@ export function prepareNodeConfig({
   };
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
-    config.node['data-availability'] = {
+    config.node!['data-availability'] = {
       'enable': true,
       'sequencer-inbox-address': coreContracts.sequencerInbox,
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: 'http://localhost:9877',
+        urls: ['http://localhost:9877'],
       },
       'rpc-aggregator': {
         'enable': true,
