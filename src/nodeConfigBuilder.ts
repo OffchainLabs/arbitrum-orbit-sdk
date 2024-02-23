@@ -15,6 +15,19 @@ type NodeConfigParams =
 type NodeConfigKey = NodeConfigParams['key'];
 type NodeConfigValue<TKey extends NodeConfigKey> = Extract<NodeConfigParams, { key: TKey }>['type'];
 
+const config = {
+  auth: {
+    /**
+     * cool cool
+     */
+    api: 'auth.api',
+    /**
+     * asdf asdf
+     */
+    addr: 'auth.addr',
+  },
+} as const;
+
 class NodeConfigBuilder {
   private nodeConfig: NodeConfig;
 
@@ -47,8 +60,8 @@ export function createNodeConfigBuilder(params?: CreateNodeConfigBuilderParams):
 
 const nodeConfig = createNodeConfigBuilder()
   //
-  .set('auth.addr', '127.0.0.1')
-  .set('auth.api', ['eth', 'net', 'web3', 'arb', 'debug'])
+  .set(config.auth.addr, '127.0.0.1')
+  .set(config.auth.api, ['eth'])
   .build();
 
 const nodeConfigDefaults: NodeConfig = {
