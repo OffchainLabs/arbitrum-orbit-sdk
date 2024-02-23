@@ -10,6 +10,7 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { fetchDecimals } from './utils/erc20';
+import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -23,10 +24,17 @@ export async function createRollupPrepareTransactionRequest({
   params,
   account,
   publicClient,
+  gasOverrides,
+  rollupCreatorOverride,
 }: {
   params: CreateRollupParams;
   account: Address;
   publicClient: PublicClient;
+  gasOverrides?: TransactionRequestGasOverrides;
+  /**
+   * Specifies a custom address for the RollupCreator. By default, the address will be automatically detected based on the provided chain.
+   */
+  rollupCreatorOverride?: Address;
 }) {
   const chainId = publicClient.chain?.id;
 
@@ -65,11 +73,23 @@ export async function createRollupPrepareTransactionRequest({
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
-    to: rollupCreator.address[chainId],
+    to: rollupCreatorOverride ?? rollupCreator.address[chainId],
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
     value: createRollupGetCallValue(paramsWithDefaults),
     account,
+    // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
+    // we'll set the actual value in the code below
+    gas: typeof gasOverrides?.gasLimit?.base !== 'undefined' ? 0n : undefined,
   });
+
+  // potential gas overrides (gas limit)
+  if (gasOverrides && gasOverrides.gasLimit) {
+    request.gas = applyPercentIncrease({
+      // the ! is here because we should let it error in case we don't have the estimated gas
+      base: gasOverrides.gasLimit.base ?? request.gas!,
+      percentIncrease: gasOverrides.gasLimit.percentIncrease,
+    });
+  }
 
   return { ...request, chainId };
 }
