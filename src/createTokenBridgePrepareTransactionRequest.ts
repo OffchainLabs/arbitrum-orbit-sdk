@@ -11,6 +11,9 @@ import {
   applyPercentIncrease,
 } from './utils/gasOverrides';
 
+import { Prettify } from './types/utils';
+import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
   maxGasForFactory?: GasOverrideOptions;
@@ -18,6 +21,17 @@ export type TransactionRequestRetryableGasOverrides = {
   maxGasForContracts?: GasOverrideOptions;
   maxGasPrice?: bigint;
 };
+
+export type CreateTokenBridgePrepareTransactionRequestParams = Prettify<
+  WithTokenBridgeCreatorAddressOverride<{
+    params: { rollup: Address; rollupOwner: Address };
+    parentChainPublicClient: PublicClient;
+    orbitChainPublicClient: PublicClient;
+    account: Address;
+    gasOverrides?: TransactionRequestGasOverrides;
+    retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
+  }>
+>;
 
 export async function createTokenBridgePrepareTransactionRequest({
   params,
@@ -27,23 +41,15 @@ export async function createTokenBridgePrepareTransactionRequest({
   gasOverrides,
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
-}: {
-  params: { rollup: Address; rollupOwner: Address };
-  parentChainPublicClient: PublicClient;
-  orbitChainPublicClient: PublicClient;
-  account: Address;
-  gasOverrides?: TransactionRequestGasOverrides;
-  retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
-  /**
-   * Specifies a custom address for the TokenBridgeCreator. By default, the address will be automatically detected based on the provided chain.
-   */
-  tokenBridgeCreatorAddressOverride?: Address;
-}) {
+}: CreateTokenBridgePrepareTransactionRequestParams) {
   const chainId = parentChainPublicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
     throw new Error('chainId is undefined');
   }
+
+  const tokenBridgeCreatorAddress =
+    tokenBridgeCreatorAddressOverride ?? tokenBridgeCreator.address[chainId];
 
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
   const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
@@ -52,7 +58,7 @@ export async function createTokenBridgePrepareTransactionRequest({
     account,
     parentChainProvider,
     orbitChainProvider,
-    tokenBridgeCreator.address[chainId],
+    tokenBridgeCreatorAddress,
     params.rollup,
     retryableGasOverrides,
   );
@@ -64,7 +70,7 @@ export async function createTokenBridgePrepareTransactionRequest({
 
   const request = await parentChainPublicClient.prepareTransactionRequest({
     chain: parentChainPublicClient.chain,
-    to: tokenBridgeCreatorAddressOverride ?? tokenBridgeCreator.address[chainId],
+    to: tokenBridgeCreatorAddress,
     data: encodeFunctionData({
       abi: tokenBridgeCreator.abi,
       functionName: 'createTokenBridge',
