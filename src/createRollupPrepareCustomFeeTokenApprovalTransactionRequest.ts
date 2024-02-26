@@ -4,8 +4,9 @@ import { approvePrepareTransactionRequest } from './utils/erc20';
 import { validParentChainId } from './types/ParentChain';
 import { rollupCreator } from './contracts';
 import { createRollupDefaultRetryablesFees } from './constants';
-import { WithRollupCreatorAddressOverride } from './createRollupTypes';
+
 import { Prettify } from './types/utils';
+import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = Prettify<
   WithRollupCreatorAddressOverride<{

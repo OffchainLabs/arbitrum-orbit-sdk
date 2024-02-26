@@ -1,6 +1,5 @@
 import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
 
-import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
@@ -11,7 +10,13 @@ import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
-import { WithRollupCreatorAddressOverride } from './createRollupTypes';
+
+import { Prettify } from './types/utils';
+import {
+  CreateRollupFunctionInputs,
+  CreateRollupParams,
+  WithRollupCreatorAddressOverride,
+} from './types/createRollupTypes';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -21,18 +26,22 @@ function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   });
 }
 
+export type CreateRollupPrepareTransactionRequestParams = Prettify<
+  WithRollupCreatorAddressOverride<{
+    params: CreateRollupParams;
+    account: Address;
+    publicClient: PublicClient;
+    gasOverrides?: TransactionRequestGasOverrides;
+  }>
+>;
+
 export async function createRollupPrepareTransactionRequest({
   params,
   account,
   publicClient,
   gasOverrides,
   rollupCreatorAddressOverride,
-}: WithRollupCreatorAddressOverride<{
-  params: CreateRollupParams;
-  account: Address;
-  publicClient: PublicClient;
-  gasOverrides?: TransactionRequestGasOverrides;
-}>) {
+}: CreateRollupPrepareTransactionRequestParams) {
   const chainId = publicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
