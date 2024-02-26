@@ -1,4 +1,3 @@
-import { createRollup } from './createRollup';
 import {
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
@@ -13,6 +12,7 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
+import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollupTypes';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import {
   createRollupPrepareTransaction,
@@ -58,8 +58,9 @@ import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
 export {
-  createRollup,
   createRollupPrepareTransactionRequest,
+  CreateRollupFunctionInputs,
+  CreateRollupParams,
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
