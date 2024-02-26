@@ -55,7 +55,10 @@ import {
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
   CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
-import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
+import {
+  createTokenBridgePrepareTransactionRequest,
+  CreateTokenBridgePrepareTransactionRequestParams,
+} from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { prepareKeyset } from './prepareKeyset';
@@ -107,6 +110,7 @@ export {
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
   CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
   createTokenBridgePrepareTransactionRequest,
+  CreateTokenBridgePrepareTransactionRequestParams,
   createTokenBridgePrepareTransactionReceipt,
   createTokenBridgeFetchTokenBridgeContracts,
 };
