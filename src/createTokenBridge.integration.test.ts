@@ -14,7 +14,10 @@ import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
-import { createTokenBridgeEnoughCustomFeeTokenAllowance } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
+import {
+  CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
+  createTokenBridgeEnoughCustomFeeTokenAllowance,
+} from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { erc20 } from './contracts';
 
@@ -195,59 +198,33 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
   expect(fundTxReceipt.status).toEqual('success');
 
   // -----------------------------
-  // 2. check the new token bridge creator allowance
-  // NOTE: We will estimate the token bridge creation through the canonical TokenBridgeCreator
-  //       and we will later change the destination address to the new deployed TokenBridgeCreator.
-  //       Thus, we need to give allowance to both TokenBridgeCreators
-  const allowanceParams = {
+  // 2. approve custom fee token to be spent by the TokenBridgeCreator
+  const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
     nativeToken: testnodeInformation.l3NativeToken,
     owner: l3RollupOwner.address,
     publicClient: nitroTestnodeL2Client,
+    tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
   };
 
-  // 2.a. Approval for canonical TokenBridgeCreator (gas estimation is still done through it, so we need allowance)
-  if (!(await createTokenBridgeEnoughCustomFeeTokenAllowance(allowanceParams))) {
-    const approvalTxRequest =
-      await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
-
-    // sign and send the transaction
-    const approvalTxHash = await nitroTestnodeL2Client.sendRawTransaction({
-      serializedTransaction: await l3RollupOwner.signTransaction(approvalTxRequest),
-    });
-
-    // get the transaction receipt after waiting for the transaction to complete
-    const approvalTxReceipt = await nitroTestnodeL2Client.waitForTransactionReceipt({
-      hash: approvalTxHash,
-    });
-    expect(approvalTxReceipt.status).toEqual('success');
-  }
-
-  // 2.b. Approval for the new TokenBridgeCreator
-  const approvalForNewTokenBridgeCreatorTxRequest =
+  // prepare the tx request
+  const approvalForTokenBridgeCreatorTxRequest =
     await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
 
-  // update the transaction request to use the fresh token bridge creator
-  approvalForNewTokenBridgeCreatorTxRequest.data = encodeFunctionData({
-    abi: erc20.abi,
-    functionName: 'approve',
-    args: [tokenBridgeCreator, maxInt256],
-  });
   // also update the gas used since we estimated an update of the mapping of allowances (to the canonical TokenBridgeCreator),
   // but we will now be adding a new element to that mapping (hence the extra cost of gas)
-  approvalForNewTokenBridgeCreatorTxRequest.gas =
-    approvalForNewTokenBridgeCreatorTxRequest.gas! * 2n;
+  approvalForTokenBridgeCreatorTxRequest.gas = approvalForTokenBridgeCreatorTxRequest.gas! * 2n;
 
   // sign and send the transaction
-  const approvalForNewTokenBridgeCreatorTxHash = await nitroTestnodeL2Client.sendRawTransaction({
+  const approvalForTokenBridgeCreatorTxHash = await nitroTestnodeL2Client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(
-      approvalForNewTokenBridgeCreatorTxRequest,
+      approvalForTokenBridgeCreatorTxRequest,
     ),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
   const approvalForNewTokenBridgeCreatorTxReceipt =
     await nitroTestnodeL2Client.waitForTransactionReceipt({
-      hash: approvalForNewTokenBridgeCreatorTxHash,
+      hash: approvalForTokenBridgeCreatorTxHash,
     });
   expect(approvalForNewTokenBridgeCreatorTxReceipt.status).toEqual('success');
 
