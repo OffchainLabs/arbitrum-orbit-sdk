@@ -30,7 +30,7 @@ export async function createTokenBridgePrepareTransactionRequest({
   account,
   gasOverrides,
   retryableGasOverrides,
-  tokenBridgeCreatorOverride,
+  tokenBridgeCreatorAddressOverride,
 }: {
   params: { rollup: Address; rollupOwner: Address };
   parentChainPublicClient: PublicClient;
@@ -41,7 +41,7 @@ export async function createTokenBridgePrepareTransactionRequest({
   /**
    * Specifies a custom address for the TokenBridgeCreator. By default, the address will be automatically detected based on the provided chain.
    */
-  tokenBridgeCreatorOverride?: Address;
+  tokenBridgeCreatorAddressOverride?: Address;
 }) {
   const chainId = parentChainPublicClient.chain?.id;
 
@@ -68,7 +68,7 @@ export async function createTokenBridgePrepareTransactionRequest({
 
   const request = await parentChainPublicClient.prepareTransactionRequest({
     chain: parentChainPublicClient.chain,
-    to: tokenBridgeCreatorOverride ?? tokenBridgeCreator.address[chainId],
+    to: tokenBridgeCreatorAddressOverride ?? tokenBridgeCreator.address[chainId],
     data: encodeFunctionData({
       abi: tokenBridgeCreator.abi,
       functionName: 'createTokenBridge',

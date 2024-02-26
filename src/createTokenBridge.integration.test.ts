@@ -110,7 +110,7 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
         base: 4_000_000_000_000n,
       },
     },
-    tokenBridgeCreatorOverride: tokenBridgeCreator,
+    tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
   });
 
   // sign and send the transaction
@@ -280,7 +280,7 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
         base: 4_000_000_000_000n,
       },
     },
-    tokenBridgeCreatorOverride: tokenBridgeCreator,
+    tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
   });
 
   // sign and send the transaction
