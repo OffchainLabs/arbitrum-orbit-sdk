@@ -1,10 +1,6 @@
 import { Address, PublicClient, encodeFunctionData } from 'viem';
 
 import { tokenBridgeCreator } from './contracts';
-import {
-  createTokenBridgeDefaultGasLimit,
-  createTokenBridgeDefaultRetryablesFees,
-} from './constants';
 import { validParentChainId } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
