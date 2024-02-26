@@ -10,6 +10,8 @@
     "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./src/dist --declaration",
     "dev": "yarn build --watch",
     "generate": "wagmi generate",
+    "generate:node-config-type": "yarn build && node ./src/dist/scripts/generateNodeConfigType.js",
+    "postgenerate:node-config-type": "prettier --write ./src/types/NodeConfig.generated.ts",
     "test:unit": "vitest unit.test",
     "test:integration": "vitest integration.test",
     "postinstall": "patch-package",
@@ -23,6 +25,7 @@
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.8.3",
+    "ts-morph": "^21.0.1",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }
