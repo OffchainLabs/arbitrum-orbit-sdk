@@ -25,7 +25,7 @@ export async function createRollupPrepareTransactionRequest({
   account,
   publicClient,
   gasOverrides,
-  rollupCreatorOverride,
+  rollupCreatorAddressOverride,
 }: {
   params: CreateRollupParams;
   account: Address;
@@ -34,7 +34,7 @@ export async function createRollupPrepareTransactionRequest({
   /**
    * Specifies a custom address for the RollupCreator. By default, the address will be automatically detected based on the provided chain.
    */
-  rollupCreatorOverride?: Address;
+  rollupCreatorAddressOverride?: Address;
 }) {
   const chainId = publicClient.chain?.id;
 
@@ -73,7 +73,7 @@ export async function createRollupPrepareTransactionRequest({
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
-    to: rollupCreatorOverride ?? rollupCreator.address[chainId],
+    to: rollupCreatorAddressOverride ?? rollupCreator.address[chainId],
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
     value: createRollupGetCallValue(paramsWithDefaults),
     account,

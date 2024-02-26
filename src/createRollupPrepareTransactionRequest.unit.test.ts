@@ -224,7 +224,7 @@ it(`successfully prepares a transaction request with a custom rollup creator`, a
     account: deployer.address,
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n, percentIncrease: 20n } },
-    rollupCreatorOverride: '0x31421C442c422BD16aef6ae44D3b11F404eeaBd9',
+    rollupCreatorAddressOverride: '0x31421C442c422BD16aef6ae44D3b11F404eeaBd9',
   });
 
   expect(txRequest.account).toEqual(deployer.address);
