@@ -1,6 +1,6 @@
 import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
 
-import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollupTypes';
+import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';

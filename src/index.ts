@@ -12,7 +12,7 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
-import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollupTypes';
+import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import {
   createRollupPrepareTransaction,

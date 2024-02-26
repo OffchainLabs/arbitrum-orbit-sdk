@@ -1,4 +1,4 @@
-import { CreateRollupParams } from './createRollupTypes';
+import { CreateRollupParams } from './types/createRollupTypes';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { createRollupDefaultRetryablesFees } from './constants';
 
