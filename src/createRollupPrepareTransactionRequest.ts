@@ -11,6 +11,7 @@ import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
+import { WithRollupCreatorAddressOverride } from './createRollupTypes';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -26,16 +27,12 @@ export async function createRollupPrepareTransactionRequest({
   publicClient,
   gasOverrides,
   rollupCreatorAddressOverride,
-}: {
+}: WithRollupCreatorAddressOverride<{
   params: CreateRollupParams;
   account: Address;
   publicClient: PublicClient;
   gasOverrides?: TransactionRequestGasOverrides;
-  /**
-   * Specifies a custom address for the RollupCreator. By default, the address will be automatically detected based on the provided chain.
-   */
-  rollupCreatorAddressOverride?: Address;
-}) {
+}>) {
   const chainId = publicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
