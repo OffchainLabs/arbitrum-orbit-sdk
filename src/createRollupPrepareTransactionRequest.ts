@@ -1,6 +1,5 @@
 import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
 
-import { CreateRollupFunctionInputs, CreateRollupParams } from './createRollup';
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
@@ -10,6 +9,14 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { fetchDecimals } from './utils/erc20';
+import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
+
+import { Prettify } from './types/utils';
+import {
+  CreateRollupFunctionInputs,
+  CreateRollupParams,
+  WithRollupCreatorAddressOverride,
+} from './types/createRollupTypes';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -19,15 +26,22 @@ function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   });
 }
 
+export type CreateRollupPrepareTransactionRequestParams = Prettify<
+  WithRollupCreatorAddressOverride<{
+    params: CreateRollupParams;
+    account: Address;
+    publicClient: PublicClient;
+    gasOverrides?: TransactionRequestGasOverrides;
+  }>
+>;
+
 export async function createRollupPrepareTransactionRequest({
   params,
   account,
   publicClient,
-}: {
-  params: CreateRollupParams;
-  account: Address;
-  publicClient: PublicClient;
-}) {
+  gasOverrides,
+  rollupCreatorAddressOverride,
+}: CreateRollupPrepareTransactionRequestParams) {
   const chainId = publicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
@@ -65,11 +79,23 @@ export async function createRollupPrepareTransactionRequest({
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
-    to: rollupCreator.address[chainId],
+    to: rollupCreatorAddressOverride ?? rollupCreator.address[chainId],
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
     value: createRollupGetCallValue(paramsWithDefaults),
     account,
+    // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
+    // we'll set the actual value in the code below
+    gas: typeof gasOverrides?.gasLimit?.base !== 'undefined' ? 0n : undefined,
   });
+
+  // potential gas overrides (gas limit)
+  if (gasOverrides && gasOverrides.gasLimit) {
+    request.gas = applyPercentIncrease({
+      // the ! is here because we should let it error in case we don't have the estimated gas
+      base: gasOverrides.gasLimit.base ?? request.gas!,
+      percentIncrease: gasOverrides.gasLimit.percentIncrease,
+    });
+  }
 
   return { ...request, chainId };
 }

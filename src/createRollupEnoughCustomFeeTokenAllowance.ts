@@ -5,16 +5,22 @@ import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
 import { createRollupDefaultRetryablesFees } from './constants';
 
-export type CreateRollupEnoughCustomFeeTokenAllowanceParams = {
-  nativeToken: Address;
-  account: Address;
-  publicClient: PublicClient;
-};
+import { Prettify } from './types/utils';
+import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
+
+export type CreateRollupEnoughCustomFeeTokenAllowanceParams = Prettify<
+  WithRollupCreatorAddressOverride<{
+    nativeToken: Address;
+    account: Address;
+    publicClient: PublicClient;
+  }>
+>;
 
 export async function createRollupEnoughCustomFeeTokenAllowance({
   nativeToken,
   account,
   publicClient,
+  rollupCreatorAddressOverride,
 }: CreateRollupEnoughCustomFeeTokenAllowanceParams) {
   const chainId = publicClient.chain?.id;
 
@@ -25,7 +31,7 @@ export async function createRollupEnoughCustomFeeTokenAllowance({
   const allowance = await fetchAllowance({
     address: nativeToken,
     owner: account,
-    spender: rollupCreator.address[chainId],
+    spender: rollupCreatorAddressOverride ?? rollupCreator.address[chainId],
     publicClient,
   });
 
