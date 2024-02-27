@@ -206,18 +206,10 @@ it(`successfully deploys token bridge contracts with a custom fee token through 
     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
   };
 
-  // prepare the tx request
-  const approvalForTokenBridgeCreatorTxRequest =
-    await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
-
-  // also update the gas used since we estimated an update of the mapping of allowances (to the canonical TokenBridgeCreator),
-  // but we will now be adding a new element to that mapping (hence the extra cost of gas)
-  approvalForTokenBridgeCreatorTxRequest.gas = approvalForTokenBridgeCreatorTxRequest.gas! * 2n;
-
   // sign and send the transaction
   const approvalForTokenBridgeCreatorTxHash = await nitroTestnodeL2Client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(
-      approvalForTokenBridgeCreatorTxRequest,
+      await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams),
     ),
   });
 
