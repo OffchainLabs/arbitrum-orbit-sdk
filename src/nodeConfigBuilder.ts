@@ -1,20 +1,14 @@
-import { NodeConfig } from './types/NodeConfig.generated';
+import { NodeConfig, NodeConfigOption } from './types/NodeConfig.generated';
 import { nodeConfigBuilderDefaults } from './nodeConfigBuilderDefaults';
 
-// todo: generate with ts-morph
 // todo: is there a way to make jsdoc readable when working with the builder?
-type NodeConfigParams =
-  | {
-      key: 'auth.addr';
-      type: string;
-    }
-  | {
-      key: 'auth.api';
-      type: string[];
-    };
 
-type NodeConfigKey = NodeConfigParams['key'];
-type NodeConfigValue<TKey extends NodeConfigKey> = Extract<NodeConfigParams, { key: TKey }>['type'];
+type NodeConfigOptionName = NodeConfigOption['name'];
+
+type NodeConfigOptionValue<TName extends NodeConfigOptionName> = Extract<
+  NodeConfigOption,
+  { name: TName }
+>['type'];
 
 const config = {
   auth: {
@@ -36,7 +30,10 @@ class NodeConfigBuilder {
     this.nodeConfig = initialNodeConfig ?? {};
   }
 
-  set<TKey extends NodeConfigKey>(key: TKey, value: NodeConfigValue<TKey>): NodeConfigBuilder {
+  set<TName extends NodeConfigOptionName>(
+    name: TName,
+    value: NodeConfigOptionValue<TName>,
+  ): NodeConfigBuilder {
     throw new Error(`not yet implemented`);
   }
 
@@ -63,4 +60,9 @@ const nodeConfig = createNodeConfigBuilder()
   //
   .set(config.auth.addr, '127.0.0.1')
   .set(config.auth.api, ['eth'])
+  .set('chain.name', 'asdf')
+  .set('chain.info-json', 'asdf')
+  .set('parent-chain.connection.url', '')
+  .set('node.batch-poster.parent-chain-wallet.private-key', '')
+  .set('node.staker.parent-chain-wallet.private-key', '')
   .build();
