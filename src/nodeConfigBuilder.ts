@@ -34,7 +34,7 @@ class NodeConfigBuilder {
     name: TName,
     value: NodeConfigOptionValue<TName>,
   ): NodeConfigBuilder {
-    throw new Error(`not yet implemented`);
+    return this;
   }
 
   build(): NodeConfig {
@@ -55,14 +55,3 @@ export function createNodeConfigBuilder(params?: CreateNodeConfigBuilderParams):
 
   return new NodeConfigBuilder(nodeConfigBuilderDefaults);
 }
-
-const nodeConfig = createNodeConfigBuilder()
-  //
-  .set(config.auth.addr, '127.0.0.1')
-  .set(config.auth.api, ['eth'])
-  .set('chain.name', 'asdf')
-  .set('chain.info-json', 'asdf')
-  .set('parent-chain.connection.url', '')
-  .set('node.batch-poster.parent-chain-wallet.private-key', '')
-  .set('node.staker.parent-chain-wallet.private-key', '')
-  .build();

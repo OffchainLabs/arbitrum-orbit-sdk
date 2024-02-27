@@ -1,0 +1,55 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`creates node config with defaults 1`] = `
+{
+  "execution": {
+    "caching": {
+      "archive": true,
+    },
+    "forwarding-target": "",
+    "sequencer": {
+      "enable": true,
+      "max-block-speed": "250ms",
+      "max-tx-data-size": 85000,
+    },
+  },
+  "http": {
+    "addr": "0.0.0.0",
+    "api": [
+      "eth",
+      "net",
+      "web3",
+      "arb",
+      "debug",
+    ],
+    "corsdomain": [
+      "*",
+    ],
+    "port": 8449,
+    "vhosts": [
+      "*",
+    ],
+  },
+  "node": {
+    "batch-poster": {
+      "enable": true,
+      "max-size": 90000,
+    },
+    "dangerous": {
+      "no-sequencer-coordinator": true,
+    },
+    "delayed-sequencer": {
+      "enable": true,
+      "finalize-distance": 1,
+      "use-merge-finality": false,
+    },
+    "sequencer": true,
+    "staker": {
+      "enable": true,
+      "strategy": "MakeNodes",
+    },
+  },
+}
+`;
+
+exports[`creates node config without defaults 1`] = `{}`;
