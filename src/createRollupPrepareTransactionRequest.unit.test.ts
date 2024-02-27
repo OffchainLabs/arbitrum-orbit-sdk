@@ -169,7 +169,7 @@ it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 
   );
 });
 
-it(`successfully prepares a transaction request with the default rollup creator`, async () => {
+it(`successfully prepares a transaction request with the default rollup creator and a gas limit override`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -201,7 +201,7 @@ it(`successfully prepares a transaction request with the default rollup creator`
   expect(txRequest.gas).toEqual(1_000n);
 });
 
-it(`successfully prepares a transaction request with a custom rollup creator`, async () => {
+it(`successfully prepares a transaction request with a custom rollup creator and a gas limit override`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
