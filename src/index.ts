@@ -13,7 +13,10 @@ import {
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
 import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
-import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
+import {
+  createRollupPrepareTransactionRequest,
+  CreateRollupPrepareTransactionRequestParams,
+} from './createRollupPrepareTransactionRequest';
 import {
   createRollupPrepareTransaction,
   CreateRollupTransaction,
@@ -52,7 +55,10 @@ import {
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
   CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
-import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
+import {
+  createTokenBridgePrepareTransactionRequest,
+  CreateTokenBridgePrepareTransactionRequestParams,
+} from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { prepareKeyset } from './prepareKeyset';
@@ -60,6 +66,7 @@ import * as utils from './utils';
 
 export {
   createRollupPrepareTransactionRequest,
+  CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
   CreateRollupParams,
   createRollupPrepareConfig,
@@ -103,6 +110,7 @@ export {
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
   CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
   createTokenBridgePrepareTransactionRequest,
+  CreateTokenBridgePrepareTransactionRequestParams,
   createTokenBridgePrepareTransactionReceipt,
   createTokenBridgeFetchTokenBridgeContracts,
 };

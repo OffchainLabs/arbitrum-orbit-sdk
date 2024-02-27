@@ -5,18 +5,24 @@ import { validParentChainId } from './types/ParentChain';
 import { rollupCreator } from './contracts';
 import { createRollupDefaultRetryablesFees } from './constants';
 
-export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = {
-  amount?: bigint;
-  nativeToken: Address;
-  account: Address;
-  publicClient: PublicClient;
-};
+import { Prettify } from './types/utils';
+import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
+
+export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = Prettify<
+  WithRollupCreatorAddressOverride<{
+    amount?: bigint;
+    nativeToken: Address;
+    account: Address;
+    publicClient: PublicClient;
+  }>
+>;
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
   amount = createRollupDefaultRetryablesFees,
   nativeToken,
   account,
   publicClient,
+  rollupCreatorAddressOverride,
 }: CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams) {
   const chainId = publicClient.chain?.id;
 
@@ -27,7 +33,7 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner: account,
-    spender: rollupCreator.address[chainId],
+    spender: rollupCreatorAddressOverride ?? rollupCreator.address[chainId],
     amount,
     publicClient,
   });

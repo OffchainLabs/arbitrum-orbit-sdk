@@ -5,16 +5,22 @@ import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
 import { createTokenBridgeDefaultRetryablesFees } from './constants';
 
-export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
-  nativeToken: Address;
-  owner: Address;
-  publicClient: PublicClient;
-};
+import { Prettify } from './types/utils';
+import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+
+export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = Prettify<
+  WithTokenBridgeCreatorAddressOverride<{
+    nativeToken: Address;
+    owner: Address;
+    publicClient: PublicClient;
+  }>
+>;
 
 export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
   nativeToken,
   owner,
   publicClient,
+  tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams) {
   const chainId = publicClient.chain?.id;
 
@@ -25,7 +31,7 @@ export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
   const allowance = await fetchAllowance({
     address: nativeToken,
     owner,
-    spender: tokenBridgeCreator.address[chainId],
+    spender: tokenBridgeCreatorAddressOverride ?? tokenBridgeCreator.address[chainId],
     publicClient,
   });
 
