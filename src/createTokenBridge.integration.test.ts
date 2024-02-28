@@ -14,9 +14,7 @@ import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
-import {
-  CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
-} from './createTokenBridgeEnoughCustomFeeTokenAllowance';
+import { CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { erc20 } from './contracts';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
