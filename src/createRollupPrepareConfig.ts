@@ -1,7 +1,7 @@
 import { parseEther, zeroAddress } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
-import { CreateRollupFunctionInputs } from './createRollup';
+import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 import { prepareChainConfig } from './prepareChainConfig';
 
 type RequiredKeys = 'chainId' | 'owner';

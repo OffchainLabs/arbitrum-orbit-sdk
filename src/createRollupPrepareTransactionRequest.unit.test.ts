@@ -6,6 +6,7 @@ import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareConfig } from './createRollupPrepareConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
+import { rollupCreator } from './contracts';
 
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 
@@ -137,11 +138,6 @@ it(`fails to prepare transaction request if "params.nativeToken" is custom and c
 });
 
 it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 decimals`, async () => {
-  const arbitrumSepoliaPublicClient = createPublicClient({
-    chain: arbitrumSepolia,
-    transport: http(),
-  });
-
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -171,4 +167,69 @@ it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 
   ).rejects.toThrowError(
     `"params.nativeToken" can only be configured with a token that uses 18 decimals.`,
   );
+});
+
+it(`successfully prepares a transaction request with the default rollup creator and a gas limit override`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
+  });
+
+  const txRequest = await createRollupPrepareTransactionRequest({
+    params: {
+      config: createRollupPrepareConfig({
+        chainId: BigInt(chainId),
+        owner: deployer.address,
+        chainConfig,
+      }),
+      batchPoster: deployer.address,
+      validators: [deployer.address],
+    },
+    account: deployer.address,
+    publicClient,
+    gasOverrides: { gasLimit: { base: 1_000n } },
+  });
+
+  expect(txRequest.account).toEqual(deployer.address);
+  expect(txRequest.from).toEqual(deployer.address);
+  expect(txRequest.to).toEqual(rollupCreator.address[arbitrumSepolia.id]);
+  expect(txRequest.chainId).toEqual(arbitrumSepolia.id);
+  expect(txRequest.gas).toEqual(1_000n);
+});
+
+it(`successfully prepares a transaction request with a custom rollup creator and a gas limit override`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
+  });
+
+  const txRequest = await createRollupPrepareTransactionRequest({
+    params: {
+      config: createRollupPrepareConfig({
+        chainId: BigInt(chainId),
+        owner: deployer.address,
+        chainConfig,
+      }),
+      batchPoster: deployer.address,
+      validators: [deployer.address],
+    },
+    account: deployer.address,
+    publicClient,
+    gasOverrides: { gasLimit: { base: 1_000n, percentIncrease: 20n } },
+    rollupCreatorAddressOverride: '0x31421C442c422BD16aef6ae44D3b11F404eeaBd9',
+  });
+
+  expect(txRequest.account).toEqual(deployer.address);
+  expect(txRequest.from).toEqual(deployer.address);
+  expect(txRequest.to).toEqual('0x31421C442c422BD16aef6ae44D3b11F404eeaBd9');
+  expect(txRequest.chainId).toEqual(arbitrumSepolia.id);
+  expect(txRequest.gas).toEqual(1_200n);
 });

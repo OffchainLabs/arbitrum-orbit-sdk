@@ -1,10 +1,6 @@
 import { Address, PublicClient, encodeFunctionData } from 'viem';
 
 import { tokenBridgeCreator } from './contracts';
-import {
-  createTokenBridgeDefaultGasLimit,
-  createTokenBridgeDefaultRetryablesFees,
-} from './constants';
 import { validParentChainId } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
@@ -15,6 +11,9 @@ import {
   applyPercentIncrease,
 } from './utils/gasOverrides';
 
+import { Prettify } from './types/utils';
+import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
   maxGasForFactory?: GasOverrideOptions;
@@ -23,6 +22,17 @@ export type TransactionRequestRetryableGasOverrides = {
   maxGasPrice?: bigint;
 };
 
+export type CreateTokenBridgePrepareTransactionRequestParams = Prettify<
+  WithTokenBridgeCreatorAddressOverride<{
+    params: { rollup: Address; rollupOwner: Address };
+    parentChainPublicClient: PublicClient;
+    orbitChainPublicClient: PublicClient;
+    account: Address;
+    gasOverrides?: TransactionRequestGasOverrides;
+    retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
+  }>
+>;
+
 export async function createTokenBridgePrepareTransactionRequest({
   params,
   parentChainPublicClient,
@@ -30,19 +40,16 @@ export async function createTokenBridgePrepareTransactionRequest({
   account,
   gasOverrides,
   retryableGasOverrides,
-}: {
-  params: { rollup: Address; rollupOwner: Address };
-  parentChainPublicClient: PublicClient;
-  orbitChainPublicClient: PublicClient;
-  account: Address;
-  gasOverrides?: TransactionRequestGasOverrides;
-  retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
-}) {
+  tokenBridgeCreatorAddressOverride,
+}: CreateTokenBridgePrepareTransactionRequestParams) {
   const chainId = parentChainPublicClient.chain?.id;
 
   if (!validParentChainId(chainId)) {
     throw new Error('chainId is undefined');
   }
+
+  const tokenBridgeCreatorAddress =
+    tokenBridgeCreatorAddressOverride ?? tokenBridgeCreator.address[chainId];
 
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
   const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
@@ -51,7 +58,7 @@ export async function createTokenBridgePrepareTransactionRequest({
     account,
     parentChainProvider,
     orbitChainProvider,
-    tokenBridgeCreator.address[chainId],
+    tokenBridgeCreatorAddress,
     params.rollup,
     retryableGasOverrides,
   );
@@ -63,7 +70,7 @@ export async function createTokenBridgePrepareTransactionRequest({
 
   const request = await parentChainPublicClient.prepareTransactionRequest({
     chain: parentChainPublicClient.chain,
-    to: tokenBridgeCreator.address[chainId],
+    to: tokenBridgeCreatorAddress,
     data: encodeFunctionData({
       abi: tokenBridgeCreator.abi,
       functionName: 'createTokenBridge',
@@ -71,12 +78,16 @@ export async function createTokenBridgePrepareTransactionRequest({
     }),
     value: chainUsesCustomFee ? 0n : retryableFee,
     account: account,
+    // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
+    // we'll set the actual value in the code below
+    gas: typeof gasOverrides?.gasLimit?.base !== 'undefined' ? 0n : undefined,
   });
 
   // potential gas overrides (gas limit)
   if (gasOverrides && gasOverrides.gasLimit) {
     request.gas = applyPercentIncrease({
-      base: gasOverrides.gasLimit.base ?? request.gas ?? createTokenBridgeDefaultGasLimit,
+      // the ! is here because we should let it error in case we don't have the estimated gas
+      base: gasOverrides.gasLimit.base ?? request.gas!,
       percentIncrease: gasOverrides.gasLimit.percentIncrease,
     });
   }
