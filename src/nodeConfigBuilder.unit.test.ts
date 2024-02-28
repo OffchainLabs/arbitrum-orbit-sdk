@@ -8,6 +8,6 @@ it('creates node config with defaults', () => {
 });
 
 it('creates node config without defaults', () => {
-  const nodeConfig = createNodeConfigBuilder({ withoutDefaults: true }).build();
+  const nodeConfig = createNodeConfigBuilder({ withDefaults: false }).build();
   expect(nodeConfig).toMatchSnapshot();
 });

@@ -42,14 +42,15 @@ class NodeConfigBuilder {
   }
 }
 
-type CreateNodeConfigBuilderParams = {
-  withoutDefaults: boolean;
+export type CreateNodeConfigBuilderParams = {
+  withDefaults?: boolean;
+  withDataAvailability?: boolean;
 };
 
 export function createNodeConfigBuilder(params?: CreateNodeConfigBuilderParams): NodeConfigBuilder {
-  const withoutDefaults = params?.withoutDefaults ?? false;
+  const withDefaults = params?.withDefaults ?? true;
 
-  if (withoutDefaults) {
+  if (!withDefaults) {
     return new NodeConfigBuilder();
   }
 
