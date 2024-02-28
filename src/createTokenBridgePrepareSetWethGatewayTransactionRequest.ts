@@ -1,6 +1,5 @@
 import { Address, PublicClient, encodeFunctionData, parseAbi } from 'viem';
 
-import { validParentChainId } from './types/ParentChain';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
@@ -8,6 +7,9 @@ import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { getEstimateForSettingGateway } from './createTokenBridge-ethers';
 import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
+import { Prettify } from './types/utils';
+import { validParentChainId } from './types/ParentChain';
+import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 
 export type TransactionRequestRetryableGasOverrides = {
   gasLimit?: GasOverrideOptions;
@@ -15,13 +17,15 @@ export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCost?: GasOverrideOptions;
 };
 
-export type CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams = {
-  rollup: Address;
-  parentChainPublicClient: PublicClient;
-  orbitChainPublicClient: PublicClient;
-  account: Address;
-  retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
-};
+export type CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams = Prettify<
+  WithTokenBridgeCreatorAddressOverride<{
+    rollup: Address;
+    parentChainPublicClient: PublicClient;
+    orbitChainPublicClient: PublicClient;
+    account: Address;
+    retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
+  }>
+>;
 
 const parentChainGatewayRouterAbi = [
   {
@@ -90,6 +94,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   orbitChainPublicClient,
   account,
   retryableGasOverrides,
+  tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams) {
   const chainId = parentChainPublicClient.chain?.id;
 
@@ -118,6 +123,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   const tokenBridgeContracts = await createTokenBridgeFetchTokenBridgeContracts({
     inbox,
     parentChainPublicClient,
+    tokenBridgeCreatorAddressOverride,
   });
 
   // check whether the weth gateway is already registered in the router

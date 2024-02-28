@@ -3,7 +3,6 @@ import {
   createPublicClient,
   encodeFunctionData,
   http,
-  maxInt256,
   parseEther,
   zeroAddress,
   parseAbi,
@@ -17,7 +16,6 @@ import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgeP
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 import {
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
-  createTokenBridgeEnoughCustomFeeTokenAllowance,
 } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { erc20 } from './contracts';
@@ -176,6 +174,7 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
         base: 100_000n,
       },
     },
+    tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
   });
 
   // sign and send the transaction
