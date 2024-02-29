@@ -4,10 +4,11 @@ import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
 import { rollupCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
+import { getRollupCreatorAddress } from './utils/getters';
 import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
@@ -42,11 +43,7 @@ export async function createRollupPrepareTransactionRequest({
   gasOverrides,
   rollupCreatorAddressOverride,
 }: CreateRollupPrepareTransactionRequestParams) {
-  const chainId = publicClient.chain?.id;
-
-  if (!validParentChainId(chainId)) {
-    throw new Error(`"publicClient.chain" can't be undefined.`);
-  }
+  const chainId = validateParentChain(publicClient);
 
   if (params.batchPoster === zeroAddress) {
     throw new Error(`"params.batchPoster" can't be set to the zero address.`);
@@ -79,7 +76,7 @@ export async function createRollupPrepareTransactionRequest({
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
-    to: rollupCreatorAddressOverride ?? rollupCreator.address[chainId],
+    to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
     value: createRollupGetCallValue(paramsWithDefaults),
     account,

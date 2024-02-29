@@ -5,7 +5,7 @@ import {
 } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
-import { ParentChainId, validParentChainId } from './types/ParentChain';
+import { ParentChainId, validateParentChain } from './types/ParentChain';
 import {
   mainnet,
   arbitrumOne,
@@ -66,17 +66,13 @@ export function prepareNodeConfig({
   parentChainId: number;
   parentChainRpcUrl: string;
 }): NodeConfig {
-  if (!validParentChainId(parentChainId)) {
-    throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
-  }
-
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
         {
           'chain-id': chainConfig.chainId,
           'parent-chain-id': parentChainId,
-          'parent-chain-is-arbitrum': parentChainIsArbitrum(parentChainId),
+          'parent-chain-is-arbitrum': parentChainIsArbitrum(validateParentChain(parentChainId)),
           'chain-name': chainName,
           'chain-config': chainConfig,
           'rollup': {

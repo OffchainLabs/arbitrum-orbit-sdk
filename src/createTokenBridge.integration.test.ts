@@ -3,9 +3,9 @@ import {
   createPublicClient,
   encodeFunctionData,
   http,
-  maxInt256,
   parseEther,
   zeroAddress,
+  parseAbi,
 } from 'viem';
 import { execSync } from 'node:child_process';
 
@@ -14,12 +14,11 @@ import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
-import {
-  CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
-  createTokenBridgeEnoughCustomFeeTokenAllowance,
-} from './createTokenBridgeEnoughCustomFeeTokenAllowance';
+import { CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { erc20 } from './contracts';
+import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
+import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 
 type TestnodeInformation = {
   rollup: `0x${string}`;
@@ -161,6 +160,60 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
   expect(tokenBridgeContracts.orbitChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.multicall).not.toEqual(zeroAddress);
+
+  // set weth gateway
+  const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
+    rollup: testnodeInformation.rollup,
+    parentChainPublicClient: nitroTestnodeL1Client,
+    orbitChainPublicClient: nitroTestnodeL2Client,
+    account: l2RollupOwner.address,
+    retryableGasOverrides: {
+      gasLimit: {
+        base: 100_000n,
+      },
+    },
+    tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+  });
+
+  // sign and send the transaction
+  const setWethGatewayTxHash = await nitroTestnodeL1Client.sendRawTransaction({
+    serializedTransaction: await l2RollupOwner.signTransaction(setWethGatewayTxRequest),
+  });
+
+  // get the transaction receipt after waiting for the transaction to complete
+  const setWethGatewayTxReceipt = createTokenBridgePrepareSetWethGatewayTransactionReceipt(
+    await nitroTestnodeL1Client.waitForTransactionReceipt({ hash: setWethGatewayTxHash }),
+  );
+
+  // checking retryables execution
+  const orbitChainSetGatewayRetryableReceipt = await setWethGatewayTxReceipt.waitForRetryables({
+    orbitPublicClient: nitroTestnodeL2Client,
+  });
+  expect(orbitChainSetGatewayRetryableReceipt).toHaveLength(1);
+  expect(orbitChainSetGatewayRetryableReceipt[0].status).toEqual('success');
+
+  // verify weth gateway (parent chain)
+  const registeredWethGatewayOnParentChain = await nitroTestnodeL1Client.readContract({
+    address: tokenBridgeContracts.parentChainContracts.router,
+    abi: parseAbi(['function l1TokenToGateway(address) view returns (address)']),
+    functionName: 'l1TokenToGateway',
+    args: [tokenBridgeContracts.parentChainContracts.weth],
+  });
+  expect(registeredWethGatewayOnParentChain).toEqual(
+    tokenBridgeContracts.parentChainContracts.wethGateway,
+  );
+
+  // verify weth gateway (orbit chain)
+  // Note: we pass the address of the token on the parent chain when asking for the registered gateway on the orbit chain
+  const registeredWethGatewayOnOrbitChain = await nitroTestnodeL2Client.readContract({
+    address: tokenBridgeContracts.orbitChainContracts.router,
+    abi: parseAbi(['function l1TokenToGateway(address) view returns (address)']),
+    functionName: 'l1TokenToGateway',
+    args: [tokenBridgeContracts.parentChainContracts.weth],
+  });
+  expect(registeredWethGatewayOnOrbitChain).toEqual(
+    tokenBridgeContracts.orbitChainContracts.wethGateway,
+  );
 });
 
 it(`successfully deploys token bridge contracts with a custom fee token through token bridge creator`, async () => {

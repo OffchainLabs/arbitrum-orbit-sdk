@@ -1,7 +1,7 @@
 import { Address, PublicClient, encodeFunctionData } from 'viem';
 
 import { tokenBridgeCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
@@ -13,6 +13,7 @@ import {
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+import { getTokenBridgeCreatorAddress } from './utils/getters';
 
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
@@ -42,14 +43,10 @@ export async function createTokenBridgePrepareTransactionRequest({
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareTransactionRequestParams) {
-  const chainId = parentChainPublicClient.chain?.id;
-
-  if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
-  }
+  const chainId = validateParentChain(parentChainPublicClient);
 
   const tokenBridgeCreatorAddress =
-    tokenBridgeCreatorAddressOverride ?? tokenBridgeCreator.address[chainId];
+    tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
   const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
