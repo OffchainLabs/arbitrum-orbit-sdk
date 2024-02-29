@@ -4,7 +4,7 @@ import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
 import { rollupCreator } from './contracts';
-import { validateParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
@@ -43,7 +43,7 @@ export async function createRollupPrepareTransactionRequest({
   gasOverrides,
   rollupCreatorAddressOverride,
 }: CreateRollupPrepareTransactionRequestParams) {
-  const chainId = validateParentChainId(publicClient);
+  const chainId = validateParentChain(publicClient);
 
   if (params.batchPoster === zeroAddress) {
     throw new Error(`"params.batchPoster" can't be set to the zero address.`);

@@ -1,6 +1,6 @@
 import { Address } from 'viem';
 
-import { validateParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import { SetValidKeysetParams } from './setValidKeyset';
 import { setValidKeysetEncodeFunctionData } from './setValidKeysetEncodeFunctionData';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
@@ -18,7 +18,7 @@ export async function setValidKeysetPrepareTransactionRequest({
   account,
   publicClient,
 }: SetValidKeysetPrepareTransactionRequestParams) {
-  const chainId = validateParentChainId(publicClient);
+  const chainId = validateParentChain(publicClient);
 
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,

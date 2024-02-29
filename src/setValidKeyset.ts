@@ -1,7 +1,7 @@
 import { PublicClient, WalletClient } from 'viem';
 
 import { upgradeExecutor } from './contracts';
-import { validateParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import { CoreContracts } from './types/CoreContracts';
 import { setValidKeysetEncodeFunctionData } from './setValidKeysetEncodeFunctionData';
 
@@ -18,7 +18,7 @@ export async function setValidKeyset({
   publicClient,
   walletClient,
 }: SetValidKeysetParams) {
-  validateParentChainId(publicClient);
+  validateParentChain(publicClient);
   const account = walletClient.account?.address;
 
   if (typeof account === 'undefined') {

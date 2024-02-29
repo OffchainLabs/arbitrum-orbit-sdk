@@ -1,7 +1,7 @@
 import { Address, PublicClient } from 'viem';
 
 import { approvePrepareTransactionRequest } from './utils/erc20';
-import { validateParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import { getRollupCreatorAddress } from './utils/getters';
 import { createRollupDefaultRetryablesFees } from './constants';
 
@@ -24,7 +24,8 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
   publicClient,
   rollupCreatorAddressOverride,
 }: CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams) {
-  const chainId = validateParentChainId(publicClient);
+  const chainId = validateParentChain(publicClient);
+
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner: account,
