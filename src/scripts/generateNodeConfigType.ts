@@ -195,12 +195,13 @@ function main() {
   sourceFile.addTypeAlias({
     name: 'NodeConfigOption',
     type: unionType(
-      // @ts-ignore not sure why ts-morph is acting weird here
+      // not sure why ts-morph is acting weird here
+      // @ts-ignore
       ...cliOptions.map((option) =>
         objectType({
           properties: [
             {
-              name: 'name',
+              name: 'key',
               type: `"${option.name}"`,
               docs: option.docs,
             },

@@ -3,11 +3,11 @@ import { getNodeConfigBuilderDefaults } from './nodeConfigBuilderDefaults';
 
 // todo: is there a way to make jsdoc readable when working with the builder?
 
-type NodeConfigOptionName = NodeConfigOption['name'];
+export type NodeConfigOptionKey = NodeConfigOption['key'];
 
-type NodeConfigOptionValue<TName extends NodeConfigOptionName> = Extract<
+export type NodeConfigOptionGetType<TKey extends NodeConfigOptionKey> = Extract<
   NodeConfigOption,
-  { name: TName }
+  { name: TKey }
 >['type'];
 
 const config = {
@@ -23,16 +23,16 @@ const config = {
   },
 } as const;
 
-class NodeConfigBuilder {
+export class NodeConfigBuilder {
   private nodeConfig: NodeConfig;
 
   constructor(initialNodeConfig?: NodeConfig) {
     this.nodeConfig = initialNodeConfig ?? {};
   }
 
-  set<TName extends NodeConfigOptionName>(
-    name: TName,
-    value: NodeConfigOptionValue<TName>,
+  set<TKey extends NodeConfigOptionKey>(
+    key: TKey,
+    value: NodeConfigOptionGetType<TKey>,
   ): NodeConfigBuilder {
     return this;
   }
