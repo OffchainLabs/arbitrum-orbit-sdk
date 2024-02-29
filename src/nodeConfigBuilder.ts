@@ -7,7 +7,7 @@ export type NodeConfigOptionKey = NodeConfigOption['key'];
 
 export type NodeConfigOptionGetType<TKey extends NodeConfigOptionKey> = Extract<
   NodeConfigOption,
-  { name: TKey }
+  { key: TKey }
 >['type'];
 
 const config = {
