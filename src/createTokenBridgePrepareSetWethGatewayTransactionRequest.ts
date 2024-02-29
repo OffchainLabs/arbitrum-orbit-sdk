@@ -8,7 +8,7 @@ import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { getEstimateForSettingGateway } from './createTokenBridge-ethers';
 import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
 import { Prettify } from './types/utils';
-import { validParentChainId } from './types/ParentChain';
+import { validateParentChainId } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 
 export type TransactionRequestRetryableGasOverrides = {
@@ -96,11 +96,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams) {
-  const chainId = parentChainPublicClient.chain?.id;
-
-  if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
-  }
+  const chainId = validateParentChainId(parentChainPublicClient);
 
   // check for custom fee token chain
   if (

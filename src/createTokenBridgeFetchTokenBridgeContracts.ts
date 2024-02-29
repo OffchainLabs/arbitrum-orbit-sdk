@@ -4,8 +4,8 @@ import { tokenBridgeCreator } from './contracts';
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
-import { validParentChainId } from './types/ParentChain';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
+import { getTokenBridgeCreatorAddress } from './utils/getters';
 
 export type CreateTokenBridgeFetchTokenBridgeContractsParams = Prettify<
   WithTokenBridgeCreatorAddressOverride<{
@@ -19,14 +19,8 @@ export async function createTokenBridgeFetchTokenBridgeContracts({
   parentChainPublicClient,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgeFetchTokenBridgeContractsParams): Promise<TokenBridgeContracts> {
-  const chainId = parentChainPublicClient.chain?.id;
-
-  if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
-  }
-
   const tokenBridgeCreatorAddress =
-    tokenBridgeCreatorAddressOverride ?? tokenBridgeCreator.address[chainId];
+    tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
   // getting parent chain addresses
   const [

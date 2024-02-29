@@ -5,7 +5,7 @@ import {
 } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
-import { ParentChainId, validParentChainId } from './types/ParentChain';
+import { ParentChainId, isValidParentChainId } from './types/ParentChain';
 import {
   mainnet,
   arbitrumOne,
@@ -66,8 +66,8 @@ export function prepareNodeConfig({
   parentChainId: number;
   parentChainRpcUrl: string;
 }): NodeConfig {
-  if (!validParentChainId(parentChainId)) {
-    throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
+  if (!isValidParentChainId(parentChainId)) {
+    throw new Error(`Parent chain not supported: ${parentChainId}`);
   }
 
   const config: NodeConfig = {

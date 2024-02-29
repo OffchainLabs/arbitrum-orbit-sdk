@@ -4,7 +4,7 @@ import { chains } from '../chains';
 export type ParentChain = (typeof chains)[number];
 export type ParentChainId = ParentChain['id'];
 
-export function validParentChainId(
+export function isValidParentChainId(
   parentChainId: number | undefined,
 ): parentChainId is ParentChainId {
   const ids = chains.map((chain) => chain.id) as Number[];
@@ -13,7 +13,7 @@ export function validParentChainId(
 
 export const validateParentChainId = (client: PublicClient): ParentChainId => {
   const chainId = client.chain?.id;
-  if (!validParentChainId(chainId)) {
+  if (!isValidParentChainId(chainId)) {
     throw new Error('chainId is undefined');
   }
   return chainId;
