@@ -192,6 +192,38 @@ const getEstimateForDeployingFactory = async (
   return deployFactoryGasParams;
 };
 
+export const getEstimateForSettingGateway = async (
+  l1ChainOwnerAddress: Address,
+  l1UpgradeExecutorAddress: Address,
+  l1GatewayRouterAddress: Address,
+  setGatewaysCalldata: `0x${string}`,
+  l1Provider: ethers.providers.Provider,
+  l2Provider: ethers.providers.Provider,
+) => {
+  //// run retryable estimate for setting a token gateway in the router
+  const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
+
+  const setGatewaysGasParams = await l1ToL2MsgGasEstimate.estimateAll(
+    {
+      from: l1UpgradeExecutorAddress,
+      to: l1GatewayRouterAddress,
+      l2CallValue: BigNumber.from(0),
+      excessFeeRefundAddress: l1ChainOwnerAddress,
+      callValueRefundAddress: l1ChainOwnerAddress,
+      data: setGatewaysCalldata,
+    },
+    await getBaseFee(l1Provider),
+    l1Provider,
+  );
+
+  return {
+    gasLimit: setGatewaysGasParams.gasLimit.toBigInt(),
+    maxFeePerGas: setGatewaysGasParams.maxFeePerGas.toBigInt(),
+    maxSubmissionCost: setGatewaysGasParams.maxSubmissionCost.toBigInt(),
+    deposit: setGatewaysGasParams.deposit.toBigInt(),
+  };
+};
+
 const registerNewNetwork = async (
   l1Provider: JsonRpcProvider,
   l2Provider: JsonRpcProvider,

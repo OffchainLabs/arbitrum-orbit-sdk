@@ -2,6 +2,8 @@ import { Chain, createPublicClient, http, defineChain } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import {
+  createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+  createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareTransactionReceipt,
   createTokenBridgePrepareTransactionRequest,
 } from '@arbitrum/orbit-sdk';
@@ -90,12 +92,76 @@ async function main() {
   console.log(
     `Transaction hash for second retryable is ${orbitChainRetryableReceipts[1].transactionHash}`,
   );
+  if (orbitChainRetryableReceipts[0].status !== 'success') {
+    throw new Error(
+      `First retryable status is not success: ${orbitChainRetryableReceipts[0].status}. Aborting...`,
+    );
+  }
+  if (orbitChainRetryableReceipts[1].status !== 'success') {
+    throw new Error(
+      `Second retryable status is not success: ${orbitChainRetryableReceipts[1].status}. Aborting...`,
+    );
+  }
 
   // fetching the TokenBridge contracts
   const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
     parentChainPublicClient,
   });
   console.log(`TokenBridge contracts:`, tokenBridgeContracts);
+
+  // verifying L2 contract existence
+  const orbitChainRouterBytecode = await orbitChainPublicClient.getBytecode({
+    address: tokenBridgeContracts.orbitChainContracts.router,
+  });
+
+  if (!orbitChainRouterBytecode || orbitChainRouterBytecode == '0x') {
+    throw new Error(
+      `TokenBridge deployment seems to have failed since orbit chain contracts do not have code`,
+    );
+  }
+
+  // set weth gateway
+  const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
+    rollup: process.env.ROLLUP_ADDRESS as `0x${string}`,
+    parentChainPublicClient,
+    orbitChainPublicClient,
+    account: rollupOwner.address,
+    retryableGasOverrides: {
+      gasLimit: {
+        percentIncrease: 200n,
+      },
+    },
+  });
+
+  // sign and send the transaction
+  const setWethGatewayTxHash = await parentChainPublicClient.sendRawTransaction({
+    serializedTransaction: await rollupOwner.signTransaction(setWethGatewayTxRequest),
+  });
+
+  // get the transaction receipt after waiting for the transaction to complete
+  const setWethGatewayTxReceipt = createTokenBridgePrepareSetWethGatewayTransactionReceipt(
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: setWethGatewayTxHash }),
+  );
+
+  console.log(
+    `Weth gateway set in ${getBlockExplorerUrl(parentChain)}/tx/${
+      setWethGatewayTxReceipt.transactionHash
+    }`,
+  );
+
+  // Wait for retryables to execute
+  const orbitChainSetWethGatewayRetryableReceipt = await setWethGatewayTxReceipt.waitForRetryables({
+    orbitPublicClient: orbitChainPublicClient,
+  });
+  console.log(`Retryables executed`);
+  console.log(
+    `Transaction hash for retryable is ${orbitChainSetWethGatewayRetryableReceipt[0].transactionHash}`,
+  );
+  if (orbitChainSetWethGatewayRetryableReceipt[0].status !== 'success') {
+    throw new Error(
+      `Retryable status is not success: ${orbitChainSetWethGatewayRetryableReceipt[0].status}. Aborting...`,
+    );
+  }
 }
 
 main();
