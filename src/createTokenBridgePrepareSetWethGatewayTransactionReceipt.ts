@@ -15,7 +15,7 @@ export type WaitForRetryablesParameters = {
   orbitPublicClient: PublicClient;
 };
 
-export type WaitForRetryablesResult = [TransactionReceipt, TransactionReceipt];
+export type WaitForRetryablesResult = [TransactionReceipt];
 
 export type CreateTokenBridgeSetWethGatewayTransactionReceipt = TransactionReceipt & {
   waitForRetryables(params: WaitForRetryablesParameters): Promise<WaitForRetryablesResult>;
@@ -45,7 +45,7 @@ export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
 
       return (
         // these type casts are both fine as we already checked everything above
-        (messagesResults as unknown as [RedeemedRetryableTicket, RedeemedRetryableTicket])
+        (messagesResults as unknown as [RedeemedRetryableTicket])
           //
           .map((result) =>
             ethersTransactionReceiptToViemTransactionReceipt(result.l2TxReceipt),
