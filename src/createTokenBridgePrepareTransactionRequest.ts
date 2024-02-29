@@ -1,7 +1,7 @@
 import { Address, PublicClient, encodeFunctionData } from 'viem';
 
 import { tokenBridgeCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
@@ -43,6 +43,8 @@ export async function createTokenBridgePrepareTransactionRequest({
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareTransactionRequestParams) {
+  const chainId = validateParentChain(parentChainPublicClient);
+
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
