@@ -1,27 +1,34 @@
-import { Address, PublicClient, maxInt256 } from 'viem';
+import { Address, PublicClient } from 'viem';
 
 import { approvePrepareTransactionRequest } from './utils/erc20';
 import { validateParentChainId } from './types/ParentChain';
 import { getRollupCreatorAddress } from './utils/getters';
+import { createRollupDefaultRetryablesFees } from './constants';
 
-export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = {
-  amount?: bigint;
-  nativeToken: Address;
-  account: Address;
-  publicClient: PublicClient;
-};
+import { Prettify } from './types/utils';
+import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
+
+export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = Prettify<
+  WithRollupCreatorAddressOverride<{
+    amount?: bigint;
+    nativeToken: Address;
+    account: Address;
+    publicClient: PublicClient;
+  }>
+>;
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
-  amount = maxInt256,
+  amount = createRollupDefaultRetryablesFees,
   nativeToken,
   account,
   publicClient,
+  rollupCreatorAddressOverride,
 }: CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams) {
   const chainId = validateParentChainId(publicClient);
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner: account,
-    spender: getRollupCreatorAddress(publicClient),
+    spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
     amount,
     publicClient,
   });
