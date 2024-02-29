@@ -7,6 +7,11 @@ it('creates node config with defaults', () => {
   expect(nodeConfig).toMatchSnapshot();
 });
 
+it('creates node config with defaults including data availability', () => {
+  const nodeConfig = createNodeConfigBuilder({ withDataAvailability: true }).build();
+  expect(nodeConfig).toMatchSnapshot();
+});
+
 it('creates node config without defaults', () => {
   const nodeConfig = createNodeConfigBuilder({ withDefaults: false }).build();
   expect(nodeConfig).toMatchSnapshot();

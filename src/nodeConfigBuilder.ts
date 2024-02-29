@@ -1,5 +1,5 @@
 import { NodeConfig, NodeConfigOption } from './types/NodeConfig.generated';
-import { nodeConfigBuilderDefaults } from './nodeConfigBuilderDefaults';
+import { getNodeConfigBuilderDefaults } from './nodeConfigBuilderDefaults';
 
 // todo: is there a way to make jsdoc readable when working with the builder?
 
@@ -54,5 +54,5 @@ export function createNodeConfigBuilder(params?: CreateNodeConfigBuilderParams):
     return new NodeConfigBuilder();
   }
 
-  return new NodeConfigBuilder(nodeConfigBuilderDefaults);
+  return new NodeConfigBuilder(getNodeConfigBuilderDefaults(params));
 }
