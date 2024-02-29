@@ -199,17 +199,21 @@ it(`successfully deploys token bridge contracts through token bridge creator`, a
     functionName: 'l1TokenToGateway',
     args: [tokenBridgeContracts.parentChainContracts.weth],
   });
-  expect(registeredWethGatewayOnParentChain).toEqual(tokenBridgeContracts.parentChainContracts.wethGateway);
+  expect(registeredWethGatewayOnParentChain).toEqual(
+    tokenBridgeContracts.parentChainContracts.wethGateway,
+  );
 
   // verify weth gateway (orbit chain)
-  // Note: we pass the L1 token when asking for the L2 gateway
+  // Note: we pass the address of the token on the parent chain when asking for the registered gateway on the orbit chain
   const registeredWethGatewayOnOrbitChain = await nitroTestnodeL2Client.readContract({
     address: tokenBridgeContracts.orbitChainContracts.router,
     abi: parseAbi(['function l1TokenToGateway(address) view returns (address)']),
     functionName: 'l1TokenToGateway',
     args: [tokenBridgeContracts.parentChainContracts.weth],
   });
-  expect(registeredWethGatewayOnOrbitChain).toEqual(tokenBridgeContracts.orbitChainContracts.wethGateway);
+  expect(registeredWethGatewayOnOrbitChain).toEqual(
+    tokenBridgeContracts.orbitChainContracts.wethGateway,
+  );
 });
 
 it(`successfully deploys token bridge contracts with a custom fee token through token bridge creator`, async () => {
