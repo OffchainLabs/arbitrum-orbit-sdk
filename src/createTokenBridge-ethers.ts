@@ -79,9 +79,7 @@ export const createTokenBridgeGetInputs = async (
     wethGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethGatewayTemplate()),
     aeWeth: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethTemplate()),
     upgradeExecutor: await l1Provider.getCode(
-      (
-        await l1TokenBridgeCreator.l1Templates()
-      ).upgradeExecutor,
+      (await l1TokenBridgeCreator.l1Templates()).upgradeExecutor,
     ),
     multicall: await l1Provider.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
   };

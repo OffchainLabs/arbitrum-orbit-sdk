@@ -9,7 +9,6 @@ TypeScript SDK for building [Arbitrum Orbit](https://arbitrum.io/orbit) chains.
 
 Make sure you are using Node v18 or greater.
 
-
 ```bash
 yarn install
 ```
