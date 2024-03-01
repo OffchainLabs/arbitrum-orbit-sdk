@@ -24,9 +24,13 @@
     "dotenv": "^16.3.1",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
-    "prettier": "^2.8.3",
+    "prettier": "2.8.8",
     "ts-morph": "^21.0.1",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
+  },
+  "dependencies": {
+    "@arbitrum/orbit-sdk": "^0.8.0",
+    "viem": "^1.20.0"
   }
 }

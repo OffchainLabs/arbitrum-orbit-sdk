@@ -12,6 +12,7 @@ Make sure you are using Node v18 or greater.
 ```bash
 yarn install
 ```
+
 Then:
 
 ```bash
