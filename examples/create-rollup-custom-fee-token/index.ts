@@ -73,8 +73,9 @@ async function main() {
   };
 
   if (!(await createRollupEnoughCustomFeeTokenAllowance(allowanceParams))) {
-    const approvalTxRequest =
-      await createRollupPrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
+    const approvalTxRequest = await createRollupPrepareCustomFeeTokenApprovalTransactionRequest(
+      allowanceParams,
+    );
 
     // sign and send the transaction
     const approvalTxHash = await parentChainPublicClient.sendRawTransaction({
