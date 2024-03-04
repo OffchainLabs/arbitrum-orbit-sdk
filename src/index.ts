@@ -1,4 +1,3 @@
-import { createRollup } from './createRollup';
 import {
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
@@ -13,7 +12,11 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
-import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
+import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
+import {
+  createRollupPrepareTransactionRequest,
+  CreateRollupPrepareTransactionRequestParams,
+} from './createRollupPrepareTransactionRequest';
 import {
   createRollupPrepareTransaction,
   CreateRollupTransaction,
@@ -26,6 +29,7 @@ import {
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
 } from './createRollupFetchTransactionHash';
+import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -43,7 +47,8 @@ import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
-import { NodeConfig, NodeConfigChainInfoJson } from './types/NodeConfig';
+import { NodeConfig } from './types/NodeConfig.generated';
+import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
@@ -53,9 +58,14 @@ import {
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
   CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
-import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
+import {
+  createTokenBridgePrepareTransactionRequest,
+  CreateTokenBridgePrepareTransactionRequestParams,
+} from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
+import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
+import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
@@ -64,6 +74,9 @@ export {
   arbGasInfoPublicActions,
   createRollup,
   createRollupPrepareTransactionRequest,
+  CreateRollupPrepareTransactionRequestParams,
+  CreateRollupFunctionInputs,
+  CreateRollupParams,
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
@@ -79,6 +92,7 @@ export {
   CreateRollupTransactionReceipt,
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
+  createRollupFetchCoreContracts,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
@@ -105,6 +119,9 @@ export {
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
   CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams,
   createTokenBridgePrepareTransactionRequest,
+  CreateTokenBridgePrepareTransactionRequestParams,
   createTokenBridgePrepareTransactionReceipt,
   createTokenBridgeFetchTokenBridgeContracts,
+  createTokenBridgePrepareSetWethGatewayTransactionRequest,
+  createTokenBridgePrepareSetWethGatewayTransactionReceipt,
 };

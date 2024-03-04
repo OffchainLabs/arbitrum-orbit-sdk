@@ -1,7 +1,7 @@
 import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
 
-import { ParentChainId } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 import {
   mainnet,
   arbitrumOne,
@@ -56,19 +56,21 @@ export async function createRollupFetchTransactionHash({
   rollup,
   publicClient,
 }: CreateRollupFetchTransactionHashParams) {
-  // Find the RollupInitialized event from that Rollup contract
-  const chainId = await publicClient.getChainId();
+  const chainId = validateParentChain(publicClient);
+
   const fromBlock =
     chainId in Object.keys(earliestRollupCreatorDeploymentBlockNumber)
-      ? earliestRollupCreatorDeploymentBlockNumber[chainId as ParentChainId]
+      ? earliestRollupCreatorDeploymentBlockNumber[chainId]
       : 'earliest';
 
+  // Find the RollupInitialized event from that Rollup contract
   const rollupInitializedEvents = await publicClient.getLogs({
     address: rollup,
     event: RollupInitializedEventAbi,
     fromBlock,
     toBlock: 'latest',
   });
+
   if (rollupInitializedEvents.length !== 1) {
     throw new Error(
       `Expected to find 1 RollupInitialized event for rollup address ${rollup} but found ${rollupInitializedEvents.length}`,
@@ -77,6 +79,7 @@ export async function createRollupFetchTransactionHash({
 
   // Get the transaction hash that emitted that event
   const transactionHash = rollupInitializedEvents[0].transactionHash;
+
   if (!transactionHash) {
     throw new Error(
       `No transactionHash found in RollupInitialized event for rollup address ${rollup}`,

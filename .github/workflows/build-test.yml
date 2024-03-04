@@ -84,7 +84,7 @@ jobs:
       - name: Generate
         run: yarn generate
         with:
-          nitro-testnode-ref: release
+          nitro-testnode-ref: transfer-ownership
           # Use simple mode
           no-simple: false
           # RollupCreator on L1 is deployed by default
