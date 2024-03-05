@@ -16,7 +16,9 @@
     "test:integration": "vitest integration.test",
     "postinstall": "patch-package",
     "prettier:check": "prettier --check '**/*.{ts,md,json,yml}'",
-    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'"
+    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'",
+    "docs:generate": "yarn typedoc",
+    "docs:generate:md": "yarn typedoc --options typedoc_md.cjs && node src/scripts/postProcessDocs.js"
   },
   "devDependencies": {
     "@offchainlabs/prettier-config": "0.2.1",
@@ -26,6 +28,8 @@
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.8.3",
     "ts-morph": "^21.0.1",
+    "typedoc": "^0.25.10",
+    "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }
