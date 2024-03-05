@@ -29,4 +29,4 @@ yarn test:integration
 
 ## Examples
 
-See [examples](./examples).
+See [examples](https://github.com/OffchainLabs/arbitrum-orbit-sdk/tree/main/examples).
