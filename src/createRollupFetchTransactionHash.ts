@@ -7,6 +7,7 @@ import {
   arbitrumOne,
   arbitrumNova,
   sepolia,
+  holesky,
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
@@ -45,6 +46,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [arbitrumNova.id]: 47798739n,
   // testnet
   [sepolia.id]: 4741823n,
+  [holesky.id]: 1083992n,
   [arbitrumSepolia.id]: 654628n,
   // local nitro-testnode
   [nitroTestnodeL1.id]: 0n,
