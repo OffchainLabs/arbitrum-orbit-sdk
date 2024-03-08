@@ -7,6 +7,7 @@ import {
   arbitrumOne,
   arbitrumNova,
   sepolia,
+  holesky,
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
@@ -32,6 +33,7 @@ const blockExplorerApiUrls: Record<ParentChainId, string> = {
   [arbitrumNova.id]: 'https://api-nova.arbiscan.io/api',
   // testnet
   [sepolia.id]: 'https://api-sepolia.etherscan.io/api',
+  [holesky.id]: 'https://api-holesky.etherscan.io/api',
   [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
   // local nitro-testnode / fine to omit these as we skip abi fetch
   [nitroTestnodeL1.id]: '',
@@ -64,6 +66,7 @@ const contracts: ContractConfig[] = [
       [arbitrumNova.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
       // testnet
       [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
+      [holesky.id]: '0xB84111D0539105ef0D1A96D2f555E3f6AeEd47d4',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
@@ -81,6 +84,7 @@ const contracts: ContractConfig[] = [
       [arbitrumNova.id]: '0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14',
       // testnet
       [sepolia.id]: '0x7edb2dfBeEf9417e0454A80c51EE0C034e45a570',
+      [holesky.id]: '0xac890ED9bC2494C053cE701F138958df95966d94',
       [arbitrumSepolia.id]: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x54B4D4e578E10178a6cA602bdb6df0F213296Af4',
