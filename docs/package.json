@@ -5,7 +5,6 @@
   "repository": "git+https://github.com/OffchainLabs/arbitrum-orbit-sdk.git",
   "author": "Offchain Labs, Inc.",
   "license": "Apache-2.0",
-  "type": "module",
   "scripts": {
     "generate": "yarn typedoc",
     "generate:md": "yarn typedoc --options typedoc_md.cjs && node scripts/postProcessDocs.js",
