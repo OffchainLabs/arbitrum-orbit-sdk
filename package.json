@@ -1,7 +1,8 @@
 {
   "workspaces": [
     "src",
-    "examples/*"
+    "examples/*",
+    "docs"
   ],
   "private": true,
   "type": "module",
@@ -16,7 +17,10 @@
     "test:integration": "vitest integration.test",
     "postinstall": "patch-package",
     "prettier:check": "prettier --check '**/*.{ts,md,json,yml}'",
-    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'"
+    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'",
+    "docs:dev": "yarn workspace docs dev",
+    "docs:build": "yarn workspace docs  build",
+    "docs:preview": "yarn workspace docs  preview"
   },
   "devDependencies": {
     "@offchainlabs/prettier-config": "0.2.1",
