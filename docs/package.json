@@ -7,18 +7,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "generate": "yarn typedoc",
-    "generate:md": "yarn typedoc --options typedoc_md.cjs && node scripts/postProcessDocs.js",
-    "docs:dev": "vocs dev",
-    "docs:build": "vocs build",
-    "docs:preview": "vocs preview"
+    "generate:md": "yarn typedoc --options typedoc_md.cjs && node scripts/postProcessDocs.js"
   },
   "devDependencies": {
     "typedoc": "^0.25.10",
     "typedoc-plugin-markdown": "^3.17.1"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "vocs": "^1.0.0-alpha.42"
   }
 }
