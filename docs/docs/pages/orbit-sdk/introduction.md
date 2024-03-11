@@ -57,7 +57,7 @@ Following the deployment phase, the next step involves initializing the chain. T
 
 ### 3. Token Bridge Deployment
 
-To facilitate the bridging of ERC-20 tokens in and out of Arbitrum chains, we utilize a set of contracts designed for this purpose. Detailed information about token bridging is available in our [docs](../../for-devs/concepts/token-bridge/token-bridge-erc20.mdx). The first step to enable token bridging on an Orbit chain is the deployment of token bridge contracts, as explained [here](token-bridge-deployment.md).
+To facilitate the bridging of ERC-20 tokens in and out of Arbitrum chains, we utilize a set of contracts designed for this purpose. Detailed information about token bridging is available in our [docs](#TODO). The first step to enable token bridging on an Orbit chain is the deployment of token bridge contracts, as explained [here](token-bridge-deployment.md).
 
 ### 4. Orbit Chain Configuration
 
