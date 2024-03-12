@@ -13,13 +13,17 @@ Make sure you are using Node v18 or greater.
 yarn install
 ```
 
-Then:
+### Examples
+
+See [examples](./examples).
+
+## Development
 
 ```bash
 yarn add @arbitrum/orbit-sdk viem@^1.20.0 -W
 ```
 
-## Run integration tests
+### Run integration tests
 
 Clone the branch `main` of [nitro-testnode](https://github.com/OffchainLabs/nitro-testnode), and run the testnode using the following arguments:
 
@@ -32,7 +36,3 @@ Then, run the integration tests:
 ```bash
 yarn test:integration
 ```
-
-## Examples
-
-See [examples](./examples).
