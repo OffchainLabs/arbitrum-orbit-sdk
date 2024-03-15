@@ -10,6 +10,7 @@ import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
 import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+import { registerNewNetwork } from './utils/registerNetwork';
 
 export type TransactionRequestRetryableGasOverrides = {
   gasLimit?: GasOverrideOptions;
@@ -98,6 +99,12 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
 }: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams) {
   const chainId = validateParentChain(parentChainPublicClient);
 
+  // ethers providers
+  const parentChainProvider = publicClientToProvider(parentChainPublicClient);
+  const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
+
+  await registerNewNetwork(parentChainProvider, orbitChainProvider, rollup);
+
   // check for custom fee token chain
   if (
     await isCustomFeeTokenChain({
@@ -137,10 +144,6 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     rollup,
     publicClient: parentChainPublicClient,
   });
-
-  // ethers providers
-  const parentChainProvider = publicClientToProvider(parentChainPublicClient);
-  const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
 
   // encode data for the setGateways call
   // (we first encode dummy data, to get the retryable message estimates)
