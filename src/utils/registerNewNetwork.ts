@@ -5,7 +5,12 @@ import {
   addCustomNetwork,
   constants as arbitrumSdkConstants,
 } from '@arbitrum/sdk';
-import { l1Networks, l2Networks } from '@arbitrum/sdk/dist/lib/dataEntities/networks';
+import {
+  getL1Network,
+  getL2Network,
+  l1Networks,
+  l2Networks,
+} from '@arbitrum/sdk/dist/lib/dataEntities/networks';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 
 export const registerNewNetwork = async (
@@ -69,7 +74,23 @@ export const registerNewNetwork = async (
     blockTime: arbitrumSdkConstants.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
   };
 
-  if (!l1Networks[l1Network.chainID] && !l2Networks[l2Network.chainID]) {
+  let isL1NetworkRegistered = false;
+  try {
+    await getL1Network(l1Provider);
+    isL1NetworkRegistered = true;
+  } catch {
+    isL1NetworkRegistered = false;
+  }
+
+  let isL2NetworkRegistered = false;
+  try {
+    await getL2Network(l2Provider);
+    isL2NetworkRegistered = true;
+  } catch {
+    isL2NetworkRegistered = false;
+  }
+
+  if (!isL1NetworkRegistered || !isL2NetworkRegistered) {
     // register - needed for retryables
     addCustomNetwork({
       customL1Network: l1Network,

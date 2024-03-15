@@ -8,7 +8,7 @@ import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/c
 import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrepareTransactionRequest';
-import { registerNewNetwork } from './utils/registerNetwork';
+import { registerNewNetwork } from './utils/registerNewNetwork';
 
 type NamedFactory = ContractFactory & { contractName: string };
 const NamedFactoryInstance = (contractJson: {

@@ -10,7 +10,7 @@ import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
 import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
-import { registerNewNetwork } from './utils/registerNetwork';
+import { registerNewNetwork } from './utils/registerNewNetwork';
 
 export type TransactionRequestRetryableGasOverrides = {
   gasLimit?: GasOverrideOptions;
