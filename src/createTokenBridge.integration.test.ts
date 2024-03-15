@@ -80,6 +80,10 @@ const nitroTestnodeL3Client = createPublicClient({
 it('successfully register custom networks', async () => {
   const testnodeInformation = getInformationFromTestnode();
 
+  const tokenBridgeCreator = await deployTokenBridgeCreator({
+    publicClient: nitroTestnodeL1Client,
+  });
+
   // set weth gateway
   expect(
     await createTokenBridgePrepareSetWethGatewayTransactionRequest({
@@ -92,6 +96,7 @@ it('successfully register custom networks', async () => {
           base: 100_000n,
         },
       },
+      tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
     }),
   ).not.toThrow();
 });
