@@ -77,6 +77,25 @@ const nitroTestnodeL3Client = createPublicClient({
   transport: http(nitroTestnodeL3.rpcUrls.default.http[0]),
 });
 
+it('successfully register custom networks', async () => {
+  const testnodeInformation = getInformationFromTestnode();
+
+  // set weth gateway
+  expect(
+    await createTokenBridgePrepareSetWethGatewayTransactionRequest({
+      rollup: testnodeInformation.rollup,
+      parentChainPublicClient: nitroTestnodeL1Client,
+      orbitChainPublicClient: nitroTestnodeL2Client,
+      account: l2RollupOwner.address,
+      retryableGasOverrides: {
+        gasLimit: {
+          base: 100_000n,
+        },
+      },
+    }),
+  ).not.toThrow();
+});
+
 it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
   const testnodeInformation = getInformationFromTestnode();
 
