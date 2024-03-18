@@ -81,7 +81,7 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@main
         with:
-          nitro-testnode-ref: transfer-ownership
+          nitro-testnode-ref: 1647de2c5f75ee0fbe5986e3f20d35bc75191ea6 # https://github.com/OffchainLabs/nitro-testnode/pull/42
           # Use simple mode
           no-simple: false
           # RollupCreator on L1 is deployed by default
