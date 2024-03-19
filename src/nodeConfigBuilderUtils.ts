@@ -4,6 +4,7 @@ import {
   arbitrumOne,
   arbitrumNova,
   sepolia,
+  holesky,
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
@@ -15,6 +16,7 @@ export function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   switch (parentChainId) {
     case mainnet.id:
     case sepolia.id:
+    case holesky.id:
     case nitroTestnodeL1.id:
       return false;
 
