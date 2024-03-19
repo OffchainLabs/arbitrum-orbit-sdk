@@ -53,7 +53,7 @@ export class NodeConfigBuilder {
   private initialized: boolean;
 
   constructor(initialNodeConfig?: NodeConfig) {
-    this.nodeConfig = initialNodeConfig ?? {};
+    this.nodeConfig = { ...initialNodeConfig } ?? {};
     this.initialized = false;
   }
 
