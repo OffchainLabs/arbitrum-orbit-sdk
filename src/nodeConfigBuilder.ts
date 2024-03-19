@@ -43,12 +43,18 @@ export type NodeConfigBuilderEnableDataAvailabilityServiceParams = {
 };
 
 export class NodeConfigBuilder {
+  /**
+   * The underlying node config object being built.
+   */
   private nodeConfig: NodeConfig;
-  private isInitialized: boolean;
+  /**
+   * Whether or not the builder was initialized with the necessary data.
+   */
+  private initialized: boolean;
 
   constructor(initialNodeConfig?: NodeConfig) {
     this.nodeConfig = initialNodeConfig ?? {};
-    this.isInitialized = false;
+    this.initialized = false;
   }
 
   private prepareChainInfoJson(params: InitializeThings): NodeConfigChainInfoJson {
@@ -72,16 +78,25 @@ export class NodeConfigBuilder {
     ];
   }
 
+  private privateSet<TKey extends NodeConfigOptionKey>(
+    key: TKey,
+    value: NodeConfigOptionGetType<TKey>,
+  ): NodeConfigBuilder {
+    _set(this.nodeConfig, key, value);
+
+    return this;
+  }
+
   public initialize(params: InitializeThings): NodeConfigBuilder {
     const chainInfoJson = stringifyJson<NodeConfigChainInfoJson>(this.prepareChainInfoJson(params));
 
-    this.set('chain.name', params.chain.name);
-    this.set('chain.info-json', chainInfoJson);
+    this.privateSet('chain.name', params.chain.name);
+    this.privateSet('chain.info-json', chainInfoJson);
 
-    this.set('parent-chain.id', params.parentChain.id);
-    this.set('parent-chain.connection.url', params.parentChain.rpcUrl);
+    this.privateSet('parent-chain.id', params.parentChain.id);
+    this.privateSet('parent-chain.connection.url', params.parentChain.rpcUrl);
 
-    this.isInitialized = true;
+    this.initialized = true;
 
     return this;
   }
@@ -146,15 +161,15 @@ export class NodeConfigBuilder {
     return this;
   }
 
-  set<TKey extends NodeConfigOptionKey>(
+  public set<TKey extends NodeConfigOptionKey>(
     key: TKey,
     value: NodeConfigOptionGetType<TKey>,
   ): NodeConfigBuilder {
-    // if (!this.isInitialized) {
-    //   throw new Error(`You must first call ".initialize()" on the builder`);
-    // }
+    if (!this.initialized) {
+      throw new Error(`You must first call ".initialize()" on the builder`);
+    }
 
-    _set(this.nodeConfig, key, value);
+    this.privateSet(key, value);
 
     return this;
   }
