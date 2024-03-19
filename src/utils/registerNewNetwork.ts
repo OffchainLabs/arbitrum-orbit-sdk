@@ -91,7 +91,7 @@ export const registerNewNetwork = async (
   }
 
   // both networks are already registered, do nothing
-  if (isL1NetworkRegistered && isL2NetworkRegistered) { 
+  if (isL1NetworkRegistered && isL2NetworkRegistered) {
     return { l1Network, l2Network };
   }
 
