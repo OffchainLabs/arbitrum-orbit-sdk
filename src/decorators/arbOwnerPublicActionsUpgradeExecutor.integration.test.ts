@@ -19,13 +19,9 @@ const randomAccount = privateKeyToAccount(generatePrivateKey());
 const client = createPublicClient({
   chain: nitroTestnodeL3,
   transport: http(),
-}).extend(arbOwnerPublicActions);
-
-// Client for arb gas info public actions
-const client2 = createPublicClient({
-  chain: nitroTestnodeL3,
-  transport: http(),
-}).extend(arbGasInfoPublicActions);
+})
+  .extend(arbOwnerPublicActions)
+  .extend(arbGasInfoPublicActions);
 
 it('succesfully adds chain owner using upgrade executor', async () => {
   // Checks if random address is not a chain owner yet
@@ -132,7 +128,7 @@ it('successfully updates L2 Base Fee Estimate Inertia on Orbit chain', async () 
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 
-  const newL2BaseFeeEstimateInertia = await client2.arbGasInfoReadContract({
+  const newL2BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
     functionName: 'getL1BaseFeeEstimateInertia',
   });
 
