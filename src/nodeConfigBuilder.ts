@@ -1,3 +1,5 @@
+import _set from 'lodash.set';
+
 import { NodeConfig, NodeConfigOption } from './types/NodeConfig.generated';
 import { CoreContracts } from './types/CoreContracts';
 import { parentChainIsArbitrum, stringifyJson } from './nodeConfigBuilderUtils';
@@ -152,23 +154,7 @@ export class NodeConfigBuilder {
     //   throw new Error(`You must first call ".initialize()" on the builder`);
     // }
 
-    const keys = key.split('.');
-    let currentObject = this.nodeConfig;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const currentKey = keys[i];
-      // @ts-ignore
-      if (!currentObject[currentKey]) {
-        // @ts-ignore
-        currentObject[currentKey] = {};
-      }
-      // @ts-ignore
-      currentObject = currentObject[currentKey];
-    }
-
-    const finalKey = keys[keys.length - 1];
-    // @ts-ignore
-    currentObject[finalKey] = value;
+    _set(this.nodeConfig, key, value);
 
     return this;
   }
