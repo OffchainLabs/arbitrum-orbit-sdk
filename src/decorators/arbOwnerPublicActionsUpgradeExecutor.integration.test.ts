@@ -4,10 +4,10 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import {nitroTestnodeL3} from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './arbGasInfoPublicActions';
+import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers'
 
 // L3 Owner Private Key
-const devPrivateKey =
-  '0xecdf21cb41c65afb51f91df408b7656e2c8739a5877f2814add0afd780cc210e';
+const devPrivateKey = getNitroTestnodePrivateKeyAccounts().l3RollupOwner.privateKey
 
 // L3 Upgrade Executor Address
 let upgradeExecutorAddress:Address = '0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b'
