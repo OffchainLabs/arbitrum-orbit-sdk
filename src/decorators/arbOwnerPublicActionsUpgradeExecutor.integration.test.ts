@@ -1,7 +1,7 @@
 import { it, expect } from 'vitest';
 import { Address, createPublicClient, http, parseGwei, Client } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { orbitLocal} from '../testHelpers';
+import {nitroTestnodeL3} from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './arbGasInfoPublicActions';
 
@@ -17,13 +17,13 @@ const randomAccount = privateKeyToAccount(generatePrivateKey());
 
 // Client for arb owner public actions
 const client = createPublicClient({
-  chain: orbitLocal,
+  chain: nitroTestnodeL3,
   transport: http(),
 }).extend(arbOwnerPublicActions);
 
 // Client for arb gas info public actions
 const client2 = createPublicClient({
-  chain: orbitLocal,
+  chain: nitroTestnodeL3,
   transport: http(),
 }).extend(arbGasInfoPublicActions);
 
