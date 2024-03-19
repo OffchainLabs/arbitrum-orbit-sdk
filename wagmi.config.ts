@@ -1,4 +1,5 @@
 import { erc, etherscan } from '@wagmi/cli/plugins';
+import { hashMessage } from 'viem';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
@@ -16,37 +17,70 @@ import {
 
 dotenv.config();
 
-if (typeof process.env.ARBISCAN_API_KEY === 'undefined') {
-  throw new Error('Missing ARBISCAN_API_KEY environment variable');
-}
+function loadApiKey(key: string): string {
+  const apiKey = process.env[key];
 
-const apiKey: string = process.env.ARBISCAN_API_KEY;
+  if (typeof apiKey === 'undefined' || apiKey.length === 0) {
+    throw new Error(`Missing the ${key} environment variable!`);
+  }
+
+  return apiKey;
+}
 
 function sleep(ms: number = 3_000) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const blockExplorerApiUrls: Record<ParentChainId, string> = {
+const arbiscanApiKey = loadApiKey('ARBISCAN_API_KEY');
+const etherscanApiKey = loadApiKey('ETHERSCAN_API_KEY');
+
+const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string }> = {
   // mainnet
-  [mainnet.id]: 'https://etherscan.io/api',
-  [arbitrumOne.id]: 'https://arbiscan.io/api',
-  [arbitrumNova.id]: 'https://api-nova.arbiscan.io/api',
+  [mainnet.id]: {
+    url: 'https://api.etherscan.io/api',
+    apiKey: etherscanApiKey,
+  },
+  [arbitrumOne.id]: {
+    url: 'https://api.arbiscan.io/api',
+    apiKey: arbiscanApiKey,
+  },
+  [arbitrumNova.id]: {
+    url: 'https://api-nova.arbiscan.io/api',
+    apiKey: arbiscanApiKey,
+  },
   // testnet
-  [sepolia.id]: 'https://api-sepolia.etherscan.io/api',
-  [holesky.id]: 'https://api-holesky.etherscan.io/api',
-  [arbitrumSepolia.id]: 'https://api-sepolia.arbiscan.io/api',
+  [sepolia.id]: {
+    url: 'https://api-sepolia.etherscan.io/api',
+    apiKey: etherscanApiKey,
+  },
+  [holesky.id]: {
+    url: 'https://api-holesky.etherscan.io/api',
+    apiKey: etherscanApiKey,
+  },
+  [arbitrumSepolia.id]: {
+    url: 'https://api-sepolia.arbiscan.io/api',
+    apiKey: arbiscanApiKey,
+  },
   // local nitro-testnode / fine to omit these as we skip abi fetch
-  [nitroTestnodeL1.id]: '',
-  [nitroTestnodeL2.id]: '',
-  [nitroTestnodeL3.id]: '',
+  [nitroTestnodeL1.id]: { url: '', apiKey: '' },
+  [nitroTestnodeL2.id]: { url: '', apiKey: '' },
+  [nitroTestnodeL3.id]: { url: '', apiKey: '' },
 };
 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
-  await (
+  const { url, apiKey } = blockExplorerApiUrls[chainId];
+
+  const responseJson = await (
     await fetch(
-      `${blockExplorerApiUrls[chainId]}?module=contract&action=getabi&format=raw&address=${address}&apikey=${process.env.ARBISCAN_API_KEY}`,
+      `${url}?module=contract&action=getabi&format=raw&address=${address}&apikey=${apiKey}`,
     )
   ).json();
+
+  if (responseJson.message === 'NOTOK') {
+    throw new Error(`Failed to fetch ABI for ${chainId}: ${responseJson.result}`);
+  }
+
+  return responseJson;
 }
 
 type ContractConfig = {
@@ -66,7 +100,7 @@ const contracts: ContractConfig[] = [
       [arbitrumNova.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
       // testnet
       [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
-      [holesky.id]: '0xB84111D0539105ef0D1A96D2f555E3f6AeEd47d4',
+      [holesky.id]: '0xB512078282F462Ba104231ad856464Ceb0a7747e',
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
@@ -117,7 +151,9 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
     return;
   }
 
-  const abis = await Promise.all(
+  console.log(`- ${contract.name}`);
+
+  const abiHashes = await Promise.all(
     Object.entries(contract.address)
       // don't fetch abis for testnode
       .filter(([chainIdString]) => {
@@ -128,20 +164,27 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
           chainId !== nitroTestnodeL3.id
         );
       })
-      // fetch abis for all chains
-      .map(([chainId, address]) => fetchAbi(Number(chainId) as ParentChainId, address)),
+      // fetch abis for all chains and hash them
+      .map(async ([chainId, address]) => {
+        const abi = await fetchAbi(Number(chainId) as ParentChainId, address);
+        const abiHash = hashMessage(JSON.stringify(abi));
+
+        console.log(`- ${abiHash} (${chainId})`);
+
+        return abiHash;
+      }),
   );
 
-  // make sure all abis are the same
-  if (!allEqual(abis.map((abi) => JSON.stringify(abi)))) {
-    throw new Error(`- ${contract.name} ERROR`);
+  // make sure all abis hashes are the same
+  if (!allEqual(abiHashes)) {
+    throw new Error(`- ${contract.name}`);
   }
 
-  console.log(`- ${contract.name} ✔`);
+  console.log(`- ${contract.name} ✔\n`);
 }
 
 export default async function () {
-  console.log(`Checking if contract ABIs match...`);
+  console.log(`Checking if contracts match by comparing hashed JSON ABIs.\n`);
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
@@ -158,7 +201,7 @@ export default async function () {
       }),
       etherscan({
         chainId: arbitrumSepolia.id,
-        apiKey,
+        apiKey: arbiscanApiKey,
         contracts,
         cacheDuration: 0,
       }),
