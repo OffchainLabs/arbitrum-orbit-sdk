@@ -2,7 +2,7 @@ import { it, expect } from 'vitest';
 import { createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
-import { arbitrumLocal } from '../testHelpers';
+import { nitroTestnodeL2 } from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 
 // l2 owner private key
@@ -13,7 +13,7 @@ const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
 const client = createPublicClient({
-  chain: arbitrumLocal,
+  chain: nitroTestnodeL2,
   transport: http(),
 }).extend(arbOwnerPublicActions);
 
