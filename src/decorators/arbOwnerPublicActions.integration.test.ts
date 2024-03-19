@@ -4,10 +4,10 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
+import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers'
 
 // l2 owner private key
-const devPrivateKey =
-  '0xdc04c5399f82306ec4b4d654a342f40e2e0620fe39950d967e1e574b32d4dd36';
+const devPrivateKey = getNitroTestnodePrivateKeyAccounts().l2RollupOwner.privateKey
 
 const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
