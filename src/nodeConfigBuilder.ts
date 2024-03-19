@@ -53,6 +53,7 @@ export class NodeConfigBuilder {
   private initialized: boolean;
 
   constructor(initialNodeConfig?: NodeConfig) {
+    // it's necessary to do a spread operator here to make sure we create a copy of the object
     this.nodeConfig = { ...initialNodeConfig } ?? {};
     this.initialized = false;
   }
