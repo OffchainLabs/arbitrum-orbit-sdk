@@ -90,12 +90,18 @@ export const registerNewNetwork = async (
     isL2NetworkRegistered = false;
   }
 
-  if (!isL1NetworkRegistered || !isL2NetworkRegistered) {
-    // register - needed for retryables
-    addCustomNetwork({
-      customL1Network: l1Network,
-      customL2Network: l2Network,
-    });
+  // both networks are already registered, do nothing
+  if (isL1NetworkRegistered && isL2NetworkRegistered) { 
+    return { l1Network, l2Network };
+  }
+
+  if (!isL1NetworkRegistered) {
+    // we can assume if parent is not registered, that means the child isn't either, because of this check:
+    // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/dataEntities/networks.ts#L519
+    addCustomNetwork({ customL1Network: l1Network, customL2Network: l2Network });
+  } else if (!isL2NetworkRegistered) {
+    // parent is already registered, only register the child
+    addCustomNetwork({ customL2Network: l2Network });
   }
 
   return {
