@@ -24,6 +24,22 @@ export type NodeConfigBuilderEnableStakerParams = {
   privateKey: string;
 };
 
+export type RpcAggregatorBackendsItem = {
+  url: string;
+  pubkey: string;
+  signermask: number;
+};
+
+export type NodeConfigBuilderEnableDataAvailabilityServiceParams = {
+  restAggregator: {
+    urls: string[];
+  };
+  rpcAggregator: {
+    assumedHonest?: undefined;
+    backends: RpcAggregatorBackendsItem[];
+  };
+};
+
 export class NodeConfigBuilder {
   private nodeConfig: NodeConfig;
   private isInitialized: boolean;
@@ -104,24 +120,26 @@ export class NodeConfigBuilder {
     return this;
   }
 
-  public enableDataAvailabilityService(): NodeConfigBuilder {
-    const backendsJson = stringifyJson<NodeConfigDataAvailabilityRpcAggregatorBackendsJson>([
-      {
-        url: 'http://localhost:9876',
-        pubkey:
-          'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
-        signermask: 1,
-      },
-    ]);
+  public enableDataAvailabilityService(
+    params: NodeConfigBuilderEnableDataAvailabilityServiceParams,
+  ): NodeConfigBuilder {
+    const backends = params.rpcAggregator.backends.map((backend, index) => ({
+      ...backend,
+      signermask: 1 << index, // 2^n
+    }));
+
+    const rpcAggregatorAssumedHonest = params.rpcAggregator.assumedHonest ?? 1;
+    const rpcAggregatorBackendsJson =
+      stringifyJson<NodeConfigDataAvailabilityRpcAggregatorBackendsJson>(backends);
 
     this.set('node.data-availability.enable', true);
 
     this.set('node.data-availability.rest-aggregator.enable', true);
-    this.set('node.data-availability.rest-aggregator.urls', ['http://localhost:9877']);
+    this.set('node.data-availability.rest-aggregator.urls', params.restAggregator.urls);
 
     this.set('node.data-availability.rpc-aggregator.enable', true);
-    this.set('node.data-availability.rpc-aggregator.assumed-honest', 1);
-    this.set('node.data-availability.rpc-aggregator.backends', backendsJson);
+    this.set('node.data-availability.rpc-aggregator.assumed-honest', rpcAggregatorAssumedHonest);
+    this.set('node.data-availability.rpc-aggregator.backends', rpcAggregatorBackendsJson);
 
     return this;
   }

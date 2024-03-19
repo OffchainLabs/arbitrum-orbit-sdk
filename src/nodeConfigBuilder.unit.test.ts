@@ -47,7 +47,21 @@ it('creates node config without defaults', () => {
 it('creates node config with data availability service', () => {
   const nodeConfig = createNodeConfigBuilder()
     .initialize(initializeParams)
-    .enableDataAvailabilityService()
+    .enableDataAvailabilityService({
+      restAggregator: {
+        urls: ['http://localhost:9877'],
+      },
+      rpcAggregator: {
+        backends: [
+          {
+            url: 'http://localhost:9876',
+            pubkey:
+              'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
+            signermask: 1,
+          },
+        ],
+      },
+    })
     .build();
 
   expect(nodeConfig).toMatchSnapshot();
