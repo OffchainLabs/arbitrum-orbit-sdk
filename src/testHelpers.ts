@@ -1,4 +1,3 @@
-import { Chain } from 'viem';
 import { sha256, toBytes } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
