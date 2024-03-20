@@ -34,12 +34,15 @@ export type CreateTokenBridgeGetInputsResult = {
 
 export const createTokenBridgeGetInputs = async (
   l1DeployerAddress: string,
-  l1Provider: ethers.providers.JsonRpcProvider,
-  l2Provider: ethers.providers.JsonRpcProvider,
+  l1PublicClient: PublicClient,
+  l2PublicClient: PublicClient,
   l1TokenBridgeCreatorAddress: string,
   rollupAddress: string,
   retryableGasOverrides?: TransactionRequestRetryableGasOverrides,
 ): Promise<CreateTokenBridgeGetInputsResult> => {
+  const l1Provider = publicClientToProvider(l1PublicClient);
+  const l2Provider = publicClientToProvider(l2PublicClient);
+
   await registerNewNetwork(l1Provider, l2Provider, rollupAddress);
 
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
