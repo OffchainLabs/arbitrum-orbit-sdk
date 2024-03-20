@@ -99,12 +99,6 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
 }: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams) {
   const chainId = validateParentChain(parentChainPublicClient);
 
-  // ethers providers
-  const parentChainProvider = publicClientToProvider(parentChainPublicClient);
-  const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
-
-  await registerNewNetwork(parentChainProvider, orbitChainProvider, rollup);
-
   // check for custom fee token chain
   if (
     await isCustomFeeTokenChain({
@@ -163,8 +157,8 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     rollupCoreContracts.upgradeExecutor,
     tokenBridgeContracts.parentChainContracts.router,
     setGatewaysDummyCalldata,
-    parentChainProvider,
-    orbitChainProvider,
+    parentChainPublicClient,
+    orbitChainPublicClient,
   );
 
   //// apply gas overrides

@@ -1,5 +1,5 @@
 /* eslint-disable no-empty */
-import { Address } from 'viem';
+import { Address, PublicClient } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { L1ToL2MessageGasEstimator } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
@@ -9,6 +9,7 @@ import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/c
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrepareTransactionRequest';
 import { registerNewNetwork } from './utils/registerNewNetwork';
+import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
 type NamedFactory = ContractFactory & { contractName: string };
 const NamedFactoryInstance = (contractJson: {
@@ -191,11 +192,15 @@ export const getEstimateForSettingGateway = async (
   l1UpgradeExecutorAddress: Address,
   l1GatewayRouterAddress: Address,
   setGatewaysCalldata: `0x${string}`,
-  l1Provider: ethers.providers.Provider,
-  l2Provider: ethers.providers.Provider,
+  parentChainPublicClient: PublicClient,
+  orbitChainPublicClient: PublicClient,
 ) => {
-  //// run retryable estimate for setting a token gateway in the router
-  const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
+  // ethers providers
+  const parentChainProvider = publicClientToProvider(parentChainPublicClient);
+  const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
+  
+  // run retryable estimate for setting a token gateway in the router
+  const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(orbitChainProvider);
 
   const setGatewaysGasParams = await l1ToL2MsgGasEstimate.estimateAll(
     {
@@ -206,8 +211,8 @@ export const getEstimateForSettingGateway = async (
       callValueRefundAddress: l1ChainOwnerAddress,
       data: setGatewaysCalldata,
     },
-    await getBaseFee(l1Provider),
-    l1Provider,
+    await getBaseFee(parentChainProvider),
+    parentChainProvider,
   );
 
   return {
