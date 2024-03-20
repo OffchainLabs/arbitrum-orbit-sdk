@@ -4,7 +4,6 @@ import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
-import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { getEstimateForSettingGateway } from './createTokenBridge-ethers';
 import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
 import { Prettify } from './types/utils';
@@ -138,10 +137,6 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     publicClient: parentChainPublicClient,
   });
 
-  // ethers providers
-  const parentChainProvider = publicClientToProvider(parentChainPublicClient);
-  const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
-
   // encode data for the setGateways call
   // (we first encode dummy data, to get the retryable message estimates)
   const setGatewaysDummyCalldata = encodeFunctionData({
@@ -160,8 +155,8 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     rollupCoreContracts.upgradeExecutor,
     tokenBridgeContracts.parentChainContracts.router,
     setGatewaysDummyCalldata,
-    parentChainProvider,
-    orbitChainProvider,
+    parentChainPublicClient,
+    orbitChainPublicClient,
   );
 
   //// apply gas overrides
