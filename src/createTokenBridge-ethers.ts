@@ -198,7 +198,7 @@ export const getEstimateForSettingGateway = async (
   // ethers providers
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
   const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
-  
+
   // run retryable estimate for setting a token gateway in the router
   const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(orbitChainProvider);
 
