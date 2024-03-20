@@ -72,7 +72,6 @@ import * as utils from './utils';
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
-  createRollup,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
