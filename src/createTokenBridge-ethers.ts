@@ -1,4 +1,3 @@
-// TODO: move to utils?
 import { Address, PublicClient } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { L1ToL2MessageGasEstimator } from '@arbitrum/sdk';
