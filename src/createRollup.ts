@@ -2,18 +2,28 @@ import { Address, Chain, PrivateKeyAccount, PublicClient } from 'viem';
 
 import { prepareChainConfig } from './prepareChainConfig';
 import { CoreContracts } from './types/CoreContracts';
-import { createRollupPrepareConfig } from './createRollupPrepareConfig';
+import {
+  CreateRollupPrepareConfigResult,
+  createRollupPrepareConfig,
+} from './createRollupPrepareConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
-import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
+import {
+  CreateRollupTransactionReceipt,
+  createRollupPrepareTransactionReceipt,
+} from './createRollupPrepareTransactionReceipt';
 import { createRollupEnoughCustomFeeTokenAllowance } from './createRollupEnoughCustomFeeTokenAllowance';
 import { createRollupPrepareCustomFeeTokenApprovalTransactionRequest } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
 import { getBlockExplorerUrl } from './utils/getters';
+import {
+  CreateRollupTransaction,
+  createRollupPrepareTransaction,
+} from './createRollupPrepareTransaction';
 
 type PublicClientWithDefinedChain = Omit<PublicClient, 'chain'> & {
   chain: Chain;
 };
 
-export type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
+type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
   nativeToken: Address;
   parentChainPublicClient: PublicClientWithDefinedChain;
   deployer: PrivateKeyAccount;
@@ -74,6 +84,20 @@ export type CreateRollupParams = {
 };
 
 /**
+ * @param {Object} createRollupResults - results of the createRollup function
+ * @param {Object} createRollupResults.config - the chain config
+ * @param {Object} createRollupResults.transaction - the transaction for deploying the core contracts
+ * @param {Object} createRollupResults.txReceipt - the transaction receipt
+ * @param {Object} createRollupResults.coreContracts - the core contracts
+ */
+export type CreateRollupResults = {
+  config: CreateRollupPrepareConfigResult;
+  transaction: CreateRollupTransaction;
+  transactionReceipt: CreateRollupTransactionReceipt;
+  coreContracts: CoreContracts;
+};
+
+/**
  * @param {Object} createRollupParams
  * @param {number} createRollupParams.chainId - The chain ID of the AnyTrust chain
  * @param {Object} createRollupParams.deployer - The deployer private key account
@@ -87,7 +111,7 @@ export type CreateRollupParams = {
  * spike when doing direct child chain TX). That would mean we permanently lost capability to
  * deploy deterministic factory at expected address.
  * @param {string} [createRollupParams.nativeToken='ETH'] - The native token address or `ETH`, default value is `ETH`
- * @returns {Object} Chain Core Contracts
+ * @returns @param {Object} createRollupResults
  */
 export async function createRollup({
   chainId,
@@ -97,7 +121,7 @@ export async function createRollup({
   parentChainPublicClient,
   deployFactoriesToL2 = true,
   nativeToken = 'ETH',
-}: CreateRollupParams): Promise<CoreContracts> {
+}: CreateRollupParams): Promise<CreateRollupResults> {
   const isCustomGasToken = nativeToken !== 'ETH';
   const parentChain = parentChainPublicClient.chain;
 
@@ -123,14 +147,17 @@ export async function createRollup({
     });
   }
 
+  // prepare config for rollup creation
+  const config = createRollupPrepareConfig({
+    chainId: BigInt(chainId),
+    owner: deployer.address,
+    chainConfig,
+  });
+
   // prepare the transaction for deploying the core contracts
   const txRequest = await createRollupPrepareTransactionRequest({
     params: {
-      config: createRollupPrepareConfig({
-        chainId: BigInt(chainId),
-        owner: deployer.address,
-        chainConfig,
-      }),
+      config,
       batchPoster,
       validators,
       nativeToken: isCustomGasToken ? nativeToken : undefined,
@@ -145,6 +172,11 @@ export async function createRollup({
     serializedTransaction: await deployer.signTransaction(txRequest),
   });
 
+  // get the transaction
+  const tx = createRollupPrepareTransaction(
+    await parentChainPublicClient.getTransaction({ hash: txHash }),
+  );
+
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
     await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
@@ -154,5 +186,10 @@ export async function createRollup({
 
   const coreContracts = txReceipt.getCoreContracts();
 
-  return coreContracts;
+  return {
+    config,
+    transaction: tx,
+    transactionReceipt: txReceipt,
+    coreContracts,
+  };
 }

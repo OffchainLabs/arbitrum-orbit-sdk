@@ -4,7 +4,8 @@ import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 import { nitroTestnodeL2 } from './chains';
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
-import { createTestRollup } from './utils/testHelpers';
+import { generateChainId } from './utils';
+import { createRollup } from './createRollup';
 
 // public client
 const publicClient = createPublicClient({
@@ -20,11 +21,12 @@ const validators = [testnodeAccounts.deployer.address];
 
 describe(`createRollup`, async () => {
   // create test rollup
-  const createRollupInformation = await createTestRollup({
+  const createRollupInformation = await createRollup({
+    chainId: generateChainId(),
     deployer,
     batchPoster,
     validators,
-    publicClient,
+    parentChainPublicClient: publicClient,
   });
 
   it(`successfully deploys core contracts through rollup creator`, async () => {

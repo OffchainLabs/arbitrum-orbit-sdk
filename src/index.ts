@@ -30,6 +30,7 @@ import {
   CreateRollupFetchTransactionHashParams,
 } from './createRollupFetchTransactionHash';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
+import { createRollup, CreateRollupParams, CreateRollupResults } from './createRollup';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -88,6 +89,9 @@ export {
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
   createRollupFetchCoreContracts,
+  CreateRollupParams,
+  CreateRollupResults,
+  createRollup,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
