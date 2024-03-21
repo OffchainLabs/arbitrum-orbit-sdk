@@ -1,4 +1,4 @@
-import { Address, Chain, PrivateKeyAccount, PublicClient } from 'viem';
+import { Address, Chain, PrivateKeyAccount, PublicClient, zeroAddress } from 'viem';
 
 import { prepareChainConfig } from './prepareChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -122,7 +122,7 @@ export async function createRollup({
   deployFactoriesToL2 = true,
   nativeToken = 'ETH',
 }: CreateRollupParams): Promise<CreateRollupResults> {
-  const isCustomGasToken = nativeToken !== 'ETH';
+  const isCustomGasToken = nativeToken !== 'ETH' && nativeToken !== zeroAddress;
   const parentChain = parentChainPublicClient.chain;
 
   if (!parentChain) {
@@ -160,7 +160,7 @@ export async function createRollup({
       config,
       batchPoster,
       validators,
-      nativeToken: isCustomGasToken ? nativeToken : undefined,
+      nativeToken: isCustomGasToken ? nativeToken : zeroAddress,
       deployFactoriesToL2,
     },
     account: deployer.address,
