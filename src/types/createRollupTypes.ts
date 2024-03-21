@@ -9,7 +9,7 @@ export type CreateRollupFunctionInputs = GetFunctionArgs<
 
 type RequiredKeys = 'config' | 'batchPoster' | 'validators';
 
-export type CreateRollupParams = Pick<CreateRollupFunctionInputs[0], RequiredKeys> &
+export type CreateRollupTxParams = Pick<CreateRollupFunctionInputs[0], RequiredKeys> &
   Partial<Omit<CreateRollupFunctionInputs[0], RequiredKeys>>;
 
 export type WithRollupCreatorAddressOverride<T> = T & {

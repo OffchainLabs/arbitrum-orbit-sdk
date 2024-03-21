@@ -15,7 +15,7 @@ import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/ga
 import { Prettify } from './types/utils';
 import {
   CreateRollupFunctionInputs,
-  CreateRollupParams,
+  CreateRollupTxParams,
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
 
@@ -29,7 +29,7 @@ function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
 
 export type CreateRollupPrepareTransactionRequestParams = Prettify<
   WithRollupCreatorAddressOverride<{
-    params: CreateRollupParams;
+    params: CreateRollupTxParams;
     account: Address;
     publicClient: PublicClient;
     gasOverrides?: TransactionRequestGasOverrides;

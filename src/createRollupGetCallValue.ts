@@ -1,8 +1,8 @@
-import { CreateRollupParams } from './types/createRollupTypes';
+import { CreateRollupTxParams } from './types/createRollupTypes';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { createRollupDefaultRetryablesFees } from './constants';
 
-export function createRollupGetCallValue(params: CreateRollupParams) {
+export function createRollupGetCallValue(params: CreateRollupTxParams) {
   // when not deploying deterministic factories to L2, no callvalue is necessary, as no retryable tickets will be created
   if (!params.deployFactoriesToL2) {
     return BigInt(0);
