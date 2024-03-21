@@ -65,6 +65,7 @@ function checkTokenBridgeContracts(tokenBridgeContracts: TokenBridgeContracts) {
   expect(tokenBridgeContracts.orbitChainContracts.wethGateway).toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.weth).toEqual(zeroAddress);
 }
+
 async function checkWethGateways(tokenBridgeContracts: TokenBridgeContracts) {
   // verify weth gateway (parent chain)
   const registeredWethGatewayOnParentChain = await nitroTestnodeL1Client.readContract({
@@ -300,28 +301,8 @@ describe('createTokenBridge utils function', () => {
     const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
       parentChainPublicClient: nitroTestnodeL2Client,
     });
-    expect(Object.keys(tokenBridgeContracts)).toHaveLength(2);
 
-    // parent chain contracts
-    expect(Object.keys(tokenBridgeContracts.parentChainContracts)).toHaveLength(6);
-    expect(tokenBridgeContracts.parentChainContracts.router).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.parentChainContracts.standardGateway).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.parentChainContracts.customGateway).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.parentChainContracts.multicall).not.toEqual(zeroAddress);
-
-    // orbit chain contracts
-    expect(Object.keys(tokenBridgeContracts.orbitChainContracts)).toHaveLength(9);
-    expect(tokenBridgeContracts.orbitChainContracts.router).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.orbitChainContracts.standardGateway).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.orbitChainContracts.customGateway).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.orbitChainContracts.proxyAdmin).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.orbitChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.orbitChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
-    expect(tokenBridgeContracts.orbitChainContracts.multicall).not.toEqual(zeroAddress);
-
-    // wethGateway and weth should be the zeroAddress on custom-fee-token chains
-    expect(tokenBridgeContracts.orbitChainContracts.wethGateway).toEqual(zeroAddress);
-    expect(tokenBridgeContracts.orbitChainContracts.weth).toEqual(zeroAddress);
+    checkTokenBridgeContracts(tokenBridgeContracts);
   });
 });
 
@@ -339,5 +320,18 @@ describe('createTokenBridge', () => {
     checkTokenBridgeContracts(tokenBridgeContracts);
     checkWethGateways(tokenBridgeContracts);
   });
-  it('successfully deploys token bridge contracts with a custom fee token', async () => {});
+
+  it('successfully deploys token bridge contracts with a custom fee token', async () => {
+    const testnodeInformation = getInformationFromTestnode();
+
+    const tokenBridgeContracts = await createTokenBridge({
+      rollupOwner: l2RollupOwner,
+      rollupAddress: testnodeInformation.rollup,
+      parentChainPublicClient: nitroTestnodeL1Client,
+      orbitChainPublicClient: nitroTestnodeL2Client,
+      nativeTokenAddress: testnodeInformation.l3NativeToken,
+    });
+
+    checkTokenBridgeContracts(tokenBridgeContracts);
+  });
 });
