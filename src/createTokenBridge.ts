@@ -36,7 +36,7 @@ type CreateTokenBridgeParams = {
  *
  * @param {CreateTokenBridgeParams} createTokenBridgeParams
  * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
- * @param {Object} createRollupParams.rollupAddress - TODO
+ * @param {Object} createRollupParams.rollupAddress - The address of the Rollup contract
  * @param {Object} createRollupParams.nativeTokenAddress - Optional
  * If nativeTokenAddress is passed, deploy a token bridge with custom fee token.
  * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
@@ -52,7 +52,7 @@ type CreateTokenBridgeParams = {
  *
  * const tokenBridgeContracts = await createTokenBridge({
  *   rollupOwner: rollupOwner,
- *   rollupAddress: testnodeInformation.rollup,
+ *   rollupAddress: rollupAddress,
  *   parentChainPublicClient: l1Client,
  *   orbitChainPublicClient: l2Client,
  *   createTokenBridgePrepareTransactionRequestParamsOverride: {
