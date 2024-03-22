@@ -92,7 +92,6 @@ export type CreateRollupResults = {
 };
 
 /**
- * @async
  * Accepts rollup creation config, rollup owner, and the parent chain public client.
  *
  * For a custom gas token chain, checks the custom gas token allowance granted
@@ -100,10 +99,10 @@ export type CreateRollupResults = {
  *
  * Performs the tx to deploy the chain's core contracts.
  *
- * - Example of a chain with ETH as gas token: https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-eth/index.ts
- * - Example of a chain with custom gas token: https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-custom-fee-token/index.ts
+ * Returns the transaction, the transaction receipt, and the core contracts.
  *
- * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
+ * - Example 1: [Create an ETH gas token chain](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-eth/index.ts)
+ * - Example 2: [Create a custom gas token chain](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-custom-fee-token/index.ts)
  *
  * @param {CreateRollupParams} createRollupParams {@link CreateRollupParams}
  * @param {Object} createRollupParams.config - The chain config
@@ -118,8 +117,10 @@ export type CreateRollupResults = {
  * @param {string} [createRollupParams.nativeToken=] - The native token address, optional, defaults to ETH
  * @param {number} [createRollupParams.maxDataSize=] - The max calldata size, optional, defaults to 104_857 B for Orbit chains
  * @param {number} [createRollupParams.maxFeePerGasForRetryables=] - The max fee per gas for retryables, optional, defaults to 0.1 gwei
- * @param {Object} createRollupParams.rollupOwner - The rollupOwner private key account
+ * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
  * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
+ *
+ * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
  *
  * @example
  * const createRollupConfig = createRollupPrepareConfig({
