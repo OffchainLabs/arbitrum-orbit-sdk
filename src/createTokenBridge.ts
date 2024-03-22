@@ -5,7 +5,10 @@ import {
 } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
-import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
+import {
+  CreateTokenBridgePrepareTransactionRequestParams,
+  createTokenBridgePrepareTransactionRequest,
+} from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
@@ -20,13 +23,16 @@ type CreateTokenBridgeParams = {
   nativeTokenAddress?: Address;
   parentChainPublicClient: PublicClient;
   orbitChainPublicClient: PublicClient;
+  createTokenBridgePrepareTransactionRequestParamsOverride?: Partial<CreateTokenBridgePrepareTransactionRequestParams>;
 };
+
 export async function createTokenBridge({
   rollupOwner,
   rollupAddress,
   nativeTokenAddress,
   parentChainPublicClient,
   orbitChainPublicClient,
+  createTokenBridgePrepareTransactionRequestParamsOverride,
 }: CreateTokenBridgeParams): Promise<TokenBridgeContracts> {
   if (nativeTokenAddress) {
     // set the custom fee token
@@ -69,6 +75,7 @@ export async function createTokenBridge({
     parentChainPublicClient,
     orbitChainPublicClient,
     account: rollupOwner.address,
+    ...createTokenBridgePrepareTransactionRequestParamsOverride,
   });
 
   // sign and send the transaction
