@@ -92,12 +92,13 @@ export type CreateRollupResults = {
 };
 
 /**
- * Accepts rollup creation config, rollup owner, and the parent chain public client.
- *
- * For a custom gas token chain, checks the custom gas token allowance granted
- * to the rollup creator contract. Runs an approval tx for insufficient allowance.
- *
  * Performs the tx to deploy the chain's core contracts.
+ *
+ * Before creating a custom gas token chain, it checks the custom gas
+ * token allowance granted to the rollup creator contract. Runs an approval
+ * tx for insufficient allowance.
+ *
+ * Accepts rollup creation config, rollup owner, and the parent chain public client.
  *
  * Returns the transaction, the transaction receipt, and the core contracts.
  *
