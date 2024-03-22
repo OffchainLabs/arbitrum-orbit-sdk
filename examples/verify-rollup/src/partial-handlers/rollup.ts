@@ -316,7 +316,7 @@ export const rollupHandler = async (
       nativeTokenAddress as `0x${string}`,
     );
     if (nativeTokenIsERC20) {
-      console.log(`Native token ${nativeTokenIsERC20} is a contract`);
+      console.log(`Native token ${nativeTokenAddress} is a contract`);
     } else {
       console.log(`Native token ${nativeTokenAddress} is NOT a contract`);
       warningMessages.push(`Native token ${nativeTokenAddress} is NOT a contract`);
