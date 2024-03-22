@@ -130,7 +130,7 @@ export const precompilesHandler = async (orbitHandler: OrbitHandler): Promise<st
           const result = await orbitHandler.readContract(
             'orbit',
             ARB_OWNER_PUBLIC,
-            ArbOwnerPublic__factory.abi,
+            ArbOwnerPublic__factory.abi as Abi,
             functionName,
           );
           return result;
