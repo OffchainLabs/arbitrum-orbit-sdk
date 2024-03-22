@@ -26,6 +26,40 @@ type CreateTokenBridgeParams = {
   createTokenBridgePrepareTransactionRequestParamsOverride?: Partial<CreateTokenBridgePrepareTransactionRequestParams>;
 };
 
+/**
+ * Performs the transactions to deploy the token bridge core contracts
+ *
+ * For chain with custom gas token, it checks the custom gas token allowance
+ * token allowance and approve if necessary.
+ *
+ * Returns the token bridge core contracts.
+ *
+ * @param {CreateTokenBridgeParams} createTokenBridgeParams
+ * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
+ * @param {Object} createRollupParams.rollupAddress - TODO
+ * @param {Object} createRollupParams.nativeTokenAddress - Optional
+ * If nativeTokenAddress is passed, deploy a token bridge with custom fee token.
+ * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
+ * @param {Object} createRollupParams.orbitChainPublicClient - The orbit chain Viem Public Client
+ * @param {Object} createRollupParams.createTokenBridgePrepareTransactionRequestParamsOverride - Optional {@link CreateTokenBridgePrepareTransactionRequestParams}
+ *
+ * @returns Promise<{@link TokenBridgeContracts}> - The token bridge core contracts.
+ *
+ * @example
+ * const tokenBridgeCreator = await deployTokenBridgeCreator({
+ *   publicClient: l2Client,
+ * });
+ *
+ * const tokenBridgeContracts = await createTokenBridge({
+ *   rollupOwner: rollupOwner,
+ *   rollupAddress: testnodeInformation.rollup,
+ *   parentChainPublicClient: l1Client,
+ *   orbitChainPublicClient: l2Client,
+ *   createTokenBridgePrepareTransactionRequestParamsOverride: {
+ *     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+ *   },
+ * });
+ */
 export async function createTokenBridge({
   rollupOwner,
   rollupAddress,
