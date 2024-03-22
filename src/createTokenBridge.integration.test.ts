@@ -99,7 +99,7 @@ async function checkWethGateways(
   );
 }
 
-describe.skip('createTokenBridge utils function', () => {
+describe('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
     const testnodeInformation = getInformationFromTestnode();
 
@@ -330,6 +330,33 @@ describe('createTokenBridge', () => {
       parentChainPublicClient: nitroTestnodeL1Client,
       orbitChainPublicClient: nitroTestnodeL2Client,
       createTokenBridgePrepareTransactionRequestParamsOverride: {
+        gasOverrides: {
+          gasLimit: {
+            base: 6_000_000n,
+          },
+        },
+        retryableGasOverrides: {
+          maxGasForFactory: {
+            base: 20_000_000n,
+          },
+          maxGasForContracts: {
+            base: 20_000_000n,
+          },
+          maxSubmissionCostForFactory: {
+            base: 4_000_000_000_000n,
+          },
+          maxSubmissionCostForContracts: {
+            base: 4_000_000_000_000n,
+          },
+        },
+        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      },
+      createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride: {
+        retryableGasOverrides: {
+          gasLimit: {
+            base: 100_000n,
+          },
+        },
         tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
       },
     });
@@ -338,7 +365,7 @@ describe('createTokenBridge', () => {
     checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 
-  it.only('successfully deploys token bridge contracts with a custom fee token', async () => {
+  it('successfully deploys token bridge contracts with a custom fee token', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
     // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
@@ -347,12 +374,34 @@ describe('createTokenBridge', () => {
     });
 
     const tokenBridgeContracts = await createTokenBridge({
-      rollupOwner: l2RollupOwner,
+      rollupOwner: l3RollupOwner,
       rollupAddress: testnodeInformation.rollup,
       parentChainPublicClient: nitroTestnodeL1Client,
       orbitChainPublicClient: nitroTestnodeL2Client,
       nativeTokenAddress: testnodeInformation.l3NativeToken,
+      createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride: {
+        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      },
       createTokenBridgePrepareTransactionRequestParamsOverride: {
+        gasOverrides: {
+          gasLimit: {
+            base: 6_000_000n,
+          },
+        },
+        retryableGasOverrides: {
+          maxGasForFactory: {
+            base: 20_000_000n,
+          },
+          maxGasForContracts: {
+            base: 20_000_000n,
+          },
+          maxSubmissionCostForFactory: {
+            base: 4_000_000_000_000n,
+          },
+          maxSubmissionCostForContracts: {
+            base: 4_000_000_000_000n,
+          },
+        },
         tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
       },
     });
