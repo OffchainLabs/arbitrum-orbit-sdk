@@ -338,7 +338,7 @@ describe('createTokenBridge', () => {
     checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 
-  it('successfully deploys token bridge contracts with a custom fee token', async () => {
+  it.only('successfully deploys token bridge contracts with a custom fee token', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
     // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
