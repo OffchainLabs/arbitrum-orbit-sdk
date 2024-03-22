@@ -6,6 +6,8 @@ import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { generateChainId } from './utils';
 import { createRollup } from './createRollup';
+import { createRollupPrepareConfig } from './createRollupPrepareConfig';
+import { prepareChainConfig } from './prepareChainConfig';
 
 // public client
 const publicClient = createPublicClient({
@@ -20,10 +22,24 @@ const batchPoster = testnodeAccounts.deployer.address;
 const validators = [testnodeAccounts.deployer.address];
 
 describe(`createRollup`, async () => {
+  const chainId = generateChainId();
+
+  const createRollupConfig = createRollupPrepareConfig({
+    chainId: BigInt(chainId),
+    owner: deployer.address,
+    chainConfig: prepareChainConfig({
+      chainId,
+      arbitrum: {
+        InitialChainOwner: deployer.address,
+        DataAvailabilityCommittee: true,
+      },
+    }),
+  });
+
   // create test rollup
   const createRollupInformation = await createRollup({
-    chainId: generateChainId(),
-    deployer,
+    config: createRollupConfig,
+    rollupOwner: deployer,
     batchPoster,
     validators,
     parentChainPublicClient: publicClient,
@@ -32,7 +48,7 @@ describe(`createRollup`, async () => {
   it(`successfully deploys core contracts through rollup creator`, async () => {
     // assert all inputs are correct
     const [arg] = createRollupInformation.transaction.getInputs();
-    expect(arg.config).toEqual(createRollupInformation.config);
+    expect(arg.config).toEqual(createRollupConfig);
     expect(arg.batchPoster).toEqual(batchPoster);
     expect(arg.validators).toEqual(validators);
     expect(arg.maxDataSize).toEqual(104_857n);

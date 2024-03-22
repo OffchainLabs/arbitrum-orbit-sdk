@@ -9,6 +9,9 @@ export type CreateRollupFunctionInputs = GetFunctionArgs<
 
 type RequiredKeys = 'config' | 'batchPoster' | 'validators';
 
+/**
+ * CreateRollupTxParams was previously named CreateRollupParams until 0.8.3
+ */
 export type CreateRollupTxParams = Pick<CreateRollupFunctionInputs[0], RequiredKeys> &
   Partial<Omit<CreateRollupFunctionInputs[0], RequiredKeys>>;
 
