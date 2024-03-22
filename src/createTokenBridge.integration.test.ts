@@ -310,11 +310,19 @@ describe('createTokenBridge', () => {
   it('successfully deploys token bridge contracts', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
+    // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
+    const tokenBridgeCreator = await deployTokenBridgeCreator({
+      publicClient: nitroTestnodeL1Client,
+    });
+
     const tokenBridgeContracts = await createTokenBridge({
       rollupOwner: l2RollupOwner,
       rollupAddress: testnodeInformation.rollup,
       parentChainPublicClient: nitroTestnodeL1Client,
       orbitChainPublicClient: nitroTestnodeL2Client,
+      createTokenBridgePrepareTransactionRequestParamsOverride: {
+        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      },
     });
 
     checkTokenBridgeContracts(tokenBridgeContracts);
@@ -324,12 +332,20 @@ describe('createTokenBridge', () => {
   it('successfully deploys token bridge contracts with a custom fee token', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
+    // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
+    const tokenBridgeCreator = await deployTokenBridgeCreator({
+      publicClient: nitroTestnodeL2Client,
+    });
+
     const tokenBridgeContracts = await createTokenBridge({
       rollupOwner: l2RollupOwner,
       rollupAddress: testnodeInformation.rollup,
       parentChainPublicClient: nitroTestnodeL1Client,
       orbitChainPublicClient: nitroTestnodeL2Client,
       nativeTokenAddress: testnodeInformation.l3NativeToken,
+      createTokenBridgePrepareTransactionRequestParamsOverride: {
+        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      },
     });
 
     checkTokenBridgeContracts(tokenBridgeContracts);
