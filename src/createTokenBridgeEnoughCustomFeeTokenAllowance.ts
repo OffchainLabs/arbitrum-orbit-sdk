@@ -1,31 +1,30 @@
 import { Address, PublicClient } from 'viem';
 
-import { tokenBridgeCreator } from './contracts';
-import { validParentChainId } from './types/ParentChain';
 import { fetchAllowance } from './utils/erc20';
 import { createTokenBridgeDefaultRetryablesFees } from './constants';
 
-export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
-  nativeToken: Address;
-  owner: Address;
-  publicClient: PublicClient;
-};
+import { Prettify } from './types/utils';
+import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+import { getTokenBridgeCreatorAddress } from './utils/getters';
+
+export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = Prettify<
+  WithTokenBridgeCreatorAddressOverride<{
+    nativeToken: Address;
+    owner: Address;
+    publicClient: PublicClient;
+  }>
+>;
 
 export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
   nativeToken,
   owner,
   publicClient,
+  tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams) {
-  const chainId = publicClient.chain?.id;
-
-  if (!validParentChainId(chainId)) {
-    throw new Error('chainId is undefined');
-  }
-
   const allowance = await fetchAllowance({
     address: nativeToken,
     owner,
-    spender: tokenBridgeCreator.address[chainId],
+    spender: tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(publicClient),
     publicClient,
   });
 

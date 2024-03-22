@@ -1,6 +1,7 @@
 import { defineChain } from 'viem';
 import {
   mainnet,
+  holesky,
   arbitrum as arbitrumOne,
   arbitrumNova,
   sepolia,
@@ -63,6 +64,7 @@ export const chains = [
   arbitrumNova,
   // testnet
   sepolia,
+  holesky,
   arbitrumSepolia,
   // local nitro-testnode
   nitroTestnodeL1,
@@ -77,6 +79,7 @@ export {
   arbitrumNova,
   // testnet
   sepolia,
+  holesky,
   arbitrumSepolia,
   // local nitro-testnode
   nitroTestnodeL1,

@@ -8,9 +8,11 @@ import {
   createRollupPrepareTransactionReceipt,
 } from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey, generateChainId } from '@arbitrum/orbit-sdk/utils';
+import { config } from 'dotenv';
+config();
 
 function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
-  if (typeof privateKey === 'undefined') {
+  if (typeof privateKey === 'undefined' || privateKey === '') {
     return generatePrivateKey();
   }
 
