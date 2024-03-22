@@ -10,7 +10,10 @@ import {
   createTokenBridgePrepareTransactionRequest,
 } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
-import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
+import {
+  CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams,
+  createTokenBridgePrepareSetWethGatewayTransactionRequest,
+} from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 
 function getBlockExplorerUrl(chain: Chain | undefined) {
@@ -23,7 +26,9 @@ type CreateTokenBridgeParams = {
   nativeTokenAddress?: Address;
   parentChainPublicClient: PublicClient;
   orbitChainPublicClient: PublicClient;
+  createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride?: Partial<CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams>;
   createTokenBridgePrepareTransactionRequestParamsOverride?: Partial<CreateTokenBridgePrepareTransactionRequestParams>;
+  createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride?: Partial<CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams>;
 };
 
 /**
@@ -41,8 +46,9 @@ type CreateTokenBridgeParams = {
  * If nativeTokenAddress is passed, deploy a token bridge with custom fee token.
  * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
  * @param {Object} createRollupParams.orbitChainPublicClient - The orbit chain Viem Public Client
+ * @param {Object} createRollupParams.createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride - Optional {@link CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams}
  * @param {Object} createRollupParams.createTokenBridgePrepareTransactionRequestParamsOverride - Optional {@link CreateTokenBridgePrepareTransactionRequestParams}
- *
+ * @param {Object} createRollupParams.createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride - Optional {@link CreateTokenBridgePrepareSetWethGatewayTransactionRequestParams}
  * @returns Promise<{@link TokenBridgeContracts}> - The token bridge core contracts.
  *
  * @example
@@ -55,9 +61,20 @@ type CreateTokenBridgeParams = {
  *   rollupAddress: rollupAddress,
  *   parentChainPublicClient: l1Client,
  *   orbitChainPublicClient: l2Client,
+ *   createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride: {
+ *     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+ *   },
  *   createTokenBridgePrepareTransactionRequestParamsOverride: {
  *     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
  *   },
+ *   createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride: {
+ *     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+ *     retryableGasOverrides: {
+ *       gasLimit: {
+ *         base: 100_000n,
+ *       }
+ *     }
+ *   }t
  * });
  */
 export async function createTokenBridge({
@@ -66,7 +83,9 @@ export async function createTokenBridge({
   nativeTokenAddress,
   parentChainPublicClient,
   orbitChainPublicClient,
+  createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride,
   createTokenBridgePrepareTransactionRequestParamsOverride,
+  createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride,
 }: CreateTokenBridgeParams): Promise<TokenBridgeContracts> {
   if (nativeTokenAddress) {
     // set the custom fee token
@@ -75,6 +94,7 @@ export async function createTokenBridge({
       nativeToken: nativeTokenAddress,
       owner: rollupOwner.address,
       publicClient: parentChainPublicClient,
+      ...createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride,
     };
 
     // Check allowance and approve if necessary
@@ -154,11 +174,7 @@ export async function createTokenBridge({
       parentChainPublicClient,
       orbitChainPublicClient,
       account: rollupOwner.address,
-      retryableGasOverrides: {
-        gasLimit: {
-          percentIncrease: 200n,
-        },
-      },
+      ...createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride,
     });
 
     // sign and send the transaction
