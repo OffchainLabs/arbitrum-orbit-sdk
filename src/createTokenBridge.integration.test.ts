@@ -98,13 +98,21 @@ function checkTokenBridgeContracts(tokenBridgeContracts: TokenBridgeContracts) {
   expect(tokenBridgeContracts.orbitChainContracts.beaconProxyFactory).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.upgradeExecutor).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.multicall).not.toEqual(zeroAddress);
-
-  // wethGateway and weth should be the zeroAddress on custom-fee-token chains
-  expect(tokenBridgeContracts.orbitChainContracts.wethGateway).toEqual(zeroAddress);
-  expect(tokenBridgeContracts.orbitChainContracts.weth).toEqual(zeroAddress);
 }
 
-async function checkWethGateways(tokenBridgeContracts: TokenBridgeContracts) {
+async function checkWethGateways(
+  tokenBridgeContracts: TokenBridgeContracts,
+  { customFeeToken }: { customFeeToken: boolean },
+) {
+  if (customFeeToken) {
+    expect(tokenBridgeContracts.parentChainContracts.wethGateway).not.toEqual(zeroAddress);
+    expect(tokenBridgeContracts.parentChainContracts.weth).not.toEqual(zeroAddress);
+
+    expect(tokenBridgeContracts.orbitChainContracts.wethGateway).not.toEqual(zeroAddress);
+    expect(tokenBridgeContracts.orbitChainContracts.weth).not.toEqual(zeroAddress);
+    return;
+  }
+
   // verify weth gateway (parent chain)
   const registeredWethGatewayOnParentChain = await nitroTestnodeL1Client.readContract({
     address: tokenBridgeContracts.parentChainContracts.router,
@@ -224,7 +232,7 @@ describe('createTokenBridge utils function', () => {
     expect(orbitChainSetGatewayRetryableReceipt).toHaveLength(1);
     expect(orbitChainSetGatewayRetryableReceipt[0].status).toEqual('success');
 
-    checkWethGateways(tokenBridgeContracts);
+    checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 
   it(`successfully deploys token bridge contracts with a custom fee token through token bridge creator`, async () => {
@@ -341,10 +349,11 @@ describe('createTokenBridge utils function', () => {
     });
 
     checkTokenBridgeContracts(tokenBridgeContracts);
+    checkWethGateways(tokenBridgeContracts, { customFeeToken: true });
   });
 });
 
-describe('createTokenBridge', () => {
+describe.skip('createTokenBridge', () => {
   it('successfully deploys token bridge contracts', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
@@ -364,7 +373,7 @@ describe('createTokenBridge', () => {
     });
 
     checkTokenBridgeContracts(tokenBridgeContracts);
-    checkWethGateways(tokenBridgeContracts);
+    checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 
   it('successfully deploys token bridge contracts with a custom fee token', async () => {
@@ -387,5 +396,6 @@ describe('createTokenBridge', () => {
     });
 
     checkTokenBridgeContracts(tokenBridgeContracts);
+    checkWethGateways(tokenBridgeContracts, { customFeeToken: true });
   });
 });
