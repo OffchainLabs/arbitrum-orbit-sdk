@@ -87,3 +87,17 @@ export async function fetchAllowance({
     args: [owner, spender],
   });
 }
+
+export function fetchDecimals({
+  address,
+  publicClient,
+}: {
+  address: Address;
+  publicClient: PublicClient;
+}) {
+  return publicClient.readContract({
+    address,
+    abi: erc20.abi,
+    functionName: 'decimals',
+  });
+}

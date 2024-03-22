@@ -1,7 +1,7 @@
 import { Transaction, decodeFunctionData } from 'viem';
 
 import { rollupCreator } from './contracts';
-import { CreateRollupFunctionInputs } from './createRollup';
+import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 
 function createRollupDecodeFunctionData(data: `0x${string}`) {
   return decodeFunctionData({

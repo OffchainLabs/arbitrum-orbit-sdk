@@ -1,7 +1,7 @@
 import { parseEther, zeroAddress } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
-import { CreateRollupFunctionInputs } from './createRollup';
+import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 import { prepareChainConfig } from './prepareChainConfig';
 
 type RequiredKeys = 'chainId' | 'owner';
@@ -14,7 +14,8 @@ export type CreateRollupPrepareConfigParams = Pick<CreateRollupPrepareConfigResu
   };
 
 const wasmModuleRoot: `0x${string}` =
-  '0x0754e09320c381566cc0449904c377a52bd34a6b9404432e80afd573b67f7b17';
+  // https://github.com/OffchainLabs/nitro/releases/tag/consensus-v11
+  '0xf4389b835497a910d7ba3ebfb77aa93da985634f3c052de1290360635be40c4a';
 
 export const defaults = {
   confirmPeriodBlocks: BigInt(150),

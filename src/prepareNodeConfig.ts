@@ -1,13 +1,24 @@
+import { NodeConfig } from './types/NodeConfig.generated';
 import {
-  NodeConfig,
   NodeConfigChainInfoJson,
   NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
 } from './types/NodeConfig';
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
-import { ParentChainId, validParentChainId } from './types/ParentChain';
-import { sepolia, arbitrumSepolia, nitroTestnodeL1, nitroTestnodeL2 } from './chains';
+import { ParentChainId, validateParentChain } from './types/ParentChain';
+import {
+  mainnet,
+  arbitrumOne,
+  arbitrumNova,
+  sepolia,
+  holesky,
+  arbitrumSepolia,
+  nitroTestnodeL1,
+  nitroTestnodeL2,
+  nitroTestnodeL3,
+} from './chains';
 
+// this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
 }
@@ -25,12 +36,17 @@ function stringifyBackendsJson(
 function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
+    case mainnet.id:
     case sepolia.id:
+    case holesky.id:
     case nitroTestnodeL1.id:
       return false;
 
+    case arbitrumOne.id:
+    case arbitrumNova.id:
     case arbitrumSepolia.id:
     case nitroTestnodeL2.id:
+    case nitroTestnodeL3.id:
       return true;
   }
 }
@@ -52,17 +68,13 @@ export function prepareNodeConfig({
   parentChainId: number;
   parentChainRpcUrl: string;
 }): NodeConfig {
-  if (!validParentChainId(parentChainId)) {
-    throw new Error(`[prepareNodeConfig] invalid parent chain id: ${parentChainId}`);
-  }
-
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
         {
           'chain-id': chainConfig.chainId,
           'parent-chain-id': parentChainId,
-          'parent-chain-is-arbitrum': parentChainIsArbitrum(parentChainId),
+          'parent-chain-is-arbitrum': parentChainIsArbitrum(validateParentChain(parentChainId)),
           'chain-name': chainName,
           'chain-config': chainConfig,
           'rollup': {
@@ -86,22 +98,16 @@ export function prepareNodeConfig({
     'http': {
       addr: '0.0.0.0',
       port: 8449,
-      vhosts: '*',
-      corsdomain: '*',
+      vhosts: ['*'],
+      corsdomain: ['*'],
       api: ['eth', 'net', 'web3', 'arb', 'debug'],
     },
     'node': {
-      'forwarding-target': '',
-      'sequencer': {
-        'max-tx-data-size': 85000,
-        'enable': true,
-        'dangerous': {
-          'no-coordinator': true,
-        },
-        'max-block-speed': '250ms',
-      },
+      'sequencer': true,
       'delayed-sequencer': {
-        enable: true,
+        'enable': true,
+        'use-merge-finality': false,
+        'finalize-distance': 1,
       },
       'batch-poster': {
         'max-size': 90000,
@@ -117,6 +123,17 @@ export function prepareNodeConfig({
           'private-key': sanitizePrivateKey(validatorPrivateKey),
         },
       },
+      'dangerous': {
+        'no-sequencer-coordinator': true,
+      },
+    },
+    'execution': {
+      'forwarding-target': '',
+      'sequencer': {
+        'enable': true,
+        'max-tx-data-size': 85000,
+        'max-block-speed': '250ms',
+      },
       'caching': {
         archive: true,
       },
@@ -124,13 +141,13 @@ export function prepareNodeConfig({
   };
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
-    config.node['data-availability'] = {
+    config.node!['data-availability'] = {
       'enable': true,
       'sequencer-inbox-address': coreContracts.sequencerInbox,
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: 'http://localhost:9876',
+        urls: ['http://localhost:9877'],
       },
       'rpc-aggregator': {
         'enable': true,
