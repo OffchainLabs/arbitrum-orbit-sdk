@@ -353,7 +353,7 @@ describe('createTokenBridge utils function', () => {
   });
 });
 
-describe.skip('createTokenBridge', () => {
+describe('createTokenBridge', () => {
   it('successfully deploys token bridge contracts', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
