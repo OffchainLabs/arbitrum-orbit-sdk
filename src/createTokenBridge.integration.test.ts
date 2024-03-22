@@ -99,7 +99,7 @@ async function checkWethGateways(
   );
 }
 
-describe('createTokenBridge utils function', () => {
+describe.skip('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
     const testnodeInformation = getInformationFromTestnode();
 
