@@ -99,7 +99,7 @@ async function checkWethGateways(
   );
 }
 
-describe('createTokenBridge utils function', () => {
+describe.skip('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
     const testnodeInformation = getInformationFromTestnode();
 
@@ -316,7 +316,7 @@ describe('createTokenBridge utils function', () => {
 });
 
 describe('createTokenBridge', () => {
-  it('successfully deploys token bridge contracts', async () => {
+  it.skip('successfully deploys token bridge contracts', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
     // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
@@ -365,7 +365,7 @@ describe('createTokenBridge', () => {
     checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 
-  it.only('successfully deploys token bridge contracts with a custom fee token', async () => {
+  it('successfully deploys token bridge contracts with a custom fee token', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
     // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
