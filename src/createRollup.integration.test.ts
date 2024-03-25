@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { Address, createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 import { TestERC20__factory } from '@arbitrum/sdk/dist/lib/abi/factories/TestERC20__factory';
 import { Wallet } from 'ethers';
@@ -23,7 +23,7 @@ const deployer = testnodeAccounts.deployer;
 const batchPoster = testnodeAccounts.deployer.address;
 const validators = [testnodeAccounts.deployer.address];
 
-async function createRollupHelper(nativeToken?: Address) {
+async function createRollupHelper(nativeToken: Address = zeroAddress) {
   const chainId = generateChainId();
 
   const createRollupConfig = createRollupPrepareConfig({
@@ -75,6 +75,12 @@ async function deployERC20ToParentChain() {
 }
 
 describe(`createRollup`, () => {
+  let customGasTokenAddress: Address = zeroAddress;
+
+  beforeAll(async () => {
+    customGasTokenAddress = (await deployERC20ToParentChain()).address as Address;
+  });
+
   describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
     const { createRollupConfig, createRollupInformation } = await createRollupHelper();
 
@@ -107,10 +113,8 @@ describe(`createRollup`, () => {
   });
 
   describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
-    const customGasToken = await deployERC20ToParentChain();
-
     const { createRollupConfig, createRollupInformation } = await createRollupHelper(
-      customGasToken.address as Address,
+      customGasTokenAddress,
     );
 
     it(`successfully deploys core contracts through rollup creator`, async () => {
