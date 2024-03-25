@@ -12,7 +12,7 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
-import { CreateRollupFunctionInputs, CreateRollupTxParams } from './types/createRollupTypes';
+import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
 import {
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
@@ -30,7 +30,7 @@ import {
   CreateRollupFetchTransactionHashParams,
 } from './createRollupFetchTransactionHash';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
-import { createRollup, CreateRollupParams, CreateRollupResults } from './createRollup';
+import { createRollup, CreateRollupFunctionParams, CreateRollupResults } from './createRollup';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -72,7 +72,7 @@ export {
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
-  CreateRollupTxParams,
+  CreateRollupParams,
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
@@ -89,7 +89,7 @@ export {
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
   createRollupFetchCoreContracts,
-  CreateRollupParams,
+  CreateRollupFunctionParams,
   CreateRollupResults,
   createRollup,
   setValidKeyset,

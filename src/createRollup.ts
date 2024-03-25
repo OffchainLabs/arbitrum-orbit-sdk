@@ -13,7 +13,7 @@ import {
   CreateRollupTransaction,
   createRollupPrepareTransaction,
 } from './createRollupPrepareTransaction';
-import { CreateRollupTxParams } from './types/createRollupTypes';
+import { CreateRollupParams } from './types/createRollupTypes';
 
 type PublicClientWithDefinedChain = Omit<PublicClient, 'chain'> & {
   chain: Chain;
@@ -71,10 +71,9 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
 
 /**
  * This type is for the params of the createRollup function
- *
- * @see {@link CreateRollupTxParams} - CreateRollupParams used until 0.8.3 had been renamed to CreateRollupTxParams
+
  */
-export type CreateRollupParams = CreateRollupTxParams & {
+export type CreateRollupFunctionParams = CreateRollupParams & {
   rollupOwner: PrivateKeyAccount;
   parentChainPublicClient: PublicClient;
 };
@@ -105,21 +104,21 @@ export type CreateRollupResults = {
  * - Example 1: [Create an ETH gas token chain](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-eth/index.ts)
  * - Example 2: [Create a custom gas token chain](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-custom-fee-token/index.ts)
  *
- * @param {CreateRollupParams} createRollupParams {@link CreateRollupParams}
- * @param {Object} createRollupParams.config - The chain config
- * @param {string} createRollupParams.batchPoster - The batchPoster address
- * @param {Array<string>} createRollupParams.validators - The validator(s) address array
- * @param {boolean} [createRollupParams.deployFactoriesToL2=] - Optional, defaults to true.
+ * @param {CreateRollupFunctionParams} createRollupFunctionParams {@link CreateRollupFunctionParams}
+ * @param {Object} createRollupFunctionParams.config - The chain config
+ * @param {string} createRollupFunctionParams.batchPoster - The batchPoster address
+ * @param {Array<string>} createRollupFunctionParams.validators - The validator(s) address array
+ * @param {boolean} [createRollupFunctionParams.deployFactoriesToL2=] - Optional, defaults to true.
  * Deploying factories via retryable tickets at rollup creation time is the most reliable method to
  * do it since it doesn't require paying the L1 gas. If deployment is not done as part of rollup
  * creation TX, there is a risk that anyone can try to deploy factories and potentially burn
  * the nonce 0 (ie. due to gas price spike when doing direct child chain TX). That would mean we
  * permanently lost capability to deploy deterministic factory at expected address.
- * @param {string} [createRollupParams.nativeToken=] - The native token address, optional, defaults to ETH
- * @param {number} [createRollupParams.maxDataSize=] - The max calldata size, optional, defaults to 104_857 B for Orbit chains
- * @param {number} [createRollupParams.maxFeePerGasForRetryables=] - The max fee per gas for retryables, optional, defaults to 0.1 gwei
- * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
- * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
+ * @param {string} [createRollupFunctionParams.nativeToken=] - The native token address, optional, defaults to ETH
+ * @param {number} [createRollupFunctionParams.maxDataSize=] - The max calldata size, optional, defaults to 104_857 B for Orbit chains
+ * @param {number} [createRollupFunctionParams.maxFeePerGasForRetryables=] - The max fee per gas for retryables, optional, defaults to 0.1 gwei
+ * @param {Object} createRollupFunctionParams.rollupOwner - The rollup owner private key account
+ * @param {Object} createRollupFunctionParams.parentChainPublicClient - The parent chain Viem Public Client
  *
  * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
  *
@@ -152,7 +151,7 @@ export async function createRollup({
   rollupOwner,
   parentChainPublicClient,
   ...params
-}: CreateRollupParams): Promise<CreateRollupResults> {
+}: CreateRollupFunctionParams): Promise<CreateRollupResults> {
   const parentChain = parentChainPublicClient.chain;
 
   if (!parentChain) {
