@@ -373,6 +373,34 @@ describe('createTokenBridge', () => {
       publicClient: nitroTestnodeL2Client,
     });
 
+    // -----------------------------
+    // 1. fund l3deployer account
+    const fundTxRequestRaw = await nitroTestnodeL2Client.prepareTransactionRequest({
+      chain: nitroTestnodeL2Client.chain,
+      to: testnodeInformation.l3NativeToken,
+      data: encodeFunctionData({
+        abi: erc20.abi,
+        functionName: 'transfer',
+        args: [l3RollupOwner.address, parseEther('500')],
+      }),
+      value: BigInt(0),
+      account: l3TokenBridgeDeployer,
+    });
+
+    // sign and send the transaction
+    const fundTxRequest = { ...fundTxRequestRaw, chainId: nitroTestnodeL2Client.chain.id };
+    const fundTxHash = await nitroTestnodeL2Client.sendRawTransaction({
+      serializedTransaction: await l3TokenBridgeDeployer.signTransaction(fundTxRequest),
+    });
+
+    // get the transaction receipt after waiting for the transaction to complete
+    const fundTxReceipt = await nitroTestnodeL2Client.waitForTransactionReceipt({
+      hash: fundTxHash,
+    });
+    expect(fundTxReceipt.status).toEqual('success');
+
+    // -----------------------------
+    // 2. Deploy token bridge contracts
     const tokenBridgeContracts = await createTokenBridge({
       rollupOwner: l3RollupOwner,
       rollupAddress: testnodeInformation.rollup,
