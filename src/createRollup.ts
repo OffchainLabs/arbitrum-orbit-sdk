@@ -71,7 +71,6 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
 
 /**
  * This type is for the params of the createRollup function
-
  */
 export type CreateRollupFunctionParams = CreateRollupParams & {
   rollupOwner: PrivateKeyAccount;
