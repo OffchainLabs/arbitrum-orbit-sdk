@@ -1,18 +1,12 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Address, createPublicClient, http, parseGwei, zeroAddress } from 'viem';
-import { TestERC20__factory } from '@arbitrum/sdk/dist/lib/abi/factories/TestERC20__factory';
-import { Wallet } from 'ethers';
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 import { nitroTestnodeL2 } from './chains';
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { generateChainId } from './utils';
-import { CreateRollupResults, createRollup } from './createRollup';
-import {
-  CreateRollupPrepareConfigResult,
-  createRollupPrepareConfig,
-} from './createRollupPrepareConfig';
+import { createRollup } from './createRollup';
+import { createRollupPrepareConfig } from './createRollupPrepareConfig';
 import { prepareChainConfig } from './prepareChainConfig';
 
 const parentChainPublicClient = createPublicClient({
@@ -22,7 +16,7 @@ const parentChainPublicClient = createPublicClient({
 
 // test inputs
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
-const deployer = testnodeAccounts.deployer;
+const userTokenBridgeDeployer = testnodeAccounts.userTokenBridgeDeployer;
 const batchPoster = testnodeAccounts.deployer.address;
 const validators = [testnodeAccounts.deployer.address];
 
@@ -31,11 +25,11 @@ async function createRollupHelper(nativeToken: Address = zeroAddress) {
 
   const createRollupConfig = createRollupPrepareConfig({
     chainId: BigInt(chainId),
-    owner: deployer.address,
+    owner: userTokenBridgeDeployer.address,
     chainConfig: prepareChainConfig({
       chainId,
       arbitrum: {
-        InitialChainOwner: deployer.address,
+        InitialChainOwner: userTokenBridgeDeployer.address,
         DataAvailabilityCommittee: true,
       },
     }),
@@ -43,7 +37,7 @@ async function createRollupHelper(nativeToken: Address = zeroAddress) {
 
   const createRollupInformation = await createRollup({
     config: createRollupConfig,
-    rollupOwner: deployer,
+    rollupOwner: userTokenBridgeDeployer,
     batchPoster,
     validators,
     nativeToken,
@@ -55,28 +49,6 @@ async function createRollupHelper(nativeToken: Address = zeroAddress) {
     createRollupConfig,
     createRollupInformation,
   };
-}
-
-/**
- * @todo use viem instead of ethers when Arbitrum SDK supports viem
- */
-async function deployERC20ToParentChain() {
-  console.log('Deploying ERC20 to Parent Chain...');
-
-  const parentChainProvider = new StaticJsonRpcProvider(
-    parentChainPublicClient.chain.rpcUrls.default.http[0],
-  );
-  const localWallet = new Wallet(deployer.privateKey);
-  const contract = new TestERC20__factory().connect(localWallet.connect(parentChainProvider));
-  const token = await contract.deploy();
-  await token.deployed();
-
-  const mintedL1Erc20Token = await token.mint();
-  await mintedL1Erc20Token.wait();
-
-  console.log(`Deployed ERC20 to Parent Chain, address is ${token.address}`);
-
-  return token;
 }
 
 describe(`createRollup`, () => {
@@ -112,23 +84,17 @@ describe(`createRollup`, () => {
   });
 
   describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
-    let customGasTokenAddress: Address;
-    let createRollupCustomGasTokenConfig: CreateRollupPrepareConfigResult;
-    let createRollupCustomGasTokenInfo: CreateRollupResults;
+    // deployed during nitro testnode running process
+    const customGasTokenAddress = '0xc57a290f65F1D433f081381B2A7A523Ea70f1134';
 
-    beforeAll(async () => {
-      const customGasTokenAddress = (await deployERC20ToParentChain()).address as Address;
-
-      ({
-        createRollupConfig: createRollupCustomGasTokenConfig,
-        createRollupInformation: createRollupCustomGasTokenInfo,
-      } = await createRollupHelper(customGasTokenAddress));
-    });
+    const { createRollupConfig, createRollupInformation } = await createRollupHelper(
+      customGasTokenAddress,
+    );
 
     it(`successfully deploys core contracts through rollup creator`, async () => {
       // assert all inputs are correct
-      const [arg] = createRollupCustomGasTokenInfo.transaction.getInputs();
-      expect(arg.config).toEqual(createRollupCustomGasTokenConfig);
+      const [arg] = createRollupInformation.transaction.getInputs();
+      expect(arg.config).toEqual(createRollupConfig);
       expect(arg.batchPoster).toEqual(batchPoster);
       expect(arg.validators).toEqual(validators);
       expect(arg.maxDataSize).toEqual(104_857n);
@@ -137,21 +103,19 @@ describe(`createRollup`, () => {
       expect(arg.maxFeePerGasForRetryables).toEqual(parseGwei('0.1'));
 
       // assert the transaction executed successfully
-      expect(createRollupCustomGasTokenInfo.transactionReceipt.status).toEqual('success');
+      expect(createRollupInformation.transactionReceipt.status).toEqual('success');
 
       // assert the core contracts were successfully obtained
-      expect(createRollupCustomGasTokenInfo.coreContracts).toBeDefined();
+      expect(createRollupInformation.coreContracts).toBeDefined();
     });
 
     it(`finds the transaction hash that created a specified deployed rollup contract`, async () => {
       const transactionHash = await createRollupFetchTransactionHash({
-        rollup: createRollupCustomGasTokenInfo.coreContracts.rollup,
+        rollup: createRollupInformation.coreContracts.rollup,
         publicClient: parentChainPublicClient,
       });
 
-      expect(transactionHash).toEqual(
-        createRollupCustomGasTokenInfo.transactionReceipt.transactionHash,
-      );
+      expect(transactionHash).toEqual(createRollupInformation.transactionReceipt.transactionHash);
     });
   });
 });
