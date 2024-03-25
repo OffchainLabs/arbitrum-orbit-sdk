@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { Address, createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 import { TestERC20__factory } from '@arbitrum/sdk/dist/lib/abi/factories/TestERC20__factory';
 import { Wallet } from 'ethers';
@@ -117,13 +117,8 @@ describe(`createRollup`, () => {
     let createRollupCustomGasTokenInfo: CreateRollupResults;
 
     beforeAll(async () => {
-      customGasTokenAddress = await vi.waitFor(
-        async () => (await deployERC20ToParentChain()).address as Address,
-        {
-          timeout: 10000,
-          interval: 200,
-        },
-      );
+      const customGasTokenAddress = (await deployERC20ToParentChain()).address as Address;
+
       ({
         createRollupConfig: createRollupCustomGasTokenConfig,
         createRollupInformation: createRollupCustomGasTokenInfo,
