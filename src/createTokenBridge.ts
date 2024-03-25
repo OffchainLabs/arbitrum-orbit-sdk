@@ -98,7 +98,6 @@ export async function createTokenBridge({
     };
 
     // Check allowance and approve if necessary
-    console.log('createTokenBridgeEnoughCustomFeeTokenAllowance', allowanceParams);
     if (!(await createTokenBridgeEnoughCustomFeeTokenAllowance(allowanceParams))) {
       const approvalTxRequest =
         await createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest(allowanceParams);
