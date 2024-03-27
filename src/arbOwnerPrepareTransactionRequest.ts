@@ -71,7 +71,7 @@ export async function arbOwnerPrepareTransactionRequest<TChain extends Chain | u
 
   const { to, data, value } = arbOwnerPrepareFunctionData(params);
 
-  //@ts-ignore
+  // @ts-ignore (todo: fix viem type issue)
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
     to,

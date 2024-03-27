@@ -13,13 +13,14 @@ export type ArbGasInfoReadContractParameters<TFunctionName extends ArbGasInfoFun
 export type ArbGasInfoReadContractReturnType<TFunctionName extends ArbGasInfoFunctionName> =
   ReadContractReturnType<ArbGasInfoAbi, TFunctionName>;
 
-export function arbGasInfoReadContract<TFunctionName extends ArbGasInfoFunctionName>(
-  client: PublicClient<Transport>,
+export function arbGasInfoReadContract<
+  TChain extends Chain | undefined,
+  TFunctionName extends ArbGasInfoFunctionName,
+>(
+  client: PublicClient<Transport, TChain>,
   params: ArbGasInfoReadContractParameters<TFunctionName>,
 ): Promise<ArbGasInfoReadContractReturnType<TFunctionName>> {
-  //
-  // todo: fix this weird type issue
-  // @ts-ignore
+  // @ts-ignore (todo: fix viem type issue)
   return client.readContract({
     address: arbGasInfo.address,
     abi: arbGasInfo.abi,

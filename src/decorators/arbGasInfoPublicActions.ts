@@ -18,7 +18,6 @@ export function arbGasInfoPublicActions<
   TChain extends Chain | undefined = Chain | undefined,
 >(client: PublicClient<TTransport, TChain>): ArbGasInfoPublicActions<TChain> {
   return {
-    // @ts-ignore
     arbGasInfoReadContract: (args) => arbGasInfoReadContract(client, args),
   };
 }

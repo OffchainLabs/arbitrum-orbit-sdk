@@ -1,4 +1,4 @@
-import { GetFunctionArgs, PublicClient, ReadContractReturnType, Transport } from 'viem';
+import { Chain, GetFunctionArgs, PublicClient, ReadContractReturnType, Transport } from 'viem';
 
 import { arbOwnerPublic } from './contracts';
 import { GetFunctionName } from './types/utils';
@@ -13,13 +13,14 @@ export type ArbOwnerReadContractParameters<TFunctionName extends ArbOwnerPublicF
 export type ArbOwnerReadContractReturnType<TFunctionName extends ArbOwnerPublicFunctionName> =
   ReadContractReturnType<ArbOwnerPublicAbi, TFunctionName>;
 
-export function arbOwnerReadContract<TFunctionName extends ArbOwnerPublicFunctionName>(
-  client: PublicClient<Transport>,
+export function arbOwnerReadContract<
+  TChain extends Chain | undefined,
+  TFunctionName extends ArbOwnerPublicFunctionName,
+>(
+  client: PublicClient<Transport, TChain>,
   params: ArbOwnerReadContractParameters<TFunctionName>,
 ): Promise<ArbOwnerReadContractReturnType<TFunctionName>> {
-  //
-  // todo: fix this weird type issue
-  // @ts-ignore
+  // @ts-ignore (todo: fix viem type issue)
   return client.readContract({
     address: arbOwnerPublic.address,
     abi: arbOwnerPublic.abi,
