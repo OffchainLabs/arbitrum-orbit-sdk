@@ -4,10 +4,10 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
-import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers'
+import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
 
 // l2 owner private key
-const devPrivateKey = getNitroTestnodePrivateKeyAccounts().l2RollupOwner.privateKey
+const devPrivateKey = getNitroTestnodePrivateKeyAccounts().l2RollupOwner.privateKey;
 
 const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
@@ -51,7 +51,6 @@ it('succesfully adds chain owner', async () => {
 
   // submit tx to add chain owner
   await client.sendRawTransaction({
-    // @ts-ignore
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 
@@ -82,7 +81,6 @@ it('succesfully removes chain owner', async () => {
 
   // submit tx to remove chain owner
   await client.sendRawTransaction({
-    // @ts-ignore
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 
@@ -112,7 +110,6 @@ it('succesfully updates infra fee receiver', async () => {
 
   // submit tx to update infra fee receiver
   await client.sendRawTransaction({
-    // @ts-ignore
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 

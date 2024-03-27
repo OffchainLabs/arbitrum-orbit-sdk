@@ -18,10 +18,7 @@ type ArbOwnerEncodeFunctionDataParameters = Prettify<
   Omit<EncodeFunctionDataParameters<typeof arbOwner.abi, string>, 'abi'>
 >;
 
-function arbOwnerEncodeFunctionData({
-  functionName,
-  args,
-}: ArbOwnerEncodeFunctionDataParameters) {
+function arbOwnerEncodeFunctionData({ functionName, args }: ArbOwnerEncodeFunctionDataParameters) {
   return encodeFunctionData({
     abi: arbOwner.abi,
     functionName,
@@ -32,7 +29,7 @@ function arbOwnerEncodeFunctionData({
 function arbOwnerPrepareFunctionData(
   params: ArbOwnerEncodeFunctionDataParameters & {
     upgradeExecutor: Address | false;
-  }
+  },
 ) {
   const { upgradeExecutor } = params;
 
@@ -64,16 +61,12 @@ export type ArbOwnerPrepareTransactionRequestParameters = Prettify<
   }
 >;
 
-export async function arbOwnerPrepareTransactionRequest<
-  TChain extends Chain | undefined
->(
+export async function arbOwnerPrepareTransactionRequest<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: ArbOwnerPrepareTransactionRequestParameters
+  params: ArbOwnerPrepareTransactionRequestParameters,
 ) {
   if (typeof client.chain === 'undefined') {
-    throw new Error(
-      '[arbOwnerPrepareTransactionRequest] client.chain is undefined'
-    );
+    throw new Error('[arbOwnerPrepareTransactionRequest] client.chain is undefined');
   }
 
   const { to, data, value } = arbOwnerPrepareFunctionData(params);

@@ -31,21 +31,15 @@ function getBlockExplorerUrl(chain: Chain) {
 }
 
 if (typeof process.env.DEPLOYER_PRIVATE_KEY === 'undefined') {
-  throw new Error(
-    `Please provide the "DEPLOYER_PRIVATE_KEY" environment variable`
-  );
+  throw new Error(`Please provide the "DEPLOYER_PRIVATE_KEY" environment variable`);
 }
 
 // load or generate a random batch poster account
-const batchPosterPrivateKey = withFallbackPrivateKey(
-  process.env.BATCH_POSTER_PRIVATE_KEY
-);
+const batchPosterPrivateKey = withFallbackPrivateKey(process.env.BATCH_POSTER_PRIVATE_KEY);
 const batchPoster = privateKeyToAccount(batchPosterPrivateKey).address;
 
 // load or generate a random validator account
-const validatorPrivateKey = withFallbackPrivateKey(
-  process.env.VALIDATOR_PRIVATE_KEY
-);
+const validatorPrivateKey = withFallbackPrivateKey(process.env.VALIDATOR_PRIVATE_KEY);
 const validator = privateKeyToAccount(validatorPrivateKey).address;
 
 // set the parent chain and create a public client for it
@@ -56,9 +50,7 @@ const publicClient = createPublicClient({
 }).extend(arbOwnerPublicActions);
 
 // load the deployer account
-const deployer = privateKeyToAccount(
-  sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY)
-);
+const deployer = privateKeyToAccount(sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY));
 
 async function main() {
   const publicClient = createPublicClient({
@@ -107,14 +99,10 @@ async function main() {
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await publicClient.waitForTransactionReceipt({ hash: txHash })
+    await publicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
-  console.log(
-    `Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${
-      txReceipt.transactionHash
-    }`
-  );
+  console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
 }
 
 main();

@@ -1,9 +1,4 @@
-import {
-  Transport,
-  Chain,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-} from 'viem';
+import { Transport, Chain, PrepareTransactionRequestReturnType, PublicClient } from 'viem';
 
 import {
   arbOwnerReadContract,
@@ -16,27 +11,24 @@ import {
   ArbOwnerPrepareTransactionRequestParameters,
 } from '../arbOwnerPrepareTransactionRequest';
 
-export type ArbOwnerPublicActions<
-  TChain extends Chain | undefined = Chain | undefined
-> = {
+export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | undefined> = {
   arbOwnerReadContract: <TFunctionName extends ArbOwnerPublicFunctionName>(
-    args: ArbOwnerReadContractParameters<TFunctionName>
+    args: ArbOwnerReadContractParameters<TFunctionName>,
   ) => Promise<ArbOwnerReadContractReturnType<TFunctionName>>;
 
   arbOwnerPrepareTransactionRequest: (
-    args: ArbOwnerPrepareTransactionRequestParameters
-  ) => Promise<PrepareTransactionRequestReturnType<TChain>>;
+    args: ArbOwnerPrepareTransactionRequestParameters,
+  ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
 export function arbOwnerPublicActions<
   TTransport extends Transport = Transport,
-  TChain extends Chain | undefined = Chain | undefined
+  TChain extends Chain | undefined = Chain | undefined,
 >(client: PublicClient<TTransport, TChain>): ArbOwnerPublicActions<TChain> {
   return {
     // @ts-ignore
     arbOwnerReadContract: (args) => arbOwnerReadContract(client, args),
 
-    arbOwnerPrepareTransactionRequest: (args) =>
-      arbOwnerPrepareTransactionRequest(client, args),
+    arbOwnerPrepareTransactionRequest: (args) => arbOwnerPrepareTransactionRequest(client, args),
   };
 }
