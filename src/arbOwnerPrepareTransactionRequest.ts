@@ -3,16 +3,13 @@ import {
   encodeFunctionData,
   EncodeFunctionDataParameters,
   Address,
-  PrepareTransactionRequestReturnType,
-  zeroAddress,
   Chain,
   Transport,
-  Abi,
 } from 'viem';
 
 import { arbOwner } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
-import { GetFunctionName, Prettify } from './types/utils';
+import { Prettify } from './types/utils';
 
 type ArbOwnerEncodeFunctionDataParameters = Prettify<
   Omit<EncodeFunctionDataParameters<typeof arbOwner.abi, string>, 'abi'>
