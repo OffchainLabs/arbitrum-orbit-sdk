@@ -16,16 +16,20 @@ type NitroTestNodePrivateKeyAccounts = {
   l3RollupOwner: PrivateKeyAccount & { privateKey: `0x${string}` };
   // sha256(user_token_bridge_deployer)
   l3TokenBridgeDeployer: PrivateKeyAccount & { privateKey: `0x${string}` };
+  // user token bridge deployer which holds custom gas token
+  userTokenBridgeDeployer: PrivateKeyAccount & { privateKey: `0x${string}` };
 };
 
 export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAccounts {
   if (
     typeof process.env.NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
     typeof process.env.NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
-    typeof process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY === 'undefined'
+    typeof process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
+    typeof process.env.NITRO_TESTNODE_USER_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined'
   ) {
     throw Error(
-      `required env variables: NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY, NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY`,
+      `required env variables: NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY, NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY,
+      NITRO_TESTNODE_USER_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY`,
     );
   }
 
@@ -38,6 +42,9 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
   );
   const l3TokenBridgeDeployerPrivateKey = sanitizePrivateKey(
     sha256(toBytes('user_token_bridge_deployer')),
+  );
+  const userTokenBridgeDeployerPrivateKey = sanitizePrivateKey(
+    process.env.NITRO_TESTNODE_USER_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY,
   );
 
   return {
@@ -53,6 +60,10 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
     l3TokenBridgeDeployer: {
       ...privateKeyToAccount(l3TokenBridgeDeployerPrivateKey),
       privateKey: l3TokenBridgeDeployerPrivateKey,
+    },
+    userTokenBridgeDeployer: {
+      ...privateKeyToAccount(userTokenBridgeDeployerPrivateKey),
+      privateKey: userTokenBridgeDeployerPrivateKey,
     },
   };
 }

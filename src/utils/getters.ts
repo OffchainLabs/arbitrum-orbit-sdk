@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem';
+import { Chain, PublicClient } from 'viem';
 
 import { rollupCreator, tokenBridgeCreator } from '../contracts';
 import { validateParentChain } from '../types/ParentChain';
@@ -21,4 +21,8 @@ export function getTokenBridgeCreatorAddress(client: PublicClient) {
   }
 
   return tokenBridgeCreator.address[chainId];
+}
+
+export function getBlockExplorerUrl(chain: Chain) {
+  return chain.blockExplorers?.default.url;
 }
