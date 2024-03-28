@@ -27,7 +27,7 @@ function loadApiKey(key: string): string {
   return apiKey;
 }
 
-function sleep(ms: number = 3_000) {
+function sleep(ms: number = 1_000) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -147,7 +147,7 @@ function allEqual<T>(array: T[]) {
 export async function assertContractAbisMatch(contract: ContractConfig) {
   // skip check when single address is provided
   if (typeof contract.address === 'string') {
-    console.log(`- ${contract.name} ✔`);
+    console.log(`- ${contract.name} ✔\n`);
     return;
   }
 
@@ -190,6 +190,8 @@ export default async function () {
     await assertContractAbisMatch(contract);
     await sleep(); // sleep to avoid rate limiting
   }
+
+  console.log(`Done.\n`);
 
   return {
     out: 'src/generated.ts',
