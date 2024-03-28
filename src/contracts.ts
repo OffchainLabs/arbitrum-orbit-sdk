@@ -6,6 +6,7 @@ import {
   arbOwnerPublicConfig,
   rollupCreatorConfig,
   tokenBridgeCreatorConfig,
+  arbGasInfoConfig,
 } from './generated';
 
 export const erc20 = {
@@ -15,6 +16,11 @@ export const erc20 = {
 export const arbOwner = {
   ...arbOwnerConfig,
   address: Object.values(arbOwnerConfig.address)[0],
+} as const;
+
+export const arbGasInfo = {
+  ...arbGasInfoConfig,
+  address: Object.values(arbGasInfoConfig.address)[0],
 } as const;
 
 export const arbOwnerPublic = {
