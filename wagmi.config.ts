@@ -131,6 +131,10 @@ const contracts: ContractConfig[] = [
     address: '0x0000000000000000000000000000000000000070',
   },
   {
+    name: 'ArbGasInfo',
+    address: '0x000000000000000000000000000000000000006c',
+  },
+  {
     name: 'ArbOwnerPublic',
     address: '0x000000000000000000000000000000000000006b',
   },
