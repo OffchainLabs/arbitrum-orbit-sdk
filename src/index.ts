@@ -42,6 +42,8 @@ import {
   upgradeExecutorEncodeFunctionData,
   UpgradeExecutorEncodeFunctionDataParameters,
 } from './upgradeExecutor';
+import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
+import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -69,6 +71,8 @@ import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
 export {
+  arbOwnerPublicActions,
+  arbGasInfoPublicActions,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
