@@ -8,7 +8,7 @@ import {
 } from '../rollupAdminLogicReadContract';
 import {
   rollupAdminLogicPrepareTransactionRequest,
-  ArbOwnerPrepareTransactionRequestParameters,
+  RollupAdminLogicPrepareTransactionRequestParameters,
 } from '../rollupAdminLogicPrepareTransactionRequest';
 
 export type RollupAdminLogicActions<TChain extends Chain | undefined = Chain | undefined> = {
@@ -17,7 +17,7 @@ export type RollupAdminLogicActions<TChain extends Chain | undefined = Chain | u
   ) => Promise<RollupAdminLogicReadContractReturnType<TFunctionName>>;
 
   rollupAdminLogicPrepareTransactionRequest: (
-    args: ArbOwnerPrepareTransactionRequestParameters,
+    args: RollupAdminLogicPrepareTransactionRequestParameters,
   ) => Promise<PrepareTransactionRequestReturnType<TChain>>;
 };
 
