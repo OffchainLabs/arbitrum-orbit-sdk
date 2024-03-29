@@ -180,7 +180,7 @@ function main() {
 
   // create the new source file
   const sourceFile = new Project().createSourceFile(
-    `./src/types/NodeConfig.generated/versions/NodeConfig.generated.${nitroNodeTag}.ts`,
+    `./src/types/NodeConfig.generated/versions/${nitroNodeTag}.ts`,
     '',
     { overwrite: true },
   );
