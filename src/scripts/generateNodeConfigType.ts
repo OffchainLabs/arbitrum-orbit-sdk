@@ -179,9 +179,11 @@ function main() {
   const cliOptionsNestedObject = createCliOptionsNestedObject(cliOptions);
 
   // create the new source file
-  const sourceFile = new Project().createSourceFile('./src/types/NodeConfig.generated.ts', '', {
-    overwrite: true,
-  });
+  const sourceFile = new Project().createSourceFile(
+    `./src/types/NodeConfig.generated/versions/NodeConfig.generated.${nitroNodeTag}.ts`,
+    '',
+    { overwrite: true },
+  );
   // append header
   sourceFile.insertText(0, generateHeader());
   // append NodeConfig type declaration
