@@ -22,7 +22,7 @@ type PublicClientWithDefinedChain = Omit<PublicClient, 'chain'> & {
 type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
   nativeToken: Address;
   parentChainPublicClient: PublicClientWithDefinedChain;
-  rollupOwner: PrivateKeyAccount;
+  account: PrivateKeyAccount;
 };
 
 /**
@@ -36,11 +36,11 @@ type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
 async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
   nativeToken,
   parentChainPublicClient,
-  rollupOwner,
+  account,
 }: EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams) {
   const allowanceParams = {
     nativeToken,
-    account: rollupOwner.address,
+    account: account.address,
     publicClient: parentChainPublicClient,
   };
 
@@ -51,7 +51,7 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
 
     // sign and send the transaction
     const approvalTxHash = await parentChainPublicClient.sendRawTransaction({
-      serializedTransaction: await rollupOwner.signTransaction(approvalTxRequest),
+      serializedTransaction: await account.signTransaction(approvalTxRequest),
     });
 
     // get the transaction receipt after waiting for the transaction to complete
@@ -73,7 +73,7 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
  * This type is for the params of the createRollup function
  */
 export type CreateRollupFunctionParams = CreateRollupParams & {
-  rollupOwner: PrivateKeyAccount;
+  account: PrivateKeyAccount;
   parentChainPublicClient: PublicClient;
 };
 
@@ -116,7 +116,7 @@ export type CreateRollupResults = {
  * @param {string} [createRollupFunctionParams.nativeToken=] - The native token address, optional, defaults to ETH
  * @param {number} [createRollupFunctionParams.maxDataSize=] - The max calldata size, optional, defaults to 104_857 B for Orbit chains
  * @param {number} [createRollupFunctionParams.maxFeePerGasForRetryables=] - The max fee per gas for retryables, optional, defaults to 0.1 gwei
- * @param {Object} createRollupFunctionParams.rollupOwner - The rollup owner private key account
+ * @param {Object} createRollupFunctionParams.account - The rollup owner private key account
  * @param {Object} createRollupFunctionParams.parentChainPublicClient - The parent chain Viem Public Client
  *
  * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
@@ -140,14 +140,14 @@ export type CreateRollupResults = {
  *   coreContracts,
  * } = await createRollup({
  *   config: createRollupConfig,
- *   rollupOwner: deployer,
+ *   account: deployer,
  *   batchPoster,
  *   validators,
  *   parentChainPublicClient,
  * });
  */
 export async function createRollup({
-  rollupOwner,
+  account,
   parentChainPublicClient,
   ...params
 }: CreateRollupFunctionParams): Promise<CreateRollupResults> {
@@ -164,20 +164,20 @@ export async function createRollup({
     await ensureCustomGasTokenAllowanceGrantedToRollupCreator({
       nativeToken,
       parentChainPublicClient: parentChainPublicClient as PublicClientWithDefinedChain,
-      rollupOwner,
+      account,
     });
   }
 
   // prepare the transaction for deploying the core contracts
   const txRequest = await createRollupPrepareTransactionRequest({
     params,
-    account: rollupOwner.address,
+    account: account.address,
     publicClient: parentChainPublicClient,
   });
 
   // sign and send the transaction
   const txHash = await parentChainPublicClient.sendRawTransaction({
-    serializedTransaction: await rollupOwner.signTransaction(txRequest),
+    serializedTransaction: await account.signTransaction(txRequest),
   });
 
   // get the transaction

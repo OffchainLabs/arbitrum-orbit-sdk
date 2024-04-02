@@ -52,7 +52,7 @@ async function main() {
   try {
     await createRollup({
       config: createRollupConfig,
-      rollupOwner: deployer,
+      account: deployer,
       batchPoster,
       validators: [validator],
       parentChainPublicClient,
