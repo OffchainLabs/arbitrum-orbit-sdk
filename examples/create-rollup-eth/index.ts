@@ -51,10 +51,12 @@ async function main() {
 
   try {
     await createRollup({
-      config: createRollupConfig,
+      params: {
+        config: createRollupConfig,
+        batchPoster,
+        validators: [validator],
+      },
       account: deployer,
-      batchPoster,
-      validators: [validator],
       parentChainPublicClient,
     });
   } catch (error) {

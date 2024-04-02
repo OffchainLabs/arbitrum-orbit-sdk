@@ -60,12 +60,14 @@ async function main() {
 
   try {
     await createRollup({
-      config: createRollupConfig,
+      params: {
+        config: createRollupConfig,
+        batchPoster,
+        validators: [validator],
+        nativeToken,
+        deployFactoriesToL2: true,
+      },
       account: deployer,
-      batchPoster,
-      validators: [validator],
-      nativeToken,
-      deployFactoriesToL2: true,
       parentChainPublicClient,
     });
   } catch (error) {

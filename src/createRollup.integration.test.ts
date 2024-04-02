@@ -36,11 +36,13 @@ async function createRollupHelper(nativeToken: Address = zeroAddress) {
   });
 
   const createRollupInformation = await createRollup({
-    config: createRollupConfig,
+    params: {
+      config: createRollupConfig,
+      batchPoster,
+      validators,
+      nativeToken,
+    },
     account: userTokenBridgeDeployer,
-    batchPoster,
-    validators,
-    nativeToken,
     parentChainPublicClient,
   });
 
