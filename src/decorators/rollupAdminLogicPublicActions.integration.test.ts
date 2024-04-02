@@ -27,7 +27,7 @@ it('successfully sets delayed inbox', async () => {
     account: owner.address,
   });
 
-  // submit tx to add chain owner
+  // submit tx to set delayed inbox
   await client.sendRawTransaction({
     serializedTransaction: await owner.signTransaction(
       transactionRequest as PrepareTransactionRequestReturnType & { chainId: number },
