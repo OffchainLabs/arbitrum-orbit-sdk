@@ -1,4 +1,4 @@
-import { Transport, Chain, PrepareTransactionRequestReturnType, PublicClient } from 'viem';
+import { Transport, Chain, PrepareTransactionRequestReturnType, PublicClient, Address } from 'viem';
 
 import {
   rollupAdminLogicReadContract,
@@ -11,9 +11,9 @@ import {
   RollupAdminLogicPrepareTransactionRequestParameters,
 } from '../rollupAdminLogicPrepareTransactionRequest';
 
-export type RollupAdminLogicActions<TChain extends Chain | undefined = Chain | undefined> = {
+export type RollupAdminLogicActions<TChain extends Chain | undefined = Chain> = {
   rollupAdminLogicReadContract: <TFunctionName extends RollupAdminLogicFunctionName>(
-    args: RollupAdminLogicReadContractParameters<TFunctionName>,
+    args: RollupAdminLogicReadContractParameters<TFunctionName> & { rollupAddress: Address },
   ) => Promise<RollupAdminLogicReadContractReturnType<TFunctionName>>;
 
   rollupAdminLogicPrepareTransactionRequest: (
@@ -23,10 +23,9 @@ export type RollupAdminLogicActions<TChain extends Chain | undefined = Chain | u
 
 export function rollupAdminLogicPublicActions<
   TTransport extends Transport = Transport,
-  TChain extends Chain | undefined = Chain | undefined,
+  TChain extends Chain | undefined = Chain,
 >(client: PublicClient<TTransport, TChain>): RollupAdminLogicActions<TChain> {
   return {
-    // @ts-ignore
     rollupAdminLogicReadContract: (args) => rollupAdminLogicReadContract(client, args),
 
     rollupAdminLogicPrepareTransactionRequest: (args) =>
