@@ -5,6 +5,7 @@ import {
   Address,
   Chain,
   Transport,
+  PrepareTransactionRequestParameters,
 } from 'viem';
 
 import { rollupAdminLogicABI } from './contracts';
@@ -73,14 +74,15 @@ export async function rollupAdminLogicPrepareTransactionRequest<TChain extends C
 
   const { to, data, value } = rollupAdminLogicPrepareFunctionData(params);
 
-  // @ts-ignore (todo: fix viem type issue)
-  const request = await client.prepareTransactionRequest({
+  const prepareTransactionRequestParams: PrepareTransactionRequestParameters = {
     chain: client.chain,
-    to,
-    data,
-    value,
     account: params.account,
-  });
+    to,
+    value,
+    data,
+  };
+
+  const request = await client.prepareTransactionRequest(prepareTransactionRequestParams);
 
   return { ...request, chainId: client.chain.id };
 }
