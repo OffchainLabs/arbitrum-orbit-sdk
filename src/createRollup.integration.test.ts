@@ -16,7 +16,7 @@ const parentChainPublicClient = createPublicClient({
 
 // test inputs
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
-const userTokenBridgeDeployer = testnodeAccounts.userTokenBridgeDeployer;
+const l3TokenBridgeDeployer = testnodeAccounts.l3TokenBridgeDeployer;
 const batchPoster = testnodeAccounts.deployer.address;
 const validators = [testnodeAccounts.deployer.address];
 
@@ -25,11 +25,11 @@ async function createRollupHelper(nativeToken: Address = zeroAddress) {
 
   const createRollupConfig = createRollupPrepareConfig({
     chainId: BigInt(chainId),
-    owner: userTokenBridgeDeployer.address,
+    owner: l3TokenBridgeDeployer.address,
     chainConfig: prepareChainConfig({
       chainId,
       arbitrum: {
-        InitialChainOwner: userTokenBridgeDeployer.address,
+        InitialChainOwner: l3TokenBridgeDeployer.address,
         DataAvailabilityCommittee: true,
       },
     }),
@@ -42,7 +42,7 @@ async function createRollupHelper(nativeToken: Address = zeroAddress) {
       validators,
       nativeToken,
     },
-    account: userTokenBridgeDeployer,
+    account: l3TokenBridgeDeployer,
     parentChainPublicClient,
   });
 
