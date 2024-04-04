@@ -1,11 +1,4 @@
-import {
-  Transport,
-  Chain,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  createPublicClient,
-  http,
-} from 'viem';
+import { Transport, Chain, PrepareTransactionRequestReturnType, PublicClient } from 'viem';
 
 import {
   sequencerInboxReadContract,
@@ -18,7 +11,6 @@ import {
   SequencerInboxPrepareTransactionRequestParameters,
 } from '../sequencerInboxPrepareTransactionRequest';
 import { CoreContracts } from '../types/CoreContracts';
-import { arbitrumOne } from '../chains';
 
 export type SequencerInboxActions<TChain extends Chain | undefined = Chain | undefined> = {
   sequencerInboxReadContract: <TFunctionName extends SequencerInboxFunctionName>(
