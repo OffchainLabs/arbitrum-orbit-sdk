@@ -3,165 +3,224 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006c)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x000000000000000000000000000000000000006c)
  */
 export const arbGasInfoABI = [
   {
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [
+      { name: '_chainId', internalType: 'uint256', type: 'uint256' },
+      { name: '_owners', internalType: 'address[]', type: 'address[]' },
+      { name: '_signaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'to', internalType: 'address', type: 'address', indexed: true }],
+    name: 'CloseStream',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'balance', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'Deposit',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address payable', type: 'address', indexed: false },
+      { name: 'value', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'data', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'nonce', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'hash', internalType: 'bytes32', type: 'bytes32', indexed: false },
+      { name: 'result', internalType: 'bytes', type: 'bytes', indexed: false },
+    ],
+    name: 'ExecuteTransaction',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'OpenStream',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address', indexed: true },
+      { name: 'added', internalType: 'bool', type: 'bool', indexed: false },
+    ],
+    name: 'Owner',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'reason', internalType: 'string', type: 'string', indexed: false },
+    ],
+    name: 'Withdraw',
+  },
+  {
+    stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [],
-    name: 'getAmortizedCostCapBips',
-    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
+    inputs: [
+      { name: 'newSigner', internalType: 'address', type: 'address' },
+      { name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'addSigner',
+    outputs: [],
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
-    name: 'getCurrentTxL1GasFees',
+    name: 'chainId',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'to', internalType: 'address payable', type: 'address' }],
+    name: 'closeStream',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address payable', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+      { name: 'signatures', internalType: 'bytes[]', type: 'bytes[]' },
+    ],
+    name: 'executeTransaction',
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: '_nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'getTransactionHash',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isOwner',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'nonce',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'openStream',
+    outputs: [],
+  },
+  {
+    stateMutability: 'pure',
+    type: 'function',
+    inputs: [
+      { name: '_hash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_signature', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'recover',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'oldSigner', internalType: 'address', type: 'address' },
+      { name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'removeSigner',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'signaturesRequired',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [],
-    name: 'getGasAccountingParams',
-    outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getGasBacklog',
-    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getGasBacklogTolerance',
-    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getL1BaseFeeEstimate',
+    inputs: [{ name: 'to', internalType: 'address', type: 'address' }],
+    name: 'streamBalance',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [],
-    name: 'getL1BaseFeeEstimateInertia',
-    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
+    inputs: [
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'reason', internalType: 'string', type: 'string' },
+    ],
+    name: 'streamWithdraw',
+    outputs: [],
   },
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [],
-    name: 'getL1FeesAvailable',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getL1GasPriceEstimate',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getL1PricingSurplus',
-    outputs: [{ name: '', internalType: 'int256', type: 'int256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getMinimumGasPrice',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getPerBatchGasCharge',
-    outputs: [{ name: '', internalType: 'int64', type: 'int64' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getPricesInArbGas',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'streams',
     outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+      { name: 'last', internalType: 'uint256', type: 'uint256' },
     ],
   },
   {
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [{ name: 'aggregator', internalType: 'address', type: 'address' }],
-    name: 'getPricesInArbGasWithAggregator',
-    outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
+    inputs: [{ name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' }],
+    name: 'updateSignaturesRequired',
+    outputs: [],
   },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getPricesInWei',
-    outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'aggregator', internalType: 'address', type: 'address' }],
-    name: 'getPricesInWeiWithAggregator',
-    outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getPricingInertia',
-    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
-  },
+  { stateMutability: 'payable', type: 'receive' },
 ] as const;
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006c)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x000000000000000000000000000000000000006c)
  */
 export const arbGasInfoAddress = {
-  421614: '0x000000000000000000000000000000000000006C',
+  11155111: '0x000000000000000000000000000000000000006C',
 } as const;
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006c)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x000000000000000000000000000000000000006c)
  */
 export const arbGasInfoConfig = { address: arbGasInfoAddress, abi: arbGasInfoABI } as const;
 
@@ -170,201 +229,224 @@ export const arbGasInfoConfig = { address: arbGasInfoAddress, abi: arbGasInfoABI
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x0000000000000000000000000000000000000070)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x0000000000000000000000000000000000000070)
  */
 export const arbOwnerABI = [
+  {
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [
+      { name: '_chainId', internalType: 'uint256', type: 'uint256' },
+      { name: '_owners', internalType: 'address[]', type: 'address[]' },
+      { name: '_signaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'to', internalType: 'address', type: 'address', indexed: true }],
+    name: 'CloseStream',
+  },
   {
     type: 'event',
     anonymous: false,
     inputs: [
-      { name: 'method', internalType: 'bytes4', type: 'bytes4', indexed: true },
-      { name: 'owner', internalType: 'address', type: 'address', indexed: true },
-      { name: 'data', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'sender', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'balance', internalType: 'uint256', type: 'uint256', indexed: false },
     ],
-    name: 'OwnerActs',
+    name: 'Deposit',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address payable', type: 'address', indexed: false },
+      { name: 'value', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'data', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'nonce', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'hash', internalType: 'bytes32', type: 'bytes32', indexed: false },
+      { name: 'result', internalType: 'bytes', type: 'bytes', indexed: false },
+    ],
+    name: 'ExecuteTransaction',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'OpenStream',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address', indexed: true },
+      { name: 'added', internalType: 'bool', type: 'bool', indexed: false },
+    ],
+    name: 'Owner',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'reason', internalType: 'string', type: 'string', indexed: false },
+    ],
+    name: 'Withdraw',
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
-    name: 'addChainOwner',
+    inputs: [
+      { name: 'newSigner', internalType: 'address', type: 'address' },
+      { name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'addSigner',
     outputs: [],
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
-    name: 'getAllChainOwners',
-    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getInfraFeeAccount',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getNetworkFeeAccount',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'addr', internalType: 'address', type: 'address' }],
-    name: 'isChainOwner',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'maxWeiToRelease', internalType: 'uint256', type: 'uint256' }],
-    name: 'releaseL1PricerSurplusFunds',
+    name: 'chainId',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [{ name: 'ownerToRemove', internalType: 'address', type: 'address' }],
-    name: 'removeChainOwner',
+    inputs: [{ name: 'to', internalType: 'address payable', type: 'address' }],
+    name: 'closeStream',
     outputs: [],
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
-      { name: 'newVersion', internalType: 'uint64', type: 'uint64' },
-      { name: 'timestamp', internalType: 'uint64', type: 'uint64' },
+      { name: 'to', internalType: 'address payable', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+      { name: 'signatures', internalType: 'bytes[]', type: 'bytes[]' },
     ],
-    name: 'scheduleArbOSUpgrade',
-    outputs: [],
+    name: 'executeTransaction',
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: '_nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'getTransactionHash',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isOwner',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'nonce',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [{ name: 'cap', internalType: 'uint64', type: 'uint64' }],
-    name: 'setAmortizedCostCapBips',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'openStream',
     outputs: [],
+  },
+  {
+    stateMutability: 'pure',
+    type: 'function',
+    inputs: [
+      { name: '_hash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_signature', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'recover',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [{ name: 'newInfraFeeAccount', internalType: 'address', type: 'address' }],
-    name: 'setInfraFeeAccount',
+    inputs: [
+      { name: 'oldSigner', internalType: 'address', type: 'address' },
+      { name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'removeSigner',
     outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'signaturesRequired',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'to', internalType: 'address', type: 'address' }],
+    name: 'streamBalance',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [{ name: 'inertia', internalType: 'uint64', type: 'uint64' }],
-    name: 'setL1BaseFeeEstimateInertia',
+    inputs: [
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'reason', internalType: 'string', type: 'string' },
+    ],
+    name: 'streamWithdraw',
     outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'streams',
+    outputs: [
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+      { name: 'last', internalType: 'uint256', type: 'uint256' },
+    ],
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [{ name: 'pricePerUnit', internalType: 'uint256', type: 'uint256' }],
-    name: 'setL1PricePerUnit',
+    inputs: [{ name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' }],
+    name: 'updateSignaturesRequired',
     outputs: [],
   },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'equilibrationUnits', internalType: 'uint256', type: 'uint256' }],
-    name: 'setL1PricingEquilibrationUnits',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'inertia', internalType: 'uint64', type: 'uint64' }],
-    name: 'setL1PricingInertia',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'weiPerUnit', internalType: 'uint64', type: 'uint64' }],
-    name: 'setL1PricingRewardRate',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'recipient', internalType: 'address', type: 'address' }],
-    name: 'setL1PricingRewardRecipient',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'priceInWei', internalType: 'uint256', type: 'uint256' }],
-    name: 'setL2BaseFee',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'sec', internalType: 'uint64', type: 'uint64' }],
-    name: 'setL2GasBacklogTolerance',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'sec', internalType: 'uint64', type: 'uint64' }],
-    name: 'setL2GasPricingInertia',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'limit', internalType: 'uint64', type: 'uint64' }],
-    name: 'setMaxTxGasLimit',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'priceInWei', internalType: 'uint256', type: 'uint256' }],
-    name: 'setMinimumL2BaseFee',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'newNetworkFeeAccount', internalType: 'address', type: 'address' }],
-    name: 'setNetworkFeeAccount',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'cost', internalType: 'int64', type: 'int64' }],
-    name: 'setPerBatchGasCharge',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'limit', internalType: 'uint64', type: 'uint64' }],
-    name: 'setSpeedLimit',
-    outputs: [],
-  },
+  { stateMutability: 'payable', type: 'receive' },
 ] as const;
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x0000000000000000000000000000000000000070)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x0000000000000000000000000000000000000070)
  */
 export const arbOwnerAddress = {
-  421614: '0x0000000000000000000000000000000000000070',
+  11155111: '0x0000000000000000000000000000000000000070',
 } as const;
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x0000000000000000000000000000000000000070)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x0000000000000000000000000000000000000070)
  */
 export const arbOwnerConfig = { address: arbOwnerAddress, abi: arbOwnerABI } as const;
 
@@ -373,48 +455,224 @@ export const arbOwnerConfig = { address: arbOwnerAddress, abi: arbOwnerABI } as 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006b)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x000000000000000000000000000000000000006b)
  */
 export const arbOwnerPublicABI = [
   {
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [
+      { name: '_chainId', internalType: 'uint256', type: 'uint256' },
+      { name: '_owners', internalType: 'address[]', type: 'address[]' },
+      { name: '_signaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'to', internalType: 'address', type: 'address', indexed: true }],
+    name: 'CloseStream',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'balance', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'Deposit',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address payable', type: 'address', indexed: false },
+      { name: 'value', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'data', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'nonce', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'hash', internalType: 'bytes32', type: 'bytes32', indexed: false },
+      { name: 'result', internalType: 'bytes', type: 'bytes', indexed: false },
+    ],
+    name: 'ExecuteTransaction',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'OpenStream',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address', indexed: true },
+      { name: 'added', internalType: 'bool', type: 'bool', indexed: false },
+    ],
+    name: 'Owner',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'reason', internalType: 'string', type: 'string', indexed: false },
+    ],
+    name: 'Withdraw',
+  },
+  {
+    stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [],
-    name: 'getAllChainOwners',
-    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+    inputs: [
+      { name: 'newSigner', internalType: 'address', type: 'address' },
+      { name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'addSigner',
+    outputs: [],
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
-    name: 'getInfraFeeAccount',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'chainId',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'to', internalType: 'address payable', type: 'address' }],
+    name: 'closeStream',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address payable', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+      { name: 'signatures', internalType: 'bytes[]', type: 'bytes[]' },
+    ],
+    name: 'executeTransaction',
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
   },
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [],
-    name: 'getNetworkFeeAccount',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    inputs: [
+      { name: '_nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'getTransactionHash',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
   },
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [{ name: 'addr', internalType: 'address', type: 'address' }],
-    name: 'isChainOwner',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isOwner',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'nonce',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'openStream',
+    outputs: [],
+  },
+  {
+    stateMutability: 'pure',
+    type: 'function',
+    inputs: [
+      { name: '_hash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_signature', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'recover',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'oldSigner', internalType: 'address', type: 'address' },
+      { name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'removeSigner',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'signaturesRequired',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'to', internalType: 'address', type: 'address' }],
+    name: 'streamBalance',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'reason', internalType: 'string', type: 'string' },
+    ],
+    name: 'streamWithdraw',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'streams',
+    outputs: [
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+      { name: 'last', internalType: 'uint256', type: 'uint256' },
+    ],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'newSignaturesRequired', internalType: 'uint256', type: 'uint256' }],
+    name: 'updateSignaturesRequired',
+    outputs: [],
+  },
+  { stateMutability: 'payable', type: 'receive' },
 ] as const;
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006b)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x000000000000000000000000000000000000006b)
  */
 export const arbOwnerPublicAddress = {
-  421614: '0x000000000000000000000000000000000000006b',
+  11155111: '0x000000000000000000000000000000000000006b',
 } as const;
 
 /**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006b)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x000000000000000000000000000000000000006b)
  */
 export const arbOwnerPublicConfig = {
   address: arbOwnerPublicAddress,
@@ -776,6 +1034,526 @@ export const rollupCreatorAddress = {
 export const rollupCreatorConfig = {
   address: rollupCreatorAddress,
   abi: rollupCreatorABI,
+} as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SequencerInbox
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x31da64d19cd31a19cd09f4070366fe2144792cf7)
+ * -
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x02ee6e3f7dd2a02eb608d47f9dcebfe209ac61fc)
+ */
+export const sequencerInboxABI = [
+  {
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [
+      { name: '_maxDataSize', internalType: 'uint256', type: 'uint256' },
+      { name: 'reader4844_', internalType: 'contract IReader4844', type: 'address' },
+      { name: '_isUsingFeeToken', internalType: 'bool', type: 'bool' },
+    ],
+  },
+  { type: 'error', inputs: [], name: 'AlreadyInit' },
+  {
+    type: 'error',
+    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'AlreadyValidDASKeyset',
+  },
+  { type: 'error', inputs: [], name: 'BadMaxTimeVariation' },
+  { type: 'error', inputs: [], name: 'BadPostUpgradeInit' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'stored', internalType: 'uint256', type: 'uint256' },
+      { name: 'received', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'BadSequencerNumber',
+  },
+  { type: 'error', inputs: [], name: 'DataBlobsNotSupported' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'dataLength', internalType: 'uint256', type: 'uint256' },
+      { name: 'maxDataLength', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'DataTooLarge',
+  },
+  { type: 'error', inputs: [], name: 'DelayedBackwards' },
+  { type: 'error', inputs: [], name: 'DelayedTooFar' },
+  { type: 'error', inputs: [], name: 'Deprecated' },
+  { type: 'error', inputs: [], name: 'ForceIncludeBlockTooSoon' },
+  { type: 'error', inputs: [], name: 'ForceIncludeTimeTooSoon' },
+  { type: 'error', inputs: [], name: 'HadZeroInit' },
+  { type: 'error', inputs: [], name: 'IncorrectMessagePreimage' },
+  {
+    type: 'error',
+    inputs: [{ name: 'name', internalType: 'string', type: 'string' }],
+    name: 'InitParamZero',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: '', internalType: 'bytes1', type: 'bytes1' }],
+    name: 'InvalidHeaderFlag',
+  },
+  { type: 'error', inputs: [], name: 'MissingDataHashes' },
+  { type: 'error', inputs: [], name: 'NativeTokenMismatch' },
+  {
+    type: 'error',
+    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'NoSuchKeyset',
+  },
+  { type: 'error', inputs: [], name: 'NotBatchPoster' },
+  {
+    type: 'error',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'NotBatchPosterManager',
+  },
+  { type: 'error', inputs: [], name: 'NotForked' },
+  { type: 'error', inputs: [], name: 'NotOrigin' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+    ],
+    name: 'NotOwner',
+  },
+  { type: 'error', inputs: [], name: 'RollupNotChanged' },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'messageNum', internalType: 'uint256', type: 'uint256', indexed: true },
+      { name: 'data', internalType: 'bytes', type: 'bytes', indexed: false },
+    ],
+    name: 'InboxMessageDelivered',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'messageNum', internalType: 'uint256', type: 'uint256', indexed: true }],
+    name: 'InboxMessageDeliveredFromOrigin',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'keysetHash', internalType: 'bytes32', type: 'bytes32', indexed: true }],
+    name: 'InvalidateKeyset',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'id', internalType: 'uint256', type: 'uint256', indexed: true }],
+    name: 'OwnerFunctionCalled',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'batchSequenceNumber', internalType: 'uint256', type: 'uint256', indexed: true },
+      { name: 'data', internalType: 'bytes', type: 'bytes', indexed: false },
+    ],
+    name: 'SequencerBatchData',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'batchSequenceNumber', internalType: 'uint256', type: 'uint256', indexed: true },
+      { name: 'beforeAcc', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      { name: 'afterAcc', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      { name: 'delayedAcc', internalType: 'bytes32', type: 'bytes32', indexed: false },
+      {
+        name: 'afterDelayedMessagesRead',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'timeBounds',
+        internalType: 'struct IBridge.TimeBounds',
+        type: 'tuple',
+        components: [
+          { name: 'minTimestamp', internalType: 'uint64', type: 'uint64' },
+          { name: 'maxTimestamp', internalType: 'uint64', type: 'uint64' },
+          { name: 'minBlockNumber', internalType: 'uint64', type: 'uint64' },
+          { name: 'maxBlockNumber', internalType: 'uint64', type: 'uint64' },
+        ],
+        indexed: false,
+      },
+      {
+        name: 'dataLocation',
+        internalType: 'enum IBridge.BatchDataLocation',
+        type: 'uint8',
+        indexed: false,
+      },
+    ],
+    name: 'SequencerBatchDelivered',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'keysetHash', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      { name: 'keysetBytes', internalType: 'bytes', type: 'bytes', indexed: false },
+    ],
+    name: 'SetValidKeyset',
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'BROTLI_MESSAGE_HEADER_FLAG',
+    outputs: [{ name: '', internalType: 'bytes1', type: 'bytes1' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'DAS_MESSAGE_HEADER_FLAG',
+    outputs: [{ name: '', internalType: 'bytes1', type: 'bytes1' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'DATA_AUTHENTICATED_FLAG',
+    outputs: [{ name: '', internalType: 'bytes1', type: 'bytes1' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'DATA_BLOB_HEADER_FLAG',
+    outputs: [{ name: '', internalType: 'bytes1', type: 'bytes1' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'HEADER_LENGTH',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'TREE_DAS_MESSAGE_HEADER_FLAG',
+    outputs: [{ name: '', internalType: 'bytes1', type: 'bytes1' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'ZERO_HEAVY_MESSAGE_HEADER_FLAG',
+    outputs: [{ name: '', internalType: 'bytes1', type: 'bytes1' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sequenceNumber', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+      { name: 'afterDelayedMessagesRead', internalType: 'uint256', type: 'uint256' },
+      { name: 'gasRefunder', internalType: 'contract IGasRefunder', type: 'address' },
+      { name: 'prevMessageCount', internalType: 'uint256', type: 'uint256' },
+      { name: 'newMessageCount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'addSequencerL2Batch',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sequenceNumber', internalType: 'uint256', type: 'uint256' },
+      { name: 'afterDelayedMessagesRead', internalType: 'uint256', type: 'uint256' },
+      { name: 'gasRefunder', internalType: 'contract IGasRefunder', type: 'address' },
+      { name: 'prevMessageCount', internalType: 'uint256', type: 'uint256' },
+      { name: 'newMessageCount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'addSequencerL2BatchFromBlobs',
+    outputs: [],
+  },
+  {
+    stateMutability: 'pure',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'contract IGasRefunder', type: 'address' },
+    ],
+    name: 'addSequencerL2BatchFromOrigin',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sequenceNumber', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+      { name: 'afterDelayedMessagesRead', internalType: 'uint256', type: 'uint256' },
+      { name: 'gasRefunder', internalType: 'contract IGasRefunder', type: 'address' },
+      { name: 'prevMessageCount', internalType: 'uint256', type: 'uint256' },
+      { name: 'newMessageCount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'addSequencerL2BatchFromOrigin',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'batchCount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'batchPosterManager',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'bridge',
+    outputs: [{ name: '', internalType: 'contract IBridge', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'dasKeySetInfo',
+    outputs: [
+      { name: 'isValidKeyset', internalType: 'bool', type: 'bool' },
+      { name: 'creationBlock', internalType: 'uint64', type: 'uint64' },
+    ],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_totalDelayedMessagesRead', internalType: 'uint256', type: 'uint256' },
+      { name: 'kind', internalType: 'uint8', type: 'uint8' },
+      { name: 'l1BlockAndTime', internalType: 'uint64[2]', type: 'uint64[2]' },
+      { name: 'baseFeeL1', internalType: 'uint256', type: 'uint256' },
+      { name: 'sender', internalType: 'address', type: 'address' },
+      { name: 'messageDataHash', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'forceInclusion',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'ksHash', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'getKeysetCreationBlock',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'index', internalType: 'uint256', type: 'uint256' }],
+    name: 'inboxAccs',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'bridge_', internalType: 'contract IBridge', type: 'address' },
+      {
+        name: 'maxTimeVariation_',
+        internalType: 'struct ISequencerInbox.MaxTimeVariation',
+        type: 'tuple',
+        components: [
+          { name: 'delayBlocks', internalType: 'uint256', type: 'uint256' },
+          { name: 'futureBlocks', internalType: 'uint256', type: 'uint256' },
+          { name: 'delaySeconds', internalType: 'uint256', type: 'uint256' },
+          { name: 'futureSeconds', internalType: 'uint256', type: 'uint256' },
+        ],
+      },
+    ],
+    name: 'initialize',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'ksHash', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'invalidateKeysetHash',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isBatchPoster',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isSequencer',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'isUsingFeeToken',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'ksHash', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'isValidKeysetHash',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'maxDataSize',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'maxTimeVariation',
+    outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'postUpgradeInit',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'reader4844',
+    outputs: [{ name: '', internalType: 'contract IReader4844', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'removeDelayAfterFork',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'rollup',
+    outputs: [{ name: '', internalType: 'contract IOwnable', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'newBatchPosterManager', internalType: 'address', type: 'address' }],
+    name: 'setBatchPosterManager',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'addr', internalType: 'address', type: 'address' },
+      { name: 'isBatchPoster_', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'setIsBatchPoster',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'addr', internalType: 'address', type: 'address' },
+      { name: 'isSequencer_', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'setIsSequencer',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        name: 'maxTimeVariation_',
+        internalType: 'struct ISequencerInbox.MaxTimeVariation',
+        type: 'tuple',
+        components: [
+          { name: 'delayBlocks', internalType: 'uint256', type: 'uint256' },
+          { name: 'futureBlocks', internalType: 'uint256', type: 'uint256' },
+          { name: 'delaySeconds', internalType: 'uint256', type: 'uint256' },
+          { name: 'futureSeconds', internalType: 'uint256', type: 'uint256' },
+        ],
+      },
+    ],
+    name: 'setMaxTimeVariation',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'keysetBytes', internalType: 'bytes', type: 'bytes' }],
+    name: 'setValidKeyset',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'totalDelayedMessagesRead',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'updateRollupAddress',
+    outputs: [],
+  },
+] as const;
+
+/**
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x31da64d19cd31a19cd09f4070366fe2144792cf7)
+ * -
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x02ee6e3f7dd2a02eb608d47f9dcebfe209ac61fc)
+ */
+export const sequencerInboxAddress = {
+  1: '0x31DA64D19Cd31A19CD09F4070366Fe2144792cf7',
+  1337: '0x0000000000000000000000000000000000000000',
+  333333: '0x0000000000000000000000000000000000000000',
+  412346: '0x0000000000000000000000000000000000000000',
+  11155111: '0x02EE6e3F7DD2a02EB608D47f9DceBfe209AC61FC',
+} as const;
+
+/**
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x31da64d19cd31a19cd09f4070366fe2144792cf7)
+ * -
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x02ee6e3f7dd2a02eb608d47f9dcebfe209ac61fc)
+ */
+export const sequencerInboxConfig = {
+  address: sequencerInboxAddress,
+  abi: sequencerInboxABI,
 } as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
