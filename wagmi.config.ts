@@ -86,7 +86,7 @@ export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
 type ContractConfig = {
   name: string;
   version?: string;
-  address: Partial<Record<ParentChainId, `0x${string}`>> | `0x${string}`;
+  address: Record<ParentChainId, `0x${string}`> | `0x${string}`;
 };
 
 const contracts: ContractConfig[] = [
@@ -123,23 +123,6 @@ const contracts: ContractConfig[] = [
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x54B4D4e578E10178a6cA602bdb6df0F213296Af4',
       [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',
-      [nitroTestnodeL3.id]: '0x0000000000000000000000000000000000000000',
-    },
-  },
-  {
-    // TODO: add nova: 0x211E1c4c7f1bF5351Ac850Ed10FD68CFfCF6c21b
-    name: 'SequencerInbox',
-    version: '1.0.0',
-    address: {
-      // Contract is at 0x1c479675ad559dc151f6ec7ed3fbf8cee79582b6, but wagmi doesn't support proxy yet:
-      // https://github.com/wevm/wagmi/discussions/1931
-      [mainnet.id]: '0x31da64d19cd31a19cd09f4070366fe2144792cf7',
-      // testnet
-      // Contract is at 0x6c97864CE4bEf387dE0b3310A44230f7E3F1be0D
-      [sepolia.id]: '0x02ee6e3f7dd2a02eb608d47f9dcebfe209ac61fc',
-      // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
-      [nitroTestnodeL1.id]: '0x0000000000000000000000000000000000000000',
-      [nitroTestnodeL2.id]: '0x0000000000000000000000000000000000000000',
       [nitroTestnodeL3.id]: '0x0000000000000000000000000000000000000000',
     },
   },
@@ -193,10 +176,9 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
   );
 
   // make sure all abis hashes are the same
-  // Fix for proxy contracts
-  // if (!allEqual(abiHashes)) {
-  //   throw new Error(`- ${contract.name}`);
-  // }
+  if (!allEqual(abiHashes)) {
+    throw new Error(`- ${contract.name}`);
+  }
 
   console.log(`- ${contract.name} ✔\n`);
 }
@@ -220,8 +202,8 @@ export default async function () {
         4626: false,
       }),
       etherscan({
-        chainId: sepolia.id,
-        apiKey: etherscanApiKey,
+        chainId: arbitrumSepolia.id,
+        apiKey: arbiscanApiKey,
         contracts,
         cacheDuration: 0,
       }),

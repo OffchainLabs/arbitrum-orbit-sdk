@@ -7,8 +7,8 @@ import {
   rollupCreatorConfig,
   tokenBridgeCreatorConfig,
   arbGasInfoConfig,
-  sequencerInboxConfig,
 } from './generated';
+import { sequencerInboxABI } from './abi/sequencerInboxABI';
 
 export const erc20 = {
   abi: erc20ABI,
@@ -195,4 +195,6 @@ export const tokenBridgeCreator = {
   abi: tokenBridgeCreatorABI,
 } as const;
 
-export const sequencerInbox = sequencerInboxConfig;
+export const sequencerInbox = {
+  abi: sequencerInboxABI,
+};
