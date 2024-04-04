@@ -25,21 +25,24 @@ export type SequencerInboxActions<TChain extends Chain | undefined = Chain | und
 /**
  * Set of actions that can be performed on the sequencerInbox contract through wagmi public client
  *
- * @param {Object} client - Interface to public JSON-RPC API methods
- *
- * @returns {Function} sequencerInboxActionsWithSequencerInbox - Accepts sequencerInbox as an argument
- * and returns sequencerInboxActions with curried sequencerInbox address.
+ * @param {Object} sequencerInbox - Address of the sequencerInbox core contract
  * User can still overrides sequencerInbox address,
- * by passing it as an argument to sequencerInboxReadContract/sequencerInboxPrepareTransactionRequest
+ * by passing it as an argument to sequencerInboxReadContract/sequencerInboxPrepareTransactionRequest calls
+ *
+ * @returns {Function} sequencerInboxActionsWithSequencerInbox - Function passed to client.extends() to extend the public client
  *
  * @example
  * const client = createPublicClient({
  *   chain: arbitrumOne,
  *   transport: http(),
  * }).extend(sequencerInboxActions(coreContracts.sequencerInbox));
+ *
+ * // SequencerInbox is set to `coreContracts.sequencerInbox` for every call
  * client.sequencerInboxReadContract({
  *   functionName: 'inboxAccs',
  * });
+ *
+ * // Overriding sequencerInbox address for this call only
  * client.sequencerInboxReadContract({
  *   functionName: 'inboxAccs',
  *   sequencerInbox: contractAddress.anotherSequencerInbox
