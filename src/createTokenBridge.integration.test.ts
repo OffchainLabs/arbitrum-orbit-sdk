@@ -99,7 +99,7 @@ async function checkWethGateways(
   );
 }
 
-describe.skip('createTokenBridge utils function', () => {
+describe('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
     const testnodeInformation = getInformationFromTestnode();
 
@@ -316,7 +316,7 @@ describe.skip('createTokenBridge utils function', () => {
 });
 
 describe('createTokenBridge', () => {
-  it.skip('successfully deploys token bridge contracts', async () => {
+  it('successfully deploys token bridge contracts', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
     // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
@@ -326,7 +326,7 @@ describe('createTokenBridge', () => {
 
     const tokenBridgeContracts = await createTokenBridge({
       rollupOwner: l2RollupOwner,
-      rollupAddress: testnodeInformation.rollup,
+      rollupAddress: testnodeInformation.l3Rollup,
       parentChainPublicClient: nitroTestnodeL1Client,
       orbitChainPublicClient: nitroTestnodeL2Client,
       createTokenBridgePrepareTransactionRequestParamsOverride: {
