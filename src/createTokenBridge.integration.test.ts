@@ -326,7 +326,7 @@ describe('createTokenBridge', () => {
 
     const tokenBridgeContracts = await createTokenBridge({
       rollupOwner: l2RollupOwner,
-      rollupAddress: testnodeInformation.l3Rollup,
+      rollupAddress: testnodeInformation.rollup,
       parentChainPublicClient: nitroTestnodeL1Client,
       orbitChainPublicClient: nitroTestnodeL2Client,
       createTokenBridgePrepareTransactionRequestParamsOverride: {
@@ -403,7 +403,7 @@ describe('createTokenBridge', () => {
     // 2. Deploy token bridge contracts
     const tokenBridgeContracts = await createTokenBridge({
       rollupOwner: l3RollupOwner,
-      rollupAddress: testnodeInformation.rollup,
+      rollupAddress: testnodeInformation.l3Rollup,
       parentChainPublicClient: nitroTestnodeL2Client,
       orbitChainPublicClient: nitroTestnodeL3Client,
       nativeTokenAddress: testnodeInformation.l3NativeToken,
