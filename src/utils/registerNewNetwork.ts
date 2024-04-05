@@ -93,7 +93,7 @@ export const registerNewNetwork = async (
       isCustom: true,
       partnerChainIDs: [childNetworkInfo.chainId],
       retryableLifetimeSeconds: 7 * 24 * 60 * 60,
-      partnerChainID: 0,
+      partnerChainID: 1,
       nitroGenesisBlock: 0,
       nitroGenesisL1Block: 0,
       depositTimeout: 1800000,
