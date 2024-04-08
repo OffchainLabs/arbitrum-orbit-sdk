@@ -15,7 +15,6 @@ import {
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
-  nitroTestnodeL3,
 } from './chains';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
