@@ -1,7 +1,12 @@
 import { PublicClient } from 'viem';
-import { chains } from '../chains';
 
-export type ParentChain = (typeof chains)[number];
+import { chains, nitroTestnodeL3 } from '../chains';
+
+export type ParentChain = Exclude<
+  (typeof chains)[number],
+  // exclude nitro-testnode L3 from the list of parent chains
+  { id: typeof nitroTestnodeL3.id }
+>;
 export type ParentChainId = ParentChain['id'];
 
 function isValidParentChainId(parentChainId: number | undefined): parentChainId is ParentChainId {
