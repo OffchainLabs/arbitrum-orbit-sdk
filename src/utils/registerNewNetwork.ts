@@ -8,6 +8,7 @@ import {
 import { getL1Network, getL2Network } from '@arbitrum/sdk/dist/lib/dataEntities/networks';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import { isArbitrumChain } from '@arbitrum/sdk/dist/lib/utils/lib';
+import { sepolia } from 'viem/chains';
 
 async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 'L1' | 'L2' }) {
   try {
@@ -93,7 +94,7 @@ export const registerNewNetwork = async (
       isCustom: true,
       partnerChainIDs: [childNetworkInfo.chainId],
       retryableLifetimeSeconds: 7 * 24 * 60 * 60,
-      partnerChainID: 1,
+      partnerChainID: sepolia.id,
       nitroGenesisBlock: 0,
       nitroGenesisL1Block: 0,
       depositTimeout: 1800000,
