@@ -2,15 +2,15 @@ import { PublicClient } from 'viem';
 
 import { chains, nitroTestnodeL3 } from '../chains';
 
-export type ParentChain = Exclude<
-  (typeof chains)[number],
-  // exclude nitro-testnode L3 from the list of parent chains
-  { id: typeof nitroTestnodeL3.id }
->;
+// exclude nitro-testnode L3 from the list of parent chains
+export type ParentChain = Exclude<(typeof chains)[number], { id: typeof nitroTestnodeL3.id }>;
 export type ParentChainId = ParentChain['id'];
 
 function isValidParentChainId(parentChainId: number | undefined): parentChainId is ParentChainId {
-  const ids = chains.map((chain) => chain.id) as Number[];
+  const ids = chains
+    // exclude nitro-testnode L3 from the list of parent chains
+    .filter((chain) => chain.id !== nitroTestnodeL3.id)
+    .map((chain) => chain.id) as Number[];
   return ids.includes(Number(parentChainId));
 }
 
