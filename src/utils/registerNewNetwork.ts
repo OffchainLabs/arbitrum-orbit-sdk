@@ -27,16 +27,16 @@ async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 
 
 async function createChildNetwork({
   rollupAddress,
-  provider,
+  parentProvider,
   parentNetwork,
   childNetwork,
 }: {
   rollupAddress: string;
-  provider: JsonRpcProvider;
+  parentProvider: JsonRpcProvider;
   parentNetwork: Network;
   childNetwork: Network;
 }): Promise<L2Network> {
-  const rollup = RollupAdminLogic__factory.connect(rollupAddress, provider);
+  const rollup = RollupAdminLogic__factory.connect(rollupAddress, parentProvider);
   return {
     chainID: childNetwork.chainId,
     confirmPeriodBlocks: (await rollup.confirmPeriodBlocks()).toNumber(),
@@ -133,7 +133,7 @@ async function createParentNetwork<TIsArbitrum>({
       nitroGenesisL1Block: 0,
       depositTimeout: 1800000,
       blockTime: arbitrumSdkConstants.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
-    } as L2Network;
+    };
   }
 
   return {
@@ -144,7 +144,7 @@ async function createParentNetwork<TIsArbitrum>({
     name: parentNetwork.name,
     partnerChainIDs: [childNetwork.chainId],
     isArbitrum: false,
-  } as L1Network;
+  };
 }
 
 export const registerNewNetwork = async (
@@ -160,7 +160,7 @@ export const registerNewNetwork = async (
 
   const childNetwork = await createChildNetwork({
     rollupAddress,
-    provider: parentProvider,
+    parentProvider,
     parentNetwork: parentNetworkInfo,
     childNetwork: childNetworkInfo,
   });
@@ -175,7 +175,7 @@ export const registerNewNetwork = async (
     });
 
     if (!isParentNetworkRegistered) {
-      addCustomNetwork({ customL2Network: parentNetwork as L2Network });
+      addCustomNetwork({ customL2Network: parentNetwork });
     }
 
     const isChildNetworkRegistered = await isNetworkRegistered(childProvider, { type: 'L2' });
