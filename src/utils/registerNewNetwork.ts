@@ -99,7 +99,7 @@ async function createParentNetwork<TIsArbitrum>({
     return {
       chainID: parentNetwork.chainId,
       name: parentNetwork.name,
-      confirmPeriodBlocks: 0,
+      confirmPeriodBlocks: 45818,
       ethBridge: {
         bridge: '',
         inbox: '',
