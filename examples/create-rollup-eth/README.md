@@ -39,7 +39,7 @@ await createRollup({
 2. Create .env file and add the env vars
 
    ```bash
-   touch .env.example .env
+   cp .env.example .env
    ```
 
 3. Run the example
