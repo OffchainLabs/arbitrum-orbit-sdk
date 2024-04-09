@@ -50,6 +50,7 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
     );
 
     // sign and send the transaction
+    console.log(`Approving custom fee token allowance for RollupCreator...`);
     const approvalTxHash = await parentChainPublicClient.sendRawTransaction({
       serializedTransaction: await account.signTransaction(approvalTxRequest),
     });
@@ -66,6 +67,7 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
         approvalTxReceipt.transactionHash
       }`,
     );
+    console.log(`Approval transaction hash is ${approvalTxReceipt.transactionHash}`);
   }
 }
 
@@ -180,6 +182,7 @@ export async function createRollup({
   });
 
   // sign and send the transaction
+  console.log(`Deploying the Rollup...`);
   const txHash = await parentChainPublicClient.sendRawTransaction({
     serializedTransaction: await account.signTransaction(txRequest),
   });
@@ -195,6 +198,7 @@ export async function createRollup({
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
+  console.log(`Deployment transaction hash is ${txReceipt.transactionHash}`);
 
   const coreContracts = txReceipt.getCoreContracts();
 

@@ -65,7 +65,6 @@ async function main() {
         batchPoster,
         validators: [validator],
         nativeToken,
-        deployFactoriesToL2: true,
       },
       account: deployer,
       parentChainPublicClient,
