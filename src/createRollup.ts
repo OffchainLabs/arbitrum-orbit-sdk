@@ -156,11 +156,6 @@ export async function createRollup({
 }: CreateRollupFunctionParams): Promise<CreateRollupResults> {
   const validatedParentChainPublicClient = validateParentChainPublicClient(parentChainPublicClient);
   const parentChain = validatedParentChainPublicClient.chain;
-
-  if (!parentChain) {
-    throw new Error('`parentChain` is not defined');
-  }
-
   const nativeToken = params.nativeToken ?? zeroAddress;
 
   if (nativeToken !== zeroAddress) {
