@@ -11,6 +11,7 @@ import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/
 import { isArbitrumChain } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { sepolia } from 'viem/chains';
 import { RollupAdminLogic } from '@arbitrum/sdk/dist/lib/abi/RollupAdminLogic';
+import { Address } from 'viem';
 
 async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 'L1' | 'L2' }) {
   try {
@@ -27,14 +28,17 @@ async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 
 }
 
 async function createChildNetwork({
-  rollup,
+  rollupAddress,
+  provider,
   parentNetwork,
   childNetwork,
 }: {
-  rollup: RollupAdminLogic;
+  rollupAddress: Address;
+  provider: JsonRpcProvider;
   parentNetwork: Network;
   childNetwork: Network;
 }): Promise<L2Network> {
+  const rollup = RollupAdminLogic__factory.connect(rollupAddress, provider);
   return {
     chainID: childNetwork.chainId,
     confirmPeriodBlocks: (await rollup.confirmPeriodBlocks()).toNumber(),
@@ -76,23 +80,19 @@ async function createChildNetwork({
 }
 
 async function createParentNetwork<TIsArbitrum extends boolean>({
-  rollup,
   parentNetwork,
   childNetwork,
   isArbitrum,
 }: {
-  rollup: RollupAdminLogic;
   parentNetwork: Network;
   childNetwork: Network;
   isArbitrum: TIsArbitrum;
 }): Promise<TIsArbitrum extends true ? L2Network : L1Network>;
 async function createParentNetwork<TIsArbitrum>({
-  rollup,
   parentNetwork,
   childNetwork,
   isArbitrum,
 }: {
-  rollup: RollupAdminLogic;
   parentNetwork: Network;
   childNetwork: Network;
   isArbitrum: TIsArbitrum;
@@ -101,7 +101,7 @@ async function createParentNetwork<TIsArbitrum>({
     return {
       chainID: parentNetwork.chainId,
       name: parentNetwork.name,
-      confirmPeriodBlocks: (await rollup.confirmPeriodBlocks()).toNumber(),
+      confirmPeriodBlocks: 0,
       ethBridge: {
         bridge: '',
         inbox: '',
@@ -152,7 +152,7 @@ async function createParentNetwork<TIsArbitrum>({
 export const registerNewNetwork = async (
   parentProvider: JsonRpcProvider,
   childProvider: JsonRpcProvider,
-  rollupAddress: string,
+  rollupAddress: Address,
 ): Promise<{
   parentNetwork: L1Network | L2Network;
   childNetwork: L2Network;
@@ -160,9 +160,9 @@ export const registerNewNetwork = async (
   const parentNetworkInfo = await parentProvider.getNetwork();
   const childNetworkInfo = await childProvider.getNetwork();
 
-  const rollup = RollupAdminLogic__factory.connect(rollupAddress, parentProvider);
   const childNetwork = await createChildNetwork({
-    rollup,
+    rollupAddress,
+    provider: parentProvider,
     parentNetwork: parentNetworkInfo,
     childNetwork: childNetworkInfo,
   });
@@ -171,7 +171,6 @@ export const registerNewNetwork = async (
   if (await isArbitrumChain(parentProvider)) {
     const isParentNetworkRegistered = await isNetworkRegistered(parentProvider, { type: 'L2' });
     const parentNetwork = await createParentNetwork({
-      rollup,
       parentNetwork: parentNetworkInfo,
       childNetwork: childNetworkInfo,
       isArbitrum: true,
@@ -195,7 +194,6 @@ export const registerNewNetwork = async (
   const isChildNetworkRegistered = await isNetworkRegistered(childProvider, { type: 'L2' });
 
   const parentNetwork = await createParentNetwork({
-    rollup,
     parentNetwork: parentNetworkInfo,
     childNetwork: childNetworkInfo,
     isArbitrum: false,
