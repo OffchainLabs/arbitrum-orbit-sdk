@@ -5,8 +5,6 @@
 This is an example for deploying the rollup contracts for your Orbit chain to its parent chain.
 
 ```typescript
-const chainId = generateChainId();
-
 const createRollupConfig = createRollupPrepareConfig({
   chainId: BigInt(chainId),
   owner: deployer.address,

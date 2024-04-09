@@ -5,7 +5,6 @@
 This is an example for deploying the rollup contracts for your Orbit chain to its parent chain.
 
 ```typescript
-const chainId = generateChainId();
 // set the custom fee token
 const nativeToken: Address = process.env.CUSTOM_FEE_TOKEN_ADDRESS as `0x${string}`;
 
