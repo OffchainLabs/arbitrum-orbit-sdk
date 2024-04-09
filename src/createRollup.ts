@@ -14,14 +14,11 @@ import {
   createRollupPrepareTransaction,
 } from './createRollupPrepareTransaction';
 import { CreateRollupParams } from './types/createRollupTypes';
-
-type PublicClientWithDefinedChain = Omit<PublicClient, 'chain'> & {
-  chain: Chain;
-};
+import { ParentChainPublicClient, validateParentChainPublicClient } from './types/ParentChain';
 
 type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
   nativeToken: Address;
-  parentChainPublicClient: PublicClientWithDefinedChain;
+  parentChainPublicClient: ParentChainPublicClient;
   account: PrivateKeyAccount;
 };
 
@@ -157,7 +154,8 @@ export async function createRollup({
   account,
   parentChainPublicClient,
 }: CreateRollupFunctionParams): Promise<CreateRollupResults> {
-  const parentChain = parentChainPublicClient.chain;
+  const validatedParentChainPublicClient = validateParentChainPublicClient(parentChainPublicClient);
+  const parentChain = validatedParentChainPublicClient.chain;
 
   if (!parentChain) {
     throw new Error('`parentChain` is not defined');
@@ -169,7 +167,7 @@ export async function createRollup({
     // check Rollup Creator custom gas token spending allowance and approve if necessary
     await ensureCustomGasTokenAllowanceGrantedToRollupCreator({
       nativeToken,
-      parentChainPublicClient: parentChainPublicClient as PublicClientWithDefinedChain,
+      parentChainPublicClient: validatedParentChainPublicClient,
       account,
     });
   }
@@ -178,23 +176,23 @@ export async function createRollup({
   const txRequest = await createRollupPrepareTransactionRequest({
     params,
     account: account.address,
-    publicClient: parentChainPublicClient,
+    publicClient: validatedParentChainPublicClient,
   });
 
   // sign and send the transaction
   console.log(`Deploying the Rollup...`);
-  const txHash = await parentChainPublicClient.sendRawTransaction({
+  const txHash = await validatedParentChainPublicClient.sendRawTransaction({
     serializedTransaction: await account.signTransaction(txRequest),
   });
 
   // get the transaction
   const tx = createRollupPrepareTransaction(
-    await parentChainPublicClient.getTransaction({ hash: txHash }),
+    await validatedParentChainPublicClient.getTransaction({ hash: txHash }),
   );
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
+    await validatedParentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
