@@ -471,7 +471,8 @@ export const rollupHandler = async (
   //
   // STF verification
   //
-
+  console.log('State transition function (WASM module root)');
+  console.log('--------------');
   // get the wasmModuleRoot of the given orbit chain
   const moduleRoot = (await orbitHandler.readContract(
     'parent',
@@ -485,17 +486,17 @@ export const rollupHandler = async (
 
   // check if this wasmModuleRoot belongs to one of mainnet version
   if (0 <= index) {
-    console.log('The state transition function is standard version');
+    console.log(`WASM module root recognized: ${moduleRoot}`);
     // check if the rollups' arbos version is latest or not
-    if (index < latestWasmModuleRootIndex) {
+    /* if (index < latestWasmModuleRootIndex) {
       warningMessages.push(
         `Arbos version is old, Rollup wasmModuleRoot is ${moduleRoot}. Latest standard wasmModuleRoot is ${WASMModuleRoots[latestWasmModuleRootIndex]}.`,
       );
-    }
+    } */
   } else {
-    console.log('The state transition function is not standard version');
+    console.log('WASM module root not recognized');
     warningMessages.push(
-      `The node is using a customized state transition function, the wasmModule root is ${moduleRoot}`,
+      `The node is using a customized state transition function, the WASM module root is ${moduleRoot}`,
     );
   }
   console.log('');

@@ -17,6 +17,15 @@
     "@openzeppelin/contracts-upgradeable" "4.5.2"
     patch-package "^6.4.7"
 
+"@arbitrum/orbit-sdk@^0.9.0":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@arbitrum/orbit-sdk/-/orbit-sdk-0.9.1.tgz#d02699ea670078cb87b6413f663de911487adb02"
+  integrity sha512-njL7xCRu49/bES7RV/Kh1sGG7iTrJOTYCMMriferRfX3IATOdQiCGF4Onw0QNIcHSiurFxFECZGupTz5I7q2Cg==
+  dependencies:
+    "@arbitrum/sdk" "^3.3.2"
+    "@arbitrum/token-bridge-contracts" "^1.2.1"
+    ethers "^5.7.2"
+
 "@arbitrum/sdk@^3.1.13":
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/@arbitrum/sdk/-/sdk-3.3.3.tgz#9a49e753b9deeee6336f6a43acb0669961b91128"
