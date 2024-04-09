@@ -22,50 +22,51 @@ const nitroTestnodeL3Client = createPublicClient({
   transport: http(nitroTestnodeL3.rpcUrls.default.http[0]),
 });
 
-const l1Client = publicClientToProvider(nitroTestnodeL1Client);
-const l2Client = publicClientToProvider(nitroTestnodeL2Client);
-const l3Client = publicClientToProvider(nitroTestnodeL3Client);
+const l1Provider = publicClientToProvider(nitroTestnodeL1Client);
+const l2Provider = publicClientToProvider(nitroTestnodeL2Client);
+const l3Provider = publicClientToProvider(nitroTestnodeL3Client);
 
 it('should register L1 and L2 respectively as L1 and L2', async () => {
   const testnodeInformation = getInformationFromTestnode();
-  const { l1Network, l2Network } = await registerNewNetwork(
-    l1Client,
-    l2Client,
+  const { parentNetwork, childNetwork } = await registerNewNetwork(
+    l1Provider,
+    l2Provider,
     testnodeInformation.rollup,
   );
 
-  expect(l1Network).toHaveProperty('chainID', nitroTestnodeL1.id);
-  expect(l2Network).toHaveProperty('chainID', nitroTestnodeL2.id);
+  expect(parentNetwork.chainID).toEqual(nitroTestnodeL1.id);
+  expect(childNetwork.chainID).toEqual(nitroTestnodeL2.id);
   expect(Object.keys(l1Networks)).toContain(nitroTestnodeL1.id.toString());
   expect(Object.keys(l2Networks)).toContain(nitroTestnodeL2.id.toString());
-  expect(l1Network.partnerChainIDs).toContain(nitroTestnodeL2.id);
-  expect(l2Network.partnerChainID).toBe(l1Network.chainID);
+  expect(parentNetwork.partnerChainIDs).toContain(nitroTestnodeL2.id);
+  expect(childNetwork.partnerChainID).toEqual(parentNetwork.chainID);
 });
 
 it('should register L2 and L3 as L2', async () => {
   const testnodeInformation = getInformationFromTestnode();
-  const { l1Network, l2Network } = await registerNewNetwork(
-    l2Client,
-    l3Client,
+  const { parentNetwork, childNetwork } = await registerNewNetwork(
+    l2Provider,
+    l3Provider,
     testnodeInformation.l3Rollup,
   );
 
-  expect(l1Network).toHaveProperty('chainID', nitroTestnodeL2.id);
-  expect(l2Network).toHaveProperty('chainID', nitroTestnodeL3.id);
+  expect(parentNetwork.chainID).toEqual(nitroTestnodeL2.id);
+  expect(childNetwork.chainID).toEqual(nitroTestnodeL3.id);
   expect(Object.keys(l2Networks)).toContain(nitroTestnodeL2.id.toString());
   expect(Object.keys(l2Networks)).toContain(nitroTestnodeL3.id.toString());
-  expect(l1Network.partnerChainIDs).toContain(nitroTestnodeL3.id);
-  expect(l2Network.partnerChainID).toBe(l1Network.chainID);
+  expect(parentNetwork.partnerChainIDs).toContain(nitroTestnodeL3.id);
+  expect(childNetwork.partnerChainID).toBe(parentNetwork.chainID);
 });
 
 it('should not throw an error if registering L2/L3 after L1/L2', async () => {
   const testnodeInformation = getInformationFromTestnode();
-  await registerNewNetwork(l1Client, l2Client, testnodeInformation.rollup);
-  await registerNewNetwork(l2Client, l3Client, testnodeInformation.l3Rollup);
-  await registerNewNetwork(l1Client, l2Client, testnodeInformation.rollup);
+  await registerNewNetwork(l1Provider, l2Provider, testnodeInformation.rollup);
+  await registerNewNetwork(l2Provider, l3Provider, testnodeInformation.l3Rollup);
+  await registerNewNetwork(l1Provider, l2Provider, testnodeInformation.rollup);
 
-  expect(() => registerNewNetwork(l2Client, l3Client, testnodeInformation.l3Rollup)).not.toThrow();
-
+  expect(() =>
+    registerNewNetwork(l2Provider, l3Provider, testnodeInformation.l3Rollup),
+  ).not.toThrow();
   expect(Object.keys(l2Networks)).toContain(nitroTestnodeL2.id.toString());
   expect(Object.keys(l2Networks)).toContain(nitroTestnodeL3.id.toString());
   expect(Object.keys(l1Networks)).not.toContain(nitroTestnodeL2.id.toString());

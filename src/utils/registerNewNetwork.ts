@@ -1,4 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
+import { Network } from '@ethersproject/networks';
 import {
   L1Network,
   L2Network,
@@ -9,6 +10,7 @@ import { getL1Network, getL2Network } from '@arbitrum/sdk/dist/lib/dataEntities/
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import { isArbitrumChain } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { sepolia } from 'viem/chains';
+import { RollupAdminLogic } from '@arbitrum/sdk/dist/lib/abi/RollupAdminLogic';
 
 async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 'L1' | 'L2' }) {
   try {
@@ -24,20 +26,17 @@ async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 
   }
 }
 
-export const registerNewNetwork = async (
-  parentProvider: JsonRpcProvider,
-  childProvider: JsonRpcProvider,
-  rollupAddress: string,
-): Promise<{
-  l1Network: L1Network | Omit<L2Network, 'tokenBridge'>;
-  l2Network: Omit<L2Network, 'tokenBridge'>;
-}> => {
-  const parentNetworkInfo = await parentProvider.getNetwork();
-  const childNetworkInfo = await childProvider.getNetwork();
-
-  const rollup = RollupAdminLogic__factory.connect(rollupAddress, parentProvider);
-  const childNetwork: L2Network = {
-    chainID: childNetworkInfo.chainId,
+async function createChildNetwork({
+  rollup,
+  parentNetwork,
+  childNetwork,
+}: {
+  rollup: RollupAdminLogic;
+  parentNetwork: Network;
+  childNetwork: Network;
+}): Promise<L2Network> {
+  return {
+    chainID: childNetwork.chainId,
     confirmPeriodBlocks: (await rollup.confirmPeriodBlocks()).toNumber(),
     ethBridge: {
       bridge: await rollup.bridge(),
@@ -50,7 +49,7 @@ export const registerNewNetwork = async (
     isArbitrum: true,
     isCustom: true,
     name: 'OrbitChain',
-    partnerChainID: parentNetworkInfo.chainId,
+    partnerChainID: parentNetwork.chainId,
     partnerChainIDs: [],
     retryableLifetimeSeconds: 7 * 24 * 60 * 60,
     nitroGenesisBlock: 0,
@@ -74,13 +73,34 @@ export const registerNewNetwork = async (
     },
     blockTime: arbitrumSdkConstants.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
   };
+}
 
-  // If the parent chain is an Arbitrum chain, we need to register parent and child chain both as L2 chains
-  if (await isArbitrumChain(parentProvider)) {
-    const isParentNetworkRegistered = await isNetworkRegistered(parentProvider, { type: 'L2' });
-    const parentNetwork: Omit<L2Network, 'tokenBridge'> = {
-      chainID: parentNetworkInfo.chainId,
-      name: parentNetworkInfo.name,
+async function createParentNetwork<TIsArbitrum extends boolean>({
+  rollup,
+  parentNetwork,
+  childNetwork,
+  isArbitrum,
+}: {
+  rollup: RollupAdminLogic;
+  parentNetwork: Network;
+  childNetwork: Network;
+  isArbitrum: TIsArbitrum;
+}): Promise<TIsArbitrum extends true ? Omit<L2Network, 'tokenBridge'> : L1Network>;
+async function createParentNetwork<TIsArbitrum>({
+  rollup,
+  parentNetwork,
+  childNetwork,
+  isArbitrum,
+}: {
+  rollup: RollupAdminLogic;
+  parentNetwork: Network;
+  childNetwork: Network;
+  isArbitrum: TIsArbitrum;
+}): Promise<L1Network | Omit<L2Network, 'tokenBridge'>> {
+  if (isArbitrum) {
+    return {
+      chainID: parentNetwork.chainId,
+      name: parentNetwork.name,
       confirmPeriodBlocks: (await rollup.confirmPeriodBlocks()).toNumber(),
       ethBridge: {
         bridge: await rollup.bridge(),
@@ -92,14 +112,54 @@ export const registerNewNetwork = async (
       explorerUrl: '',
       isArbitrum: true,
       isCustom: true,
-      partnerChainIDs: [childNetworkInfo.chainId],
+      partnerChainIDs: [childNetwork.chainId],
       retryableLifetimeSeconds: 7 * 24 * 60 * 60,
       partnerChainID: sepolia.id,
       nitroGenesisBlock: 0,
       nitroGenesisL1Block: 0,
       depositTimeout: 1800000,
       blockTime: arbitrumSdkConstants.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
-    };
+    } as Omit<L2Network, 'tokenBridge'>;
+  }
+
+  return {
+    blockTime: 10,
+    chainID: parentNetwork.chainId,
+    explorerUrl: '',
+    isCustom: true,
+    name: parentNetwork.name,
+    partnerChainIDs: [childNetwork.chainId],
+    isArbitrum: false,
+  } as L1Network;
+}
+
+export const registerNewNetwork = async (
+  parentProvider: JsonRpcProvider,
+  childProvider: JsonRpcProvider,
+  rollupAddress: string,
+): Promise<{
+  parentNetwork: L1Network | Omit<L2Network, 'tokenBridge'>;
+  childNetwork: Omit<L2Network, 'tokenBridge'>;
+}> => {
+  const parentNetworkInfo = await parentProvider.getNetwork();
+  const childNetworkInfo = await childProvider.getNetwork();
+
+  const rollup = RollupAdminLogic__factory.connect(rollupAddress, parentProvider);
+  const childNetwork = await createChildNetwork({
+    rollup,
+    parentNetwork: parentNetworkInfo,
+    childNetwork: childNetworkInfo,
+  });
+
+  // If the parent chain is an Arbitrum chain, we need to register parent and child chain both as L2 chains
+  if (await isArbitrumChain(parentProvider)) {
+    const isParentNetworkRegistered = await isNetworkRegistered(parentProvider, { type: 'L2' });
+    const parentNetwork = await createParentNetwork({
+      rollup,
+      parentNetwork: parentNetworkInfo,
+      childNetwork: childNetworkInfo,
+      isArbitrum: true,
+    });
 
     if (!isParentNetworkRegistered) {
       addCustomNetwork({ customL2Network: parentNetwork as L2Network });
@@ -110,27 +170,24 @@ export const registerNewNetwork = async (
       addCustomNetwork({ customL2Network: childNetwork });
     }
     return {
-      l1Network: parentNetwork,
-      l2Network: childNetwork,
+      parentNetwork,
+      childNetwork,
     };
   }
 
   const isParentNetworkRegistered = await isNetworkRegistered(parentProvider, { type: 'L1' });
   const isChildNetworkRegistered = await isNetworkRegistered(childProvider, { type: 'L2' });
 
-  const parentNetwork: L1Network = {
-    blockTime: 10,
-    chainID: parentNetworkInfo.chainId,
-    explorerUrl: '',
-    isCustom: true,
-    name: parentNetworkInfo.name,
-    partnerChainIDs: [childNetworkInfo.chainId],
+  const parentNetwork = await createParentNetwork({
+    rollup,
+    parentNetwork: parentNetworkInfo,
+    childNetwork: childNetworkInfo,
     isArbitrum: false,
-  };
+  });
 
   // both networks are already registered, do nothing
   if (isParentNetworkRegistered && isChildNetworkRegistered) {
-    return { l1Network: parentNetwork, l2Network: childNetwork };
+    return { parentNetwork, childNetwork };
   }
 
   if (!isParentNetworkRegistered) {
@@ -143,7 +200,7 @@ export const registerNewNetwork = async (
   }
 
   return {
-    l1Network: parentNetwork,
-    l2Network: childNetwork,
+    parentNetwork,
+    childNetwork,
   };
 };
