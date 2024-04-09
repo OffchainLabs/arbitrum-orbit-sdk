@@ -10,8 +10,6 @@ import { getL1Network, getL2Network } from '@arbitrum/sdk/dist/lib/dataEntities/
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import { isArbitrumChain } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { sepolia } from 'viem/chains';
-import { RollupAdminLogic } from '@arbitrum/sdk/dist/lib/abi/RollupAdminLogic';
-import { Address } from 'viem';
 
 async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 'L1' | 'L2' }) {
   try {
@@ -33,7 +31,7 @@ async function createChildNetwork({
   parentNetwork,
   childNetwork,
 }: {
-  rollupAddress: Address;
+  rollupAddress: string;
   provider: JsonRpcProvider;
   parentNetwork: Network;
   childNetwork: Network;
@@ -152,7 +150,7 @@ async function createParentNetwork<TIsArbitrum>({
 export const registerNewNetwork = async (
   parentProvider: JsonRpcProvider,
   childProvider: JsonRpcProvider,
-  rollupAddress: Address,
+  rollupAddress: string,
 ): Promise<{
   parentNetwork: L1Network | L2Network;
   childNetwork: L2Network;
