@@ -85,7 +85,7 @@ async function createParentNetwork<TIsArbitrum extends boolean>({
   parentNetwork: Network;
   childNetwork: Network;
   isArbitrum: TIsArbitrum;
-}): Promise<TIsArbitrum extends true ? Omit<L2Network, 'tokenBridge'> : L1Network>;
+}): Promise<TIsArbitrum extends true ? L2Network : L1Network>;
 async function createParentNetwork<TIsArbitrum>({
   rollup,
   parentNetwork,
@@ -96,18 +96,34 @@ async function createParentNetwork<TIsArbitrum>({
   parentNetwork: Network;
   childNetwork: Network;
   isArbitrum: TIsArbitrum;
-}): Promise<L1Network | Omit<L2Network, 'tokenBridge'>> {
+}): Promise<L1Network | L2Network> {
   if (isArbitrum) {
     return {
       chainID: parentNetwork.chainId,
       name: parentNetwork.name,
       confirmPeriodBlocks: (await rollup.confirmPeriodBlocks()).toNumber(),
       ethBridge: {
-        bridge: await rollup.bridge(),
-        inbox: await rollup.inbox(),
-        outbox: await rollup.outbox(),
-        rollup: rollup.address,
-        sequencerInbox: await rollup.sequencerInbox(),
+        bridge: '',
+        inbox: '',
+        outbox: '',
+        rollup: '',
+        sequencerInbox: '',
+      },
+      tokenBridge: {
+        l1GatewayRouter: '',
+        l2GatewayRouter: '',
+        l1ERC20Gateway: '',
+        l2ERC20Gateway: '',
+        l1CustomGateway: '',
+        l2CustomGateway: '',
+        l1WethGateway: '',
+        l2WethGateway: '',
+        l2Weth: '',
+        l1Weth: '',
+        l1ProxyAdmin: '',
+        l2ProxyAdmin: '',
+        l1MultiCall: '',
+        l2Multicall: '',
       },
       explorerUrl: '',
       isArbitrum: true,
@@ -119,7 +135,7 @@ async function createParentNetwork<TIsArbitrum>({
       nitroGenesisL1Block: 0,
       depositTimeout: 1800000,
       blockTime: arbitrumSdkConstants.ARB_MINIMUM_BLOCK_TIME_IN_SECONDS,
-    } as Omit<L2Network, 'tokenBridge'>;
+    } as L2Network;
   }
 
   return {
@@ -138,8 +154,8 @@ export const registerNewNetwork = async (
   childProvider: JsonRpcProvider,
   rollupAddress: string,
 ): Promise<{
-  parentNetwork: L1Network | Omit<L2Network, 'tokenBridge'>;
-  childNetwork: Omit<L2Network, 'tokenBridge'>;
+  parentNetwork: L1Network | L2Network;
+  childNetwork: L2Network;
 }> => {
   const parentNetworkInfo = await parentProvider.getNetwork();
   const childNetworkInfo = await childProvider.getNetwork();
