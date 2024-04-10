@@ -36,7 +36,7 @@ const parentChainIdFromChildChainId = (childChainId: number) => {
   }[childChainId];
 
   if (!parentChainId) {
-    throw new Error('[utils/registernewNetwork] invalid child chain id');
+    throw new Error(`[utils/registernewNetwork] invalid child chain id: ${childChainId}`);
   }
 
   return parentChainId;
