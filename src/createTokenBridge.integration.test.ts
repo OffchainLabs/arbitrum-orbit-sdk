@@ -7,10 +7,9 @@ import {
   zeroAddress,
   parseAbi,
 } from 'viem';
-import { execSync } from 'node:child_process';
 
 import { nitroTestnodeL1, nitroTestnodeL2, nitroTestnodeL3 } from './chains';
-import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
+import { getInformationFromTestnode, getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { createTokenBridgePrepareTransactionRequest } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
@@ -19,43 +18,6 @@ import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from
 import { erc20 } from './contracts';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
-
-type TestnodeInformation = {
-  rollup: `0x${string}`;
-  l3Rollup: `0x${string}`;
-  l3NativeToken: `0x${string}`;
-};
-
-function getInformationFromTestnode(): TestnodeInformation {
-  const containers = [
-    'nitro_sequencer_1',
-    'nitro-sequencer-1',
-    'nitro-testnode-sequencer-1',
-    'nitro-testnode_sequencer_1',
-  ];
-
-  for (const container of containers) {
-    try {
-      const deploymentJson = JSON.parse(
-        execSync('docker exec ' + container + ' cat /config/deployment.json').toString(),
-      );
-
-      const l3DeploymentJson = JSON.parse(
-        execSync('docker exec ' + container + ' cat /config/l3deployment.json').toString(),
-      );
-
-      return {
-        rollup: deploymentJson['rollup'],
-        l3Rollup: l3DeploymentJson['rollup'],
-        l3NativeToken: l3DeploymentJson['native-token'],
-      };
-    } catch {
-      // empty on purpose
-    }
-  }
-
-  throw new Error('nitro-testnode sequencer not found');
-}
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 const l2RollupOwner = testnodeAccounts.l2RollupOwner;
