@@ -20,7 +20,7 @@ function getBlockExplorerUrl(chain: Chain | undefined) {
   return chain?.blockExplorers?.default.url;
 }
 
-type CreateTokenBridgeParams = {
+export type CreateTokenBridgeParams = {
   rollupOwner: PrivateKeyAccount;
   rollupAddress: Address;
   nativeTokenAddress?: Address;
