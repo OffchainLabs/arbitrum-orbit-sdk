@@ -10,7 +10,7 @@ import { getL1Network, getL2Network } from '@arbitrum/sdk/dist/lib/dataEntities/
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import { isArbitrumChain } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { arbitrum, arbitrumNova, arbitrumSepolia, mainnet, sepolia } from 'viem/chains';
-import { nitroTestnodeL1, nitroTestnodeL2 } from '../chains';
+import { nitroTestnodeL1, nitroTestnodeL2, nitroTestnodeL3 } from '../chains';
 
 async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 'L1' | 'L2' }) {
   try {
@@ -32,6 +32,7 @@ const parentChainIdFromChildChainId = (childChainId: number) => {
     [arbitrumNova.id]: mainnet.id,
     [arbitrumSepolia.id]: sepolia.id,
     [nitroTestnodeL2.id]: nitroTestnodeL1.id,
+    [nitroTestnodeL3.id]: nitroTestnodeL2.id,
   }[childChainId];
 
   if (!parentChainId) {
