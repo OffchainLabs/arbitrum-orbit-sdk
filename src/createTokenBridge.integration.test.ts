@@ -325,7 +325,7 @@ describe('createTokenBridge', () => {
       publicClient: nitroTestnodeL1Client,
     });
 
-    const createTokenBridgeResult = await createTokenBridge({
+    const { tokenBridgeContracts } = await createTokenBridge({
       rollupOwner: l2RollupOwner,
       rollupAddress: testnodeInformation.rollup,
       parentChainPublicClient: nitroTestnodeL1Client,
@@ -357,8 +357,8 @@ describe('createTokenBridge', () => {
       },
     });
 
-    // checkTokenBridgeContracts(createTokenBridgeResult);
-    // checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
+    checkTokenBridgeContracts(tokenBridgeContracts);
+    checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 
   it('successfully deploys token bridge contracts with a custom fee token', async () => {
@@ -397,7 +397,7 @@ describe('createTokenBridge', () => {
 
     // -----------------------------
     // 2. Deploy token bridge contracts
-    const tokenBridgeContracts = await createTokenBridge({
+    const { tokenBridgeContracts } = await createTokenBridge({
       rollupOwner: l3RollupOwner,
       rollupAddress: testnodeInformation.l3Rollup,
       parentChainPublicClient: nitroTestnodeL2Client,
