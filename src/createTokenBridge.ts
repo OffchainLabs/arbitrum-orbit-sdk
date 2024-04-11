@@ -238,7 +238,7 @@ export async function createTokenBridge({
       orbitChainPublicClient,
       account: rollupOwner.address,
       tokenBridgeCreatorAddressOverride,
-      ...setWethGatewayGasOverrides,
+      retryableGasOverrides: setWethGatewayGasOverrides,
     });
 
     // sign and send the transaction
@@ -272,7 +272,24 @@ export async function createTokenBridge({
         `Retryable status is not success: ${orbitChainSetWethGatewayRetryableReceipt[0].status}. Aborting...`,
       );
     }
+
+    return {
+      transaction: txHash,
+      transactionReceipt: txReceipt,
+      retryables: orbitChainRetryableReceipts,
+      tokenBridgeContracts,
+      setWethGateway: {
+        transaction: setWethGatewayTxHash,
+        transactionReceipt: setWethGatewayTxReceipt,
+        retryables: orbitChainSetWethGatewayRetryableReceipt,
+      },
+    };
   }
 
-  return tokenBridgeContracts;
+  return {
+    transaction: txHash,
+    transactionReceipt: txReceipt,
+    retryables: orbitChainRetryableReceipts,
+    tokenBridgeContracts,
+  };
 }
