@@ -15,6 +15,7 @@ import {
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
 } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
+import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 
 function getBlockExplorerUrl(chain: Chain | undefined) {
   return chain?.blockExplorers?.default.url;
@@ -43,7 +44,7 @@ export type CreateTokenBridgeParams = {
  * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
  * @param {Object} createRollupParams.rollupAddress - The address of the Rollup contract
  * @param {Object} createRollupParams.nativeTokenAddress - Optional
- * If nativeTokenAddress is passed, deploy a token bridge with custom fee token.
+ * If nativeTokenAddress is passed and different than zero address, deploy a token bridge with custom fee token.
  * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
  * @param {Object} createRollupParams.orbitChainPublicClient - The orbit chain Viem Public Client
  * @param {Object} createRollupParams.createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride - Optional {@link CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams}
@@ -87,7 +88,7 @@ export async function createTokenBridge({
   createTokenBridgePrepareTransactionRequestParamsOverride,
   createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride,
 }: CreateTokenBridgeParams): Promise<TokenBridgeContracts> {
-  if (nativeTokenAddress) {
+  if (isCustomFeeTokenAddress(nativeTokenAddress)) {
     // set the custom fee token
     // prepare transaction to approve custom fee token spend
     const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
