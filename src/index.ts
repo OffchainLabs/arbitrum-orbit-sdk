@@ -51,7 +51,11 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
-import { CreateTokenBridgeParams, createTokenBridge } from './createTokenBridge';
+import {
+  CreateTokenBridgeParams,
+  CreateTokenBridgeReturnType,
+  createTokenBridge,
+} from './createTokenBridge';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
@@ -119,6 +123,7 @@ export {
   utils,
   //
   CreateTokenBridgeParams,
+  CreateTokenBridgeReturnType,
   createTokenBridge,
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,

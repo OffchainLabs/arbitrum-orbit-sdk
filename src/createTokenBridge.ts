@@ -1,4 +1,11 @@
-import { Address, Chain, PrivateKeyAccount, PublicClient, TransactionReceipt } from 'viem';
+import {
+  Address,
+  Chain,
+  PrivateKeyAccount,
+  PublicClient,
+  Transaction,
+  TransactionReceipt,
+} from 'viem';
 import {
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
   createTokenBridgeEnoughCustomFeeTokenAllowance,
@@ -42,9 +49,9 @@ export type CreateTokenBridgeParams = WithTokenBridgeCreatorAddressOverride<{
 }>;
 export type CreateTokenBridgeReturnType = {
   /**
-   * Transaction hash of createTokenBridgePrepareTransactionRequest
+   * Transaction of createTokenBridgePrepareTransactionRequest
    */
-  transaction: Address;
+  transaction: Transaction;
   /**
    * Transaction receipt of createTokenBridgePrepareTransactionReceipt ({@link CreateTokenBridgeTransactionReceipt})
    */
@@ -62,17 +69,17 @@ export type CreateTokenBridgeReturnType = {
    */
   setWethGateway?: {
     /**
-     * Transaction hash of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link createTokenBridgePrepareSetWethGatewayTransactionReceipt})
+     * Transaction of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link Transaction})
      */
-    transaction: Address;
+    transaction: Transaction;
     /**
      * Transaction receipt of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link createTokenBridgePrepareSetWethGatewayTransactionReceipt})
      */
     transactionReceipt: CreateTokenBridgeSetWethGatewayTransactionReceipt;
     /**
-     * Retryable transaction receipts of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link WaitForRetryablesResult})
+     * Retryable transaction receipt of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link WaitForRetryablesResult})
      */
-    retryables: TransactionReceipt[];
+    retryables: TransactionReceipt;
   };
 };
 
@@ -204,6 +211,8 @@ export async function createTokenBridge({
     serializedTransaction: await rollupOwner.signTransaction(txRequest),
   });
 
+  const transaction = await parentChainPublicClient.getTransaction({ hash: txHash });
+
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createTokenBridgePrepareTransactionReceipt(
     await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
@@ -249,6 +258,10 @@ export async function createTokenBridge({
       serializedTransaction: await rollupOwner.signTransaction(setWethGatewayTxRequest),
     });
 
+    const setWethGatewayTransaction = await parentChainPublicClient.getTransaction({
+      hash: setWethGatewayTxHash,
+    });
+
     // get the transaction receipt after waiting for the transaction to complete
     const setWethGatewayTxReceipt = createTokenBridgePrepareSetWethGatewayTransactionReceipt(
       await parentChainPublicClient.waitForTransactionReceipt({ hash: setWethGatewayTxHash }),
@@ -277,20 +290,20 @@ export async function createTokenBridge({
     }
 
     return {
-      transaction: txHash,
+      transaction,
       transactionReceipt: txReceipt,
       retryables: orbitChainRetryableReceipts,
       tokenBridgeContracts,
       setWethGateway: {
-        transaction: setWethGatewayTxHash,
+        transaction: setWethGatewayTransaction,
         transactionReceipt: setWethGatewayTxReceipt,
-        retryables: orbitChainSetWethGatewayRetryableReceipt,
+        retryables: orbitChainSetWethGatewayRetryableReceipt[0],
       },
     };
   }
 
   return {
-    transaction: txHash,
+    transaction,
     transactionReceipt: txReceipt,
     retryables: orbitChainRetryableReceipts,
     tokenBridgeContracts,
