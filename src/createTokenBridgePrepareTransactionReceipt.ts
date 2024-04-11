@@ -58,16 +58,18 @@ type GetTokenBridgeContractsParameters = {
 };
 
 export type CreateTokenBridgeTransactionReceipt = TransactionReceipt & {
-  waitForRetryables(params: WaitForRetryablesParameters): Promise<void>;
-  getTokenBridgeContracts(): TokenBridgeContracts;
+  waitForRetryables(params: WaitForRetryablesParameters): Promise<WaitForRetryablesResult>;
+  getTokenBridgeContracts(
+    parentChainPublicClient: GetTokenBridgeContractsParameters,
+  ): Promise<TokenBridgeContracts>;
 };
 
-export function createTokenBridgePrepareTransactionReceipt(txReceipt: TransactionReceipt) {
+export function createTokenBridgePrepareTransactionReceipt(
+  txReceipt: TransactionReceipt,
+): CreateTokenBridgeTransactionReceipt {
   return {
     ...txReceipt,
-    waitForRetryables: async function ({
-      orbitPublicClient,
-    }: WaitForRetryablesParameters): Promise<WaitForRetryablesResult> {
+    waitForRetryables: async function ({ orbitPublicClient }) {
       const ethersTxReceipt = viemTransactionReceiptToEthersTransactionReceipt(txReceipt);
       const l1TxReceipt = new L1TransactionReceipt(ethersTxReceipt);
       const orbitProvider = publicClientToProvider(orbitPublicClient);
@@ -95,9 +97,7 @@ export function createTokenBridgePrepareTransactionReceipt(txReceipt: Transactio
           ) as WaitForRetryablesResult
       );
     },
-    getTokenBridgeContracts: async function ({
-      parentChainPublicClient,
-    }: GetTokenBridgeContractsParameters): Promise<TokenBridgeContracts> {
+    getTokenBridgeContracts: async function ({ parentChainPublicClient }) {
       const eventLog = findOrbitTokenBridgeCreatedEventLog(txReceipt);
       const decodedEventLog = decodeOrbitTokenBridgeCreatedEventLog(eventLog);
       const { inbox } = decodedEventLog.args;

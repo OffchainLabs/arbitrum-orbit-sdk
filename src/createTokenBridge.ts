@@ -1,4 +1,4 @@
-import { Address, Chain, PrivateKeyAccount, PublicClient } from 'viem';
+import { Address, Chain, PrivateKeyAccount, PublicClient, TransactionReceipt } from 'viem';
 import {
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
   createTokenBridgeEnoughCustomFeeTokenAllowance,
@@ -9,12 +9,19 @@ import {
   TransactionRequestRetryableGasOverrides as TokenBridgeRetryableGasOverrides,
   createTokenBridgePrepareTransactionRequest,
 } from './createTokenBridgePrepareTransactionRequest';
-import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
+import {
+  CreateTokenBridgeTransactionReceipt,
+  WaitForRetryablesResult,
+  createTokenBridgePrepareTransactionReceipt,
+} from './createTokenBridgePrepareTransactionReceipt';
 import {
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   TransactionRequestRetryableGasOverrides as SetWethGatewayRetryableGasOverrides,
 } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
-import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
+import {
+  CreateTokenBridgeSetWethGatewayTransactionReceipt,
+  createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+} from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { TransactionRequestGasOverrides } from './utils/gasOverrides';
@@ -33,6 +40,38 @@ export type CreateTokenBridgeParams = WithTokenBridgeCreatorAddressOverride<{
   retryableGasOverrides?: TokenBridgeRetryableGasOverrides;
   setWethGatewayGasOverrides?: SetWethGatewayRetryableGasOverrides;
 }>;
+export type CreateTokenBridgeReturnType = {
+  /**
+   * Transaction hash of createTokenBridgePrepareTransactionRequest
+   */
+  transaction: Address;
+  /**
+   * Transaction receipt of createTokenBridgePrepareTransactionReceipt ({@link CreateTokenBridgeTransactionReceipt})
+   */
+  transactionReceipt: CreateTokenBridgeTransactionReceipt;
+  /**
+   * Retryable transaction receipts of createTokenBridgePrepareTransactionReceipt ({@link WaitForRetryablesResult})
+   */
+  retryables: WaitForRetryablesResult;
+  /**
+   * Core token bridge contracts ({@link TokenBridgeContracts})
+   */
+  tokenBridgeContracts: TokenBridgeContracts;
+  setWethGateway?: {
+    /**
+     * Transaction hash of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link createTokenBridgePrepareSetWethGatewayTransactionReceipt})
+     */
+    transaction: Address;
+    /**
+     * Transaction receipt of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link createTokenBridgePrepareSetWethGatewayTransactionReceipt})
+     */
+    transactionReceipt: CreateTokenBridgeSetWethGatewayTransactionReceipt;
+    /**
+     * Retryable transaction receipts of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link WaitForRetryablesResult})
+     */
+    retryables: TransactionReceipt[];
+  };
+};
 
 /**
  * Performs the transactions to deploy the token bridge core contracts
@@ -57,7 +96,8 @@ export type CreateTokenBridgeParams = WithTokenBridgeCreatorAddressOverride<{
  * Retryable gas overrides for createTokenBridgePrepareTransactionRequest
  * @param {Object} createRollupParams.setWethGatewayGasOverrides - {@link SetWethGatewayRetryableGasOverrides} Optional
  * Retryable gas overrides for createTokenBridgePrepareSetWethGatewayTransactionRequest
- * @returns Promise<{@link TokenBridgeContracts}> - The token bridge core contracts.
+ *
+ * @returns Promise<{@link CreateTokenBridgeReturnType}
  *
  * @example
  * const tokenBridgeCreator = await deployTokenBridgeCreator({
@@ -106,7 +146,7 @@ export async function createTokenBridge({
   gasOverrides,
   retryableGasOverrides,
   setWethGatewayGasOverrides,
-}: CreateTokenBridgeParams): Promise<TokenBridgeContracts> {
+}: CreateTokenBridgeParams): Promise<CreateTokenBridgeReturnType> {
   const isCustomFeeTokenBridge = isCustomFeeTokenAddress(nativeTokenAddress);
   if (isCustomFeeTokenBridge) {
     // set the custom fee token
@@ -226,6 +266,7 @@ export async function createTokenBridge({
     console.log(
       `Transaction hash for retryable is ${orbitChainSetWethGatewayRetryableReceipt[0].transactionHash}`,
     );
+
     if (orbitChainSetWethGatewayRetryableReceipt[0].status !== 'success') {
       throw new Error(
         `Retryable status is not success: ${orbitChainSetWethGatewayRetryableReceipt[0].status}. Aborting...`,
