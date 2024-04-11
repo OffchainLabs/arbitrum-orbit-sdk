@@ -57,6 +57,9 @@ export type CreateTokenBridgeReturnType = {
    * Core token bridge contracts ({@link TokenBridgeContracts})
    */
   tokenBridgeContracts: TokenBridgeContracts;
+  /**
+   * Optional: createTokenBridgePrepareSetWethGatewayTransaction's result
+   */
   setWethGateway?: {
     /**
      * Transaction hash of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link createTokenBridgePrepareSetWethGatewayTransactionReceipt})
@@ -84,20 +87,20 @@ export type CreateTokenBridgeReturnType = {
  * @param {CreateTokenBridgeParams} createTokenBridgeParams
  * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
  * @param {Object} createRollupParams.rollupAddress - The address of the Rollup contract
- * @param {String} createRollupParams.nativeTokenAddress - Optional
+ * @param {String} [createRollupParams.nativeTokenAddress=] - Optional
  * If nativeTokenAddress is passed and different than zero address, deploy a token bridge with custom fee token.
  * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
  * @param {Object} createRollupParams.orbitChainPublicClient - The orbit chain Viem Public Client
- * @param {String} createRollupParams.tokenBridgeCreatorAddressOverride - Optional
+ * @param {String} [createRollupParams.tokenBridgeCreatorAddressOverride=] - Optional
  * If tokenBridgeCreatorAddressOverride is passed, the address is overridden in the different transactions
- * @param {Object} createRollupParams.gasOverrides - {@link TransactionRequestGasOverrides} Optional
+ * @param {Object} [createRollupParams.gasOverrides=] - {@link TransactionRequestGasOverrides} Optional
  * Gas overrides for createTokenBridgePrepareTransactionRequest
  * @param {Object} createRollupParams.retryableGasOverrides - {@link TokenBridgeRetryableGasOverrides} Optional
  * Retryable gas overrides for createTokenBridgePrepareTransactionRequest
  * @param {Object} createRollupParams.setWethGatewayGasOverrides - {@link SetWethGatewayRetryableGasOverrides} Optional
  * Retryable gas overrides for createTokenBridgePrepareSetWethGatewayTransactionRequest
  *
- * @returns Promise<{@link CreateTokenBridgeReturnType}
+ * @returns Promise<{@link CreateTokenBridgeReturnType}>
  *
  * @example
  * const tokenBridgeCreator = await deployTokenBridgeCreator({
