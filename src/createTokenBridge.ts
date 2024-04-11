@@ -79,7 +79,7 @@ export type CreateTokenBridgeReturnType = {
     /**
      * Retryable transaction receipt of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link WaitForRetryablesResult})
      */
-    retryables: TransactionReceipt;
+    retryables: [TransactionReceipt];
   };
 };
 
@@ -297,7 +297,7 @@ export async function createTokenBridge({
       setWethGateway: {
         transaction: setWethGatewayTransaction,
         transactionReceipt: setWethGatewayTxReceipt,
-        retryables: orbitChainSetWethGatewayRetryableReceipt[0],
+        retryables: [orbitChainSetWethGatewayRetryableReceipt[0]],
       },
     };
   }
