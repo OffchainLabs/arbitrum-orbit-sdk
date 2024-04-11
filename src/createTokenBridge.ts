@@ -47,7 +47,7 @@ export type CreateTokenBridgeParams = WithTokenBridgeCreatorAddressOverride<{
   retryableGasOverrides?: TokenBridgeRetryableGasOverrides;
   setWethGatewayGasOverrides?: SetWethGatewayRetryableGasOverrides;
 }>;
-export type CreateTokenBridgeReturnType = {
+export type CreateTokenBridgeResults = {
   /**
    * Transaction of createTokenBridgePrepareTransactionRequest
    */
@@ -107,7 +107,7 @@ export type CreateTokenBridgeReturnType = {
  * @param {Object} createRollupParams.setWethGatewayGasOverrides - {@link SetWethGatewayRetryableGasOverrides} Optional
  * Retryable gas overrides for createTokenBridgePrepareSetWethGatewayTransactionRequest
  *
- * @returns Promise<{@link CreateTokenBridgeReturnType}>
+ * @returns Promise<{@link CreateTokenBridgeResults}>
  *
  * @example
  * const tokenBridgeCreator = await deployTokenBridgeCreator({
@@ -156,7 +156,7 @@ export async function createTokenBridge({
   gasOverrides,
   retryableGasOverrides,
   setWethGatewayGasOverrides,
-}: CreateTokenBridgeParams): Promise<CreateTokenBridgeReturnType> {
+}: CreateTokenBridgeParams): Promise<CreateTokenBridgeResults> {
   const isCustomFeeTokenBridge = isCustomFeeTokenAddress(nativeTokenAddress);
   if (isCustomFeeTokenBridge) {
     // set the custom fee token

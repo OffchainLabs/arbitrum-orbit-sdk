@@ -53,7 +53,7 @@ import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import {
   CreateTokenBridgeParams,
-  CreateTokenBridgeReturnType,
+  CreateTokenBridgeResults,
   createTokenBridge,
 } from './createTokenBridge';
 import {
@@ -123,7 +123,7 @@ export {
   utils,
   //
   CreateTokenBridgeParams,
-  CreateTokenBridgeReturnType,
+  CreateTokenBridgeResults,
   createTokenBridge,
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
