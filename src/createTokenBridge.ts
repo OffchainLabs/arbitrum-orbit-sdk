@@ -6,31 +6,33 @@ import {
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
 import {
-  CreateTokenBridgePrepareTransactionRequestParams,
+  TransactionRequestRetryableGasOverrides as TokenBridgeRetryableGasOverrides,
   createTokenBridgePrepareTransactionRequest,
 } from './createTokenBridgePrepareTransactionRequest';
 import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgePrepareTransactionReceipt';
 import {
-  CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams,
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
+  TransactionRequestRetryableGasOverrides as SetWethGatewayRetryableGasOverrides,
 } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+import { TransactionRequestGasOverrides } from './utils/gasOverrides';
 
 function getBlockExplorerUrl(chain: Chain | undefined) {
   return chain?.blockExplorers?.default.url;
 }
 
-export type CreateTokenBridgeParams = {
+export type CreateTokenBridgeParams = WithTokenBridgeCreatorAddressOverride<{
   rollupOwner: PrivateKeyAccount;
   rollupAddress: Address;
   nativeTokenAddress?: Address;
   parentChainPublicClient: PublicClient;
   orbitChainPublicClient: PublicClient;
-  createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride?: Partial<CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams>;
-  createTokenBridgePrepareTransactionRequestParamsOverride?: Partial<CreateTokenBridgePrepareTransactionRequestParams>;
-  createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride?: Partial<CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams>;
-};
+  gasOverrides?: TransactionRequestGasOverrides;
+  retryableGasOverrides?: TokenBridgeRetryableGasOverrides;
+  setWethGatewayGasOverrides?: SetWethGatewayRetryableGasOverrides;
+}>;
 
 /**
  * Performs the transactions to deploy the token bridge core contracts
@@ -43,13 +45,18 @@ export type CreateTokenBridgeParams = {
  * @param {CreateTokenBridgeParams} createTokenBridgeParams
  * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
  * @param {Object} createRollupParams.rollupAddress - The address of the Rollup contract
- * @param {Object} createRollupParams.nativeTokenAddress - Optional
+ * @param {String} createRollupParams.nativeTokenAddress - Optional
  * If nativeTokenAddress is passed and different than zero address, deploy a token bridge with custom fee token.
  * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
  * @param {Object} createRollupParams.orbitChainPublicClient - The orbit chain Viem Public Client
- * @param {Object} createRollupParams.createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride - Optional {@link CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams}
- * @param {Object} createRollupParams.createTokenBridgePrepareTransactionRequestParamsOverride - Optional {@link CreateTokenBridgePrepareTransactionRequestParams}
- * @param {Object} createRollupParams.createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride - Optional {@link CreateTokenBridgePrepareSetWethGatewayTransactionRequestParams}
+ * @param {String} createRollupParams.tokenBridgeCreatorAddressOverride - Optional
+ * If tokenBridgeCreatorAddressOverride is passed, the address is overridden in the different transactions
+ * @param {Object} createRollupParams.gasOverrides - {@link TransactionRequestGasOverrides} Optional
+ * Gas overrides for createTokenBridgePrepareTransactionRequest
+ * @param {Object} createRollupParams.retryableGasOverrides - {@link TokenBridgeRetryableGasOverrides} Optional
+ * Retryable gas overrides for createTokenBridgePrepareTransactionRequest
+ * @param {Object} createRollupParams.setWethGatewayGasOverrides - {@link SetWethGatewayRetryableGasOverrides} Optional
+ * Retryable gas overrides for createTokenBridgePrepareSetWethGatewayTransactionRequest
  * @returns Promise<{@link TokenBridgeContracts}> - The token bridge core contracts.
  *
  * @example
@@ -62,20 +69,31 @@ export type CreateTokenBridgeParams = {
  *   rollupAddress: rollupAddress,
  *   parentChainPublicClient: l1Client,
  *   orbitChainPublicClient: l2Client,
- *   createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride: {
- *     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+ *   tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+ *   gasOverrides: {
+ *     gasLimit: {
+ *       base: 6_000_000n,
+ *     },
  *   },
- *   createTokenBridgePrepareTransactionRequestParamsOverride: {
- *     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+ *   retryableGasOverrides: {
+ *     maxGasForFactory: {
+ *       base: 20_000_000n,
+ *     },
+ *     maxGasForContracts: {
+ *       base: 20_000_000n,
+ *     },
+ *     maxSubmissionCostForFactory: {
+ *       base: 4_000_000_000_000n,
+ *     },
+ *     maxSubmissionCostForContracts: {
+ *       base: 4_000_000_000_000n,
+ *     },
  *   },
- *   createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride: {
- *     tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
- *     retryableGasOverrides: {
- *       gasLimit: {
- *         base: 100_000n,
- *       }
- *     }
- *   }t
+ *   setWethGatewayGasOverrides: {
+ *     gasLimit: {
+ *       base: 100_000n,
+ *     },
+ *   },
  * });
  */
 export async function createTokenBridge({
@@ -84,18 +102,20 @@ export async function createTokenBridge({
   nativeTokenAddress,
   parentChainPublicClient,
   orbitChainPublicClient,
-  createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride,
-  createTokenBridgePrepareTransactionRequestParamsOverride,
-  createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride,
+  tokenBridgeCreatorAddressOverride,
+  gasOverrides,
+  retryableGasOverrides,
+  setWethGatewayGasOverrides,
 }: CreateTokenBridgeParams): Promise<TokenBridgeContracts> {
-  if (isCustomFeeTokenAddress(nativeTokenAddress)) {
+  const isCustomFeeTokenBridge = isCustomFeeTokenAddress(nativeTokenAddress);
+  if (isCustomFeeTokenBridge) {
     // set the custom fee token
     // prepare transaction to approve custom fee token spend
     const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
       nativeToken: nativeTokenAddress,
       owner: rollupOwner.address,
       publicClient: parentChainPublicClient,
-      ...createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride,
+      tokenBridgeCreatorAddressOverride,
     };
 
     // Check allowance and approve if necessary
@@ -130,7 +150,9 @@ export async function createTokenBridge({
     parentChainPublicClient,
     orbitChainPublicClient,
     account: rollupOwner.address,
-    ...createTokenBridgePrepareTransactionRequestParamsOverride,
+    tokenBridgeCreatorAddressOverride,
+    gasOverrides,
+    retryableGasOverrides,
   });
 
   // sign and send the transaction
@@ -168,14 +190,15 @@ export async function createTokenBridge({
   });
 
   // Non custom fee token
-  if (!nativeTokenAddress) {
+  if (!isCustomFeeTokenBridge) {
     // set weth gateway
     const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
       rollup: rollupAddress,
       parentChainPublicClient,
       orbitChainPublicClient,
       account: rollupOwner.address,
-      ...createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride,
+      tokenBridgeCreatorAddressOverride,
+      ...setWethGatewayGasOverrides,
     });
 
     // sign and send the transaction

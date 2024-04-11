@@ -18,7 +18,7 @@ import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from
 import { erc20 } from './contracts';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
-import { createTokenBridge } from './createTokenBridge';
+import { CreateTokenBridgeParams, createTokenBridge } from './createTokenBridge';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
@@ -330,35 +330,30 @@ describe('createTokenBridge', () => {
       rollupAddress: testnodeInformation.rollup,
       parentChainPublicClient: nitroTestnodeL1Client,
       orbitChainPublicClient: nitroTestnodeL2Client,
-      createTokenBridgePrepareTransactionRequestParamsOverride: {
-        gasOverrides: {
-          gasLimit: {
-            base: 6_000_000n,
-          },
+      tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      gasOverrides: {
+        gasLimit: {
+          base: 6_000_000n,
         },
-        retryableGasOverrides: {
-          maxGasForFactory: {
-            base: 20_000_000n,
-          },
-          maxGasForContracts: {
-            base: 20_000_000n,
-          },
-          maxSubmissionCostForFactory: {
-            base: 4_000_000_000_000n,
-          },
-          maxSubmissionCostForContracts: {
-            base: 4_000_000_000_000n,
-          },
-        },
-        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
       },
-      createTokenBridgePrepareRegisterWethGatewayTransactionRequestParamsOverride: {
-        retryableGasOverrides: {
-          gasLimit: {
-            base: 100_000n,
-          },
+      retryableGasOverrides: {
+        maxGasForFactory: {
+          base: 20_000_000n,
         },
-        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+        maxGasForContracts: {
+          base: 20_000_000n,
+        },
+        maxSubmissionCostForFactory: {
+          base: 4_000_000_000_000n,
+        },
+        maxSubmissionCostForContracts: {
+          base: 4_000_000_000_000n,
+        },
+      },
+      setWethGatewayGasOverrides: {
+        gasLimit: {
+          base: 100_000n,
+        },
       },
     });
 
@@ -408,30 +403,25 @@ describe('createTokenBridge', () => {
       parentChainPublicClient: nitroTestnodeL2Client,
       orbitChainPublicClient: nitroTestnodeL3Client,
       nativeTokenAddress: testnodeInformation.l3NativeToken,
-      createTokenBridgeEnoughCustomFeeTokenAllowanceParamsOverride: {
-        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      gasOverrides: {
+        gasLimit: {
+          base: 6_000_000n,
+        },
       },
-      createTokenBridgePrepareTransactionRequestParamsOverride: {
-        gasOverrides: {
-          gasLimit: {
-            base: 6_000_000n,
-          },
+      retryableGasOverrides: {
+        maxGasForFactory: {
+          base: 20_000_000n,
         },
-        retryableGasOverrides: {
-          maxGasForFactory: {
-            base: 20_000_000n,
-          },
-          maxGasForContracts: {
-            base: 20_000_000n,
-          },
-          maxSubmissionCostForFactory: {
-            base: 4_000_000_000_000n,
-          },
-          maxSubmissionCostForContracts: {
-            base: 4_000_000_000_000n,
-          },
+        maxGasForContracts: {
+          base: 20_000_000n,
         },
-        tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+        maxSubmissionCostForFactory: {
+          base: 4_000_000_000_000n,
+        },
+        maxSubmissionCostForContracts: {
+          base: 4_000_000_000_000n,
+        },
       },
     });
 
