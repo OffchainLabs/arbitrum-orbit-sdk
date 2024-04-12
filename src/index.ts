@@ -52,6 +52,11 @@ import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
 import {
+  CreateTokenBridgeParams,
+  CreateTokenBridgeResults,
+  createTokenBridge,
+} from './createTokenBridge';
+import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
 } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
@@ -117,6 +122,9 @@ export {
   prepareKeyset,
   utils,
   //
+  CreateTokenBridgeParams,
+  CreateTokenBridgeResults,
+  createTokenBridge,
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
