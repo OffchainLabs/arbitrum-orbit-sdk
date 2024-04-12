@@ -167,7 +167,7 @@ export async function createTokenBridge({
     // prepare transaction to approve custom fee token spend
     const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
       nativeToken: nativeTokenAddress,
-      owner: rollupOwner,
+      owner: account.address,
       publicClient: parentChainPublicClient,
       tokenBridgeCreatorAddressOverride,
     };
