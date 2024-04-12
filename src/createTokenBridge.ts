@@ -38,8 +38,9 @@ function getBlockExplorerUrl(chain: Chain | undefined) {
 }
 
 export type CreateTokenBridgeParams = WithTokenBridgeCreatorAddressOverride<{
-  rollupOwner: PrivateKeyAccount;
+  rollupOwner: Address;
   rollupAddress: Address;
+  account: PrivateKeyAccount;
   nativeTokenAddress?: Address;
   parentChainPublicClient: PublicClient;
   orbitChainPublicClient: PublicClient;
@@ -92,8 +93,9 @@ export type CreateTokenBridgeResults = {
  * Returns the token bridge core contracts.
  *
  * @param {CreateTokenBridgeParams} createTokenBridgeParams
- * @param {Object} createRollupParams.rollupOwner - The rollup owner private key account
+ * @param {String} createRollupParams.rollupOwner - The address of the rollup owner
  * @param {Object} createRollupParams.rollupAddress - The address of the Rollup contract
+ * @param {Object} [createRollupParams.account] - The private key account to sign transactions
  * @param {String} [createRollupParams.nativeTokenAddress=] - Optional
  * If nativeTokenAddress is passed and different than zero address, deploy a token bridge with custom fee token.
  * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
@@ -115,8 +117,9 @@ export type CreateTokenBridgeResults = {
  * });
  *
  * const tokenBridgeContracts = await createTokenBridge({
- *   rollupOwner: rollupOwner,
+ *   rollupOwner: rollupOwner.address,
  *   rollupAddress: rollupAddress,
+ *   account: deployer,
  *   parentChainPublicClient: l1Client,
  *   orbitChainPublicClient: l2Client,
  *   tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
@@ -149,6 +152,7 @@ export type CreateTokenBridgeResults = {
 export async function createTokenBridge({
   rollupOwner,
   rollupAddress,
+  account,
   nativeTokenAddress,
   parentChainPublicClient,
   orbitChainPublicClient,
@@ -163,7 +167,7 @@ export async function createTokenBridge({
     // prepare transaction to approve custom fee token spend
     const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
       nativeToken: nativeTokenAddress,
-      owner: rollupOwner.address,
+      owner: rollupOwner,
       publicClient: parentChainPublicClient,
       tokenBridgeCreatorAddressOverride,
     };
@@ -175,7 +179,7 @@ export async function createTokenBridge({
 
       // sign and send the transaction
       const approvalTxHash = await parentChainPublicClient.sendRawTransaction({
-        serializedTransaction: await rollupOwner.signTransaction(approvalTxRequest),
+        serializedTransaction: await account.signTransaction(approvalTxRequest),
       });
 
       // get the transaction receipt after waiting for the transaction to complete
@@ -195,11 +199,11 @@ export async function createTokenBridge({
   const txRequest = await createTokenBridgePrepareTransactionRequest({
     params: {
       rollup: rollupAddress,
-      rollupOwner: rollupOwner.address,
+      rollupOwner,
     },
     parentChainPublicClient,
     orbitChainPublicClient,
-    account: rollupOwner.address,
+    account: account.address,
     tokenBridgeCreatorAddressOverride,
     gasOverrides,
     retryableGasOverrides,
@@ -208,7 +212,7 @@ export async function createTokenBridge({
   // sign and send the transaction
   console.log(`Deploying the TokenBridge...`);
   const txHash = await parentChainPublicClient.sendRawTransaction({
-    serializedTransaction: await rollupOwner.signTransaction(txRequest),
+    serializedTransaction: await account.signTransaction(txRequest),
   });
 
   const transaction = await parentChainPublicClient.getTransaction({ hash: txHash });
@@ -248,14 +252,14 @@ export async function createTokenBridge({
       rollup: rollupAddress,
       parentChainPublicClient,
       orbitChainPublicClient,
-      account: rollupOwner.address,
+      account: account.address,
       tokenBridgeCreatorAddressOverride,
       retryableGasOverrides: setWethGatewayGasOverrides,
     });
 
     // sign and send the transaction
     const setWethGatewayTxHash = await parentChainPublicClient.sendRawTransaction({
-      serializedTransaction: await rollupOwner.signTransaction(setWethGatewayTxRequest),
+      serializedTransaction: await account.signTransaction(setWethGatewayTxRequest),
     });
 
     const setWethGatewayTransaction = await parentChainPublicClient.getTransaction({
