@@ -49,6 +49,17 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   }
 }
 
+export type PrepareNodeConfigParams = {
+  chainName: string;
+  chainConfig: ChainConfig;
+  coreContracts: CoreContracts;
+  batchPosterPrivateKey: string;
+  validatorPrivateKey: string;
+  parentChainId: number;
+  parentChainRpcUrl: string;
+  parentChainBeaconRpcUrl?: string;
+};
+
 export function prepareNodeConfig({
   chainName,
   chainConfig,
@@ -57,15 +68,8 @@ export function prepareNodeConfig({
   validatorPrivateKey,
   parentChainId,
   parentChainRpcUrl,
-}: {
-  chainName: string;
-  chainConfig: ChainConfig;
-  coreContracts: CoreContracts;
-  batchPosterPrivateKey: string;
-  validatorPrivateKey: string;
-  parentChainId: number;
-  parentChainRpcUrl: string;
-}): NodeConfig {
+  parentChainBeaconRpcUrl,
+}: PrepareNodeConfigParams): NodeConfig {
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
@@ -137,6 +141,12 @@ export function prepareNodeConfig({
       },
     },
   };
+
+  if (parentChainBeaconRpcUrl) {
+    config['parent-chain']!['blob-client'] = {
+      'beacon-url': parentChainBeaconRpcUrl,
+    }
+  }
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
     config.node!['data-availability'] = {

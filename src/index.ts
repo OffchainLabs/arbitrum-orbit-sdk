@@ -50,7 +50,7 @@ import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
-import { prepareNodeConfig } from './prepareNodeConfig';
+import { PrepareNodeConfigParams, prepareNodeConfig } from './prepareNodeConfig';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
@@ -113,6 +113,7 @@ export {
   ParentChainId,
   NodeConfig,
   NodeConfigChainInfoJson,
+  PrepareNodeConfigParams,
   prepareNodeConfig,
   prepareKeyset,
   utils,
