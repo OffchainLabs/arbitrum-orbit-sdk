@@ -70,6 +70,8 @@ async function checkWethGateways(
     // wethGateway and weth should be the zeroAddress on custom-fee-token chains
     expect(tokenBridgeContracts.orbitChainContracts.wethGateway).toEqual(zeroAddress);
     expect(tokenBridgeContracts.orbitChainContracts.weth).toEqual(zeroAddress);
+    expect(tokenBridgeContracts.parentChainContracts.wethGateway).toEqual(zeroAddress);
+    expect(tokenBridgeContracts.parentChainContracts.weth).toEqual(zeroAddress);
     return;
   }
 
@@ -97,7 +99,9 @@ async function checkWethGateways(
   );
 
   expect(tokenBridgeContracts.parentChainContracts.weth).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.parentChainContracts.wethGateway).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.weth).not.toEqual(zeroAddress);
+  expect(tokenBridgeContracts.orbitChainContracts.wethGateway).not.toEqual(zeroAddress);
 }
 
 describe('createTokenBridge utils function', () => {
