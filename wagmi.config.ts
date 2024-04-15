@@ -64,7 +64,6 @@ const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string 
   // local nitro-testnode / fine to omit these as we skip abi fetch
   [nitroTestnodeL1.id]: { url: '', apiKey: '' },
   [nitroTestnodeL2.id]: { url: '', apiKey: '' },
-  [nitroTestnodeL3.id]: { url: '', apiKey: '' },
 };
 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
@@ -105,7 +104,6 @@ const contracts: ContractConfig[] = [
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
       [nitroTestnodeL2.id]: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
-      [nitroTestnodeL3.id]: '0x0000000000000000000000000000000000000000',
     },
   },
   {
@@ -123,7 +121,6 @@ const contracts: ContractConfig[] = [
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x54B4D4e578E10178a6cA602bdb6df0F213296Af4',
       [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',
-      [nitroTestnodeL3.id]: '0x0000000000000000000000000000000000000000',
     },
   },
   {

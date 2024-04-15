@@ -15,7 +15,6 @@ import {
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
-  nitroTestnodeL3,
 } from './chains';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
@@ -46,7 +45,6 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
     case arbitrumNova.id:
     case arbitrumSepolia.id:
     case nitroTestnodeL2.id:
-    case nitroTestnodeL3.id:
       return true;
   }
 }

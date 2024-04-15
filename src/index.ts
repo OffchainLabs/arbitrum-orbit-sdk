@@ -30,6 +30,7 @@ import {
   CreateRollupFetchTransactionHashParams,
 } from './createRollupFetchTransactionHash';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
+import { createRollup, CreateRollupFunctionParams, CreateRollupResults } from './createRollup';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -51,6 +52,11 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
+import {
+  CreateTokenBridgeParams,
+  CreateTokenBridgeResults,
+  createTokenBridge,
+} from './createTokenBridge';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
@@ -94,6 +100,9 @@ export {
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
   createRollupFetchCoreContracts,
+  CreateRollupFunctionParams,
+  CreateRollupResults,
+  createRollup,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
@@ -115,6 +124,9 @@ export {
   prepareKeyset,
   utils,
   //
+  CreateTokenBridgeParams,
+  CreateTokenBridgeResults,
+  createTokenBridge,
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,

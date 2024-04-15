@@ -1,7 +1,12 @@
-import { createPublicClient, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
-import { createRollupPrepareConfig, prepareChainConfig, createRollup } from '@arbitrum/orbit-sdk';
+import {
+  createRollupPrepareConfig,
+  prepareChainConfig,
+  createRollupPrepareTransactionRequest,
+  createRollupPrepareTransactionReceipt,
+} from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey, generateChainId } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
 config();
@@ -12,6 +17,10 @@ function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
   }
 
   return sanitizePrivateKey(privateKey);
+}
+
+function getBlockExplorerUrl(chain: Chain) {
+  return chain.blockExplorers?.default.url;
 }
 
 if (typeof process.env.DEPLOYER_PRIVATE_KEY === 'undefined') {
@@ -37,31 +46,38 @@ async function main() {
   // generate a random chain id
   const chainId = generateChainId();
 
-  const createRollupConfig = createRollupPrepareConfig({
-    chainId: BigInt(chainId),
-    owner: deployer.address,
-    chainConfig: prepareChainConfig({
-      chainId,
-      arbitrum: {
-        InitialChainOwner: deployer.address,
-        DataAvailabilityCommittee: true,
-      },
-    }),
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
   });
 
-  try {
-    await createRollup({
-      params: {
-        config: createRollupConfig,
-        batchPoster,
-        validators: [validator],
-      },
-      account: deployer,
-      parentChainPublicClient,
-    });
-  } catch (error) {
-    console.error(`Rollup creation failed with error: ${error}`);
-  }
+  // prepare the transaction for deploying the core contracts
+  const request = await createRollupPrepareTransactionRequest({
+    params: {
+      config: createRollupPrepareConfig({
+        chainId: BigInt(chainId),
+        owner: deployer.address,
+        chainConfig,
+      }),
+      batchPoster,
+      validators: [validator],
+    },
+    account: deployer.address,
+    publicClient: parentChainPublicClient,
+  });
+
+  // sign and send the transaction
+  const txHash = await parentChainPublicClient.sendRawTransaction({
+    serializedTransaction: await deployer.signTransaction(request),
+  });
+
+  // get the transaction receipt after waiting for the transaction to complete
+  const txReceipt = createRollupPrepareTransactionReceipt(
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
+  );
+
+  console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
 }
 
 main();

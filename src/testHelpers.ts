@@ -19,6 +19,9 @@ type NitroTestNodePrivateKeyAccounts = {
   l3RollupOwner: PrivateKeyAccountWithPrivateKey;
   // sha256(user_token_bridge_deployer)
   l3TokenBridgeDeployer: PrivateKeyAccountWithPrivateKey;
+  // l2 token bridge deployer
+  l2TokenBridgeDeployer: PrivateKeyAccountWithPrivateKey;
+  // l3 token bridge deployer which holds custom gas token
 };
 
 export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAccounts {
@@ -26,10 +29,14 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
     typeof process.env.NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
     typeof process.env.NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
     typeof process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
+    typeof process.env.NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
+    typeof process.env.NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
     typeof process.env.NITRO_TESTNODE_SEQUENCER_PRIVATE_KEY === 'undefined'
   ) {
     throw Error(
-      `required env variables: NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY, NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY, NITRO_TESTNODE_SEQUENCER_PRIVATE_KEY`,
+      `required env variables: NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY,
+      NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY,
+      NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_SEQUENCER_PRIVATE_KEY`,
     );
   }
 
@@ -38,11 +45,14 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
   const l2RollupOwnerPrivateKey = sanitizePrivateKey(
     process.env.NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY,
   );
+  const l2TokenBridgeDeployerPrivateKey = sanitizePrivateKey(
+    process.env.NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY,
+  );
   const l3RollupOwnerPrivateKey = sanitizePrivateKey(
     process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY,
   );
   const l3TokenBridgeDeployerPrivateKey = sanitizePrivateKey(
-    sha256(toBytes('user_token_bridge_deployer')),
+    process.env.NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY,
   );
 
   return {
@@ -54,6 +64,10 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
     l2RollupOwner: {
       ...privateKeyToAccount(l2RollupOwnerPrivateKey),
       privateKey: l2RollupOwnerPrivateKey,
+    },
+    l2TokenBridgeDeployer: {
+      ...privateKeyToAccount(l2TokenBridgeDeployerPrivateKey),
+      privateKey: l2TokenBridgeDeployerPrivateKey,
     },
     l3RollupOwner: {
       ...privateKeyToAccount(l3RollupOwnerPrivateKey),
@@ -69,13 +83,13 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
 type TestnodeInformation = {
   bridge: Address;
   rollup: Address;
-  l3Rollup: Address;
-  l3NativeToken: Address;
   sequencerInbox: Address;
   l3SequencerInbox: Address;
   l3Bridge: Address;
   batchPoster: Address;
   l3BatchPoster: Address;
+  l3Rollup: `0x${string}`;
+  l3NativeToken: `0x${string}`;
 };
 
 export function getInformationFromTestnode(): TestnodeInformation {
