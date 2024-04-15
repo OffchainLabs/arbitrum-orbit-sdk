@@ -4,12 +4,14 @@
   "version": "0.0.0",
   "scripts": {
     "verifyRollup": "ts-node src/verify-rollup.ts",
-    "verifyTokenBridge": "ts-node src/verify-token-bridge.ts"
+    "verifyTokenBridge": "ts-node src/verify-token-bridge.ts",
+    "getAllContracts": "ts-node src/get-contracts.ts"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
     "typescript": "^5.2.2",
     "@arbitrum/sdk": "^3.1.13",
+    "@arbitrum/orbit-sdk": "^0.9.0",
     "ts-node": "^10.9.1"
   }
 }
