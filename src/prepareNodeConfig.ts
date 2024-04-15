@@ -145,7 +145,7 @@ export function prepareNodeConfig({
   if (parentChainBeaconRpcUrl) {
     config['parent-chain']!['blob-client'] = {
       'beacon-url': parentChainBeaconRpcUrl,
-    }
+    };
   }
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {

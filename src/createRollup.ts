@@ -180,14 +180,17 @@ export async function createRollup({
     serializedTransaction: await account.signTransaction(txRequest),
   });
 
-  // get the transaction
-  const tx = createRollupPrepareTransaction(
-    await validatedParentChainPublicClient.getTransaction({ hash: txHash }),
-  );
-
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
     await validatedParentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
+  );
+
+  // get the transaction
+  // (we get the transaction after waiting for the receipt, to prevent `TransactionNotFoundError`s coming
+  // from RPCs that use load balancing and caching. More information can be found here:
+  // https://github.com/wevm/viem/issues/1056#issuecomment-1689800265 )
+  const tx = createRollupPrepareTransaction(
+    await validatedParentChainPublicClient.getTransaction({ hash: txHash }),
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);

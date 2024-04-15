@@ -35,8 +35,13 @@ const parentChainPublicClient = createPublicClient({
   transport: http(),
 });
 
-if ((getParentChainLayer(parentChainPublicClient.chain.id) == 1) && typeof process.env.ETHEREUM_BEACON_RPC_URL === 'undefined') {
-  throw new Error(`Please provide the "ETHEREUM_BEACON_RPC_URL" environment variable necessary for L2 Orbit chains`);
+if (
+  getParentChainLayer(parentChainPublicClient.chain.id) == 1 &&
+  typeof process.env.ETHEREUM_BEACON_RPC_URL === 'undefined'
+) {
+  throw new Error(
+    `Please provide the "ETHEREUM_BEACON_RPC_URL" environment variable necessary for L2 Orbit chains`,
+  );
 }
 
 async function main() {
