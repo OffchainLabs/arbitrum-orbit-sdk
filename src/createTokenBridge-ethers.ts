@@ -1,4 +1,3 @@
-/* eslint-disable no-empty */
 import { Address, PublicClient } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { L1ToL2MessageGasEstimator } from '@arbitrum/sdk';
