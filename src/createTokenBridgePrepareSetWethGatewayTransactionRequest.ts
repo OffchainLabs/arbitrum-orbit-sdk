@@ -157,6 +157,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
     setGatewaysDummyCalldata,
     parentChainPublicClient,
     orbitChainPublicClient,
+    inbox,
   );
 
   //// apply gas overrides

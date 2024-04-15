@@ -7,7 +7,6 @@ import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/c
 import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrepareTransactionRequest';
-import { registerNewNetwork } from './utils/registerNewNetwork';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
 type NamedFactory = ContractFactory & { contractName: string };
@@ -42,8 +41,6 @@ export const createTokenBridgeGetInputs = async (
   const l1Provider = publicClientToProvider(l1PublicClient);
   const l2Provider = publicClientToProvider(l2PublicClient);
 
-  await registerNewNetwork(l1Provider, l2Provider, rollupAddress);
-
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
     l1TokenBridgeCreatorAddress,
     L1AtomicTokenBridgeCreator.abi,
@@ -52,12 +49,15 @@ export const createTokenBridgeGetInputs = async (
 
   //// gasPrice
   const gasPrice = await l2Provider.getGasPrice();
+  // get inbox from rollup contract
+  const inbox = await RollupAdminLogic__factory.connect(rollupAddress, l1Provider).inbox();
 
   //// run retryable estimate for deploying L2 factory
   const deployFactoryGasParams = await getEstimateForDeployingFactory(
     l1DeployerAddress,
     l1Provider,
     l2Provider,
+    inbox,
   );
   const maxSubmissionCostForFactoryEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
   const maxGasForFactoryEstimation = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
@@ -154,9 +154,6 @@ export const createTokenBridgeGetInputs = async (
     .add(maxGasForFactory.mul(maxGasPrice))
     .add(maxGasForContracts.mul(maxGasPrice));
 
-  // get inbox from rollup contract
-  const inbox = await RollupAdminLogic__factory.connect(rollupAddress, l1Provider).inbox();
-
   return {
     inbox: inbox as Address,
     maxGasForContracts: maxGasForContracts.toBigInt(),
@@ -169,6 +166,7 @@ const getEstimateForDeployingFactory = async (
   l1DeployerAddress: string,
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,
+  inbox: string,
 ) => {
   //// run retryable estimate for deploying L2 factory
   const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
@@ -184,6 +182,8 @@ const getEstimateForDeployingFactory = async (
     },
     await getBaseFee(l1Provider),
     l1Provider,
+    undefined,
+    inbox,
   );
 
   return deployFactoryGasParams;
@@ -196,6 +196,7 @@ export const getEstimateForSettingGateway = async (
   setGatewaysCalldata: `0x${string}`,
   parentChainPublicClient: PublicClient,
   orbitChainPublicClient: PublicClient,
+  inbox: Address,
 ) => {
   // ethers providers
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
@@ -215,6 +216,8 @@ export const getEstimateForSettingGateway = async (
     },
     await getBaseFee(parentChainProvider),
     parentChainProvider,
+    undefined,
+    inbox,
   );
 
   return {
