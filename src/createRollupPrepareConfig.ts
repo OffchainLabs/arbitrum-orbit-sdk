@@ -14,8 +14,8 @@ export type CreateRollupPrepareConfigParams = Pick<CreateRollupPrepareConfigResu
   };
 
 const wasmModuleRoot: `0x${string}` =
-  // https://github.com/OffchainLabs/nitro/releases/tag/consensus-v11
-  '0xf4389b835497a910d7ba3ebfb77aa93da985634f3c052de1290360635be40c4a';
+  // https://github.com/OffchainLabs/nitro/releases/tag/consensus-v20
+  '0x8b104a2e80ac6165dc58b9048de12f301d70b02a0ab51396c22b4b4b802a16a4';
 
 export const defaults = {
   confirmPeriodBlocks: BigInt(150),
