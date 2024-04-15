@@ -1,6 +1,7 @@
 import { sha256, toBytes } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
+import { execSync } from 'node:child_process';
 
 import { sanitizePrivateKey } from './utils';
 
@@ -12,9 +13,11 @@ type NitroTestNodePrivateKeyAccounts = {
   deployer: PrivateKeyAccount & { privateKey: `0x${string}` };
   // sequencer (batch poster and rollup owner are the same in nitro-testnode)
   l2RollupOwner: PrivateKeyAccount & { privateKey: `0x${string}` };
+  // l2 token bridge deployer
+  l2TokenBridgeDeployer: PrivateKeyAccount & { privateKey: `0x${string}` };
   // l3owner
   l3RollupOwner: PrivateKeyAccount & { privateKey: `0x${string}` };
-  // sha256(user_token_bridge_deployer)
+  // l3 token bridge deployer which holds custom gas token
   l3TokenBridgeDeployer: PrivateKeyAccount & { privateKey: `0x${string}` };
 };
 
@@ -22,10 +25,14 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
   if (
     typeof process.env.NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
     typeof process.env.NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
-    typeof process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY === 'undefined'
+    typeof process.env.NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
+    typeof process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
+    typeof process.env.NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined'
   ) {
     throw Error(
-      `required env variables: NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY, NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY`,
+      `required env variables: NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY, 
+      NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY,
+      NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY`,
     );
   }
 
@@ -33,11 +40,14 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
   const l2RollupOwnerPrivateKey = sanitizePrivateKey(
     process.env.NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY,
   );
+  const l2TokenBridgeDeployerPrivateKey = sanitizePrivateKey(
+    process.env.NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY,
+  );
   const l3RollupOwnerPrivateKey = sanitizePrivateKey(
     process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY,
   );
   const l3TokenBridgeDeployerPrivateKey = sanitizePrivateKey(
-    sha256(toBytes('user_token_bridge_deployer')),
+    process.env.NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY,
   );
 
   return {
@@ -45,6 +55,10 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
     l2RollupOwner: {
       ...privateKeyToAccount(l2RollupOwnerPrivateKey),
       privateKey: l2RollupOwnerPrivateKey,
+    },
+    l2TokenBridgeDeployer: {
+      ...privateKeyToAccount(l2TokenBridgeDeployerPrivateKey),
+      privateKey: l2TokenBridgeDeployerPrivateKey,
     },
     l3RollupOwner: {
       ...privateKeyToAccount(l3RollupOwnerPrivateKey),
@@ -55,4 +69,41 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
       privateKey: l3TokenBridgeDeployerPrivateKey,
     },
   };
+}
+
+type TestnodeInformation = {
+  rollup: `0x${string}`;
+  l3Rollup: `0x${string}`;
+  l3NativeToken: `0x${string}`;
+};
+
+export function getInformationFromTestnode(): TestnodeInformation {
+  const containers = [
+    'nitro_sequencer_1',
+    'nitro-sequencer-1',
+    'nitro-testnode-sequencer-1',
+    'nitro-testnode_sequencer_1',
+  ];
+
+  for (const container of containers) {
+    try {
+      const deploymentJson = JSON.parse(
+        execSync('docker exec ' + container + ' cat /config/deployment.json').toString(),
+      );
+
+      const l3DeploymentJson = JSON.parse(
+        execSync('docker exec ' + container + ' cat /config/l3deployment.json').toString(),
+      );
+
+      return {
+        rollup: deploymentJson['rollup'],
+        l3Rollup: l3DeploymentJson['rollup'],
+        l3NativeToken: l3DeploymentJson['native-token'],
+      };
+    } catch {
+      // empty on purpose
+    }
+  }
+
+  throw new Error('nitro-testnode sequencer not found');
 }

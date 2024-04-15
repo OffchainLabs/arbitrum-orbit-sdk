@@ -30,6 +30,7 @@ import {
   CreateRollupFetchTransactionHashParams,
 } from './createRollupFetchTransactionHash';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
+import { createRollup, CreateRollupFunctionParams, CreateRollupResults } from './createRollup';
 import { setValidKeyset, SetValidKeysetParams } from './setValidKeyset';
 import {
   setValidKeysetPrepareTransactionRequest,
@@ -41,6 +42,8 @@ import {
   upgradeExecutorEncodeFunctionData,
   UpgradeExecutorEncodeFunctionDataParameters,
 } from './upgradeExecutor';
+import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
+import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -48,6 +51,11 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { prepareNodeConfig } from './prepareNodeConfig';
+import {
+  CreateTokenBridgeParams,
+  CreateTokenBridgeResults,
+  createTokenBridge,
+} from './createTokenBridge';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
@@ -68,6 +76,8 @@ import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
 export {
+  arbOwnerPublicActions,
+  arbGasInfoPublicActions,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
@@ -88,6 +98,9 @@ export {
   createRollupFetchTransactionHash,
   CreateRollupFetchTransactionHashParams,
   createRollupFetchCoreContracts,
+  CreateRollupFunctionParams,
+  CreateRollupResults,
+  createRollup,
   setValidKeyset,
   SetValidKeysetParams,
   setValidKeysetPrepareTransactionRequest,
@@ -109,6 +122,9 @@ export {
   prepareKeyset,
   utils,
   //
+  CreateTokenBridgeParams,
+  CreateTokenBridgeResults,
+  createTokenBridge,
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
   createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest,
