@@ -1,11 +1,20 @@
 import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
 
+/**
+ * This type is for the params of the upgradeExecutorFetchPrivilegedAccounts function
+ */
 export type UpgradeExecutorFetchPrivilegedAccountsParams = {
   upgradeExecutorAddress: Address;
   publicClient: PublicClient;
 };
 
+/**
+ * This type is for the result of the upgradeExecutorFetchPrivilegedAccounts function.
+ *
+ * It is an object containing the addresses of the privileged accounts as keys,
+ * and an array with a hash for each role they have.
+ */
 export type UpgradeExecutorPrivilegedAccounts = {
   // Key: account
   // Value: array of roles
@@ -69,6 +78,23 @@ const RoleRevokedEventAbi: AbiEvent = {
   type: 'event',
 };
 
+/**
+ * Returns all accounts that have been granted a role in the UpgradeExecutor
+ *
+ * Returns an object containing the addresses of the privileged accounts as keys, and an array with a hash for each role they have.
+ *
+ * @param {UpgradeExecutorFetchPrivilegedAccountsParams} upgradeExecutorFetchPrivilegedAccountsParams {@link UpgradeExecutorFetchPrivilegedAccountsParams}
+ * @param {Address} upgradeExecutorFetchPrivilegedAccountsParams.upgradeExecutorAddress - Address of the UpgradeExecutor
+ * @param {PublicClient} upgradeExecutorFetchPrivilegedAccountsParams.publicClient - The chain Viem Public Client
+ *
+ * @returns Promise<{@link UpgradeExecutorPrivilegedAccounts}> - an object containing the addresses of the privileged accounts as keys, and an array with a hash for each role they have
+ *
+ * @example
+ * const privilegedAccounts = await upgradeExecutorFetchPrivilegedAccounts({
+ *   upgradeExecutorAddress,
+ *   publicClient,
+ * });
+ */
 export async function upgradeExecutorFetchPrivilegedAccounts({
   upgradeExecutorAddress,
   publicClient,

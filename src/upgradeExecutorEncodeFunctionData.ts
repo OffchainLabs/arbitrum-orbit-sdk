@@ -3,7 +3,9 @@ import { upgradeExecutor } from './contracts';
 import { GetFunctionName, Prettify } from './types/utils';
 
 // Roles
+// 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
 export const UPGRADE_EXECUTOR_ROLE_ADMIN = keccak256(toHex('ADMIN_ROLE'));
+// 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63
 export const UPGRADE_EXECUTOR_ROLE_EXECUTOR = keccak256(toHex('EXECUTOR_ROLE'));
 
 // Types for upgradeExecutorEncodeFunctionData

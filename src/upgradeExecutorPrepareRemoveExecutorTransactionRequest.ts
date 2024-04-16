@@ -1,10 +1,18 @@
-import { Address, PublicClient, encodeFunctionData } from 'viem';
+import {
+  Address,
+  PublicClient,
+  encodeFunctionData,
+  PrepareTransactionRequestReturnType,
+} from 'viem';
 import { upgradeExecutor } from './contracts';
 import {
   UPGRADE_EXECUTOR_ROLE_EXECUTOR,
   upgradeExecutorEncodeFunctionData,
 } from './upgradeExecutorEncodeFunctionData';
 
+/**
+ * Type for the params of the upgradeExecutorPrepareRemoveExecutorTransactionRequest function
+ */
 export type UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams = {
   account: Address;
   upgradeExecutorAddress: Address;
@@ -12,6 +20,27 @@ export type UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams = {
   publicClient: PublicClient;
 };
 
+/**
+ * Prepares a transaction to revoke the executor role from an account
+ *
+ * - Example: [Add new executor account to UpgradeExecutor](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/upgrade-executor-add-account/index.ts)
+ *
+ * @param {UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams} upgradeExecutorPrepareRemoveExecutorTransactionRequestParams {@link UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams}
+ * @param {Address} upgradeExecutorPrepareRemoveExecutorTransactionRequestParams.account - Address of the account to be revoked the executor role
+ * @param {Address} upgradeExecutorPrepareRemoveExecutorTransactionRequestParams.upgradeExecutorAddress - Address of the UpgradeExecutor contract
+ * @param {Address} upgradeExecutorPrepareRemoveExecutorTransactionRequestParams.executorAccountAddress - Address of the account that already has the executor role (will send the transaction)
+ * @param {PublicClient} upgradeExecutorPrepareRemoveExecutorTransactionRequestParams.publicClient - The chain Viem Public Client
+ *
+ * @returns Promise<{@link PrepareTransactionRequestReturnType}> - the transaction request
+ *
+ * @example
+ * const removeExecutorTransactionRequest = await upgradeExecutorPrepareRemoveExecutorTransactionRequest({
+ *   account: accountAddress,
+ *   upgradeExecutorAddress: coreContracts.upgradeExecutor,
+ *   executorAccountAddress: deployer.address,
+ *   publicClient,
+ * });
+ */
 export async function upgradeExecutorPrepareRemoveExecutorTransactionRequest({
   account,
   upgradeExecutorAddress,

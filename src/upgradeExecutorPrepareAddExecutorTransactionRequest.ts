@@ -1,10 +1,18 @@
-import { Address, PublicClient, encodeFunctionData } from 'viem';
+import {
+  Address,
+  PublicClient,
+  encodeFunctionData,
+  PrepareTransactionRequestReturnType,
+} from 'viem';
 import { upgradeExecutor } from './contracts';
 import {
   UPGRADE_EXECUTOR_ROLE_EXECUTOR,
   upgradeExecutorEncodeFunctionData,
 } from './upgradeExecutorEncodeFunctionData';
 
+/**
+ * Type for the params of the upgradeExecutorPrepareAddExecutorTransactionRequest function
+ */
 export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams = {
   account: Address;
   upgradeExecutorAddress: Address;
@@ -12,6 +20,27 @@ export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams = {
   publicClient: PublicClient;
 };
 
+/**
+ * Prepares a transaction to grant the executor role to a new account
+ *
+ * - Example: [Add new executor account to UpgradeExecutor](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/upgrade-executor-add-account/index.ts)
+ *
+ * @param {UpgradeExecutorPrepareAddExecutorTransactionRequestParams} upgradeExecutorPrepareAddExecutorTransactionRequestParams {@link UpgradeExecutorPrepareAddExecutorTransactionRequestParams}
+ * @param {Address} upgradeExecutorPrepareAddExecutorTransactionRequestParams.account - Address of the account to be granted the executor role
+ * @param {Address} upgradeExecutorPrepareAddExecutorTransactionRequestParams.upgradeExecutorAddress - Address of the UpgradeExecutor contract
+ * @param {Address} upgradeExecutorPrepareAddExecutorTransactionRequestParams.executorAccountAddress - Address of the account that already has the executor role (will send the transaction)
+ * @param {PublicClient} upgradeExecutorPrepareAddExecutorTransactionRequestParams.publicClient - The chain Viem Public Client
+ *
+ * @returns Promise<{@link PrepareTransactionRequestReturnType}> - the transaction request
+ *
+ * @example
+ * const addExecutorTransactionRequest = await upgradeExecutorPrepareAddExecutorTransactionRequest({
+ *   account: newExecutorAccountAddress,
+ *   upgradeExecutorAddress: coreContracts.upgradeExecutor,
+ *   executorAccountAddress: deployer.address,
+ *   publicClient,
+ * });
+ */
 export async function upgradeExecutorPrepareAddExecutorTransactionRequest({
   account,
   upgradeExecutorAddress,
