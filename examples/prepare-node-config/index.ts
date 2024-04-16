@@ -3,10 +3,12 @@ import { Chain, createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 import {
   ChainConfig,
+  PrepareNodeConfigParams,
   createRollupPrepareTransaction,
   createRollupPrepareTransactionReceipt,
   prepareNodeConfig,
 } from '@arbitrum/orbit-sdk';
+import { getParentChainLayer } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
 config();
 
@@ -33,6 +35,15 @@ const parentChainPublicClient = createPublicClient({
   transport: http(),
 });
 
+if (
+  getParentChainLayer(parentChainPublicClient.chain.id) == 1 &&
+  typeof process.env.ETHEREUM_BEACON_RPC_URL === 'undefined'
+) {
+  throw new Error(
+    `Please provide the "ETHEREUM_BEACON_RPC_URL" environment variable necessary for L2 Orbit chains`,
+  );
+}
+
 async function main() {
   // tx hash for the transaction to create rollup
   const txHash = process.env.ORBIT_DEPLOYMENT_TRANSACTION_HASH as `0x${string}`;
@@ -53,7 +64,7 @@ async function main() {
   const coreContracts = txReceipt.getCoreContracts();
 
   // prepare the node config
-  const nodeConfig = prepareNodeConfig({
+  const nodeConfigParameters: PrepareNodeConfigParams = {
     chainName: 'My Orbit Chain',
     chainConfig,
     coreContracts,
@@ -61,7 +72,14 @@ async function main() {
     validatorPrivateKey: process.env.VALIDATOR_PRIVATE_KEY as `0x${string}`,
     parentChainId: parentChain.id,
     parentChainRpcUrl: getRpcUrl(parentChain),
-  });
+  };
+
+  // For L2 Orbit chains settling to Ethereum mainnet or testnet
+  if (getParentChainLayer(parentChainPublicClient.chain.id) === 1) {
+    nodeConfigParameters.parentChainBeaconRpcUrl = process.env.ETHEREUM_BEACON_RPC_URL;
+  }
+
+  const nodeConfig = prepareNodeConfig(nodeConfigParameters);
 
   await writeFile('node-config.json', JSON.stringify(nodeConfig, null, 2));
   console.log(`Node config written to "node-config.json"`);
