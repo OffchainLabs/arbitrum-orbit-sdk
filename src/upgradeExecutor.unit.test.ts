@@ -1,10 +1,10 @@
 import { it, expect } from 'vitest';
+import { upgradeExecutorFetchPrivilegedAccounts } from './upgradeExecutorFetchPrivilegedAccounts';
 import {
-  upgradeExecutorEncodeFunctionData,
-  upgradeExecutorFetchPrivilegedAccounts,
   UPGRADE_EXECUTOR_ROLE_ADMIN,
   UPGRADE_EXECUTOR_ROLE_EXECUTOR,
-} from './upgradeExecutor';
+  upgradeExecutorEncodeFunctionData,
+} from './upgradeExecutorEncodeFunctionData';
 import { createPublicClient, http } from 'viem';
 import { arbitrum } from 'viem/chains';
 

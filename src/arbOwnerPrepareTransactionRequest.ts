@@ -8,7 +8,7 @@ import {
 } from 'viem';
 
 import { arbOwner } from './contracts';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { Prettify } from './types/utils';
 
 type ArbOwnerEncodeFunctionDataParameters = Prettify<

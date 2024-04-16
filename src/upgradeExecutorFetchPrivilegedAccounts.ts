@@ -1,33 +1,5 @@
-import {
-  Address,
-  encodeFunctionData,
-  EncodeFunctionDataParameters,
-  keccak256,
-  PublicClient,
-  toHex,
-} from 'viem';
+import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
-import { upgradeExecutor } from './contracts';
-import { GetFunctionName, Prettify } from './types/utils';
-
-export type UpgradeExecutorAbi = typeof upgradeExecutor.abi;
-
-export type UpgradeExecutorFunctionName = GetFunctionName<UpgradeExecutorAbi>;
-
-export type UpgradeExecutorEncodeFunctionDataParameters<
-  TFunctionName extends UpgradeExecutorFunctionName,
-> = Prettify<Omit<EncodeFunctionDataParameters<UpgradeExecutorAbi, TFunctionName>, 'abi'>>;
-
-export function upgradeExecutorEncodeFunctionData<
-  TFunctionName extends UpgradeExecutorFunctionName,
->({ functionName, args }: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>) {
-  // @ts-ignore (todo: fix viem type issue)
-  return encodeFunctionData({
-    abi: upgradeExecutor.abi,
-    functionName,
-    args,
-  });
-}
 
 export type UpgradeExecutorFetchPrivilegedAccountsParams = {
   upgradeExecutorAddress: Address;
@@ -39,9 +11,6 @@ export type UpgradeExecutorPrivilegedAccounts = {
   // Value: array of roles
   [key: `0x${string}`]: `0x${string}`[];
 };
-
-export const UPGRADE_EXECUTOR_ROLE_ADMIN = keccak256(toHex('ADMIN_ROLE'));
-export const UPGRADE_EXECUTOR_ROLE_EXECUTOR = keccak256(toHex('EXECUTOR_ROLE'));
 
 type RoleGrantedLogArgs = {
   role: `0x${string}`;
@@ -159,7 +128,4 @@ export async function upgradeExecutorFetchPrivilegedAccounts({
   });
 
   return upgradeExecutorPrivilegedAccounts;
-}
-function hex(arg0: string): `0x${string}` | Uint8Array {
-  throw new Error('Function not implemented.');
 }
