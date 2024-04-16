@@ -59,7 +59,7 @@ export async function createRollupFetchTransactionHash({
   const chainId = validateParentChain(publicClient);
 
   const fromBlock =
-    chainId in Object.keys(earliestRollupCreatorDeploymentBlockNumber)
+    chainId in earliestRollupCreatorDeploymentBlockNumber
       ? earliestRollupCreatorDeploymentBlockNumber[chainId]
       : 'earliest';
 
