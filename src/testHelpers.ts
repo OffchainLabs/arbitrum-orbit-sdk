@@ -1,4 +1,4 @@
-import { Address, sha256, toBytes } from 'viem';
+import { Address } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
 import { execSync } from 'node:child_process';
@@ -10,7 +10,6 @@ config();
 type PrivateKeyAccountWithPrivateKey = PrivateKeyAccount & { privateKey: `0x${string}` };
 // Source: https://github.com/OffchainLabs/nitro-testnode/blob/release/scripts/accounts.ts#L28
 type NitroTestNodePrivateKeyAccounts = {
-  sequencer: PrivateKeyAccountWithPrivateKey;
   // funnel
   deployer: PrivateKeyAccountWithPrivateKey;
   // sequencer (batch poster and rollup owner are the same in nitro-testnode)
@@ -30,17 +29,15 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
     typeof process.env.NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
     typeof process.env.NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY === 'undefined' ||
     typeof process.env.NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
-    typeof process.env.NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
-    typeof process.env.NITRO_TESTNODE_SEQUENCER_PRIVATE_KEY === 'undefined'
+    typeof process.env.NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY === 'undefined'
   ) {
     throw Error(
       `required env variables: NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY,
       NITRO_TESTNODE_L2_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_L3_ROLLUP_OWNER_PRIVATE_KEY,
-      NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY, NITRO_TESTNODE_SEQUENCER_PRIVATE_KEY`,
+      NITRO_TESTNODE_L3_TOKEN_BRIDGE_DEPLOYER_PRIVATE_KEY`,
     );
   }
 
-  const sequencerPrivateKey = sanitizePrivateKey(process.env.NITRO_TESTNODE_SEQUENCER_PRIVATE_KEY);
   const deployerPrivateKey = sanitizePrivateKey(process.env.NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY);
   const l2RollupOwnerPrivateKey = sanitizePrivateKey(
     process.env.NITRO_TESTNODE_L2_ROLLUP_OWNER_PRIVATE_KEY,
@@ -56,10 +53,6 @@ export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAcc
   );
 
   return {
-    sequencer: {
-      ...privateKeyToAccount(sequencerPrivateKey),
-      privateKey: sequencerPrivateKey,
-    },
     deployer: { ...privateKeyToAccount(deployerPrivateKey), privateKey: deployerPrivateKey },
     l2RollupOwner: {
       ...privateKeyToAccount(l2RollupOwnerPrivateKey),
