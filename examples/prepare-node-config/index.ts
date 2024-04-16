@@ -75,7 +75,7 @@ async function main() {
   };
 
   // For L2 Orbit chains settling to Ethereum mainnet or testnet
-  if (getParentChainLayer(parentChainPublicClient.chain.id) == 1) {
+  if (getParentChainLayer(parentChainPublicClient.chain.id) === 1) {
     nodeConfigParameters.parentChainBeaconRpcUrl = process.env.ETHEREUM_BEACON_RPC_URL;
   }
 

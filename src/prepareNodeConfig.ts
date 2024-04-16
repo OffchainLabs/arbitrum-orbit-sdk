@@ -72,7 +72,7 @@ export function prepareNodeConfig({
   parentChainBeaconRpcUrl,
 }: PrepareNodeConfigParams): NodeConfig {
   // For L2 Orbit chains settling to Ethereum mainnet or testnet, a parentChainBeaconRpcUrl is enforced
-  if (getParentChainLayer(parentChainId) == 1 && !parentChainBeaconRpcUrl) {
+  if (getParentChainLayer(parentChainId) === 1 && !parentChainBeaconRpcUrl) {
     throw new Error(`"parentChainBeaconRpcUrl" is required for L2 Orbit chains.`);
   }
 
