@@ -88,6 +88,7 @@ type TestnodeInformation = {
   l3Bridge: Address;
   batchPoster: Address;
   l3BatchPoster: Address;
+  l3UpgradeExecutor: Address;
   l3Rollup: `0x${string}`;
   l3NativeToken: `0x${string}`;
 };
@@ -128,6 +129,7 @@ export function getInformationFromTestnode(): TestnodeInformation {
         l3SequencerInbox: l3DeploymentJson['sequencer-inbox'],
         l3NativeToken: l3DeploymentJson['native-token'],
         l3BatchPoster: l3SequencerConfig.node['batch-poster']['parent-chain-wallet'].account,
+        l3UpgradeExecutor: l3DeploymentJson['upgrade-executor'],
       };
     } catch {
       // empty on purpose
