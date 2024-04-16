@@ -75,7 +75,7 @@ export function sequencerInboxActions<
   return function sequencerInboxActionsWithSequencerInbox(
     client: PublicClient<TTransport, TChain>,
   ) {
-    return {
+    const sequencerInboxExtensions: SequencerInboxActions<TSequencerInbox, TChain> = {
       sequencerInboxReadContract: <TFunctionName extends SequencerInboxFunctionName>(
         args: SequencerInboxReadContractArgs<TSequencerInbox, TFunctionName>,
       ) => {
@@ -93,5 +93,6 @@ export function sequencerInboxActions<
         } as SequencerInboxPrepareTransactionRequestParameters);
       },
     };
+    return sequencerInboxExtensions;
   };
 }
