@@ -1,17 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { createPublicClient, http, zeroAddress } from 'viem';
+import { Address, createPublicClient, http, parseAbi, zeroAddress } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from '../chains';
 import { getNitroTestnodePrivateKeyAccounts, getInformationFromTestnode } from '../testHelpers';
 import { sequencerInboxActions } from './sequencerInboxActions';
 
-// l1 owner private key
-const { l2RollupOwner } = getNitroTestnodePrivateKeyAccounts();
+const { l3RollupOwner } = getNitroTestnodePrivateKeyAccounts();
 
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
-const { l3SequencerInbox, l3Bridge, l3Rollup, l3BatchPoster, rollup } =
+const { l3SequencerInbox, l3Bridge, l3Rollup, l3BatchPoster, l3UpgradeExecutor } =
   getInformationFromTestnode();
 
 const client = createPublicClient({
@@ -25,12 +24,12 @@ describe('sequencerInboxReadContract', () => {
       functionName: 'batchCount',
       sequencerInbox: l3SequencerInbox,
     });
-    // console.log('RRRRRRRRRRRRRRR', rollup);
-    // const native = await client.readContract({
-    //   address: rollup,
-    //   abi: parseAbi(['function nativeToken() view returns (address)']),
-    //   functionName: 'nativeToken',
-    // });
+
+    const owner = await client.readContract({
+      address: l3Rollup,
+      abi: parseAbi(['function owner() view returns (address)']),
+      functionName: 'owner',
+    });
 
     expect(Number(batchCount)).greaterThan(0);
   });
@@ -38,11 +37,9 @@ describe('sequencerInboxReadContract', () => {
   //   it('successfully fetches batchPosterManager', async () => {
   //     const batchPosterManager = await client.sequencerInboxReadContract({
   //       functionName: 'batchPosterManager',
-  //       sequencerInbox: sequencerInbox,
+  //       sequencerInbox: l3SequencerInbox,
   //     });
-  //     console.log(batchPosterManager);
-
-  //     expect(batchPosterManager).toEqual('0x1248628e221ec541128d006a1517710d130');
+  //     expect(batchPosterManager).not.toEqual(zeroAddress);
   //   });
 
   it('successfully fetches bridge', async () => {
@@ -64,16 +61,6 @@ describe('sequencerInboxReadContract', () => {
     expect(isValidKeyset).toEqual(false);
     expect(creationBlock).toEqual(0n);
   });
-
-  // it('successfully call getKeysetCreationBlock', async () => {
-  //   const result = await client.sequencerInboxReadContract({
-  //     functionName: 'getKeysetCreationBlock',
-  //   sequencerInbox,
-  //     args: [],
-  //   });
-
-  //   expect(result).toEqual('');
-  // });
 
   it('successfully call inboxAccs', async () => {
     const result = await client.sequencerInboxReadContract({
@@ -181,11 +168,12 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
       functionName: 'postUpgradeInit',
       sequencerInbox: l3SequencerInbox,
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
 
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
   });
 
@@ -193,11 +181,12 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
       functionName: 'removeDelayAfterFork',
       sequencerInbox: l3SequencerInbox,
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
 
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
   });
 
@@ -206,10 +195,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       functionName: 'setBatchPosterManager',
       sequencerInbox: l3SequencerInbox,
       args: [randomAccount.address],
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
 
     const result = await client.sequencerInboxReadContract({
@@ -219,15 +209,17 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     expect(result).toEqual(randomAccount.address);
   });
 
-  it.only('successfully call setIsBatchPoster', async () => {
+  it('successfully call setIsBatchPoster', async () => {
     const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
       functionName: 'setIsBatchPoster',
       sequencerInbox: l3SequencerInbox,
       args: [randomAccount.address, true],
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
+
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
 
     const result = await client.sequencerInboxReadContract({
@@ -242,10 +234,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       functionName: 'setIsBatchPoster',
       sequencerInbox: l3SequencerInbox,
       args: [randomAccount.address, false],
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(revertTransactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(revertTransactionRequest),
     });
 
     const resultAfterReverting = await client.sequencerInboxReadContract({
@@ -257,14 +250,23 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
   });
 
   it('successfully call setIsSequencer', async () => {
+    const resultBefore = await client.sequencerInboxReadContract({
+      functionName: 'isSequencer',
+      sequencerInbox: l3SequencerInbox,
+      args: [randomAccount.address],
+    });
+    expect(resultBefore).toEqual(false);
+
     const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
       functionName: 'setIsSequencer',
       sequencerInbox: l3SequencerInbox,
       args: [randomAccount.address, true],
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
+
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
 
     const result = await client.sequencerInboxReadContract({
@@ -272,6 +274,7 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       sequencerInbox: l3SequencerInbox,
       args: [randomAccount.address],
     });
+
     expect(result).toEqual(true);
 
     // Revert change and assert
@@ -279,10 +282,12 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       functionName: 'setIsSequencer',
       sequencerInbox: l3SequencerInbox,
       args: [randomAccount.address, false],
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
+
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(revertTransactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(revertTransactionRequest),
     });
 
     const resultAfterReverting = await client.sequencerInboxReadContract({
@@ -290,6 +295,7 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       sequencerInbox: l3SequencerInbox,
       args: [randomAccount.address],
     });
+
     expect(resultAfterReverting).toEqual(false);
   });
 
@@ -297,6 +303,7 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
       functionName: 'setMaxTimeVariation',
       sequencerInbox: l3SequencerInbox,
+      upgradeExecutor: l3UpgradeExecutor,
       args: [
         {
           delayBlocks: 2_880n,
@@ -305,10 +312,10 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
           futureSeconds: 1_800n,
         },
       ],
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
     });
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
 
     const result = await client.sequencerInboxReadContract({
@@ -323,10 +330,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       functionName: 'setValidKeyset',
       sequencerInbox: l3SequencerInbox,
       args: ['0x1111111111111111111111111111111111111111111111111111111111111111'],
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
 
     const result = await client.sequencerInboxReadContract({
@@ -346,11 +354,12 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
       functionName: 'updateRollupAddress',
       sequencerInbox: l3SequencerInbox,
-      account: l2RollupOwner.address,
+      account: l3RollupOwner.address,
+      upgradeExecutor: l3UpgradeExecutor,
     });
 
     await client.sendRawTransaction({
-      serializedTransaction: await l2RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
 
     const rollupAfter = await client.sequencerInboxReadContract({
@@ -358,6 +367,6 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       sequencerInbox: l3SequencerInbox,
     });
 
-    console.log(rollupBefore, rollupAfter);
+    expect(rollupBefore).not.toEqual(rollupAfter);
   });
 });

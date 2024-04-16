@@ -8,6 +8,7 @@ import {
 } from 'viem';
 
 import { sequencerInbox } from './contracts';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { Prettify } from './types/utils';
 import { CoreContracts } from './types/CoreContracts';
 
@@ -28,16 +29,35 @@ function sequencerInboxEncodeFunctionData({
   });
 }
 
-function sequencerInboxPrepareFunctionData(params: SequencerInboxEncodeFunctionDataParameters) {
+function sequencerInboxPrepareFunctionData(
+  params: SequencerInboxEncodeFunctionDataParameters & {
+    upgradeExecutor: Address | false;
+  },
+) {
+  if (!params.upgradeExecutor) {
+    return {
+      to: params.sequencerInbox,
+      data: sequencerInboxEncodeFunctionData(params),
+      value: BigInt(0),
+    };
+  }
+
   return {
-    to: params.sequencerInbox,
-    data: sequencerInboxEncodeFunctionData(params),
+    to: params.upgradeExecutor,
+    data: upgradeExecutorEncodeFunctionData({
+      functionName: 'executeCall',
+      args: [
+        params.sequencerInbox,
+        sequencerInboxEncodeFunctionData(params), // targetCallData
+      ],
+    }),
     value: BigInt(0),
   };
 }
 
 export type SequencerInboxPrepareTransactionRequestParameters =
   Prettify<SequencerInboxEncodeFunctionDataParameters> & {
+    upgradeExecutor: Address | false;
     account: Address;
   };
 
