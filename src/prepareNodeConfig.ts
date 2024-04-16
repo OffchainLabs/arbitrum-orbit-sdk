@@ -16,6 +16,7 @@ import {
   nitroTestnodeL1,
   nitroTestnodeL2,
 } from './chains';
+import { getParentChainLayer } from './utils';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
@@ -55,7 +56,7 @@ export type PrepareNodeConfigParams = {
   coreContracts: CoreContracts;
   batchPosterPrivateKey: string;
   validatorPrivateKey: string;
-  parentChainId: number;
+  parentChainId: ParentChainId;
   parentChainRpcUrl: string;
   parentChainBeaconRpcUrl?: string;
 };
@@ -70,6 +71,11 @@ export function prepareNodeConfig({
   parentChainRpcUrl,
   parentChainBeaconRpcUrl,
 }: PrepareNodeConfigParams): NodeConfig {
+  // For L2 Orbit chains settling to Ethereum mainnet or testnet, a parentChainBeaconRpcUrl is enforced
+  if (getParentChainLayer(parentChainId) == 1 && !parentChainBeaconRpcUrl) {
+    throw new Error(`"parentChainBeaconRpcUrl" is required for L2 Orbit chains.`);
+  }
+
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
