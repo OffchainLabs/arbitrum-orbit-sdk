@@ -34,7 +34,9 @@ function sequencerInboxPrepareFunctionData(
     upgradeExecutor: Address | false;
   },
 ) {
-  if (!params.upgradeExecutor) {
+  const { upgradeExecutor } = params;
+
+  if (!upgradeExecutor) {
     return {
       to: params.sequencerInbox,
       data: sequencerInboxEncodeFunctionData(params),
@@ -43,11 +45,11 @@ function sequencerInboxPrepareFunctionData(
   }
 
   return {
-    to: params.upgradeExecutor,
+    to: upgradeExecutor,
     data: upgradeExecutorEncodeFunctionData({
       functionName: 'executeCall',
       args: [
-        params.sequencerInbox,
+        params.sequencerInbox, // target
         sequencerInboxEncodeFunctionData(params), // targetCallData
       ],
     }),
