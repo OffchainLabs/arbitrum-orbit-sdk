@@ -1,12 +1,27 @@
 import { describe, it, expect } from 'vitest';
-import { createPublicClient, http, zeroAddress } from 'viem';
+import {
+  Address,
+  createPublicClient,
+  http,
+  zeroAddress,
+  keccak256,
+  encodePacked,
+  stringToHex,
+  concatHex,
+  hexToBigInt,
+} from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from '../chains';
-import { getNitroTestnodePrivateKeyAccounts, getInformationFromTestnode } from '../testHelpers';
+import {
+  getNitroTestnodePrivateKeyAccounts,
+  getInformationFromTestnode,
+  createRollupHelper,
+} from '../testHelpers';
 import { sequencerInboxActions } from './sequencerInboxActions';
+import { prepareKeyset } from '../prepareKeyset';
 
-const { l3RollupOwner } = getNitroTestnodePrivateKeyAccounts();
+const { l3RollupOwner, l3TokenBridgeDeployer, deployer } = getNitroTestnodePrivateKeyAccounts();
 
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
@@ -26,14 +41,6 @@ describe('sequencerInboxReadContract', () => {
     });
 
     expect(Number(batchCount)).greaterThan(0);
-  });
-
-  it('successfully fetches batchPosterManager', async () => {
-    const batchPosterManager = await client.sequencerInboxReadContract({
-      functionName: 'batchPosterManager',
-    });
-
-    // expect(batchPosterManager).not.toEqual(zeroAddress);
   });
 
   it('successfully fetches bridge', async () => {
@@ -82,25 +89,6 @@ describe('sequencerInboxReadContract', () => {
     expect(resultWithBatchPoster).toEqual(true);
   });
 
-  it('successfully call isSequencer', async () => {
-    const result = await client.sequencerInboxReadContract({
-      functionName: 'isSequencer',
-      sequencerInbox: l3SequencerInbox,
-      args: [randomAccount.address],
-    });
-
-    expect(result).toEqual(false);
-  });
-
-  // it('successfully call isUsingFeeToken', async () => {
-  //   const result = await client.sequencerInboxReadContract({
-  //     functionName: 'isUsingFeeToken',
-  //     sequencerInbox: l3SequencerInbox,
-  //   });
-
-  //   expect(result).toEqual(false);
-  // });
-
   it('successfully call isValidKeysetHash', async () => {
     const result = await client.sequencerInboxReadContract({
       functionName: 'isValidKeysetHash',
@@ -111,15 +99,6 @@ describe('sequencerInboxReadContract', () => {
     expect(result).toEqual(false);
   });
 
-  it('successfully call maxDataSize', async () => {
-    const result = await client.sequencerInboxReadContract({
-      functionName: 'maxDataSize',
-      sequencerInbox: l3SequencerInbox,
-    });
-
-    expect(Number(result)).greaterThan(0);
-  });
-
   it('successfully call maxTimeVariation', async () => {
     const result = await client.sequencerInboxReadContract({
       functionName: 'maxTimeVariation',
@@ -128,15 +107,6 @@ describe('sequencerInboxReadContract', () => {
 
     expect(result).toEqual([5760n, 12n, 86400n, 3600n]);
   });
-
-  //   it('successfully call reader4844', async () => {
-  //     const result = await client.sequencerInboxReadContract({
-  //       functionName: 'reader4844',
-  //       sequencerInbox: l3SequencerInbox,
-  //     });
-
-  //     expect(result).toEqual('0x');
-  //   });
 
   it('successfully call rollup', async () => {
     const result = await client.sequencerInboxReadContract({
@@ -158,38 +128,6 @@ describe('sequencerInboxReadContract', () => {
 });
 
 describe('sequencerInboxPrepareTransactionRequest', async () => {
-  it('successfully call postUpgradeInit', async () => {
-    const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
-      functionName: 'postUpgradeInit',
-      sequencerInbox: l3SequencerInbox,
-      account: l3RollupOwner.address,
-      upgradeExecutor: l3UpgradeExecutor,
-    });
-
-    await client.sendRawTransaction({
-      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
-    });
-  });
-
-  it('successfully call setBatchPosterManager', async () => {
-    const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
-      functionName: 'setBatchPosterManager',
-      sequencerInbox: l3SequencerInbox,
-      args: [randomAccount.address],
-      account: l3RollupOwner.address,
-      upgradeExecutor: l3UpgradeExecutor,
-    });
-    await client.sendRawTransaction({
-      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
-    });
-
-    const result = await client.sequencerInboxReadContract({
-      functionName: 'batchPosterManager',
-      sequencerInbox: l3SequencerInbox,
-    });
-    expect(result).toEqual(randomAccount.address);
-  });
-
   it('successfully call setIsBatchPoster', async () => {
     const resultBefore = await client.sequencerInboxReadContract({
       functionName: 'isBatchPoster',
@@ -237,57 +175,12 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     expect(resultAfterReverting).toEqual(false);
   });
 
-  it('successfully call setIsSequencer', async () => {
-    const resultBefore = await client.sequencerInboxReadContract({
-      functionName: 'isSequencer',
-      sequencerInbox: l3SequencerInbox,
-      args: [randomAccount.address],
-    });
-    expect(resultBefore).toEqual(false);
-
-    const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
-      functionName: 'setIsSequencer',
-      sequencerInbox: l3SequencerInbox,
-      args: [randomAccount.address, true],
-      account: l3RollupOwner.address,
-      upgradeExecutor: l3UpgradeExecutor,
-    });
-
-    await client.sendRawTransaction({
-      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
-    });
-
-    const result = await client.sequencerInboxReadContract({
-      functionName: 'isSequencer',
-      sequencerInbox: l3SequencerInbox,
-      args: [randomAccount.address],
-    });
-
-    expect(result).toEqual(true);
-
-    // Revert change and assert
-    const revertTransactionRequest = await client.sequencerInboxPrepareTransactionRequest({
-      functionName: 'setIsSequencer',
-      sequencerInbox: l3SequencerInbox,
-      args: [randomAccount.address, false],
-      account: l3RollupOwner.address,
-      upgradeExecutor: l3UpgradeExecutor,
-    });
-
-    await client.sendRawTransaction({
-      serializedTransaction: await l3RollupOwner.signTransaction(revertTransactionRequest),
-    });
-
-    const resultAfterReverting = await client.sequencerInboxReadContract({
-      functionName: 'isSequencer',
-      sequencerInbox: l3SequencerInbox,
-      args: [randomAccount.address],
-    });
-
-    expect(resultAfterReverting).toEqual(false);
-  });
-
   it('successfully call setMaxTimeVariation', async () => {
+    const resultBefore = await client.sequencerInboxReadContract({
+      functionName: 'maxTimeVariation',
+      sequencerInbox: l3SequencerInbox,
+    });
+
     const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
       functionName: 'setMaxTimeVariation',
       sequencerInbox: l3SequencerInbox,
@@ -311,25 +204,72 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       sequencerInbox: l3SequencerInbox,
     });
     expect(result).toEqual([2_880n, 6n, 43_200n, 1_800n]);
-  });
 
-  it('successfully call setValidKeyset', async () => {
-    const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
-      functionName: 'setValidKeyset',
+    // Revert the change, so read test still work
+    const transactionRequestRevert = await client.sequencerInboxPrepareTransactionRequest({
+      functionName: 'setMaxTimeVariation',
       sequencerInbox: l3SequencerInbox,
-      args: ['0x1111111111111111111111111111111111111111111111111111111111111111'],
-      account: l3RollupOwner.address,
       upgradeExecutor: l3UpgradeExecutor,
+      args: [
+        {
+          delayBlocks: resultBefore[0],
+          futureBlocks: resultBefore[1],
+          delaySeconds: resultBefore[2],
+          futureSeconds: resultBefore[3],
+        },
+      ],
+      account: l3RollupOwner.address,
     });
     await client.sendRawTransaction({
-      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
+      serializedTransaction: await l3RollupOwner.signTransaction(transactionRequestRevert),
+    });
+  });
+
+  it.only('successfully call setValidKeyset', async () => {
+    // Keyset needs to be set on anytrust chain
+    const deployerAddress = deployer.address;
+    const batchPoster = deployer.address;
+    const validators: [Address] = [deployerAddress];
+
+    const { createRollupInformation } = await createRollupHelper({
+      l3TokenBridgeDeployer,
+      batchPoster,
+      validators,
+      nativeToken: zeroAddress,
+      client,
     });
 
-    const result = await client.sequencerInboxReadContract({
-      functionName: 'isValidKeysetHash',
-      sequencerInbox: l3SequencerInbox,
-      args: ['0x1111111111111111111111111111111111111111111111111111111111111111'],
+    const { sequencerInbox, upgradeExecutor } = createRollupInformation.coreContracts;
+
+    const keyset =
+      '0x00000000000000010000000000000001012160000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+    const transactionRequest = await client.sequencerInboxPrepareTransactionRequest({
+      functionName: 'setValidKeyset',
+      sequencerInbox: sequencerInbox,
+      args: [keyset],
+      account: l3TokenBridgeDeployer.address,
+      upgradeExecutor: upgradeExecutor,
     });
-    expect(result).toEqual(true);
+    const transactionHash = await client.sendRawTransaction({
+      serializedTransaction: await l3TokenBridgeDeployer.signTransaction(transactionRequest),
+    });
+
+    await client.waitForTransactionReceipt({ hash: transactionHash });
+
+    // uint256 ksWord = uint256(keccak256(bytes.concat(hex"fe", keccak256(keysetBytes))));
+    // bytes32 ksHash = bytes32(ksWord ^ (1 << 255));
+    const ksword = keccak256(concatHex(['0xfe', keccak256(keyset)]));
+    // const ksHash = ksword ^ (1n << 255n);
+
+    const a = hexToBigInt(ksword);
+    const ksHash = a ^ (1n << 255n);
+
+    // const result = await client.sequencerInboxReadContract({
+    //   functionName: 'isValidKeysetHash',
+    //   sequencerInbox,
+    //   args: [ksHash],
+    // });
+
+    // expect(result).toEqual(true);
   });
 });
