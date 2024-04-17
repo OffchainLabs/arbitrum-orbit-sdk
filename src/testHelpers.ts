@@ -1,9 +1,12 @@
-import { Address } from 'viem';
+import { Address, Client, PublicClient, zeroAddress } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
 import { execSync } from 'node:child_process';
 
-import { sanitizePrivateKey } from './utils';
+import { generateChainId, sanitizePrivateKey } from './utils';
+import { createRollup } from './createRollup';
+import { createRollupPrepareConfig } from './createRollupPrepareConfig';
+import { prepareChainConfig } from './prepareChainConfig';
 
 config();
 
@@ -130,4 +133,49 @@ export function getInformationFromTestnode(): TestnodeInformation {
   }
 
   throw new Error('nitro-testnode sequencer not found');
+}
+
+export async function createRollupHelper({
+  l3TokenBridgeDeployer,
+  batchPoster,
+  validators,
+  nativeToken = zeroAddress,
+  client,
+}: {
+  l3TokenBridgeDeployer: PrivateKeyAccountWithPrivateKey;
+  batchPoster: Address;
+  validators: [Address];
+  nativeToken: Address;
+  client: PublicClient;
+}) {
+  const chainId = generateChainId();
+
+  const createRollupConfig = createRollupPrepareConfig({
+    chainId: BigInt(chainId),
+    owner: l3TokenBridgeDeployer.address,
+    chainConfig: prepareChainConfig({
+      chainId,
+      arbitrum: {
+        InitialChainOwner: l3TokenBridgeDeployer.address,
+        DataAvailabilityCommittee: true,
+      },
+    }),
+  });
+
+  const createRollupInformation = await createRollup({
+    params: {
+      config: createRollupConfig,
+      batchPoster,
+      validators,
+      nativeToken,
+    },
+    account: l3TokenBridgeDeployer,
+    parentChainPublicClient: client,
+  });
+
+  // create test rollup with ETH as gas token
+  return {
+    createRollupConfig,
+    createRollupInformation,
+  };
 }
