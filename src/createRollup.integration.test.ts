@@ -83,7 +83,7 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
     expect(createRollupInformation.coreContracts).toBeDefined();
   });
 
-  it(`finds the transaction hash that created a specified deployed rollup contract`, async (p) => {
+  it(`finds the transaction hash that created a specified deployed rollup contract`, async () => {
     const transactionHash = await createRollupFetchTransactionHash({
       rollup: createRollupInformation.coreContracts.rollup,
       publicClient: parentChainPublicClient,
