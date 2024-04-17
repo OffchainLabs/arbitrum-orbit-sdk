@@ -225,7 +225,7 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     });
   });
 
-  it.only('successfully call setValidKeyset', async () => {
+  it('successfully call setValidKeyset', async () => {
     // Keyset needs to be set on anytrust chain
     const deployerAddress = deployer.address;
     const batchPoster = deployer.address;
