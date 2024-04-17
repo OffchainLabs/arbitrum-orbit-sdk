@@ -16,7 +16,7 @@ const l3TokenBridgeDeployer = testnodeAccounts.l3TokenBridgeDeployer;
 const batchPoster = testnodeAccounts.deployer.address;
 const validators: [Address] = [testnodeAccounts.deployer.address];
 
-describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
+describe.sequential(`create an AnyTrust chain that uses ETH as gas token`, async () => {
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
     l3TokenBridgeDeployer,
     batchPoster,
@@ -53,7 +53,7 @@ describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
   });
 });
 
-describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
+describe.sequential(`create an AnyTrust chain that uses a custom gas token`, async () => {
   // deployed during nitro testnode running process
   const customGasTokenAddress = '0xc57a290f65F1D433f081381B2A7A523Ea70f1134';
 
