@@ -7,7 +7,7 @@ import { arbAggregatorActions } from './arbAggregatorActions';
 import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
-const deployer = testnodeAccounts.deployer;
+const l2RollupOwner = testnodeAccounts.l2RollupOwner;
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
 const nitroTestnodeL2Client = createPublicClient({
@@ -44,10 +44,10 @@ describe('ArgAggregator decorator tests', () => {
         functionName: 'setFeeCollector',
         args: [batchPosters[1] as `0x${string}`, randomAccount.address],
         upgradeExecutor: false,
-        account: deployer.address,
+        account: l2RollupOwner.address,
       });
     await nitroTestnodeL2Client.sendRawTransaction({
-      serializedTransaction: await deployer.signTransaction(setFeeCollectorTransactionRequest),
+      serializedTransaction: await l2RollupOwner.signTransaction(setFeeCollectorTransactionRequest),
     });
 
     // Check the fee collector has changed
