@@ -44,6 +44,7 @@ import {
 } from './upgradeExecutor';
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
+import { arbAggregatorActions } from './decorators/arbAggregatorActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -73,11 +74,20 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
+import {
+  feeRouterDeployChildToParentRouter,
+  FeeRouterDeployChildToParentRouterParams,
+} from './feeRouterDeployChildToParentRouter';
+import {
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
+} from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
+  arbAggregatorActions,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
@@ -136,4 +146,9 @@ export {
   createTokenBridgeFetchTokenBridgeContracts,
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+  //
+  feeRouterDeployChildToParentRouter,
+  FeeRouterDeployChildToParentRouterParams,
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
 };
