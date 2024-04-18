@@ -16,6 +16,7 @@ import {
   nitroTestnodeL1,
   nitroTestnodeL2,
 } from './chains';
+import { getParentChainLayer } from './utils';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
@@ -49,6 +50,17 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   }
 }
 
+export type PrepareNodeConfigParams = {
+  chainName: string;
+  chainConfig: ChainConfig;
+  coreContracts: CoreContracts;
+  batchPosterPrivateKey: string;
+  validatorPrivateKey: string;
+  parentChainId: ParentChainId;
+  parentChainRpcUrl: string;
+  parentChainBeaconRpcUrl?: string;
+};
+
 export function prepareNodeConfig({
   chainName,
   chainConfig,
@@ -57,15 +69,13 @@ export function prepareNodeConfig({
   validatorPrivateKey,
   parentChainId,
   parentChainRpcUrl,
-}: {
-  chainName: string;
-  chainConfig: ChainConfig;
-  coreContracts: CoreContracts;
-  batchPosterPrivateKey: string;
-  validatorPrivateKey: string;
-  parentChainId: number;
-  parentChainRpcUrl: string;
-}): NodeConfig {
+  parentChainBeaconRpcUrl,
+}: PrepareNodeConfigParams): NodeConfig {
+  // For L2 Orbit chains settling to Ethereum mainnet or testnet, a parentChainBeaconRpcUrl is enforced
+  if (getParentChainLayer(parentChainId) === 1 && !parentChainBeaconRpcUrl) {
+    throw new Error(`"parentChainBeaconRpcUrl" is required for L2 Orbit chains.`);
+  }
+
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
@@ -137,6 +147,12 @@ export function prepareNodeConfig({
       },
     },
   };
+
+  if (parentChainBeaconRpcUrl) {
+    config['parent-chain']!['blob-client'] = {
+      'beacon-url': parentChainBeaconRpcUrl,
+    };
+  }
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
     config.node!['data-availability'] = {
