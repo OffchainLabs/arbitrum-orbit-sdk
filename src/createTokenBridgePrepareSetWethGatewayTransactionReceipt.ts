@@ -1,5 +1,5 @@
 import { PublicClient, TransactionReceipt } from 'viem';
-import { L1ToL2MessageStatus, L1TransactionReceipt } from '@arbitrum/sdk';
+import { ParentToChildMessageStatus, ParentTransactionReceipt } from '@arbitrum/sdk';
 import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
 
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
@@ -7,7 +7,7 @@ import { viemTransactionReceiptToEthersTransactionReceipt } from './ethers-compa
 import { ethersTransactionReceiptToViemTransactionReceipt } from './ethers-compat/ethersTransactionReceiptToViemTransactionReceipt';
 
 type RedeemedRetryableTicket = {
-  status: L1ToL2MessageStatus.REDEEMED;
+  status: ParentToChildMessageStatus.REDEEMED;
   l2TxReceipt: EthersTransactionReceipt;
 };
 
@@ -30,16 +30,16 @@ export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
       orbitPublicClient,
     }: WaitForRetryablesParameters): Promise<WaitForRetryablesResult> {
       const ethersTxReceipt = viemTransactionReceiptToEthersTransactionReceipt(txReceipt);
-      const parentChainTxReceipt = new L1TransactionReceipt(ethersTxReceipt);
+      const parentChainTxReceipt = new ParentTransactionReceipt(ethersTxReceipt);
       const orbitProvider = publicClientToProvider(orbitPublicClient);
-      const messages = await parentChainTxReceipt.getL1ToL2Messages(orbitProvider);
+      const messages = await parentChainTxReceipt.getParentToChildMessages(orbitProvider);
       const messagesResults = await Promise.all(messages.map((message) => message.waitForStatus()));
 
       if (messagesResults.length !== 1) {
         throw Error(`Unexpected number of retryable tickets: ${messagesResults.length}`);
       }
 
-      if (messagesResults[0].status !== L1ToL2MessageStatus.REDEEMED) {
+      if (messagesResults[0].status !== ParentToChildMessageStatus.REDEEMED) {
         throw Error(`Unexpected status for retryable ticket: ${messages[0].retryableCreationId}`);
       }
 

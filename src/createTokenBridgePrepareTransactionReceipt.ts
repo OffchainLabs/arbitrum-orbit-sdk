@@ -6,7 +6,7 @@ import {
   getAbiItem,
   getEventSelector,
 } from 'viem';
-import { L1ToL2MessageStatus, L1TransactionReceipt } from '@arbitrum/sdk';
+import { ParentToChildMessageStatus, ParentTransactionReceipt } from '@arbitrum/sdk';
 import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
 
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
@@ -43,7 +43,7 @@ function decodeOrbitTokenBridgeCreatedEventLog(log: Log<bigint, number>) {
 }
 
 type RedeemedRetryableTicket = {
-  status: L1ToL2MessageStatus.REDEEMED;
+  status: ParentToChildMessageStatus.REDEEMED;
   l2TxReceipt: EthersTransactionReceipt;
 };
 
@@ -71,20 +71,20 @@ export function createTokenBridgePrepareTransactionReceipt(
     ...txReceipt,
     waitForRetryables: async function ({ orbitPublicClient }) {
       const ethersTxReceipt = viemTransactionReceiptToEthersTransactionReceipt(txReceipt);
-      const l1TxReceipt = new L1TransactionReceipt(ethersTxReceipt);
+      const l1TxReceipt = new ParentTransactionReceipt(ethersTxReceipt);
       const orbitProvider = publicClientToProvider(orbitPublicClient);
-      const messages = await l1TxReceipt.getL1ToL2Messages(orbitProvider);
+      const messages = await l1TxReceipt.getParentToChildMessages(orbitProvider);
       const messagesResults = await Promise.all(messages.map((message) => message.waitForStatus()));
 
       if (messagesResults.length !== 2) {
         throw Error(`Unexpected number of retryable tickets: ${messagesResults.length}`);
       }
 
-      if (messagesResults[0].status !== L1ToL2MessageStatus.REDEEMED) {
+      if (messagesResults[0].status !== ParentToChildMessageStatus.REDEEMED) {
         throw Error(`Unexpected status for retryable ticket: ${messages[0].retryableCreationId}`);
       }
 
-      if (messagesResults[1].status !== L1ToL2MessageStatus.REDEEMED) {
+      if (messagesResults[1].status !== ParentToChildMessageStatus.REDEEMED) {
         throw Error(`Unexpected status for retryable ticket: ${messages[1].retryableCreationId}`);
       }
 

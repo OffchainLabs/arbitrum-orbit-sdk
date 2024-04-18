@@ -51,7 +51,7 @@
     "viem": "^1.20.0"
   },
   "dependencies": {
-    "@arbitrum/sdk": "^3.3.2",
+    "@arbitrum/sdk": "^4.0.0-alpha.0",
     "@arbitrum/token-bridge-contracts": "^1.2.1",
     "ethers": "^5.7.2"
   }

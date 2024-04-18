@@ -1,6 +1,6 @@
 import { Address, PublicClient } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
-import { L1ToL2MessageGasEstimator } from '@arbitrum/sdk';
+import { ParentToChildMessageGasEstimator } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
@@ -171,7 +171,7 @@ const getEstimateForDeployingFactory = async (
   l2Provider: ethers.providers.Provider,
 ) => {
   //// run retryable estimate for deploying L2 factory
-  const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(l2Provider);
+  const l1ToL2MsgGasEstimate = new ParentToChildMessageGasEstimator(l2Provider);
 
   const deployFactoryGasParams = await l1ToL2MsgGasEstimate.estimateAll(
     {
@@ -202,7 +202,7 @@ export const getEstimateForSettingGateway = async (
   const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
 
   // run retryable estimate for setting a token gateway in the router
-  const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(orbitChainProvider);
+  const l1ToL2MsgGasEstimate = new ParentToChildMessageGasEstimator(orbitChainProvider);
 
   const setGatewaysGasParams = await l1ToL2MsgGasEstimate.estimateAll(
     {
