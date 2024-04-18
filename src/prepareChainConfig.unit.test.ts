@@ -42,7 +42,7 @@ it('creates chain config with custom params', () => {
       EnableArbOS: false,
       AllowDebugPrecompiles: true,
       DataAvailabilityCommittee: true,
-      InitialArbOSVersion: 11,
+      InitialArbOSVersion: 20,
       InitialChainOwner: vitalik,
       GenesisBlockNum: 1,
       MaxCodeSize: 40 * 1024,
