@@ -1,24 +1,20 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import {
   ArbitrumNetwork,
-  getArbitrumNetwork,
   getArbitrumNetworkInformationFromRollup,
-  addCustomArbitrumNetwork,
+  registerCustomArbitrumNetwork,
 } from '@arbitrum/sdk';
 
-async function createArbitrumNetwork({
-  chainId,
-  rollupAddress,
-  parentProvider,
-}: {
-  chainId: number;
-  rollupAddress: string;
-  parentProvider: JsonRpcProvider;
-}): Promise<ArbitrumNetwork> {
+export const registerNewNetwork = async (
+  parentProvider: JsonRpcProvider,
+  childProvider: JsonRpcProvider,
+  rollupAddress: string,
+): Promise<ArbitrumNetwork> => {
+  const chainId = (await childProvider.getNetwork()).chainId;
   const { parentChainId, ethBridge, confirmPeriodBlocks } =
     await getArbitrumNetworkInformationFromRollup(rollupAddress, parentProvider);
 
-  return {
+  const arbitrumNetwork: ArbitrumNetwork = {
     name: String(`${chainId}-arbitrum-network`),
     chainId,
     parentChainId,
@@ -42,24 +38,6 @@ async function createArbitrumNetwork({
     },
     isCustom: true,
   };
-}
 
-export const registerNewNetwork = async (
-  parentProvider: JsonRpcProvider,
-  childProvider: JsonRpcProvider,
-  rollupAddress: string,
-): Promise<ArbitrumNetwork> => {
-  try {
-    return await getArbitrumNetwork(childProvider);
-  } catch (err) {
-    const arbitrumNetwork = await createArbitrumNetwork({
-      chainId: (await childProvider.getNetwork()).chainId,
-      rollupAddress,
-      parentProvider,
-    });
-
-    addCustomArbitrumNetwork(arbitrumNetwork);
-
-    return arbitrumNetwork;
-  }
+  return registerCustomArbitrumNetwork(arbitrumNetwork);
 };
