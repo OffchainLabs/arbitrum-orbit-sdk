@@ -20,12 +20,16 @@ export type FeeRouterDeployRewardDistributorParams = {
 
 /**
  * Deploys the RewardDistributor smart contract and initializes it with the provided configuration.
- * 
+ *
+ * Note that weights are expressed in percentages multiplied by 100. For example, to allocate 12,5% of the amount to
+ * a specific recipient, you'll define the weight as 1250. To allocate 80%, you'll define the weight as 8000.
+ *
  * References:
  * - ChildToParentRouter contract: https://github.com/OffchainLabs/fund-distribution-contracts/blob/main/src/RewardDistributor.sol
- * 
- * Example: [Setup fee routing for the AEP](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/setup-aep-fee-router/index.ts)
- * 
+ *
+ * Example 1: [Setup fee routing for the AEP](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/setup-aep-fee-router/index.ts)
+ * Example 2: [Setup fee distributor contract](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/setup-fee-distributor-contract/index.ts)
+ *
  * @param {FeeRouterDeployRewardDistributorParams} feeRouterDeployRewardDistributorParams {@link FeeRouterDeployRewardDistributorParams}
  * @param {WalletClient} feeRouterDeployRewardDistributorParams.orbitChainWalletClient - The orbit chain Viem wallet client (this account will deploy the contract)
  * @param {RewardDistributorRecipient[]} feeRouterDeployRewardDistributorParams.recipients - The recipients of the rewards (array objects with properties "account" and "weight") {@link RewardDistributorRecipient}
@@ -33,7 +37,7 @@ export type FeeRouterDeployRewardDistributorParams = {
  * @param {Address} feeRouterDeployRewardDistributorParams.recipients.weight - Percentage of the reward obtained multiplied by 100 (e.g., for obtaining 25%, the weight would be 2500)
  *
  * @returns Promise<0x${string}> - The hash of the deployment transaction
- * 
+ *
  * @example
  * const recipients = [
  *   {
