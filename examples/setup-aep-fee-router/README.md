@@ -7,10 +7,12 @@ This example script shows how to setup the appropriate fee routing to comply wit
 The script performs the following operations:
 
 1. Obtain all chain contracts (needed to execute the next steps)
-2. Obtain the current fee collector for the active batch poster of the chain
+2. Obtain the current fee collectors of the chain: Orbit base fee collector, Orbit surplus fee collector, Parent chain surplus fee collector
 3. Deploy the ChildToParentRouter contract, configured to send the amounts received to the Arbitrum Foundation L1 multisig address
-4. Deploy the RewardDistributor contract, configured to distribute 90% of the amounts received to the current fee collector, and 10% to the ChildToParentRouter contract
-5. Set the fee collector of the active batch poster to the RewardDistributor contract
+4. Deploy a RewardDistributor contract for each different fee collector account, configured to distribute 90% of the amounts received to the current fee collector, and 10% to the ChildToParentRouter contract
+5. Set each of the fee collectors to the RewardDistributor contracts
+
+Note that if all three fee types are collected by the same address, only one RewardDistributor contract will be deployed that will collect all those fees.
 
 ## Variables needed
 

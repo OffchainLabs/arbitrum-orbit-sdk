@@ -11,9 +11,10 @@ import { arbitrumSepolia } from 'viem/chains';
 import {
   feeRouterDeployChildToParentRouter,
   feeRouterDeployRewardDistributor,
-  arbAggregatorActions,
   createRollupFetchCoreContracts,
   createTokenBridgeFetchTokenBridgeContracts,
+  arbOwnerPublicActions,
+  arbGasInfoPublicActions,
 } from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey, getParentChainLayer } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
@@ -59,9 +60,9 @@ const orbitChain = defineChain({
   },
   testnet: true,
 });
-const orbitChainPublicClient = createPublicClient({ chain: orbitChain, transport: http() }).extend(
-  arbAggregatorActions,
-);
+const orbitChainPublicClient = createPublicClient({ chain: orbitChain, transport: http() })
+  .extend(arbOwnerPublicActions)
+  .extend(arbGasInfoPublicActions);
 const orbitChainWalletClient = createWalletClient({
   chain: orbitChain,
   transport: http(),
@@ -81,7 +82,7 @@ async function main() {
   }
 
   // Step 0. Collect information
-  // (We need to obtain all chain contracts and the current fee collector for the configured batch poster)
+  // (We need to obtain all chain contracts and the current fee collectors of all fee types)
   // ---------------------------
 
   // getting all chain contracts
@@ -100,38 +101,24 @@ async function main() {
     parentChainPublicClient,
   });
 
-  // getting the current batch poster
-  console.log('Finding current batch poster...');
-  const batchPosters = await orbitChainPublicClient.arbAggregatorReadContract({
-    functionName: 'getBatchPosters',
+  // getting Orbit base fee collector (infraFeeAccount)
+  const infraFeeAccount = await orbitChainPublicClient.arbOwnerReadContract({
+    functionName: 'getInfraFeeAccount',
   });
 
-  let currentBatchPoster = '';
-  for await (const batchPoster of batchPosters) {
-    const isBatchPoster = await parentChainPublicClient.readContract({
-      address: rollupCoreContracts.sequencerInbox,
-      abi: parseAbi(['function isBatchPoster(address) view returns (bool)']),
-      functionName: 'isBatchPoster',
-      args: [batchPoster],
-    });
-
-    if (isBatchPoster) {
-      currentBatchPoster = batchPoster;
-    }
-  }
-
-  if (currentBatchPoster === '') {
-    throw new Error('Current batch poster could not be found');
-  }
-  console.log(`Current batch poster is ${currentBatchPoster}`);
-
-  // getting the fee collector of that batch poster
-  const batchPosterFeeCollector = await orbitChainPublicClient.arbAggregatorReadContract({
-    functionName: 'getFeeCollector',
-    args: [currentBatchPoster as `0x${string}`],
+  // getting Orbit surplus fee collector (networkFeeAccount)
+  const networkFeeAccount = await orbitChainPublicClient.arbOwnerReadContract({
+    functionName: 'getNetworkFeeAccount',
   });
-  console.log(`Fee collector for the current batch poster is ${batchPosterFeeCollector}`);
-  console.log('');
+
+  // getting parent chain surplus fee collector (L1RewardRecipient)
+  // Note: Arbiscan (Sepolia) doesn't have the updated ABI for ArbGasInfo, so we need to
+  // fetch the reward recipient this way
+  const parentChainRewardRecipient = await orbitChainPublicClient.readContract({
+    address: '0x000000000000000000000000000000000000006C',
+    abi: parseAbi(['function getL1RewardRecipient() view returns (address)']),
+    functionName: 'getL1RewardRecipient',
+  });
 
   // Step 1. Deploy the ChildToParentRouter
   // (This contract will transfer the amounts received by the contract to a specific address in the parent chain)
@@ -158,64 +145,139 @@ async function main() {
   console.log(`ChildToParentRouter contract deployed at ${childToParentRouterAddress}`);
   console.log('');
 
-  // Step 2. Deploy the RewardDistributor
-  // (This contract will distribute the amounts received by the contract to the configured recipients)
+  // Step 2. Deploy a RewardDistributor for each distinct fee collector
+  //
+  // These contracts will distribute the amounts received by them to the configured recipients
+  // Each contract will have the following recipients configured:
+  //  - Previous fee collector, to receive 90% of the amount
+  //  - Deployed childToParentRouter, to receive 10% of the amount
   // ------------------------------------
-  const recipients = [
-    {
-      account: batchPosterFeeCollector,
-      weight: 9000n,
-    },
-    {
-      account: childToParentRouterAddress,
-      weight: 1000n,
-    },
+  const feeCollectors = [
+    ...new Set([infraFeeAccount, networkFeeAccount, parentChainRewardRecipient]),
   ];
-  console.log('Deploying RewardDistributor contract...');
-  const rewardDistributorDeploymentTransactionHash = await feeRouterDeployRewardDistributor({
-    orbitChainWalletClient,
-    recipients,
-  });
+  const feeCollectorToRewardDistributor: { [key: `0x${string}`]: `0x${string}` } = {};
 
-  const rewardDistributorDeploymentTransactionReceipt =
-    await orbitChainPublicClient.waitForTransactionReceipt({
-      hash: rewardDistributorDeploymentTransactionHash,
+  for await (const feeCollector of feeCollectors) {
+    const recipients = [
+      {
+        account: feeCollector,
+        weight: 9000n,
+      },
+      {
+        account: childToParentRouterAddress,
+        weight: 1000n,
+      },
+    ];
+    console.log('Deploying RewardDistributor contract...');
+    const rewardDistributorDeploymentTransactionHash = await feeRouterDeployRewardDistributor({
+      orbitChainWalletClient,
+      recipients,
     });
 
-  if (!rewardDistributorDeploymentTransactionReceipt.contractAddress) {
-    throw new Error('RewardDistributor was not successfully deployed.');
+    const rewardDistributorDeploymentTransactionReceipt =
+      await orbitChainPublicClient.waitForTransactionReceipt({
+        hash: rewardDistributorDeploymentTransactionHash,
+      });
+
+    if (!rewardDistributorDeploymentTransactionReceipt.contractAddress) {
+      throw new Error('RewardDistributor was not successfully deployed.');
+    }
+
+    const rewardDistributorAddress = getAddress(
+      rewardDistributorDeploymentTransactionReceipt.contractAddress,
+    );
+    console.log(`RewardDistributor contract deployed at ${rewardDistributorAddress}`);
+    console.log('');
+
+    feeCollectorToRewardDistributor[feeCollector] = rewardDistributorAddress;
   }
 
-  const rewardDistributorAddress = getAddress(
-    rewardDistributorDeploymentTransactionReceipt.contractAddress,
-  );
-  console.log(`RewardDistributor contract deployed at ${rewardDistributorAddress}`);
-  console.log('');
-
-  // Step 3. Set FeeCollector of the current batch poster to the RewardDistributor
+  // Step 3. Set the fee collectors to the new RewardDistributor contracts
   // -----------------------------------------------------------------------------
-  console.log('Setting the RewardDistributor as the FeeCollector of the active batch poster...');
-  const setFeeCollectorTransactionRequest =
-    await orbitChainPublicClient.arbAggregatorPrepareTransactionRequest({
-      functionName: 'setFeeCollector',
-      args: [currentBatchPoster as `0x${string}`, rewardDistributorAddress],
+  console.log('Setting the RewardDistributors as the fee new collectors...');
+
+  // setting Orbit base fee collector (infraFeeAccount)
+  const setOrbitBaseFeeCollectorTransactionRequest =
+    await orbitChainPublicClient.arbOwnerPrepareTransactionRequest({
+      functionName: 'setInfraFeeAccount',
+      args: [feeCollectorToRewardDistributor[infraFeeAccount]],
       upgradeExecutor: tokenBridgeContracts.orbitChainContracts.upgradeExecutor,
       account: chainOwner.address,
     });
-
   await orbitChainPublicClient.sendRawTransaction({
-    serializedTransaction: await chainOwner.signTransaction(setFeeCollectorTransactionRequest),
+    serializedTransaction: await chainOwner.signTransaction(
+      setOrbitBaseFeeCollectorTransactionRequest,
+    ),
   });
 
-  // checking that the fee collector was correctly set
-  const currentFeeCollector = await orbitChainPublicClient.arbAggregatorReadContract({
-    functionName: 'getFeeCollector',
-    args: [currentBatchPoster as `0x${string}`],
+  // setting Orbit surplus fee collector (networkFeeAccount)
+  const setOrbitSurplusFeeCollectorTransactionRequest =
+    await orbitChainPublicClient.arbOwnerPrepareTransactionRequest({
+      functionName: 'setNetworkFeeAccount',
+      args: [feeCollectorToRewardDistributor[networkFeeAccount]],
+      upgradeExecutor: tokenBridgeContracts.orbitChainContracts.upgradeExecutor,
+      account: chainOwner.address,
+    });
+  await orbitChainPublicClient.sendRawTransaction({
+    serializedTransaction: await chainOwner.signTransaction(
+      setOrbitSurplusFeeCollectorTransactionRequest,
+    ),
   });
-  if (currentFeeCollector != rewardDistributorAddress) {
-    throw new Error(`Fee collector was not correctly set. It is now set to ${currentFeeCollector}`);
+
+  // setting parent chain surplus fee collector (L1RewardRecipient)
+  const setParentChainSurplusFeeCollectorTransactionRequest =
+    await orbitChainPublicClient.arbOwnerPrepareTransactionRequest({
+      functionName: 'setL1PricingRewardRecipient',
+      args: [feeCollectorToRewardDistributor[parentChainRewardRecipient]],
+      upgradeExecutor: tokenBridgeContracts.orbitChainContracts.upgradeExecutor,
+      account: chainOwner.address,
+    });
+  await orbitChainPublicClient.sendRawTransaction({
+    serializedTransaction: await chainOwner.signTransaction(
+      setParentChainSurplusFeeCollectorTransactionRequest,
+    ),
+  });
+
+  // checking that the fee collectors were correctly set
+  const currentInfraFeeAccount = await orbitChainPublicClient.arbOwnerReadContract({
+    functionName: 'getInfraFeeAccount',
+  });
+  if (currentInfraFeeAccount != feeCollectorToRewardDistributor[infraFeeAccount]) {
+    throw new Error(
+      `Orbit base fee collector was not correctly set. It is now set to ${currentInfraFeeAccount}`,
+    );
   }
-  console.log('Fee collector correctly set to the RewardDistributor contract');
+  console.log(
+    `Orbit base fee collector correctly set to the RewardDistributor contract ${currentInfraFeeAccount}`,
+  );
+
+  const currentNetworkFeeAccount = await orbitChainPublicClient.arbOwnerReadContract({
+    functionName: 'getNetworkFeeAccount',
+  });
+  if (currentNetworkFeeAccount != feeCollectorToRewardDistributor[networkFeeAccount]) {
+    throw new Error(
+      `Orbit surplus fee collector was not correctly set. It is now set to ${currentNetworkFeeAccount}`,
+    );
+  }
+  console.log(
+    `Orbit surplus fee collector correctly set to the RewardDistributor contract ${currentNetworkFeeAccount}`,
+  );
+
+  const currentParentChainRewardRecipient = await orbitChainPublicClient.readContract({
+    address: '0x000000000000000000000000000000000000006C',
+    abi: parseAbi(['function getL1RewardRecipient() view returns (address)']),
+    functionName: 'getL1RewardRecipient',
+  });
+  if (
+    currentParentChainRewardRecipient != feeCollectorToRewardDistributor[parentChainRewardRecipient]
+  ) {
+    throw new Error(
+      `Parent chain surplus fee collector was not correctly set. It is now set to ${currentParentChainRewardRecipient}`,
+    );
+  }
+  console.log(
+    `Parent chain surplus fee collector correctly set to the RewardDistributor contract ${currentParentChainRewardRecipient}`,
+  );
 }
 
 main();
