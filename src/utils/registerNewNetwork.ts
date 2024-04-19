@@ -1,33 +1,29 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { Network } from '@ethersproject/networks';
-import { ArbitrumNetwork, getArbitrumNetwork, addCustomArbitrumNetwork } from '@arbitrum/sdk';
-import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
+import {
+  ArbitrumNetwork,
+  getArbitrumNetwork,
+  getArbitrumNetworkInformationFromRollup,
+  addCustomArbitrumNetwork,
+} from '@arbitrum/sdk';
 
 async function createArbitrumNetwork({
+  chainId,
   rollupAddress,
   parentProvider,
-  parentNetwork,
-  childNetwork,
 }: {
+  chainId: number;
   rollupAddress: string;
   parentProvider: JsonRpcProvider;
-  parentNetwork: Network;
-  childNetwork: Network;
 }): Promise<ArbitrumNetwork> {
-  const rollup = RollupAdminLogic__factory.connect(rollupAddress, parentProvider);
+  const { parentChainId, ethBridge, confirmPeriodBlocks } =
+    await getArbitrumNetworkInformationFromRollup(rollupAddress, parentProvider);
 
   return {
-    name: 'OrbitChain',
-    parentChainId: parentNetwork.chainId,
-    chainId: childNetwork.chainId,
-    confirmPeriodBlocks: (await rollup.confirmPeriodBlocks()).toNumber(),
-    ethBridge: {
-      bridge: await rollup.bridge(),
-      inbox: await rollup.inbox(),
-      outbox: await rollup.outbox(),
-      rollup: rollup.address,
-      sequencerInbox: await rollup.sequencerInbox(),
-    },
+    name: String(`${chainId}-arbitrum-network`),
+    chainId,
+    parentChainId,
+    confirmPeriodBlocks,
+    ethBridge,
     tokenBridge: {
       l1CustomGateway: '',
       l1ERC20Gateway: '',
@@ -56,14 +52,10 @@ export const registerNewNetwork = async (
   try {
     return await getArbitrumNetwork(childProvider);
   } catch (err) {
-    const parentNetworkInfo = await parentProvider.getNetwork();
-    const childNetworkInfo = await childProvider.getNetwork();
-
     const arbitrumNetwork = await createArbitrumNetwork({
+      chainId: (await childProvider.getNetwork()).chainId,
       rollupAddress,
       parentProvider,
-      parentNetwork: parentNetworkInfo,
-      childNetwork: childNetworkInfo,
     });
 
     addCustomArbitrumNetwork(arbitrumNetwork);
