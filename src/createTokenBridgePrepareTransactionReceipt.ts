@@ -7,7 +7,7 @@ import {
   getEventSelector,
 } from 'viem';
 import { ParentToChildMessageStatus, ParentTransactionReceipt } from '@arbitrum/sdk';
-import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
+import { ParentToChildMessageWaitResult } from '@arbitrum/sdk/dist/lib/message/ParentToChildMessage';
 
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { viemTransactionReceiptToEthersTransactionReceipt } from './ethers-compat/viemTransactionReceiptToEthersTransactionReceipt';
@@ -42,10 +42,10 @@ function decodeOrbitTokenBridgeCreatedEventLog(log: Log<bigint, number>) {
   return decodedEventLog;
 }
 
-type RedeemedRetryableTicket = {
-  status: ParentToChildMessageStatus.REDEEMED;
-  chainTxReceipt: EthersTransactionReceipt;
-};
+type RedeemedRetryableTicket = Extract<
+  ParentToChildMessageWaitResult,
+  { status: ParentToChildMessageStatus.REDEEMED }
+>;
 
 export type WaitForRetryablesParameters = {
   orbitPublicClient: PublicClient;
