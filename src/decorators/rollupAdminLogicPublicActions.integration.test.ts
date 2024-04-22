@@ -49,3 +49,49 @@ it('successfully set validators', async () => {
 
   expect(validators).toEqual([true, false]);
 });
+
+it('successfully enable/disable whitelist', async () => {
+  const whitelistDisabledBefore = await client.rollupAdminLogicReadContract({
+    functionName: 'validatorWhitelistDisabled',
+    rollupAddress: l3Rollup,
+  });
+
+  // By default whitelist is not disabled
+  expect(whitelistDisabledBefore).toEqual(false);
+
+  const tx = await client.rollupAdminLogicPrepareTransactionRequest({
+    functionName: 'setValidatorWhitelistDisabled',
+    args: [true],
+    account: l3RollupOwner.address,
+    rollupAdminLogicAddress: l3Rollup,
+    upgradeExecutor: l3UpgradeExecutor,
+  });
+
+  await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(
+      tx as PrepareTransactionRequestReturnType & { chainId: number },
+    ),
+  });
+
+  const whitelistDisabled = await client.rollupAdminLogicReadContract({
+    functionName: 'validatorWhitelistDisabled',
+    rollupAddress: l3Rollup,
+  });
+
+  expect(whitelistDisabled).toEqual(true);
+
+  // Revert changes, so test can be run multiple time without issues
+  const revertTx = await client.rollupAdminLogicPrepareTransactionRequest({
+    functionName: 'setValidatorWhitelistDisabled',
+    args: [false],
+    account: l3RollupOwner.address,
+    rollupAdminLogicAddress: l3Rollup,
+    upgradeExecutor: l3UpgradeExecutor,
+  });
+
+  await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(
+      revertTx as PrepareTransactionRequestReturnType & { chainId: number },
+    ),
+  });
+});
