@@ -1,12 +1,11 @@
 import { it, expect } from 'vitest';
-import { PrepareTransactionRequestReturnType, createPublicClient, http, Address } from 'viem';
+import { PrepareTransactionRequestReturnType, createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from '../chains';
 import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
 import { getInformationFromTestnode, getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
 
-// l2 owner private key
 const { l3RollupOwner } = getNitroTestnodePrivateKeyAccounts();
 const { l3Rollup, l3UpgradeExecutor } = getInformationFromTestnode();
 
@@ -29,7 +28,7 @@ it('successfully set validators', async () => {
     upgradeExecutor: l3UpgradeExecutor,
   });
 
-  const txHash = await client.sendRawTransaction({
+  await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(
       tx as PrepareTransactionRequestReturnType & { chainId: number },
     ),

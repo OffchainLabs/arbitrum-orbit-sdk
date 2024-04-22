@@ -37,7 +37,6 @@ function rollupAdminLogicPrepareFunctionData(
 ) {
   const { upgradeExecutor, rollupAdminLogicAddress } = params;
 
-  console.log('upgradeExecutor', upgradeExecutor);
   if (!upgradeExecutor) {
     return {
       to: rollupAdminLogicAddress,
