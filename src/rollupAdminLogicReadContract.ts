@@ -10,7 +10,7 @@ import {
 
 import { GetFunctionName } from './types/utils';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
-import { rollupAdminLogicABI } from './contracts';
+import { rollupAdminLogicABI } from './abi/rollupAdminLogicABI';
 
 export type RollupAdminLogicAbi = typeof rollupAdminLogicABI;
 export type RollupAdminLogicFunctionName = GetFunctionName<RollupAdminLogicAbi>;
@@ -36,5 +36,6 @@ export function rollupAdminLogicReadContract<
     address: params.rollupAddress,
     abi: RollupAdminLogic__factory.abi,
     functionName: params.functionName,
+    args: params.args,
   } as unknown as ReadContractParameters<RollupAdminLogicAbi, TFunctionName>);
 }

@@ -9,8 +9,9 @@ import {
   PrepareTransactionRequestReturnType,
 } from 'viem';
 
-import { rollupAdminLogicABI } from './contracts';
+import { rollupAdminLogicABI } from './abi/rollupAdminLogicABI';
 import { Prettify } from './types/utils';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 
 type RollupAdminLogicEncodeFunctionDataParameters = Prettify<
   Omit<EncodeFunctionDataParameters<typeof rollupAdminLogicABI, string>, 'abi'>
@@ -29,18 +30,38 @@ function rollupAdminLogicEncodeFunctionData({
   });
 }
 
-function rollupAdminLogicPrepareFunctionData(params: RollupAdminLogicEncodeFunctionDataParameters) {
-  const { rollupAdminLogicAddress } = params;
+function rollupAdminLogicPrepareFunctionData(
+  params: RollupAdminLogicEncodeFunctionDataParameters & {
+    upgradeExecutor: Address | false;
+  },
+) {
+  const { upgradeExecutor, rollupAdminLogicAddress } = params;
+
+  console.log('upgradeExecutor', upgradeExecutor);
+  if (!upgradeExecutor) {
+    return {
+      to: rollupAdminLogicAddress,
+      data: rollupAdminLogicEncodeFunctionData(params),
+      value: BigInt(0),
+    };
+  }
 
   return {
-    to: rollupAdminLogicAddress,
-    data: rollupAdminLogicEncodeFunctionData(params),
+    to: upgradeExecutor,
+    data: upgradeExecutorEncodeFunctionData({
+      functionName: 'executeCall',
+      args: [
+        rollupAdminLogicAddress, // target
+        rollupAdminLogicEncodeFunctionData(params), // targetCallData
+      ],
+    }),
     value: BigInt(0),
   };
 }
 
 export type RollupAdminLogicPrepareTransactionRequestParameters = Prettify<
   RollupAdminLogicEncodeFunctionDataParameters & {
+    upgradeExecutor: Address | false;
     account: Address;
   }
 >;
@@ -59,8 +80,8 @@ export async function rollupAdminLogicPrepareTransactionRequest<TChain extends C
     chain: client.chain,
     account: params.account,
     to,
-    value,
     data,
+    value,
   };
 
   const request = await client.prepareTransactionRequest(prepareTransactionRequestParams);
