@@ -1,36 +1,52 @@
 import { it, expect } from 'vitest';
-import { PrepareTransactionRequestReturnType, createPublicClient, http } from 'viem';
+import { PrepareTransactionRequestReturnType, createPublicClient, http, Address } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from '../chains';
 import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
-import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
+import { getInformationFromTestnode, getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
 
 // l2 owner private key
-const devPrivateKey = getNitroTestnodePrivateKeyAccounts().l2RollupOwner.privateKey;
-
-const owner = privateKeyToAccount(devPrivateKey);
-const randomAccount = privateKeyToAccount(generatePrivateKey());
-
-const rollupAddress = '0x';
+const { l3RollupOwner } = getNitroTestnodePrivateKeyAccounts();
+const { l3Rollup, l3UpgradeExecutor } = getInformationFromTestnode();
 
 const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
 }).extend(rollupAdminLogicPublicActions);
 
-it('successfully sets delayed inbox', async () => {
-  const transactionRequest = await client.rollupAdminLogicPrepareTransactionRequest({
-    functionName: 'setDelayedInbox',
-    args: ['0x', true],
-    rollupAdminLogicAddress: rollupAddress,
-    account: owner.address,
+it('successfully set validators', async () => {
+  const randomAccounts = [
+    privateKeyToAccount(generatePrivateKey()).address,
+    privateKeyToAccount(generatePrivateKey()).address,
+  ];
+
+  const tx = await client.rollupAdminLogicPrepareTransactionRequest({
+    functionName: 'setValidator',
+    args: [randomAccounts, [true, false]],
+    account: l3RollupOwner.address,
+    rollupAdminLogicAddress: l3Rollup,
+    upgradeExecutor: l3UpgradeExecutor,
   });
 
-  // submit tx to set delayed inbox
-  await client.sendRawTransaction({
-    serializedTransaction: await owner.signTransaction(
-      transactionRequest as PrepareTransactionRequestReturnType & { chainId: number },
+  const txHash = await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(
+      tx as PrepareTransactionRequestReturnType & { chainId: number },
     ),
   });
+
+  const validators = await Promise.all([
+    client.rollupAdminLogicReadContract({
+      functionName: 'isValidator',
+      args: [randomAccounts[0]],
+      rollupAddress: l3Rollup,
+    }),
+    client.rollupAdminLogicReadContract({
+      functionName: 'isValidator',
+      args: [randomAccounts[1]],
+      rollupAddress: l3Rollup,
+    }),
+  ]);
+
+  expect(validators).toEqual([true, false]);
 });
