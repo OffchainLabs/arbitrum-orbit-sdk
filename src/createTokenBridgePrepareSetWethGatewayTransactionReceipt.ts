@@ -8,7 +8,7 @@ import { ethersTransactionReceiptToViemTransactionReceipt } from './ethers-compa
 
 type RedeemedRetryableTicket = {
   status: ParentToChildMessageStatus.REDEEMED;
-  l2TxReceipt: EthersTransactionReceipt;
+  chainTxReceipt: EthersTransactionReceipt;
 };
 
 export type WaitForRetryablesParameters = {
@@ -48,7 +48,7 @@ export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
         (messagesResults as unknown as [RedeemedRetryableTicket])
           //
           .map((result) =>
-            ethersTransactionReceiptToViemTransactionReceipt(result.l2TxReceipt),
+            ethersTransactionReceiptToViemTransactionReceipt(result.chainTxReceipt),
           ) as WaitForRetryablesResult
       );
     },
