@@ -198,3 +198,40 @@ export const tokenBridgeCreator = {
 export const sequencerInbox = {
   abi: sequencerInboxABI,
 };
+export type ArbOSVersions = 10 | 11 | 20;
+
+export const ArbOwnerABIs = {
+  10: [
+    {
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [],
+      name: 'getAllChainOwners',
+      outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    },
+    {
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [],
+      name: 'onlyOnArbOS10',
+      outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+    },
+  ],
+  11: [
+    {
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [],
+      name: 'getAllChainOwners',
+      outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    },
+    {
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [],
+      name: 'onlyOnArbOS11',
+      outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+    },
+  ],
+  20: arbOwnerConfig.abi,
+} as const;
