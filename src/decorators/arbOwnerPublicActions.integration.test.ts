@@ -15,7 +15,7 @@ const randomAccount = privateKeyToAccount(generatePrivateKey());
 const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
-}).extend(arbOwnerPublicActions);
+}).extend(arbOwnerPublicActions({ arbOSVersion: 20 }));
 
 it('successfully fetches network fee receiver', async () => {
   const result = await client.arbOwnerReadContract({

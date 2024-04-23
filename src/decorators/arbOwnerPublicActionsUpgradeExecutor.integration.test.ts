@@ -20,7 +20,7 @@ const client = createPublicClient({
   chain: nitroTestnodeL3,
   transport: http(),
 })
-  .extend(arbOwnerPublicActions)
+  .extend(arbOwnerPublicActions({ arbOSVersion: 20 }))
   .extend(arbGasInfoPublicActions);
 
 it('succesfully adds chain owner using upgrade executor', async () => {
