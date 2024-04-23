@@ -11,11 +11,15 @@ import {
   ArbOwnerPrepareTransactionRequestFunctionName,
   ArbOwnerPrepareTransactionRequestParameters,
 } from '../arbOwnerPrepareTransactionRequest';
+import { ArbOSVersions } from '../contracts';
 
-export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | undefined> = {
-  arbOwnerReadContract: <TFunctionName extends ArbOwnerPublicFunctionName>(
-    args: ArbOwnerReadContractParameters<TFunctionName>,
-  ) => Promise<ArbOwnerReadContractReturnType<TFunctionName>>;
+export type ArbOwnerPublicActions<
+  TArbOsVersion extends ArbOSVersions,
+  TChain extends Chain | undefined = Chain | undefined,
+> = {
+  arbOwnerReadContract: <TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>>(
+    args: ArbOwnerReadContractParameters<TArbOsVersion, TFunctionName>,
+  ) => Promise<ArbOwnerReadContractReturnType<TArbOsVersion, TFunctionName>>;
 
   arbOwnerPrepareTransactionRequest: <
     TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
@@ -25,12 +29,18 @@ export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | und
 };
 
 export function arbOwnerPublicActions<
+  TArbOsVersion extends ArbOSVersions,
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
->(client: PublicClient<TTransport, TChain>): ArbOwnerPublicActions<TChain> {
-  return {
-    arbOwnerReadContract: (args) => arbOwnerReadContract(client, args),
+>({ arbOSVersion }: { arbOSVersion: TArbOsVersion }) {
+  return (
+    client: PublicClient<TTransport, TChain>,
+  ): ArbOwnerPublicActions<TArbOsVersion, TChain> => {
+    return {
+      arbOwnerReadContract: (args) => arbOwnerReadContract(client, { ...args, arbOSVersion }),
 
-    arbOwnerPrepareTransactionRequest: (args) => arbOwnerPrepareTransactionRequest(client, args),
+      arbOwnerPrepareTransactionRequest: (args) =>
+        arbOwnerPrepareTransactionRequest(client, { ...args, arbOSVersion }),
+    };
   };
 }

@@ -7,7 +7,7 @@ import {
   Transport,
 } from 'viem';
 
-import { arbOwner } from './contracts';
+import { arbOwner, ArbOSVersions } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { GetFunctionName } from './types/utils';
 
@@ -61,18 +61,20 @@ function arbOwnerPrepareFunctionData<
   };
 }
 
-export type ArbOwnerPrepareTransactionRequestParameters<
-  TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
-> = Omit<ArbOwnerPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+export type ArbOwnerPrepareTransactionRequestParameters<TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName> = ArbOwnerEncodeFunctionDataParameters<TFunctionName> & {
+  upgradeExecutor: Address | false;
   account: Address;
-};
+}
 
 export async function arbOwnerPrepareTransactionRequest<
+  TArbOsVersion extends ArbOSVersions,
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
   TChain extends Chain | undefined,
 >(
   client: PublicClient<Transport, TChain>,
-  params: ArbOwnerPrepareTransactionRequestParameters<TFunctionName>,
+  params: ArbOwnerPrepareTransactionRequestParameters<TFunctionName> & {
+    arbOSVersion: TArbOsVersion;
+  },
 ) {
   if (typeof client.chain === 'undefined') {
     throw new Error('[arbOwnerPrepareTransactionRequest] client.chain is undefined');
