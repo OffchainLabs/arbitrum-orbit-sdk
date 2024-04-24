@@ -31,8 +31,4 @@ yarn verifyRollup
 
 ## Token Bridge verification
 
-Fetches information from the Token Bridge in the parent and Orbit chains.
-
-```shell
-yarn verifyTokenBridge
-```
+To verify the token bridge, please follow [these instructions](https://github.com/OffchainLabs/token-bridge-contracts/blob/main/docs/deployment.md#verify-token-bridge-deployment) from the token-bridge-contracts repository.

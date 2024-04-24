@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "scripts": {
     "verifyRollup": "ts-node src/verify-rollup.ts",
-    "verifyTokenBridge": "ts-node src/verify-token-bridge.ts",
     "getAllContracts": "ts-node src/get-contracts.ts"
   },
   "devDependencies": {
