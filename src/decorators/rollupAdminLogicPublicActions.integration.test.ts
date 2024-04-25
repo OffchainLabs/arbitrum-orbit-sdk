@@ -12,7 +12,11 @@ const { l3Rollup, l3UpgradeExecutor } = getInformationFromTestnode();
 const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
-}).extend(rollupAdminLogicPublicActions);
+}).extend(
+  rollupAdminLogicPublicActions({
+    rollupAdminLogicAddress: l3Rollup,
+  }),
+);
 
 it('successfully set validators', async () => {
   const randomAccounts = [
@@ -24,7 +28,6 @@ it('successfully set validators', async () => {
     functionName: 'setValidator',
     args: [randomAccounts, [true, false]],
     account: l3RollupOwner.address,
-    rollupAdminLogicAddress: l3Rollup,
     upgradeExecutor: l3UpgradeExecutor,
   });
 
@@ -38,12 +41,12 @@ it('successfully set validators', async () => {
     client.rollupAdminLogicReadContract({
       functionName: 'isValidator',
       args: [randomAccounts[0]],
-      rollupAddress: l3Rollup,
+      rollupAdminLogicAddress: l3Rollup,
     }),
     client.rollupAdminLogicReadContract({
       functionName: 'isValidator',
       args: [randomAccounts[1]],
-      rollupAddress: l3Rollup,
+      rollupAdminLogicAddress: l3Rollup,
     }),
   ]);
 
@@ -53,7 +56,6 @@ it('successfully set validators', async () => {
 it('successfully enable/disable whitelist', async () => {
   const whitelistDisabledBefore = await client.rollupAdminLogicReadContract({
     functionName: 'validatorWhitelistDisabled',
-    rollupAddress: l3Rollup,
   });
 
   // By default whitelist is not disabled
@@ -75,7 +77,7 @@ it('successfully enable/disable whitelist', async () => {
 
   const whitelistDisabled = await client.rollupAdminLogicReadContract({
     functionName: 'validatorWhitelistDisabled',
-    rollupAddress: l3Rollup,
+    rollupAdminLogicAddress: l3Rollup,
   });
 
   expect(whitelistDisabled).toEqual(true);

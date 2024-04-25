@@ -21,6 +21,12 @@ export type RollupAdminLogicReadContractParameters<
   functionName: TFunctionName;
 } & GetFunctionArgs<RollupAdminLogicAbi, TFunctionName>;
 
+export type RollupAdminLogicReadContractParametersWithContractAddress<
+  TFunctionName extends RollupAdminLogicFunctionName,
+> = RollupAdminLogicReadContractParameters<TFunctionName> & {
+  rollupAdminLogicAddress: Address;
+};
+
 export type RollupAdminLogicReadContractReturnType<
   TFunctionName extends RollupAdminLogicFunctionName,
 > = ReadContractReturnType<RollupAdminLogicAbi, TFunctionName>;
@@ -30,10 +36,10 @@ export function rollupAdminLogicReadContract<
   TFunctionName extends RollupAdminLogicFunctionName,
 >(
   client: PublicClient<Transport, TChain>,
-  params: RollupAdminLogicReadContractParameters<TFunctionName> & { rollupAddress: Address },
+  params: RollupAdminLogicReadContractParametersWithContractAddress<TFunctionName>,
 ): Promise<RollupAdminLogicReadContractReturnType<TFunctionName>> {
   return client.readContract({
-    address: params.rollupAddress,
+    address: params.rollupAdminLogicAddress,
     abi: RollupAdminLogic__factory.abi,
     functionName: params.functionName,
     args: params.args,

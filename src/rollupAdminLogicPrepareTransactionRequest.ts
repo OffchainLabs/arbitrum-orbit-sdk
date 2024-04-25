@@ -15,9 +15,7 @@ import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 
 type RollupAdminLogicEncodeFunctionDataParameters = Prettify<
   Omit<EncodeFunctionDataParameters<typeof rollupAdminLogicABI, string>, 'abi'>
-> & {
-  rollupAdminLogicAddress: Address;
-};
+>;
 
 function rollupAdminLogicEncodeFunctionData({
   functionName,
@@ -33,6 +31,7 @@ function rollupAdminLogicEncodeFunctionData({
 function rollupAdminLogicPrepareFunctionData(
   params: RollupAdminLogicEncodeFunctionDataParameters & {
     upgradeExecutor: Address | false;
+    rollupAdminLogicAddress: Address;
   },
 ) {
   const { upgradeExecutor, rollupAdminLogicAddress } = params;
@@ -67,7 +66,9 @@ export type RollupAdminLogicPrepareTransactionRequestParameters = Prettify<
 
 export async function rollupAdminLogicPrepareTransactionRequest<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: RollupAdminLogicPrepareTransactionRequestParameters,
+  params: RollupAdminLogicPrepareTransactionRequestParameters & {
+    rollupAdminLogicAddress: Address;
+  },
 ): Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }> {
   if (typeof client.chain === 'undefined') {
     throw new Error('[rollupAdminLogicPrepareTransactionRequest] client.chain is undefined');
