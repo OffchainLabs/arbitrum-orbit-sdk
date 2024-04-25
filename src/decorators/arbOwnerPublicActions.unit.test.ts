@@ -25,6 +25,7 @@ it('Accept function name based on arbOSVersion', async () => {
 
   expect(
     client10.arbOwnerReadContract({
+      // @ts-expect-error Not available for version 10
       functionName: 'onlyOnArbOS20',
     }),
   ).rejects.toThrowError(AbiFunctionNotFoundError);
@@ -36,6 +37,7 @@ it('Accept function name based on arbOSVersion', async () => {
 
   expect(
     client11.arbOwnerReadContract({
+      // @ts-expect-error Not available for version 11
       functionName: 'onlyOnArbOS20',
     }),
   ).rejects.toThrowError(AbiFunctionNotFoundError);
@@ -47,6 +49,7 @@ it('Accept function name based on arbOSVersion', async () => {
 
   expect(
     client20.arbOwnerReadContract({
+      // @ts-expect-error Not available for version 20
       functionName: 'onlyOnArbOS10',
     }),
   ).rejects.toThrowError(AbiFunctionNotFoundError);
