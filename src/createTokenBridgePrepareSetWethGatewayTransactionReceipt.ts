@@ -1,13 +1,16 @@
 import { PublicClient, TransactionReceipt } from 'viem';
-import { ParentToChildMessageStatus, ParentTransactionReceipt } from '@arbitrum/sdk';
-import { ParentToChildMessageWaitResult } from '@arbitrum/sdk/dist/lib/message/ParentToChildMessage';
+import {
+  ParentToChildMessageStatus,
+  ParentToChildMessageWaitForStatusResult,
+  ParentTransactionReceipt,
+} from '@arbitrum/sdk';
 
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { viemTransactionReceiptToEthersTransactionReceipt } from './ethers-compat/viemTransactionReceiptToEthersTransactionReceipt';
 import { ethersTransactionReceiptToViemTransactionReceipt } from './ethers-compat/ethersTransactionReceiptToViemTransactionReceipt';
 
 type RedeemedRetryableTicket = Extract<
-  ParentToChildMessageWaitResult,
+  ParentToChildMessageWaitForStatusResult,
   { status: ParentToChildMessageStatus.REDEEMED }
 >;
 
@@ -48,7 +51,7 @@ export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
         (messagesResults as unknown as [RedeemedRetryableTicket])
           //
           .map((result) =>
-            ethersTransactionReceiptToViemTransactionReceipt(result.chainTxReceipt),
+            ethersTransactionReceiptToViemTransactionReceipt(result.txReceipt),
           ) as WaitForRetryablesResult
       );
     },
