@@ -5,31 +5,33 @@ import {
   Address,
   Chain,
   Transport,
+  GetFunctionArgs,
+  PrepareTransactionRequestReturnType,
 } from 'viem';
 
 import { arbOwner } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
-import { Prettify } from './types/utils';
+import { GetFunctionName, Prettify } from './types/utils';
+import { arbOwnerABI } from './generated';
 
-type ArbOwnerEncodeFunctionDataParameters = Prettify<
-  Omit<EncodeFunctionDataParameters<typeof arbOwner.abi, string>, 'abi'>
->;
+export type ArbOwnerAbi = typeof arbOwnerABI;
+export type ArbOwnerFunctionName = GetFunctionName<ArbOwnerAbi>;
 
-function arbOwnerEncodeFunctionData({ functionName, args }: ArbOwnerEncodeFunctionDataParameters) {
+type ArbOwnerEncodeFunctionDataParameters<TFunctionName extends ArbOwnerFunctionName> =
+  EncodeFunctionDataParameters<typeof arbOwnerABI, TFunctionName>
+function arbOwnerEncodeFunctionData<TFunctionName extends ArbOwnerFunctionName>({ functionName, abi, args }: ArbOwnerEncodeFunctionDataParameters<TFunctionName>) {
   return encodeFunctionData({
-    abi: arbOwner.abi,
+    abi,
     functionName,
     args,
   });
 }
 
-function arbOwnerPrepareFunctionData(
-  params: ArbOwnerEncodeFunctionDataParameters & {
-    upgradeExecutor: Address | false;
-  },
+// Type intersection would be too slow here, we need to split upgradeExecutor in a second param
+function arbOwnerPrepareFunctionData<TFunctionName extends ArbOwnerFunctionName>(
+  params: ArbOwnerEncodeFunctionDataParameters<TFunctionName>,
+  upgradeExecutor: Address | false
 ) {
-  const { upgradeExecutor } = params;
-
   if (!upgradeExecutor) {
     return {
       to: arbOwner.address,
@@ -51,22 +53,28 @@ function arbOwnerPrepareFunctionData(
   };
 }
 
-export type ArbOwnerPrepareTransactionRequestParameters = Prettify<
-  ArbOwnerEncodeFunctionDataParameters & {
+export type ArbOwnerPrepareTransactionRequestParameters<TFunctionName extends ArbOwnerFunctionName> = Prettify<
+{
+  functionName: TFunctionName;
+} & GetFunctionArgs<ArbOwnerAbi, TFunctionName> & {
     upgradeExecutor: Address | false;
     account: Address;
   }
 >;
 
-export async function arbOwnerPrepareTransactionRequest<TChain extends Chain | undefined>(
+export async function arbOwnerPrepareTransactionRequest<
+  TChain extends Chain | undefined,
+  TFunctionName extends ArbOwnerFunctionName,
+>(
   client: PublicClient<Transport, TChain>,
-  params: ArbOwnerPrepareTransactionRequestParameters,
-) {
+  params: ArbOwnerPrepareTransactionRequestParameters<TFunctionName>,
+): Promise<PrepareTransactionRequestReturnType & { chainId: number }> {
   if (typeof client.chain === 'undefined') {
     throw new Error('[arbOwnerPrepareTransactionRequest] client.chain is undefined');
   }
 
-  const { to, data, value } = arbOwnerPrepareFunctionData(params);
+  const { upgradeExecutor, ...restParams } = params
+  const { to, data, value } = arbOwnerPrepareFunctionData(restParams as unknown as ArbOwnerPrepareTransactionRequestParameters<TFunctionName>, upgradeExecutor);
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await client.prepareTransactionRequest({
