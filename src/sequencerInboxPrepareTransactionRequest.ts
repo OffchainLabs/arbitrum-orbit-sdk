@@ -10,7 +10,6 @@ import {
 import { sequencerInbox } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { Prettify } from './types/utils';
-import { CoreContracts } from './types/CoreContracts';
 
 type SequencerInboxEncodeFunctionDataParameters = Prettify<
   Omit<EncodeFunctionDataParameters<typeof sequencerInbox.abi, string>, 'abi'>
