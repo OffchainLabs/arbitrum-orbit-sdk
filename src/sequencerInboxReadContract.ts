@@ -1,8 +1,14 @@
-import { Chain, GetFunctionArgs, PublicClient, ReadContractReturnType, Transport } from 'viem';
+import {
+  Address,
+  Chain,
+  GetFunctionArgs,
+  PublicClient,
+  ReadContractReturnType,
+  Transport,
+} from 'viem';
 
 import { sequencerInbox } from './contracts';
 import { GetFunctionName } from './types/utils';
-import { CoreContracts } from './types/CoreContracts';
 
 export type SequencerInboxAbi = typeof sequencerInbox.abi;
 export type SequencerInboxFunctionName = GetFunctionName<SequencerInboxAbi>;
