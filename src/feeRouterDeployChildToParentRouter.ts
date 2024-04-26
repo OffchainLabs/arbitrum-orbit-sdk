@@ -21,7 +21,7 @@ export type FeeRouterDeployChildToParentRouterParams = Prettify<
 >;
 
 // Default minimum distribution interval seconds
-const DEFAULT_MIN_DISTRIBUTION_INVERVAL_SECONDS = BigInt(60 * 60 * 24); // 1 day
+const DEFAULT_MIN_DISTRIBUTION_INVERVAL_SECONDS = BigInt(60 * 60 * 24 * 7); // 1 week
 
 // Default address 1
 const oneAddress = getAddress(
