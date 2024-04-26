@@ -15,7 +15,7 @@ import { CoreContracts } from './types/CoreContracts';
 type SequencerInboxEncodeFunctionDataParameters = Prettify<
   Omit<EncodeFunctionDataParameters<typeof sequencerInbox.abi, string>, 'abi'>
 > & {
-  sequencerInbox: CoreContracts['sequencerInbox'];
+  sequencerInbox: Address;
 };
 
 function sequencerInboxEncodeFunctionData({
