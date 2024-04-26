@@ -136,13 +136,13 @@ export function getInformationFromTestnode(): TestnodeInformation {
 }
 
 export async function createRollupHelper({
-  l3TokenBridgeDeployer,
+  deployer,
   batchPoster,
   validators,
   nativeToken = zeroAddress,
   client,
 }: {
-  l3TokenBridgeDeployer: PrivateKeyAccountWithPrivateKey;
+  deployer: PrivateKeyAccountWithPrivateKey;
   batchPoster: Address;
   validators: [Address];
   nativeToken: Address;
@@ -152,11 +152,11 @@ export async function createRollupHelper({
 
   const createRollupConfig = createRollupPrepareConfig({
     chainId: BigInt(chainId),
-    owner: l3TokenBridgeDeployer.address,
+    owner: deployer.address,
     chainConfig: prepareChainConfig({
       chainId,
       arbitrum: {
-        InitialChainOwner: l3TokenBridgeDeployer.address,
+        InitialChainOwner: deployer.address,
         DataAvailabilityCommittee: true,
       },
     }),
@@ -169,7 +169,7 @@ export async function createRollupHelper({
       validators,
       nativeToken,
     },
-    account: l3TokenBridgeDeployer,
+    account: deployer,
     parentChainPublicClient: client,
   });
 

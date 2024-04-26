@@ -18,7 +18,7 @@ const validators: [Address] = [testnodeAccounts.deployer.address];
 
 describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
-    l3TokenBridgeDeployer,
+    deployer: l3TokenBridgeDeployer,
     batchPoster,
     validators,
     nativeToken: zeroAddress,
@@ -58,7 +58,7 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
   const customGasTokenAddress = '0xc57a290f65F1D433f081381B2A7A523Ea70f1134';
 
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
-    l3TokenBridgeDeployer,
+    deployer: l3TokenBridgeDeployer,
     batchPoster,
     validators,
     nativeToken: customGasTokenAddress,

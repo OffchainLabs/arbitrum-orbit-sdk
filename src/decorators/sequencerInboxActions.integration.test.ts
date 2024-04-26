@@ -125,7 +125,7 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
     const validators: [Address] = [deployerAddress];
 
     const { createRollupInformation } = await createRollupHelper({
-      l3TokenBridgeDeployer,
+      deployer: l3TokenBridgeDeployer,
       batchPoster,
       validators,
       nativeToken: zeroAddress,
