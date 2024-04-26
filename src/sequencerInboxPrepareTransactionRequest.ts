@@ -1,4 +1,11 @@
-import { PublicClient, encodeFunctionData, EncodeFunctionDataParameters, Address } from 'viem';
+import {
+  PublicClient,
+  encodeFunctionData,
+  EncodeFunctionDataParameters,
+  Address,
+  Transport,
+  Chain,
+} from 'viem';
 
 import { sequencerInbox } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
@@ -56,8 +63,11 @@ export type SequencerInboxPrepareTransactionRequestParameters =
     account: Address;
   };
 
-export async function sequencerInboxPrepareTransactionRequest(
-  client: PublicClient,
+export async function sequencerInboxPrepareTransactionRequest<
+  TTransport extends Transport = Transport,
+  TChain extends Chain | undefined = Chain | undefined,
+>(
+  client: PublicClient<TTransport, TChain>,
   params: SequencerInboxPrepareTransactionRequestParameters,
 ) {
   const validatedPublicClient = validateParentChainPublicClient(client);
