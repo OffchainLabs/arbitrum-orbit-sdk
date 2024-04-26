@@ -9,6 +9,8 @@ import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
 import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+import { registerNewNetwork } from './utils/registerNewNetwork';
+import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
 export type TransactionRequestRetryableGasOverrides = {
   gasLimit?: GasOverrideOptions;
@@ -96,6 +98,13 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams) {
   const chainId = validateParentChain(parentChainPublicClient);
+
+  // Ensure that networks are registered
+  await registerNewNetwork(
+    publicClientToProvider(parentChainPublicClient),
+    publicClientToProvider(orbitChainPublicClient),
+    rollup,
+  );
 
   // check for custom fee token chain
   if (
