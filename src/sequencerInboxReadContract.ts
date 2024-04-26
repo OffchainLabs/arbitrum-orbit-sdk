@@ -11,7 +11,7 @@ export type SequencerInboxReadContractParameters<TFunctionName extends Sequencer
   {
     functionName: TFunctionName;
     // SequencerInbox address is different for each rollup, so user needs to pass it as a parameter
-    sequencerInbox: CoreContracts['sequencerInbox'];
+    sequencerInbox: Address;
   } & GetFunctionArgs<SequencerInboxAbi, TFunctionName>;
 
 export type SequencerInboxReadContractReturnType<TFunctionName extends SequencerInboxFunctionName> =
