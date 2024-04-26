@@ -37,6 +37,10 @@ if (typeof process.env.ORBIT_CHAIN_RPC === 'undefined') {
   throw new Error(`Please provide the "ORBIT_CHAIN_RPC" environment variable`);
 }
 
+if (typeof process.env.PARENT_CHAIN_TARGET_ADDRESS === 'undefined') {
+  throw new Error(`Please provide the "PARENT_CHAIN_TARGET_ADDRESS" environment variable`);
+}
+
 // load the chain owner account (or any account that has the executor role in the UpgradeExecutor)
 const chainOwner = privateKeyToAccount(sanitizePrivateKey(process.env.CHAIN_OWNER_PRIVATE_KEY));
 
@@ -69,9 +73,8 @@ const orbitChainWalletClient = createWalletClient({
   account: chainOwner,
 });
 
-// Arbitrum Foundation multisig account on Ethereum
-// https://etherscan.io/address/0x1Afa41C006dA1605846271E7bdae942F2787f941
-const parentChainTargetAddress = getAddress('0x1Afa41C006dA1605846271E7bdae942F2787f941');
+// Parent chain target address. It will receive 10% of the chain revenue on L1.
+const parentChainTargetAddress = getAddress(process.env.PARENT_CHAIN_TARGET_ADDRESS);
 
 async function main() {
   // Verify that this is an L2 orbit chain
