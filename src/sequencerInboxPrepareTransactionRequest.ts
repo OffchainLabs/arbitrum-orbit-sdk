@@ -1,15 +1,9 @@
-import {
-  PublicClient,
-  encodeFunctionData,
-  EncodeFunctionDataParameters,
-  Chain,
-  Transport,
-  Address,
-} from 'viem';
+import { PublicClient, encodeFunctionData, EncodeFunctionDataParameters, Address } from 'viem';
 
 import { sequencerInbox } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { Prettify } from './types/utils';
+import { validateParentChainPublicClient } from './types/ParentChain';
 
 type SequencerInboxEncodeFunctionDataParameters = Prettify<
   Omit<EncodeFunctionDataParameters<typeof sequencerInbox.abi, string>, 'abi'>
@@ -62,13 +56,11 @@ export type SequencerInboxPrepareTransactionRequestParameters =
     account: Address;
   };
 
-export async function sequencerInboxPrepareTransactionRequest<TChain extends Chain | undefined>(
-  client: PublicClient<Transport, TChain>,
+export async function sequencerInboxPrepareTransactionRequest(
+  client: PublicClient,
   params: SequencerInboxPrepareTransactionRequestParameters,
 ) {
-  if (typeof client.chain === 'undefined') {
-    throw new Error('[sequencerInboxPrepareTransactionRequest] client.chain is undefined');
-  }
+  const validatedPublicClient = validateParentChainPublicClient(client);
 
   const { to, data, value } = sequencerInboxPrepareFunctionData(params);
 
@@ -81,5 +73,5 @@ export async function sequencerInboxPrepareTransactionRequest<TChain extends Cha
     account: params.account,
   });
 
-  return { ...request, chainId: client.chain.id };
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }
