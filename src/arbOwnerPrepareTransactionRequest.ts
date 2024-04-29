@@ -36,6 +36,8 @@ type ArbOwnerPrepareFunctionDataParameters<
 function arbOwnerPrepareFunctionData<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
 >(params: ArbOwnerPrepareFunctionDataParameters<TFunctionName>) {
+  const { upgradeExecutor } = params;
+
   if (!upgradeExecutor) {
     return {
       to: arbOwner.address,
