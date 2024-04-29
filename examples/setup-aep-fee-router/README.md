@@ -20,6 +20,8 @@ Note that if all three fee types are collected by the same address, only one Rew
 - CHAIN_OWNER_PRIVATE_KEY: private key of the account with executor privileges in the UpgradeExecutor admin contract for the chain
 - ORBIT_CHAIN_ID: chainId of the Orbit chain
 - ORBIT_CHAIN_RPC: RPC of the Orbit chain
+- PARENT_CHAIN_ID: chainId of the parent chain (should be an L1)
+- PARENT_CHAIN_TARGET_ADDRESS: address on L1 where 10% of the revenue will be sent to
 
 ## Setup
 

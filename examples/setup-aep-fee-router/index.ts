@@ -7,7 +7,6 @@ import {
   getAddress,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { arbitrumSepolia } from 'viem/chains';
 import {
   feeRouterDeployChildToParentRouter,
   feeRouterDeployRewardDistributor,
@@ -16,37 +15,31 @@ import {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
 } from '@arbitrum/orbit-sdk';
-import { sanitizePrivateKey, getParentChainLayer } from '@arbitrum/orbit-sdk/utils';
+import { sanitizePrivateKey, getParentChainLayer, getParentChainFromId } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
+import { ParentChainPublicClient } from '@arbitrum/orbit-sdk/types/ParentChain';
 config();
 
 // environent variables check
-if (typeof process.env.ROLLUP_ADDRESS === 'undefined') {
-  throw new Error(`Please provide the "ROLLUP_ADDRESS" environment variable`);
-}
-
-if (typeof process.env.CHAIN_OWNER_PRIVATE_KEY === 'undefined') {
-  throw new Error(`Please provide the "CHAIN_OWNER_PRIVATE_KEY" environment variable`);
-}
-
-if (typeof process.env.ORBIT_CHAIN_ID === 'undefined') {
-  throw new Error(`Please provide the "ORBIT_CHAIN_ID" environment variable`);
-}
-
-if (typeof process.env.ORBIT_CHAIN_RPC === 'undefined') {
-  throw new Error(`Please provide the "ORBIT_CHAIN_RPC" environment variable`);
-}
-
-if (typeof process.env.PARENT_CHAIN_TARGET_ADDRESS === 'undefined') {
-  throw new Error(`Please provide the "PARENT_CHAIN_TARGET_ADDRESS" environment variable`);
+if (
+  typeof process.env.ROLLUP_ADDRESS === 'undefined' ||
+  typeof process.env.CHAIN_OWNER_PRIVATE_KEY === 'undefined' ||
+  typeof process.env.ORBIT_CHAIN_ID === 'undefined' ||
+  typeof process.env.ORBIT_CHAIN_RPC === 'undefined' ||
+  typeof process.env.PARENT_CHAIN_ID === 'undefined' ||
+  typeof process.env.PARENT_CHAIN_TARGET_ADDRESS === 'undefined'
+) {
+  throw new Error(
+    `Please provide the following environment variables: ROLLUP_ADDRESS, CHAIN_OWNER_PRIVATE_KEY, ORBIT_CHAIN_ID, ORBIT_CHAIN_RPC, PARENT_CHAIN_ID, PARENT_CHAIN_TARGET_ADDRESS.`,
+  );
 }
 
 // load the chain owner account (or any account that has the executor role in the UpgradeExecutor)
 const chainOwner = privateKeyToAccount(sanitizePrivateKey(process.env.CHAIN_OWNER_PRIVATE_KEY));
 
 // set the parent chain and create a public client for it
-const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
+const parentChain = getParentChainFromId(Number(process.env.PARENT_CHAIN_ID));
+const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() }) as ParentChainPublicClient;
 
 // define chain config for the orbit chain
 const orbitChain = defineChain({
