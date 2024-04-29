@@ -21,6 +21,8 @@
     "allowSyntheticDefaultImports": true,
 
     // Show all keys in type without hiding in "... more ..."
-    "noErrorTruncation": true
+    // Setting this option to true will cause massive performance slowdown.
+    // Keeping it to false (default value) for future reference
+    "noErrorTruncation": false
   }
 }
