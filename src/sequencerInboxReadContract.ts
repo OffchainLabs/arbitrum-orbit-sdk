@@ -8,10 +8,7 @@ import {
 } from 'viem';
 
 import { sequencerInbox } from './contracts';
-import { GetFunctionName } from './types/utils';
-
-export type SequencerInboxAbi = typeof sequencerInbox.abi;
-export type SequencerInboxFunctionName = GetFunctionName<SequencerInboxAbi>;
+import { SequencerInboxAbi, SequencerInboxFunctionName } from './sequencerInboxPrepareTransactionRequest';
 
 export type SequencerInboxReadContractParameters<TFunctionName extends SequencerInboxFunctionName> =
   {

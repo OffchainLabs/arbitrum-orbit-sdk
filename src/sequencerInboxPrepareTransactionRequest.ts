@@ -9,37 +9,43 @@ import {
 
 import { sequencerInbox } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
-import { Prettify } from './types/utils';
+import { GetFunctionName } from './types/utils';
 import { validateParentChainPublicClient } from './types/ParentChain';
 
-type SequencerInboxEncodeFunctionDataParameters = Prettify<
-  Omit<EncodeFunctionDataParameters<typeof sequencerInbox.abi, string>, 'abi'>
-> & {
-  sequencerInbox: Address;
-};
+export type SequencerInboxAbi = typeof sequencerInbox.abi;
+export type SequencerInboxFunctionName = GetFunctionName<SequencerInboxAbi>;
 
-function sequencerInboxEncodeFunctionData({
+type SequencerInboxEncodeFunctionDataParameters<TFunctionName extends SequencerInboxFunctionName> = EncodeFunctionDataParameters<SequencerInboxAbi, TFunctionName>
+
+function sequencerInboxEncodeFunctionData<TFunctionName extends SequencerInboxFunctionName>({
+  abi,
   functionName,
   args,
-}: SequencerInboxEncodeFunctionDataParameters) {
+}: SequencerInboxEncodeFunctionDataParameters<TFunctionName>) {
   return encodeFunctionData({
-    abi: sequencerInbox.abi,
+    abi,
     functionName,
     args,
   });
 }
 
-function sequencerInboxPrepareFunctionData(
-  params: SequencerInboxEncodeFunctionDataParameters & {
+type SequencerInboxPrepareFunctionDataParameters<TFunctionName extends SequencerInboxFunctionName> =
+  SequencerInboxEncodeFunctionDataParameters<TFunctionName> & {
     upgradeExecutor: Address | false;
-  },
+    abi: SequencerInboxAbi;
+    sequencerInbox: Address;
+  };
+function sequencerInboxPrepareFunctionData<TFunctionName extends SequencerInboxFunctionName>(
+  params: SequencerInboxPrepareFunctionDataParameters<TFunctionName>,
 ) {
   const { upgradeExecutor } = params;
 
   if (!upgradeExecutor) {
     return {
       to: params.sequencerInbox,
-      data: sequencerInboxEncodeFunctionData(params),
+      data: sequencerInboxEncodeFunctionData(
+        params as SequencerInboxEncodeFunctionDataParameters<TFunctionName>,
+      ),
       value: BigInt(0),
     };
   }
@@ -50,29 +56,36 @@ function sequencerInboxPrepareFunctionData(
       functionName: 'executeCall',
       args: [
         params.sequencerInbox, // target
-        sequencerInboxEncodeFunctionData(params), // targetCallData
+        sequencerInboxEncodeFunctionData(
+          params as SequencerInboxEncodeFunctionDataParameters<TFunctionName>,
+        ), // targetCallData
       ],
     }),
     value: BigInt(0),
   };
 }
 
-export type SequencerInboxPrepareTransactionRequestParameters =
-  Prettify<SequencerInboxEncodeFunctionDataParameters> & {
-    upgradeExecutor: Address | false;
-    account: Address;
-  };
+export type SequencerInboxPrepareTransactionRequestParameters<
+  TFunctionName extends SequencerInboxFunctionName,
+> = Omit<SequencerInboxPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+  account: Address;
+};
 
 export async function sequencerInboxPrepareTransactionRequest<
+  TFunctionName extends SequencerInboxFunctionName,
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
 >(
   client: PublicClient<TTransport, TChain>,
-  params: SequencerInboxPrepareTransactionRequestParameters,
+  params: SequencerInboxPrepareTransactionRequestParameters<TFunctionName>,
 ) {
   const validatedPublicClient = validateParentChainPublicClient(client);
 
-  const { to, data, value } = sequencerInboxPrepareFunctionData(params);
+  // params is extending SequencerInboxPrepareFunctionDataParameters, it's safe to cast
+  const { to, data, value } = sequencerInboxPrepareFunctionData({
+    ...params,
+    abi: sequencerInbox.abi
+  } as unknown as SequencerInboxPrepareFunctionDataParameters<TFunctionName>);
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await client.prepareTransactionRequest({
