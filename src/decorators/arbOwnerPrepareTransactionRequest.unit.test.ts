@@ -31,7 +31,7 @@ it('Infer parameters based on function name', async () => {
   expect(
     client.arbOwnerPrepareTransactionRequest({
       functionName: 'addChainOwner',
-      // @ts-expect-error Args are missing
+      // @ts-expect-error Args are of the wrong type
       args: [10n],
       upgradeExecutor: false,
       account: randomAccount.address,
@@ -48,7 +48,7 @@ it('Infer parameters based on function name', async () => {
       }),
   ).rejects.toThrow(AbiEncodingLengthMismatchError);
 
-  expectTypeOf<typeof client.arbOwnerPrepareTransactionRequest>().toBeCallableWith({
+  expectTypeOf<typeof client.arbOwnerPrepareTransactionRequest<'addChainOwner'>>().toBeCallableWith({
     functionName: 'addChainOwner',
     args: [randomAccount.address],
     upgradeExecutor: false,
