@@ -45,6 +45,7 @@ import {
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
 import { sequencerInboxActions } from './decorators/sequencerInboxActions';
+import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -80,6 +81,7 @@ export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
   sequencerInboxActions,
+  rollupAdminLogicPublicActions,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
