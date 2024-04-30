@@ -29,7 +29,7 @@ it('successfully set validators', async () => {
     args: [randomAccounts, [true, false]],
     account: l3RollupOwner.address,
     upgradeExecutor: l3UpgradeExecutor,
-    rollupAdminLogic: l3UpgradeExecutor,
+    rollupAdminLogic: l3Rollup,
   });
 
   await client.sendRawTransaction({
