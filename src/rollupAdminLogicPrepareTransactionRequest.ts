@@ -3,43 +3,52 @@ import {
   encodeFunctionData,
   EncodeFunctionDataParameters,
   Address,
-  Chain,
   Transport,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
+  Chain,
 } from 'viem';
 
 import { rollupAdminLogicABI } from './abi/rollupAdminLogicABI';
-import { Prettify } from './types/utils';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { GetFunctionName } from './types/utils';
+import { validateParentChainPublicClient } from './types/ParentChain';
 
-type RollupAdminLogicEncodeFunctionDataParameters = Prettify<
-  Omit<EncodeFunctionDataParameters<typeof rollupAdminLogicABI, string>, 'abi'>
->;
+export type RollupAdminLogicAbi = typeof rollupAdminLogicABI;
+export type RollupAdminLogicFunctionName = GetFunctionName<RollupAdminLogicAbi>;
 
-function rollupAdminLogicEncodeFunctionData({
+type RollupAdminLogicEncodeFunctionDataParameters<
+  TFunctionName extends RollupAdminLogicFunctionName,
+> = EncodeFunctionDataParameters<RollupAdminLogicAbi, TFunctionName>;
+
+function rollupAdminLogicEncodeFunctionData<TFunctionName extends RollupAdminLogicFunctionName>({
+  abi,
   functionName,
   args,
-}: RollupAdminLogicEncodeFunctionDataParameters) {
+}: RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>) {
   return encodeFunctionData({
-    abi: rollupAdminLogicABI,
+    abi,
     functionName,
     args,
   });
 }
 
-function rollupAdminLogicPrepareFunctionData(
-  params: RollupAdminLogicEncodeFunctionDataParameters & {
-    upgradeExecutor: Address | false;
-    rollupAdminLogicAddress: Address;
-  },
+type RollupAdminLogicPrepareFunctionDataParameters<
+  TFunctionName extends RollupAdminLogicFunctionName,
+> = RollupAdminLogicEncodeFunctionDataParameters<TFunctionName> & {
+  upgradeExecutor: Address | false;
+  abi: RollupAdminLogicAbi;
+  rollupAdminLogic: Address;
+};
+function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLogicFunctionName>(
+  params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>,
 ) {
-  const { upgradeExecutor, rollupAdminLogicAddress } = params;
+  const { upgradeExecutor } = params;
 
   if (!upgradeExecutor) {
     return {
-      to: rollupAdminLogicAddress,
-      data: rollupAdminLogicEncodeFunctionData(params),
+      to: params.rollupAdminLogic,
+      data: rollupAdminLogicEncodeFunctionData(
+        params as RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>,
+      ),
       value: BigInt(0),
     };
   }
@@ -49,42 +58,46 @@ function rollupAdminLogicPrepareFunctionData(
     data: upgradeExecutorEncodeFunctionData({
       functionName: 'executeCall',
       args: [
-        rollupAdminLogicAddress, // target
-        rollupAdminLogicEncodeFunctionData(params), // targetCallData
+        params.rollupAdminLogic, // target
+        rollupAdminLogicEncodeFunctionData(
+          params as RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>,
+        ), // targetCallData
       ],
     }),
     value: BigInt(0),
   };
 }
 
-export type RollupAdminLogicPrepareTransactionRequestParameters = Prettify<
-  RollupAdminLogicEncodeFunctionDataParameters & {
-    upgradeExecutor: Address | false;
-    account: Address;
-  }
->;
+export type RollupAdminLogicPrepareTransactionRequestParameters<
+  TFunctionName extends RollupAdminLogicFunctionName,
+> = Omit<RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+  account: Address;
+};
 
-export async function rollupAdminLogicPrepareTransactionRequest<TChain extends Chain | undefined>(
-  client: PublicClient<Transport, TChain>,
-  params: RollupAdminLogicPrepareTransactionRequestParameters & {
-    rollupAdminLogicAddress: Address;
-  },
-): Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }> {
-  if (typeof client.chain === 'undefined') {
-    throw new Error('[rollupAdminLogicPrepareTransactionRequest] client.chain is undefined');
-  }
+export async function rollupAdminLogicPrepareTransactionRequest<
+  TFunctionName extends RollupAdminLogicFunctionName,
+  TTransport extends Transport = Transport,
+  TChain extends Chain | undefined = Chain | undefined,
+>(
+  client: PublicClient<TTransport, TChain>,
+  params: RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>,
+) {
+  const validatedPublicClient = validateParentChainPublicClient(client);
 
-  const { to, data, value } = rollupAdminLogicPrepareFunctionData(params);
+  // params is extending RollupAdminLogicPrepareFunctionDataParameters, it's safe to cast
+  const { to, data, value } = rollupAdminLogicPrepareFunctionData({
+    ...params,
+    abi: rollupAdminLogicABI,
+  } as unknown as RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>);
 
-  const prepareTransactionRequestParams: PrepareTransactionRequestParameters = {
+  // @ts-ignore (todo: fix viem type issue)
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    account: params.account,
     to,
     data,
     value,
-  };
+    account: params.account,
+  });
 
-  const request = await client.prepareTransactionRequest(prepareTransactionRequestParams);
-
-  return { ...request, chainId: client.chain.id };
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

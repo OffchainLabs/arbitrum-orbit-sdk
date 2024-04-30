@@ -10,70 +10,73 @@ import {
   rollupAdminLogicPrepareTransactionRequest,
   RollupAdminLogicPrepareTransactionRequestParameters,
 } from '../rollupAdminLogicPrepareTransactionRequest';
-import { CoreContracts } from '../types/CoreContracts';
 
-type WrapWithRollupAdminLogicAddress<
-  TArgs extends Object,
-  TAddress extends Address | undefined,
-> = TAddress extends Address
-  ? TArgs & {
-      // If the Contract was passed to the actions, it's now optional for each call
-      rollupAdminLogicAddress?: Address;
+type RollupAdminLogicReadContractArgs<
+  TRollupAdminLogic extends Address | undefined,
+  TFunctionName extends RollupAdminLogicFunctionName,
+> = TRollupAdminLogic extends Address
+  ? Omit<RollupAdminLogicReadContractParameters<TFunctionName>, 'rollupAdminLogic'> & {
+      rollupAdminLogic?: Address;
     }
-  : TArgs & {
-      rollupAdminLogicAddress: Address;
-    };
+  : RollupAdminLogicReadContractParameters<TFunctionName>;
+type rollupAdminLogicPrepareTransactionRequestArgs<
+  TRollupAdminLogic extends Address | undefined,
+  TFunctionName extends RollupAdminLogicFunctionName,
+> = TRollupAdminLogic extends Address
+  ? Omit<RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>, 'rollupAdminLogic'> & {
+      rollupAdminLogic?: Address;
+    }
+  : RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>;
 
 export type RollupAdminLogicActions<
-  TRollupAdminLogicAddress extends CoreContracts['rollup'] | undefined,
-  TChain extends Chain | undefined = Chain,
+  TRollupAdminLogic extends Address | undefined,
+  TChain extends Chain | undefined = Chain | undefined,
 > = {
   rollupAdminLogicReadContract: <TFunctionName extends RollupAdminLogicFunctionName>(
-    args: WrapWithRollupAdminLogicAddress<
-      RollupAdminLogicReadContractParameters<TFunctionName>,
-      TRollupAdminLogicAddress
-    >,
+    args: RollupAdminLogicReadContractArgs<TRollupAdminLogic, TFunctionName>,
   ) => Promise<RollupAdminLogicReadContractReturnType<TFunctionName>>;
 
-  rollupAdminLogicPrepareTransactionRequest: (
-    args: WrapWithRollupAdminLogicAddress<
-      RollupAdminLogicPrepareTransactionRequestParameters,
-      TRollupAdminLogicAddress
-    >,
-  ) => Promise<PrepareTransactionRequestReturnType<TChain>>;
+  rollupAdminLogicPrepareTransactionRequest: <TFunctionName extends RollupAdminLogicFunctionName>(
+    args: rollupAdminLogicPrepareTransactionRequestArgs<TRollupAdminLogic, TFunctionName>,
+  ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
 export function rollupAdminLogicPublicActions<
-  TRollupAdminLogicAddress extends CoreContracts['rollup'] | undefined,
+  TParams extends { rollupAdminLogic?: Address },
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain,
 >({
-  rollupAdminLogicAddress,
-}: {
-  rollupAdminLogicAddress: TRollupAdminLogicAddress;
-}): (
+  rollupAdminLogic,
+}: TParams): (
   client: PublicClient<TTransport, TChain>,
-) => RollupAdminLogicActions<TRollupAdminLogicAddress, TChain> {
-  return (client) => {
-    return {
-      rollupAdminLogicReadContract: (args) => {
-        // rollupAdminLogicAddress is either passed initially, or mandatory when user call this function
-        const contractAddress = (args.rollupAdminLogicAddress ||
-          rollupAdminLogicAddress) as unknown as Address;
-        return rollupAdminLogicReadContract(client, {
-          ...args,
-          rollupAdminLogicAddress: contractAddress,
-        });
-      },
-      rollupAdminLogicPrepareTransactionRequest: (args) => {
-        // rollupAdminLogicAddress is either passed initially, or mandatory when user call this function
-        const contractAddress = (args.rollupAdminLogicAddress ||
-          rollupAdminLogicAddress) as unknown as Address;
-        return rollupAdminLogicPrepareTransactionRequest(client, {
-          ...args,
-          rollupAdminLogicAddress: contractAddress,
-        });
-      },
-    };
+) => RollupAdminLogicActions<TParams['rollupAdminLogic'], TChain> {
+  return function rollupAdminLogicActionsWithRollupAdminLogicAddress(
+    client: PublicClient<TTransport, TChain>,
+  ) {
+    const rollupAdminLogicExtensions: RollupAdminLogicActions<TParams['rollupAdminLogic'], TChain> =
+      {
+        rollupAdminLogicReadContract: <TFunctionName extends RollupAdminLogicFunctionName>(
+          args: RollupAdminLogicReadContractArgs<TParams['rollupAdminLogic'], TFunctionName>,
+        ) => {
+          return rollupAdminLogicReadContract(client, {
+            ...args,
+            rollupAdminLogic: args.rollupAdminLogic || rollupAdminLogic,
+          } as RollupAdminLogicReadContractParameters<TFunctionName>);
+        },
+        rollupAdminLogicPrepareTransactionRequest: <
+          TFunctionName extends RollupAdminLogicFunctionName,
+        >(
+          args: rollupAdminLogicPrepareTransactionRequestArgs<
+            TParams['rollupAdminLogic'],
+            TFunctionName
+          >,
+        ) => {
+          return rollupAdminLogicPrepareTransactionRequest(client, {
+            ...args,
+            rollupAdminLogic: args.rollupAdminLogic || rollupAdminLogic,
+          } as RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>);
+        },
+      };
+    return rollupAdminLogicExtensions;
   };
 }

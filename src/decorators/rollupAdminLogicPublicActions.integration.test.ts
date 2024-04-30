@@ -14,7 +14,7 @@ const client = createPublicClient({
   transport: http(),
 }).extend(
   rollupAdminLogicPublicActions({
-    rollupAdminLogicAddress: l3Rollup,
+    rollupAdminLogic: l3Rollup,
   }),
 );
 
@@ -29,6 +29,7 @@ it('successfully set validators', async () => {
     args: [randomAccounts, [true, false]],
     account: l3RollupOwner.address,
     upgradeExecutor: l3UpgradeExecutor,
+    rollupAdminLogic: l3UpgradeExecutor,
   });
 
   await client.sendRawTransaction({
@@ -41,12 +42,12 @@ it('successfully set validators', async () => {
     client.rollupAdminLogicReadContract({
       functionName: 'isValidator',
       args: [randomAccounts[0]],
-      rollupAdminLogicAddress: l3Rollup,
+      rollupAdminLogic: l3Rollup,
     }),
     client.rollupAdminLogicReadContract({
       functionName: 'isValidator',
       args: [randomAccounts[1]],
-      rollupAdminLogicAddress: l3Rollup,
+      rollupAdminLogic: l3Rollup,
     }),
   ]);
 
@@ -65,7 +66,7 @@ it('successfully enable/disable whitelist', async () => {
     functionName: 'setValidatorWhitelistDisabled',
     args: [true],
     account: l3RollupOwner.address,
-    rollupAdminLogicAddress: l3Rollup,
+    rollupAdminLogic: l3Rollup,
     upgradeExecutor: l3UpgradeExecutor,
   });
 
@@ -77,7 +78,7 @@ it('successfully enable/disable whitelist', async () => {
 
   const whitelistDisabled = await client.rollupAdminLogicReadContract({
     functionName: 'validatorWhitelistDisabled',
-    rollupAdminLogicAddress: l3Rollup,
+    rollupAdminLogic: l3Rollup,
   });
 
   expect(whitelistDisabled).toEqual(true);
@@ -87,7 +88,7 @@ it('successfully enable/disable whitelist', async () => {
     functionName: 'setValidatorWhitelistDisabled',
     args: [false],
     account: l3RollupOwner.address,
-    rollupAdminLogicAddress: l3Rollup,
+    rollupAdminLogic: l3Rollup,
     upgradeExecutor: l3UpgradeExecutor,
   });
 
