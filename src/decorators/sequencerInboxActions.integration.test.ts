@@ -21,15 +21,19 @@ const { l3SequencerInbox, l3Bridge, l3Rollup, l3BatchPoster, l3UpgradeExecutor }
 const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
-}).extend(sequencerInboxActions(l3SequencerInbox));
+}).extend(sequencerInboxActions({ sequencerInbox: l3SequencerInbox }));
+const client2= createPublicClient({
+  chain: nitroTestnodeL2,
+  transport: http(),
+}).extend(sequencerInboxActions({}));
+
+
 
 describe('sequencerInboxReadContract', () => {
   it('successfully fetches batchCount', async () => {
     const batchCount = await client.sequencerInboxReadContract({
       functionName: 'batchCount',
-      sequencerInbox: l3SequencerInbox,
     });
-
     expect(Number(batchCount)).greaterThan(0);
   });
 
