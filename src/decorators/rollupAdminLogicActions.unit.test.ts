@@ -16,7 +16,7 @@ const rollupAdminLogicAddress = '0x42b5da0625cf278067955f07045f63cafd79274f';
 const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
-}).extend(rollupAdminLogicPublicActions({ rollupAdminLogic: rollupAdminLogicAddress }));
+}).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
@@ -38,7 +38,7 @@ describe('RollupAdminLogic parameter:', () => {
     >().toBeCallableWith({
       functionName: 'amountStaked',
       args: [randomAccount.address],
-      rollupAdminLogic: rollupAdminLogicAddress,
+      rollup: rollupAdminLogicAddress,
     });
   });
 
@@ -46,7 +46,7 @@ describe('RollupAdminLogic parameter:', () => {
     const clientWithRollupAdminLogicAddress = createPublicClient({
       chain: nitroTestnodeL2,
       transport: http(),
-    }).extend(rollupAdminLogicPublicActions({ rollupAdminLogic: rollupAdminLogicAddress }));
+    }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
     expectTypeOf<
       typeof clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract<'amountStaked'>
@@ -60,14 +60,14 @@ describe('RollupAdminLogic parameter:', () => {
     const clientWithRollupAdminLogicAddress = createPublicClient({
       chain: nitroTestnodeL2,
       transport: http(),
-    }).extend(rollupAdminLogicPublicActions({ rollupAdminLogic: rollupAdminLogicAddress }));
+    }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
     expectTypeOf<
       typeof clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract<'amountStaked'>
     >().toBeCallableWith({
       functionName: 'amountStaked',
       args: [randomAccount.address],
-      rollupAdminLogic: rollupAdminLogicAddress,
+      rollup: rollupAdminLogicAddress,
     });
   });
 });

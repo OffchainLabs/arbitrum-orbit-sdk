@@ -36,7 +36,7 @@ type RollupAdminLogicPrepareFunctionDataParameters<
 > = RollupAdminLogicEncodeFunctionDataParameters<TFunctionName> & {
   upgradeExecutor: Address | false;
   abi: RollupAdminLogicAbi;
-  rollupAdminLogic: Address;
+  rollup: Address;
 };
 function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLogicFunctionName>(
   params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>,
@@ -45,7 +45,7 @@ function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLo
 
   if (!upgradeExecutor) {
     return {
-      to: params.rollupAdminLogic,
+      to: params.rollup,
       data: rollupAdminLogicEncodeFunctionData(
         params as RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>,
       ),
@@ -58,7 +58,7 @@ function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLo
     data: upgradeExecutorEncodeFunctionData({
       functionName: 'executeCall',
       args: [
-        params.rollupAdminLogic, // target
+        params.rollup, // target
         rollupAdminLogicEncodeFunctionData(
           params as RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>,
         ), // targetCallData
