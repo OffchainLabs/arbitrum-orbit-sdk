@@ -6,45 +6,42 @@ import {
   parseAbi,
   getAddress,
 } from 'viem';
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { arbitrumSepolia } from 'viem/chains';
+import { privateKeyToAccount } from 'viem/accounts';
 import {
   feeRouterDeployRewardDistributor,
   createRollupFetchCoreContracts,
   createTokenBridgeFetchTokenBridgeContracts,
   arbOwnerPublicActions,
 } from '@arbitrum/orbit-sdk';
-import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
+import { getParentChainFromId, sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
+import { ParentChainPublicClient } from '@arbitrum/orbit-sdk/dist/types/ParentChain';
 config();
 
 // environent variables check
-if (typeof process.env.ROLLUP_ADDRESS === 'undefined') {
-  throw new Error(`Please provide the "ROLLUP_ADDRESS" environment variable`);
-}
-
-if (typeof process.env.CHAIN_OWNER_PRIVATE_KEY === 'undefined') {
-  throw new Error(`Please provide the "CHAIN_OWNER_PRIVATE_KEY" environment variable`);
-}
-
-if (typeof process.env.ORBIT_CHAIN_ID === 'undefined') {
-  throw new Error(`Please provide the "ORBIT_CHAIN_ID" environment variable`);
-}
-
-if (typeof process.env.ORBIT_CHAIN_RPC === 'undefined') {
-  throw new Error(`Please provide the "ORBIT_CHAIN_RPC" environment variable`);
+if (
+  typeof process.env.ROLLUP_ADDRESS === 'undefined' ||
+  typeof process.env.CHAIN_OWNER_PRIVATE_KEY === 'undefined' ||
+  typeof process.env.ORBIT_CHAIN_ID === 'undefined' ||
+  typeof process.env.ORBIT_CHAIN_RPC === 'undefined' ||
+  typeof process.env.PARENT_CHAIN_ID === 'undefined' ||
+  typeof process.env.RECIPIENT_ADDRESSES === 'undefined' ||
+  typeof process.env.RECIPIENT_WEIGHTS === 'undefined'
+) {
+  throw new Error(
+    `Please provide the following environment variables: ROLLUP_ADDRESS, CHAIN_OWNER_PRIVATE_KEY, ORBIT_CHAIN_ID, ORBIT_CHAIN_RPC, PARENT_CHAIN_ID, RECIPIENT_ADDRESSES, RECIPIENT_WEIGHTS.`,
+  );
 }
 
 // load the chain owner account (or any account that has the executor role in the UpgradeExecutor)
 const chainOwner = privateKeyToAccount(sanitizePrivateKey(process.env.CHAIN_OWNER_PRIVATE_KEY));
 
-// creating some random addresses to show the example
-const randomAccount = privateKeyToAccount(generatePrivateKey());
-const randomAccount2 = privateKeyToAccount(generatePrivateKey());
-
 // set the parent chain and create a public client for it
-const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
+const parentChain = getParentChainFromId(Number(process.env.PARENT_CHAIN_ID));
+const parentChainPublicClient = createPublicClient({
+  chain: parentChain,
+  transport: http(),
+}) as ParentChainPublicClient;
 
 // define chain config for the orbit chain
 const orbitChain = defineChain({
@@ -101,18 +98,21 @@ async function main() {
   // Weights are expressed in percentages multiplied by 100. For example, to allocate 12,5% of the amount to
   // a specific recipient, you'll define the weight as 1250. To allocate 80%, you'll define the weight as 8000.
   //
-  // You can configure as many recipients as you wish.
+  // You can configure as many recipients as you wish in the .env file
   // ---------------------------
-  const recipients = [
-    {
-      account: randomAccount.address,
-      weight: 7500n,
-    },
-    {
-      account: randomAccount2.address,
-      weight: 2500n,
-    },
-  ];
+  const recipientAddresses = JSON.parse(process.env.RECIPIENT_ADDRESSES!);
+  const recipientWeights = JSON.parse(process.env.RECIPIENT_WEIGHTS!);
+
+  if (recipientAddresses.length != recipientWeights.length) {
+    throw new Error(
+      `Env variables RECIPIENT_ADDRESSES and RECIPIENT_WEIGHTS must have the same length.`,
+    );
+  }
+
+  const recipients = recipientAddresses.map((address: `0x${string}`, index: number) => ({
+    account: address as `0x${string}`,
+    weight: BigInt(recipientWeights[index]),
+  }));
 
   // Step 2. Deploy the RewardDistributor
   //

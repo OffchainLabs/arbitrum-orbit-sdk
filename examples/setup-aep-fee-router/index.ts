@@ -15,7 +15,11 @@ import {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
 } from '@arbitrum/orbit-sdk';
-import { sanitizePrivateKey, getParentChainLayer, getParentChainFromId } from '@arbitrum/orbit-sdk/utils';
+import {
+  sanitizePrivateKey,
+  getParentChainLayer,
+  getParentChainFromId,
+} from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
 import { ParentChainPublicClient } from '@arbitrum/orbit-sdk/types/ParentChain';
 config();
@@ -39,7 +43,10 @@ const chainOwner = privateKeyToAccount(sanitizePrivateKey(process.env.CHAIN_OWNE
 
 // set the parent chain and create a public client for it
 const parentChain = getParentChainFromId(Number(process.env.PARENT_CHAIN_ID));
-const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() }) as ParentChainPublicClient;
+const parentChainPublicClient = createPublicClient({
+  chain: parentChain,
+  transport: http(),
+}) as ParentChainPublicClient;
 
 // define chain config for the orbit chain
 const orbitChain = defineChain({

@@ -14,6 +14,17 @@ You can find more information about the different fee types, and how to configur
 - CHAIN_OWNER_PRIVATE_KEY: private key of the account with executor privileges in the UpgradeExecutor admin contract for the chain
 - ORBIT_CHAIN_ID: chainId of the Orbit chain
 - ORBIT_CHAIN_RPC: RPC of the Orbit chain
+- PARENT_CHAIN_ID: chainId of the parent chain
+- RECIPIENT_ADDRESSES: Array of addresses to configure in the distributor contract
+- RECIPIENT_WEIGHTS: Array of weights of each of the configured addresses
+
+## How to configure the distribution addresses in the .env file
+
+The .env file contains two arrays: RECIPIENT_ADDRESSES and RECIPIENT_WEIGHTS. The first one will have the addresses that will receive the amounts that the distributor contract receives. The second one will define the weights of each of those addresses. For example, if one recipient has a weight of 75%, they will receive 75% of the amount held in the contract at the time of distribution. Both arrays must have the same length.
+
+Weights are expressed in percentages multiplied by 100. For example, to allocate 12,5% of the amount to a specific recipient, you'll define the weight as 1250. To allocate 80%, you'll define the weight as 8000.
+
+You can configure as many recipients as you wish.
 
 ## Setup
 
