@@ -8,6 +8,7 @@ import {
   tokenBridgeCreatorConfig,
   arbGasInfoConfig,
 } from './generated';
+import { sequencerInboxABI } from './abi/sequencerInboxABI';
 
 export const erc20 = {
   abi: erc20ABI,
@@ -193,3 +194,7 @@ export const tokenBridgeCreator = {
   ...tokenBridgeCreatorConfig,
   abi: tokenBridgeCreatorABI,
 } as const;
+
+export const sequencerInbox = {
+  abi: sequencerInboxABI,
+};

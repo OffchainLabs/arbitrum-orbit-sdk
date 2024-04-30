@@ -18,7 +18,7 @@ import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from
 import { erc20 } from './contracts';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
-import { CreateTokenBridgeParams, createTokenBridge } from './createTokenBridge';
+import { createTokenBridge } from './createTokenBridge';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
