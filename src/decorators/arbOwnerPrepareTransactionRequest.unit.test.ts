@@ -48,12 +48,14 @@ it('Infer parameters based on function name', async () => {
       }),
   ).rejects.toThrow(AbiEncodingLengthMismatchError);
 
-  expectTypeOf<typeof client.arbOwnerPrepareTransactionRequest<'addChainOwner'>>().toBeCallableWith({
-    functionName: 'addChainOwner',
-    args: [randomAccount.address],
-    upgradeExecutor: false,
-    account: randomAccount.address,
-  });
+  expectTypeOf<typeof client.arbOwnerPrepareTransactionRequest<'addChainOwner'>>().toBeCallableWith(
+    {
+      functionName: 'addChainOwner',
+      args: [randomAccount.address],
+      upgradeExecutor: false,
+      account: randomAccount.address,
+    },
+  );
 
   // Function doesn't exist
   expect(

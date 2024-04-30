@@ -15,7 +15,8 @@ import { validateParentChainPublicClient } from './types/ParentChain';
 export type SequencerInboxAbi = typeof sequencerInbox.abi;
 export type SequencerInboxFunctionName = GetFunctionName<SequencerInboxAbi>;
 
-type SequencerInboxEncodeFunctionDataParameters<TFunctionName extends SequencerInboxFunctionName> = EncodeFunctionDataParameters<SequencerInboxAbi, TFunctionName>
+type SequencerInboxEncodeFunctionDataParameters<TFunctionName extends SequencerInboxFunctionName> =
+  EncodeFunctionDataParameters<SequencerInboxAbi, TFunctionName>;
 
 function sequencerInboxEncodeFunctionData<TFunctionName extends SequencerInboxFunctionName>({
   abi,
@@ -84,7 +85,7 @@ export async function sequencerInboxPrepareTransactionRequest<
   // params is extending SequencerInboxPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = sequencerInboxPrepareFunctionData({
     ...params,
-    abi: sequencerInbox.abi
+    abi: sequencerInbox.abi,
   } as unknown as SequencerInboxPrepareFunctionDataParameters<TFunctionName>);
 
   // @ts-ignore (todo: fix viem type issue)

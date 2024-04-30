@@ -22,12 +22,6 @@ const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
 }).extend(sequencerInboxActions({ sequencerInbox: l3SequencerInbox }));
-const client2= createPublicClient({
-  chain: nitroTestnodeL2,
-  transport: http(),
-}).extend(sequencerInboxActions({}));
-
-
 
 describe('sequencerInboxReadContract', () => {
   it('successfully fetches batchCount', async () => {
