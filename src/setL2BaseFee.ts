@@ -2,7 +2,6 @@ import { PublicClient, WalletClient } from 'viem';
 import { getContract } from 'viem';
 import { validateParentChain } from './types/ParentChain';
 import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
-import { Interface } from 'ethers/lib/utils';
 import { upgradeExecutor } from './contracts';
 import { getAddress } from 'viem';
 import {
