@@ -32,3 +32,11 @@ yarn verifyRollup
 ## Token Bridge verification
 
 To verify the token bridge, please follow [these instructions](https://github.com/OffchainLabs/token-bridge-contracts/blob/main/docs/deployment.md#verify-token-bridge-deployment) from the token-bridge-contracts repository.
+
+## Get all contracts
+
+This script returns the Rollup contracts, the Token Bridge contracts, as some additional chain parameters.
+
+```shell
+yarn getAllContracts
+```
