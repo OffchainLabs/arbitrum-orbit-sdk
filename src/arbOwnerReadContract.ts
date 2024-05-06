@@ -1,6 +1,5 @@
 import {
   Chain,
-  ContractFunctionName,
   PublicClient,
   Transport,
   ContractFunctionArgs,
