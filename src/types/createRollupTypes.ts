@@ -1,4 +1,4 @@
-import { Address, GetFunctionArgs } from 'viem';
+import { Address } from 'viem';
 
 import { rollupCreator } from '../contracts';
 

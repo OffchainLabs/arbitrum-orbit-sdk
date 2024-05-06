@@ -16,7 +16,8 @@ import { validateParentChainPublicClient } from './types/ParentChain';
 import { GetPrepareTransactionRequestParams } from './types/utils';
 
 type RollupAdminLogicAbi = typeof rollupAdminLogicABI;
-export type RollupAdminLogicPrepareTransactionRequestFunctionName = GetPrepareTransactionRequestParams<RollupAdminLogicAbi>;
+export type RollupAdminLogicPrepareTransactionRequestFunctionName =
+  GetPrepareTransactionRequestParams<RollupAdminLogicAbi>;
 type RollupAdminLogicPrepareTransactionRequestArgs<
   TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
 > = ContractFunctionArgs<RollupAdminLogicAbi, 'nonpayable' | 'payable', TFunctionName>;
@@ -28,7 +29,9 @@ type RollupAdminLogicEncodeFunctionDataParameters<
   args: TArgs;
 };
 
-function rollupAdminLogicEncodeFunctionData<TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName>({
+function rollupAdminLogicEncodeFunctionData<
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+>({
   functionName,
   abi,
   args,
@@ -51,7 +54,9 @@ type RollupAdminLogicPrepareFunctionDataParameters<
   upgradeExecutor: Address | false;
   rollup: Address;
 };
-function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName>(
+function rollupAdminLogicPrepareFunctionData<
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+>(
   params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>,
 ): RollupAdminLogicPrepareFunctionDataReturnType {
   const { upgradeExecutor } = params;

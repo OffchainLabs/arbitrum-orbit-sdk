@@ -21,4 +21,3 @@ export function arbGasInfoPublicActions<
     arbGasInfoReadContract: (args) => arbGasInfoReadContract(client, args),
   };
 }
-

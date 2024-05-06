@@ -27,7 +27,10 @@ export type ArbGasInfoReadContractReturnType<
 export function arbGasInfoReadContract<
   TFunctionName extends ArbGasInfoFunctionName,
   TChain extends Chain | undefined,
->(client: PublicClient<Transport, TChain>, params: ArbGasInfoReadContractParameters<TFunctionName>) {
+>(
+  client: PublicClient<Transport, TChain>,
+  params: ArbGasInfoReadContractParameters<TFunctionName>,
+) {
   return client.readContract({
     address: arbGasInfo.address,
     abi: arbGasInfo.abi,

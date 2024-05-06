@@ -12,19 +12,16 @@ import { GetReadContractFunctionName } from './types/utils';
 
 type ArbOwnerPublicAbi = typeof arbOwnerPublic.abi;
 export type ArbOwnerPublicFunctionName = GetReadContractFunctionName<ArbOwnerPublicAbi>;
-type ArbOwnerReadContractArgs<TFunctionName extends ArbOwnerPublicFunctionName> = ContractFunctionArgs<
-  ArbOwnerPublicAbi,
-  'pure' | 'view',
-  TFunctionName
->;
+type ArbOwnerReadContractArgs<TFunctionName extends ArbOwnerPublicFunctionName> =
+  ContractFunctionArgs<ArbOwnerPublicAbi, 'pure' | 'view', TFunctionName>;
 
 export type ArbOwnerReadContractParameters<
   TFunctionName extends ArbOwnerPublicFunctionName,
   TArgs extends ArbOwnerReadContractArgs<TFunctionName> = ArbOwnerReadContractArgs<TFunctionName>,
-> = Omit<ReadContractParameters<ArbOwnerPublicAbi, TFunctionName, TArgs>, 'abi' | 'address'>
+> = Omit<ReadContractParameters<ArbOwnerPublicAbi, TFunctionName, TArgs>, 'abi' | 'address'>;
 export type ArbOwnerReadContractReturnType<
   TFunctionName extends ArbOwnerPublicFunctionName,
-  TArgs extends ArbOwnerReadContractArgs<TFunctionName> = ArbOwnerReadContractArgs<TFunctionName>
+  TArgs extends ArbOwnerReadContractArgs<TFunctionName> = ArbOwnerReadContractArgs<TFunctionName>,
 > = ReadContractReturnType<ArbOwnerPublicAbi, TFunctionName, TArgs>;
 
 export function arbOwnerReadContract<

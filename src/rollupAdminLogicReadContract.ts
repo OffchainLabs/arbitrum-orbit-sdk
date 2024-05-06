@@ -13,7 +13,7 @@ import { GetReadContractFunctionName } from './types/utils';
 import { rollupAdminLogicABI } from './abi/rollupAdminLogicABI';
 
 export type RollupAdminLogicAbi = typeof rollupAdminLogicABI;
-export type RollupAdminLogicFunctionName = GetReadContractFunctionName<RollupAdminLogicAbi>
+export type RollupAdminLogicFunctionName = GetReadContractFunctionName<RollupAdminLogicAbi>;
 
 type RollupAdminLogicContractArgs<TFunctionName extends RollupAdminLogicFunctionName> =
   ContractFunctionArgs<RollupAdminLogicAbi, 'pure' | 'view', TFunctionName>;
