@@ -11,7 +11,7 @@ export type GetReadContractFunctionName<TAbi extends Abi> = ContractFunctionName
   TAbi,
   'pure' | 'view'
 >;
-export type GetPrepreTransactionRequestParams<TAbi extends Abi> = ContractFunctionName<
+export type GetPrepareTransactionRequestParams<TAbi extends Abi> = ContractFunctionName<
   TAbi,
   'nonpayable' | 'payable'
 >;

@@ -12,10 +12,10 @@ import {
 
 import { arbOwner } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
-import { GetPrepreTransactionRequestParams } from './types/utils';
+import { GetPrepareTransactionRequestParams } from './types/utils';
 
 type ArbOwnerAbi = typeof arbOwner.abi;
-export type ArbOwnerFunctionName = GetPrepreTransactionRequestParams<ArbOwnerAbi>;
+export type ArbOwnerFunctionName = GetPrepareTransactionRequestParams<ArbOwnerAbi>;
 type ArbOwnerPrepareTransactionRequestArgs<TFunctionName extends ArbOwnerFunctionName> =
   ContractFunctionArgs<ArbOwnerAbi, 'nonpayable' | 'payable', TFunctionName>;
 
