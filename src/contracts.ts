@@ -9,6 +9,7 @@ import {
   arbGasInfoConfig,
   arbAggregatorConfig,
 } from './generated';
+import { sequencerInboxABI } from './abi/sequencerInboxABI';
 
 export const erc20 = {
   abi: erc20ABI,
@@ -485,4 +486,8 @@ const rewardDistributorBytecode =
 export const rewardDistributor = {
   abi: rewardDistributorAbi,
   bytecode: rewardDistributorBytecode as `0x${string}`,
+};
+
+export const sequencerInbox = {
+  abi: sequencerInboxABI,
 };
