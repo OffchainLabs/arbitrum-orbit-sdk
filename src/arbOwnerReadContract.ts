@@ -9,9 +9,10 @@ import {
 } from 'viem';
 
 import { arbOwnerPublic } from './contracts';
+import { GetReadContractFunctionName } from './types/utils';
 
 type ArbOwnerPublicAbi = typeof arbOwnerPublic.abi;
-export type ArbOwnerPublicFunctionName = ContractFunctionName<ArbOwnerPublicAbi, 'pure' | 'view'>;
+export type ArbOwnerPublicFunctionName = GetReadContractFunctionName<ArbOwnerPublicAbi>;
 type ArbOwnerReadContractArgs<TFunctionName extends ArbOwnerPublicFunctionName> = ContractFunctionArgs<
   ArbOwnerPublicAbi,
   'pure' | 'view',

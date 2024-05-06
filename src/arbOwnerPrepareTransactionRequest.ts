@@ -6,16 +6,16 @@ import {
   Chain,
   Transport,
   PrepareTransactionRequestReturnType,
-  ContractFunctionName,
   EncodeFunctionDataReturnType,
   ContractFunctionArgs,
 } from 'viem';
 
 import { arbOwner } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { GetPrepreTransactionRequestParams } from './types/utils';
 
 type ArbOwnerAbi = typeof arbOwner.abi;
-export type ArbOwnerFunctionName = ContractFunctionName<ArbOwnerAbi, 'nonpayable' | 'payable'>;
+export type ArbOwnerFunctionName = GetPrepreTransactionRequestParams<ArbOwnerAbi>;
 type ArbOwnerPrepareTransactionRequestArgs<TFunctionName extends ArbOwnerFunctionName> =
   ContractFunctionArgs<ArbOwnerAbi, 'nonpayable' | 'payable', TFunctionName>;
 
