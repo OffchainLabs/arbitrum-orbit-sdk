@@ -7,7 +7,7 @@ import {
   ArbGasInfoReadContractReturnType,
 } from '../arbGasInfoReadContract';
 
-export type ArbGasInfoPublicActions<TChain extends Chain | undefined = Chain | undefined> = {
+export type ArbGasInfoPublicActions = {
   arbGasInfoReadContract: <TFunctionName extends ArbGasInfoFunctionName>(
     args: ArbGasInfoReadContractParameters<TFunctionName>,
   ) => Promise<ArbGasInfoReadContractReturnType<TFunctionName>>;
@@ -16,8 +16,9 @@ export type ArbGasInfoPublicActions<TChain extends Chain | undefined = Chain | u
 export function arbGasInfoPublicActions<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
->(client: PublicClient<TTransport, TChain>): ArbGasInfoPublicActions<TChain> {
+>(client: PublicClient<TTransport, TChain>): ArbGasInfoPublicActions {
   return {
     arbGasInfoReadContract: (args) => arbGasInfoReadContract(client, args),
   };
 }
+
