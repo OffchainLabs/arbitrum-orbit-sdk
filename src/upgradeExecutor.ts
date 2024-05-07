@@ -14,10 +14,9 @@ export type UpgradeExecutorEncodeFunctionDataParameters<
 export function upgradeExecutorEncodeFunctionData<
   TFunctionName extends UpgradeExecutorFunctionName,
 >({ functionName, args }: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>) {
-  // @ts-ignore (todo: fix viem type issue)
   return encodeFunctionData({
     abi: upgradeExecutor.abi,
     functionName,
     args,
-  });
+  } as EncodeFunctionDataParameters);
 }
