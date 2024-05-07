@@ -6,6 +6,6 @@ export default defineConfig({
     // allow tests to run for 7 minutes as retryables can take a while
     testTimeout: 7 * 60 * 1000,
     // don't run tests in parallel to avoid race conditions
-    sequence: { concurrent: false }
+    sequence: { concurrent: false },
   },
 });
