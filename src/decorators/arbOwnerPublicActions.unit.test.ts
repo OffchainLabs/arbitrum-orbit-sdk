@@ -118,11 +118,11 @@ describe('prepareTransactionRequest', () => {
   });
 
   it('Only accept prepare transaction request function names', () => {
-      expect(
-        client.arbOwnerPrepareTransactionRequest({
-          // @ts-expect-error `isChainOwner` is only available through arbOwnerReadContract
-          functionName: 'isChainOwner',
-        }),
-      ).rejects.toThrowError(AbiEncodingLengthMismatchError);
+    expect(
+      client.arbOwnerPrepareTransactionRequest({
+        // @ts-expect-error `isChainOwner` is only available through arbOwnerReadContract
+        functionName: 'isChainOwner',
+      }),
+    ).rejects.toThrowError(AbiEncodingLengthMismatchError);
   });
 });

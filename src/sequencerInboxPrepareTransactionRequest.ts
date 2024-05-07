@@ -86,7 +86,7 @@ export type SequencerInboxPrepareTransactionRequestParameters<
   TFunctionName extends SequencerInboxPrepareTransactionRequestFunctionName,
 > = Omit<SequencerInboxPrepareFunctionDataParameters<TFunctionName>, 'abi' | 'functionName'> & {
   account: Address;
-  functionName: TFunctionName
+  functionName: TFunctionName;
 };
 
 export type SequencerInboxPrepareTransactionRequestReturnType<TChain extends Chain | undefined> =
