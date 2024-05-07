@@ -1,11 +1,11 @@
 import { encodeFunctionData, EncodeFunctionDataParameters } from 'viem';
 
 import { upgradeExecutor } from './contracts';
-import { GetFunctionName, Prettify } from './types/utils';
+import { GetPrepareTransactionRequestParams, Prettify } from './types/utils';
 
 export type UpgradeExecutorAbi = typeof upgradeExecutor.abi;
 
-export type UpgradeExecutorFunctionName = GetFunctionName<UpgradeExecutorAbi>;
+export type UpgradeExecutorFunctionName = GetPrepareTransactionRequestParams<UpgradeExecutorAbi>;
 
 export type UpgradeExecutorEncodeFunctionDataParameters<
   TFunctionName extends UpgradeExecutorFunctionName,
