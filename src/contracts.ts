@@ -7,6 +7,7 @@ import {
   rollupCreatorConfig,
   tokenBridgeCreatorConfig,
   arbGasInfoConfig,
+  arbAggregatorConfig,
 } from './generated';
 import { sequencerInboxABI } from './abi/sequencerInboxABI';
 
@@ -27,6 +28,11 @@ export const arbGasInfo = {
 export const arbOwnerPublic = {
   ...arbOwnerPublicConfig,
   address: Object.values(arbOwnerPublicConfig.address)[0],
+} as const;
+
+export const arbAggregator = {
+  ...arbAggregatorConfig,
+  address: Object.values(arbAggregatorConfig.address)[0],
 } as const;
 
 export const rollupCreator = rollupCreatorConfig;
