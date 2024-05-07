@@ -1,11 +1,12 @@
-import { Address } from 'viem';
+import { AbiStateMutability, Address, ContractFunctionArgs } from 'viem';
 
 import { rollupCreator } from '../contracts';
 
-export type CreateRollupFunctionInputs = GetFunctionArgs<
+export type CreateRollupFunctionInputs = ContractFunctionArgs<
   typeof rollupCreator.abi,
+  AbiStateMutability,
   'createRollup'
->['args'];
+>;
 
 type RequiredKeys = 'config' | 'batchPoster' | 'validators';
 
