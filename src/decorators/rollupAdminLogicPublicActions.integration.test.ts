@@ -34,7 +34,7 @@ it('successfully set validators', async () => {
 
   await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(
-      tx as PrepareTransactionRequestReturnType & { chainId: number },
+      tx as PrepareTransactionRequestReturnType,
     ),
   });
 
@@ -72,7 +72,7 @@ it('successfully enable/disable whitelist', async () => {
 
   await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(
-      tx as PrepareTransactionRequestReturnType & { chainId: number },
+      tx as PrepareTransactionRequestReturnType,
     ),
   });
 
@@ -94,7 +94,7 @@ it('successfully enable/disable whitelist', async () => {
 
   await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(
-      revertTx as PrepareTransactionRequestReturnType & { chainId: number },
+      revertTx as PrepareTransactionRequestReturnType,
     ),
   });
 });
