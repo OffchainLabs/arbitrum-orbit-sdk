@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitest/config';
-import { HangingProcessReporter, DefaultReporter } from 'vitest/reporters';
 
 export default defineConfig({
   test: {
@@ -8,6 +7,5 @@ export default defineConfig({
     testTimeout: 7 * 60 * 1000,
     // don't run tests in parallel to avoid race conditions
     sequence: { concurrent: false },
-    reporters: [new DefaultReporter(), new HangingProcessReporter()],
   },
 });
