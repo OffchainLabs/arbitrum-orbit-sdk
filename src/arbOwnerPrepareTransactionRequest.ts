@@ -28,7 +28,9 @@ function arbOwnerPrepareFunctionData<
   if (!upgradeExecutor) {
     return {
       to: arbOwner.address,
-      data: encodeFunctionData(params as EncodeFunctionDataParameters<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>),
+      data: encodeFunctionData(
+        params as EncodeFunctionDataParameters<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>,
+      ),
       value: BigInt(0),
     };
   }
@@ -39,7 +41,9 @@ function arbOwnerPrepareFunctionData<
       functionName: 'executeCall',
       args: [
         arbOwner.address, // target
-        encodeFunctionData(params as EncodeFunctionDataParameters<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>), // targetCallData
+        encodeFunctionData(
+          params as EncodeFunctionDataParameters<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>,
+        ), // targetCallData
       ],
     }),
     value: BigInt(0),
