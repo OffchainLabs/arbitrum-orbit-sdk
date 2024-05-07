@@ -1,94 +1,4 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ArbAggregator
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006d)
- */
-export const arbAggregatorABI = [
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'newBatchPoster', internalType: 'address', type: 'address' }],
-    name: 'addBatchPoster',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getBatchPosters',
-    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getDefaultAggregator',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'batchPoster', internalType: 'address', type: 'address' }],
-    name: 'getFeeCollector',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'addr', internalType: 'address', type: 'address' }],
-    name: 'getPreferredAggregator',
-    outputs: [
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'bool', type: 'bool' },
-    ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'aggregator', internalType: 'address', type: 'address' }],
-    name: 'getTxBaseFee',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'batchPoster', internalType: 'address', type: 'address' },
-      { name: 'newFeeCollector', internalType: 'address', type: 'address' },
-    ],
-    name: 'setFeeCollector',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'aggregator', internalType: 'address', type: 'address' },
-      { name: 'feeInL1Gas', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'setTxBaseFee',
-    outputs: [],
-  },
-] as const;
-
-/**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006d)
- */
-export const arbAggregatorAddress = {
-  421614: '0x000000000000000000000000000000000000006D',
-} as const;
-
-/**
- * [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x000000000000000000000000000000000000006d)
- */
-export const arbAggregatorConfig = {
-  address: arbAggregatorAddress,
-  abi: arbAggregatorABI,
-} as const;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ArbGasInfo
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,8 +77,57 @@ export const arbGasInfoABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [],
+    name: 'getL1PricingEquilibrationUnits',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getL1PricingFundsDueForRewards',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     name: 'getL1PricingSurplus',
     outputs: [{ name: '', internalType: 'int256', type: 'int256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getL1PricingUnitsSinceUpdate',
+    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getL1RewardRate',
+    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getL1RewardRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getLastL1PricingSurplus',
+    outputs: [{ name: '', internalType: 'int256', type: 'int256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getLastL1PricingUpdateTime',
+    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
   },
   {
     stateMutability: 'view',
@@ -342,6 +301,20 @@ export const arbOwnerABI = [
   {
     stateMutability: 'nonpayable',
     type: 'function',
+    inputs: [{ name: 'level', internalType: 'uint64', type: 'uint64' }],
+    name: 'setBrotliCompressionLevel',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'chainConfig', internalType: 'string', type: 'string' }],
+    name: 'setChainConfig',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [{ name: 'newInfraFeeAccount', internalType: 'address', type: 'address' }],
     name: 'setInfraFeeAccount',
     outputs: [],
@@ -467,11 +440,24 @@ export const arbOwnerConfig = { address: arbOwnerAddress, abi: arbOwnerABI } as 
  */
 export const arbOwnerPublicABI = [
   {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'rectifiedOwner', internalType: 'address', type: 'address', indexed: false }],
+    name: 'ChainOwnerRectified',
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'getAllChainOwners',
     outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getBrotliCompressionLevel',
+    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
   },
   {
     stateMutability: 'view',
@@ -490,9 +476,26 @@ export const arbOwnerPublicABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [],
+    name: 'getScheduledUpgrade',
+    outputs: [
+      { name: 'arbosVersion', internalType: 'uint64', type: 'uint64' },
+      { name: 'scheduledForTimestamp', internalType: 'uint64', type: 'uint64' },
+    ],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [{ name: 'addr', internalType: 'address', type: 'address' }],
     name: 'isChainOwner',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'ownerToRectify', internalType: 'address', type: 'address' }],
+    name: 'rectifyChainOwner',
+    outputs: [],
   },
 ] as const;
 
