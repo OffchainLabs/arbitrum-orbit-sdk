@@ -70,7 +70,7 @@ describe('sequencerInboxReadContract', () => {
       functionName: 'setValidKeyset',
       args: [randomAccount.address],
     });
-  })
+  });
 });
 
 describe('sequencerInboxPrepareTransactionRequest:', () => {
