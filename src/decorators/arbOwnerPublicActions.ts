@@ -8,7 +8,6 @@ import {
 } from '../arbOwnerReadContract';
 import {
   arbOwnerPrepareTransactionRequest,
-  ArbOwnerPrepareTransactionRequestFunctionName,
   ArbOwnerPrepareTransactionRequestParameters,
 } from '../arbOwnerPrepareTransactionRequest';
 import { ArbOSVersions } from '../contracts';
@@ -22,9 +21,9 @@ export type ArbOwnerPublicActions<
   ) => Promise<ArbOwnerReadContractReturnType<TArbOsVersion, TFunctionName>>;
 
   arbOwnerPrepareTransactionRequest: <
-    TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
+    TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
   >(
-    args: ArbOwnerPrepareTransactionRequestParameters<TFunctionName>,
+    args: ArbOwnerPrepareTransactionRequestParameters<TArbOsVersion, TFunctionName>,
   ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
@@ -32,15 +31,15 @@ export function arbOwnerPublicActions<
   TArbOsVersion extends ArbOSVersions,
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
->({ arbOSVersion }: { arbOSVersion: TArbOsVersion }) {
+>({ arbOsVersion }: { arbOsVersion: TArbOsVersion }) {
   return (
     client: PublicClient<TTransport, TChain>,
   ): ArbOwnerPublicActions<TArbOsVersion, TChain> => {
     return {
-      arbOwnerReadContract: (args) => arbOwnerReadContract(client, { ...args, arbOSVersion }),
+      arbOwnerReadContract: (args) => arbOwnerReadContract(client, { ...args, arbOsVersion }),
 
       arbOwnerPrepareTransactionRequest: (args) =>
-        arbOwnerPrepareTransactionRequest(client, { ...args, arbOSVersion }),
+        arbOwnerPrepareTransactionRequest(client, { ...args, arbOsVersion }),
     };
   };
 }

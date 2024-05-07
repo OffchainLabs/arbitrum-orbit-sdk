@@ -29,13 +29,13 @@ export function arbOwnerReadContract<
 >(
   client: PublicClient<Transport, TChain>,
   params: ArbOwnerReadContractParameters<TArbOsVersion, TFunctionName> & {
-    arbOSVersion: TArbOsVersion;
+    arbOsVersion: TArbOsVersion;
   },
 ): Promise<ArbOwnerReadContractReturnType<TArbOsVersion, TFunctionName>> {
   // @ts-ignore (todo: fix viem type issue)
   return client.readContract({
     address: arbOwnerPublic.address,
-    abi: ArbOwnerABIs[params.arbOSVersion],
+    abi: ArbOwnerABIs[params.arbOsVersion],
     functionName: params.functionName,
     args: params.args,
   });

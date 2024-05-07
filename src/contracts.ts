@@ -216,6 +216,13 @@ export const ArbOwnerABIs = {
       name: 'onlyOnArbOS10',
       outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
     },
+    {
+      stateMutability: 'nonpayable',
+      type: 'function',
+      inputs: [{ name: 'recipient', internalType: 'address[]', type: 'address[]' }],
+      name: 'setL1PricingRewardRecipient',
+      outputs: [],
+    },
   ],
   11: [
     {
@@ -231,6 +238,13 @@ export const ArbOwnerABIs = {
       inputs: [],
       name: 'onlyOnArbOS11',
       outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+    },
+    {
+      stateMutability: 'nonpayable',
+      type: 'function',
+      inputs: [{ name: 'recipient', internalType: 'uint64', type: 'uint64' }],
+      name: 'setL1PricingRewardRecipient',
+      outputs: [],
     },
   ],
   20: arbOwnerConfig.abi,

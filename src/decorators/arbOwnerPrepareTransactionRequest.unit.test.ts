@@ -14,7 +14,7 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
-}).extend(arbOwnerPublicActions);
+}).extend(arbOwnerPublicActions({ arbOsVersion: 20 }));
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
 it('Infer parameters based on function name', async () => {
