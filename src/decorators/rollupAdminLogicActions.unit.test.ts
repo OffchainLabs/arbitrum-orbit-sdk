@@ -20,7 +20,7 @@ const client = createPublicClient({
 
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
-describe('RollupAdminLogic parameter:', () => {
+describe('readContract', () => {
   it('require rollupAdminLogic parameter if not passed initially to the actions during initialization', () => {
     const clientWithoutRollupAdminLogicAddress = createPublicClient({
       chain: nitroTestnodeL2,
@@ -85,7 +85,7 @@ describe('RollupAdminLogic parameter:', () => {
   });
 });
 
-describe('RollupAdminLogic parameter:', () => {
+describe('prepareTransactionRequest', () => {
   it('Infer parameters based on function name', async () => {
     expect(
       client.rollupAdminLogicPrepareTransactionRequest({

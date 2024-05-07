@@ -20,7 +20,7 @@ const client = createPublicClient({
 
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
-describe('sequencerInboxReadContract', () => {
+describe('readContract', () => {
   it('require sequencerInbox parameter if not passed initially to the actions during initialization', () => {
     const clientWithoutSequencerInboxAddress = createPublicClient({
       chain: nitroTestnodeL2,
@@ -73,7 +73,7 @@ describe('sequencerInboxReadContract', () => {
   });
 });
 
-describe('sequencerInboxPrepareTransactionRequest:', () => {
+describe('prepareTransactionRequest', () => {
   it('Infer parameters based on function name', async () => {
     expect(
       client.sequencerInboxPrepareTransactionRequest({
