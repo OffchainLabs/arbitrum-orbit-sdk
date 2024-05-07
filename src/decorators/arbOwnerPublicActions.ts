@@ -39,7 +39,11 @@ export function arbOwnerPublicActions<
       arbOwnerReadContract: (args) => arbOwnerReadContract(client, { ...args, arbOsVersion }),
 
       arbOwnerPrepareTransactionRequest: (args) =>
-        arbOwnerPrepareTransactionRequest(client, { ...args, arbOsVersion }),
+        // @ts-ignore (todo: fix viem type issue)
+        arbOwnerPrepareTransactionRequest(client, {
+          ...args,
+          arbOsVersion,
+        }),
     };
   };
 }
