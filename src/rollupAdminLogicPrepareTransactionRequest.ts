@@ -84,8 +84,9 @@ function rollupAdminLogicPrepareFunctionData<
 
 export type RollupAdminLogicPrepareTransactionRequestParameters<
   TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
-> = Omit<RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+> = Omit<RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>, 'abi' | 'functionName'> & {
   account: Address;
+  functionName: TFunctionName;
 };
 
 export type RollupAdminLogicPrepareTransactionRequestReturnType<TChain extends Chain | undefined> =

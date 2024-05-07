@@ -70,53 +70,77 @@ describe('RollupAdminLogic parameter:', () => {
       rollup: rollupAdminLogicAddress,
     });
   });
+
+  it('Only accept read function names', () => {
+    const clientWithRollupAdminLogicAddress = createPublicClient({
+      chain: nitroTestnodeL2,
+      transport: http(),
+    }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
+
+    clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract({
+      // @ts-expect-error `addChainOwner` is only available through rollupAdminLogicPrepareTransactionRequest
+      functionName: 'setLoserStakeEscrow',
+      args: [randomAccount.address],
+    });
+  });
 });
 
-it('Infer parameters based on function name', async () => {
-  expect(
-    client.rollupAdminLogicPrepareTransactionRequest({
-      functionName: 'setLoserStakeEscrow',
-      // @ts-expect-error Args are missing
-      args: [],
-      upgradeExecutor: false,
-      account: randomAccount.address,
-    }),
-  ).rejects.toThrowError(AbiEncodingLengthMismatchError);
-
-  expect(
-    client.rollupAdminLogicPrepareTransactionRequest({
-      functionName: 'setLoserStakeEscrow',
-      // @ts-expect-error Args are of the wrong type
-      args: [true],
-      upgradeExecutor: false,
-      account: randomAccount.address,
-    }),
-  ).rejects.toThrowError(InvalidAddressError);
-
-  expect(
-    client
-      // @ts-expect-error Args are required for `setLoserStakeEscrow`
-      .rollupAdminLogicPrepareTransactionRequest({
+describe('RollupAdminLogic parameter:', () => {
+  it('Infer parameters based on function name', async () => {
+    expect(
+      client.rollupAdminLogicPrepareTransactionRequest({
         functionName: 'setLoserStakeEscrow',
+        // @ts-expect-error Args are missing
+        args: [],
         upgradeExecutor: false,
         account: randomAccount.address,
       }),
-  ).rejects.toThrow(AbiEncodingLengthMismatchError);
+    ).rejects.toThrowError(AbiEncodingLengthMismatchError);
 
-  expectTypeOf<
-    typeof client.rollupAdminLogicPrepareTransactionRequest<'setLoserStakeEscrow'>
-  >().toBeCallableWith({
-    functionName: 'setLoserStakeEscrow',
-    args: [randomAccount.address],
-    upgradeExecutor: false,
-    account: randomAccount.address,
+    expect(
+      client.rollupAdminLogicPrepareTransactionRequest({
+        functionName: 'setLoserStakeEscrow',
+        // @ts-expect-error Args are of the wrong type
+        args: [true],
+        upgradeExecutor: false,
+        account: randomAccount.address,
+      }),
+    ).rejects.toThrowError(InvalidAddressError);
+
+    expect(
+      client
+        // @ts-expect-error Args are required for `setLoserStakeEscrow`
+        .rollupAdminLogicPrepareTransactionRequest({
+          functionName: 'setLoserStakeEscrow',
+          upgradeExecutor: false,
+          account: randomAccount.address,
+        }),
+    ).rejects.toThrow(AbiEncodingLengthMismatchError);
+
+    expectTypeOf<
+      typeof client.rollupAdminLogicPrepareTransactionRequest<'setLoserStakeEscrow'>
+    >().toBeCallableWith({
+      functionName: 'setLoserStakeEscrow',
+      args: [randomAccount.address],
+      upgradeExecutor: false,
+      account: randomAccount.address,
+    });
+
+    // Function doesn't exist
+    expect(
+      client.rollupAdminLogicPrepareTransactionRequest({
+        // @ts-expect-error Function not available
+        functionName: 'notExisting',
+      }),
+    ).rejects.toThrowError(AbiFunctionNotFoundError);
   });
 
-  // Function doesn't exist
-  expect(
-    client.rollupAdminLogicPrepareTransactionRequest({
-      // @ts-expect-error Function not available
-      functionName: 'notExisting',
-    }),
-  ).rejects.toThrowError(AbiFunctionNotFoundError);
+  it('Only accept prepare transaction request function names', () => {
+    expect(
+      client.rollupAdminLogicPrepareTransactionRequest({
+        // @ts-expect-error `amountStaked` is only available through rollupAdminLogicReadContract
+        functionName: 'amountStaked',
+      }),
+    ).rejects.toThrowError(AbiEncodingLengthMismatchError);
+  });
 });
