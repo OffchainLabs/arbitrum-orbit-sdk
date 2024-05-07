@@ -55,6 +55,16 @@ describe('readContract', () => {
       }),
     ).rejects.toThrowError(AbiFunctionNotFoundError);
   });
+
+  it('Only accept read function names', () => {
+    expect(
+      client.arbOwnerReadContract({
+        // @ts-expect-error `addChainOwner` is only available through arbOwnerPrepareTransactionRequest
+        functionName: 'addChainOwner',
+        args: [randomAccount.address],
+      }),
+    ).rejects.toThrowError(AbiFunctionNotFoundError);
+  });
 });
 
 describe('prepareTransactionRequest', () => {
@@ -105,5 +115,14 @@ describe('prepareTransactionRequest', () => {
         functionName: 'notExisting',
       }),
     ).rejects.toThrowError(AbiFunctionNotFoundError);
+  });
+
+  it('Only accept prepare transaction request function names', () => {
+      expect(
+        client.arbOwnerPrepareTransactionRequest({
+          // @ts-expect-error `isChainOwner` is only available through arbOwnerReadContract
+          functionName: 'isChainOwner',
+        }),
+      ).rejects.toThrowError(AbiEncodingLengthMismatchError);
   });
 });

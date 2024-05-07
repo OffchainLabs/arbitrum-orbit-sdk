@@ -75,8 +75,9 @@ function arbOwnerPrepareFunctionData<TFunctionName extends ArbOwnerFunctionName>
 
 export type ArbOwnerPrepareTransactionRequestParameters<
   TFunctionName extends ArbOwnerFunctionName,
-> = Omit<ArbOwnerPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+> = Omit<ArbOwnerPrepareFunctionDataParameters<TFunctionName>, 'abi' | 'functionName'> & {
   account: Address;
+  functionName: TFunctionName;
 };
 
 export type ArbOwnerPrepareTransactionRequestReturnType<TChain extends Chain | undefined> =
