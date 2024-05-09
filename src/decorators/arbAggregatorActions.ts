@@ -8,6 +8,7 @@ import {
 } from '../arbAggregatorReadContract';
 import {
   arbAggregatorPrepareTransactionRequest,
+  ArbAggregatorPrepareTransactionRequestFunctionName,
   ArbAggregatorPrepareTransactionRequestParameters,
 } from '../arbAggregatorPrepareTransactionRequest';
 
@@ -16,8 +17,10 @@ export type ArbAggregatorActions<TChain extends Chain | undefined = Chain | unde
     args: ArbAggregatorReadContractParameters<TFunctionName>,
   ) => Promise<ArbAggregatorReadContractReturnType<TFunctionName>>;
 
-  arbAggregatorPrepareTransactionRequest: (
-    args: ArbAggregatorPrepareTransactionRequestParameters,
+  arbAggregatorPrepareTransactionRequest: <
+    TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
+  >(
+    args: ArbAggregatorPrepareTransactionRequestParameters<TFunctionName>,
   ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 

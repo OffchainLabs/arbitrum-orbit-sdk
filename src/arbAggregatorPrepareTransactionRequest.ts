@@ -9,34 +9,41 @@ import {
 
 import { arbAggregator } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
-import { Prettify } from './types/utils';
+import { GetFunctionName } from './types/utils';
 
-type ArbAggregatorEncodeFunctionDataParameters = Prettify<
-  Omit<EncodeFunctionDataParameters<typeof arbAggregator.abi, string>, 'abi'>
->;
+type ArbAggregatorAbi = typeof arbAggregator.abi;
+export type ArbAggregatorPrepareTransactionRequestFunctionName = GetFunctionName<ArbAggregatorAbi>;
+export type ArbAggregatorEncodeFunctionDataParameters<
+  TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
+> = EncodeFunctionDataParameters<ArbAggregatorAbi, TFunctionName>;
 
-function arbAggregatorEncodeFunctionData({
-  functionName,
-  args,
-}: ArbAggregatorEncodeFunctionDataParameters) {
+function arbAggregatorEncodeFunctionData<
+  TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
+>({ functionName, abi, args }: ArbAggregatorEncodeFunctionDataParameters<TFunctionName>) {
   return encodeFunctionData({
-    abi: arbAggregator.abi,
+    abi,
     functionName,
     args,
   });
 }
 
-function arbAggregatorPrepareFunctionData(
-  params: ArbAggregatorEncodeFunctionDataParameters & {
-    upgradeExecutor: Address | false;
-  },
-) {
+type ArbAggregatorPrepareFunctionDataParameters<
+  TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
+> = ArbAggregatorEncodeFunctionDataParameters<TFunctionName> & {
+  upgradeExecutor: Address | false;
+  abi: ArbAggregatorAbi;
+};
+function arbAggregatorPrepareFunctionData<
+  TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
+>(params: ArbAggregatorPrepareFunctionDataParameters<TFunctionName>) {
   const { upgradeExecutor } = params;
 
   if (!upgradeExecutor) {
     return {
       to: arbAggregator.address,
-      data: arbAggregatorEncodeFunctionData(params),
+      data: arbAggregatorEncodeFunctionData(
+        params as ArbAggregatorEncodeFunctionDataParameters<TFunctionName>,
+      ),
       value: BigInt(0),
     };
   }
@@ -47,29 +54,36 @@ function arbAggregatorPrepareFunctionData(
       functionName: 'executeCall',
       args: [
         arbAggregator.address, // target
-        arbAggregatorEncodeFunctionData(params), // targetCallData
+        arbAggregatorEncodeFunctionData(
+          params as ArbAggregatorEncodeFunctionDataParameters<TFunctionName>,
+        ), // targetCallData
       ],
     }),
     value: BigInt(0),
   };
 }
 
-export type ArbAggregatorPrepareTransactionRequestParameters = Prettify<
-  ArbAggregatorEncodeFunctionDataParameters & {
-    upgradeExecutor: Address | false;
-    account: Address;
-  }
->;
-
-export async function arbAggregatorPrepareTransactionRequest<TChain extends Chain | undefined>(
+export type ArbAggregatorPrepareTransactionRequestParameters<
+  TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
+> = Omit<ArbAggregatorPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+  account: Address;
+};
+export async function arbAggregatorPrepareTransactionRequest<
+  TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
+  TChain extends Chain | undefined,
+>(
   client: PublicClient<Transport, TChain>,
-  params: ArbAggregatorPrepareTransactionRequestParameters,
+  params: ArbAggregatorPrepareTransactionRequestParameters<TFunctionName>,
 ) {
   if (typeof client.chain === 'undefined') {
     throw new Error('[arbAggregatorPrepareTransactionRequest] client.chain is undefined');
   }
 
-  const { to, data, value } = arbAggregatorPrepareFunctionData(params);
+  // params is extending ArbAggregatorPrepareFunctionDataParameters, it's safe to cast
+  const { to, data, value } = arbAggregatorPrepareFunctionData({
+    ...params,
+    abi: arbAggregator.abi,
+  } as unknown as ArbAggregatorPrepareFunctionDataParameters<TFunctionName>);
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await client.prepareTransactionRequest({
