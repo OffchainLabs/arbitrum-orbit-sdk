@@ -2,12 +2,8 @@ import { PublicClient, WalletClient } from 'viem';
 import { getContract } from 'viem';
 import { validateParentChain } from './types/ParentChain';
 import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
-import { upgradeExecutor } from './contracts';
-import { getAddress } from 'viem';
-import {
-  setL2BaseFeeEnocdeFunctionData,
-  setMinimumL2BaseFeeEnocdeFunctionData,
-} from './setL2BaseFeeEncodeFunctionData';
+import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
+import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
 
 export type BaseFeeParams = {
   parentChainClient: PublicClient;
@@ -18,14 +14,12 @@ export type BaseFeeParams = {
 };
 
 export type SetL2BaseFeeParams = {
-  l2BaseFee: string;
+  l2BaseFee: bigint;
 };
 
 export type SetMinimumL2BaseFeeParams = {
-  minimumL2BaseFee: string;
+  minimumL2BaseFee: bigint;
 };
-
-const arbOwner = '0x0000000000000000000000000000000000000070';
 
 export async function setL2BaseFee({
   parentChainClient,
@@ -42,27 +36,27 @@ export async function setL2BaseFee({
     throw new Error('account is undefined');
   }
 
+  const extendedOrbitChainClient = orbitChainClient
+    .extend(arbOwnerPublicActions)
+    .extend(arbGasInfoPublicActions);
+
   const upgradeExecutorProxyAddress = await getUpgradeExecutorProxyAddress(
     tokenBridgeCreatorAddress,
     inboxAddress,
     orbitChainClient,
   );
 
-  const { request } = await orbitChainClient.simulateContract({
-    address: getAddress(upgradeExecutorProxyAddress),
-    abi: upgradeExecutor.abi,
-    functionName: 'executeCall',
-    args: [
-      arbOwner, // target
-      setL2BaseFeeEnocdeFunctionData(BigInt(l2BaseFee)), // targetCallData
-    ],
-    account,
+  const transactionRequest = await extendedOrbitChainClient.arbOwnerPrepareTransactionRequest({
+    functionName: 'setL2BaseFee',
+    args: [l2BaseFee],
+    upgradeExecutor: upgradeExecutorProxyAddress,
+    account: account,
   });
 
-  const hash = await orbitChainWalletClient.writeContract(request);
-  const txReceipt = await orbitChainClient.waitForTransactionReceipt({ hash });
-
-  return txReceipt;
+  // submit tx to set l2 base fee
+  return await extendedOrbitChainClient.sendRawTransaction({
+    serializedTransaction: await orbitChainWalletClient.signTransaction(transactionRequest),
+  });
 }
 
 export async function setMinimumL2BaseFee({
@@ -80,27 +74,27 @@ export async function setMinimumL2BaseFee({
     throw new Error('account is undefined');
   }
 
+  const extendedOrbitChainClient = orbitChainClient
+    .extend(arbOwnerPublicActions)
+    .extend(arbGasInfoPublicActions);
+
   const upgradeExecutorProxyAddress = await getUpgradeExecutorProxyAddress(
     tokenBridgeCreatorAddress,
     inboxAddress,
     orbitChainClient,
   );
 
-  const { request } = await orbitChainClient.simulateContract({
-    address: getAddress(upgradeExecutorProxyAddress),
-    abi: upgradeExecutor.abi,
-    functionName: 'executeCall',
-    args: [
-      arbOwner, // target
-      setMinimumL2BaseFeeEnocdeFunctionData(BigInt(minimumL2BaseFee)), // targetCallData
-    ],
-    account,
+  const transactionRequest = await extendedOrbitChainClient.arbOwnerPrepareTransactionRequest({
+    functionName: 'setMinimumL2BaseFee',
+    args: [minimumL2BaseFee],
+    upgradeExecutor: upgradeExecutorProxyAddress,
+    account: account,
   });
 
-  const hash = await orbitChainWalletClient.writeContract(request);
-  const txReceipt = await orbitChainClient.waitForTransactionReceipt({ hash });
-
-  return txReceipt;
+  // submit tx to set minimum l2 base fee
+  return await extendedOrbitChainClient.sendRawTransaction({
+    serializedTransaction: await orbitChainWalletClient.signTransaction(transactionRequest),
+  });
 }
 
 async function getUpgradeExecutorProxyAddress(
