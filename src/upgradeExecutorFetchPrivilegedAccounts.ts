@@ -1,8 +1,9 @@
 import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
+import { UpgradeExecutorRoles } from './upgradeExecutorEncodeFunctionData';
 
 /**
- * This type is for the params of the upgradeExecutorFetchPrivilegedAccounts function
+ * This type is for the params of the {@link upgradeExecutorFetchPrivilegedAccounts} function
  */
 export type UpgradeExecutorFetchPrivilegedAccountsParams = {
   upgradeExecutorAddress: Address;
@@ -10,7 +11,7 @@ export type UpgradeExecutorFetchPrivilegedAccountsParams = {
 };
 
 /**
- * This type is for the result of the upgradeExecutorFetchPrivilegedAccounts function.
+ * This type is for the result of the {@link upgradeExecutorFetchPrivilegedAccounts} function.
  *
  * It is an object containing the addresses of the privileged accounts as keys,
  * and an array with a hash for each role they have.
@@ -18,17 +19,17 @@ export type UpgradeExecutorFetchPrivilegedAccountsParams = {
 export type UpgradeExecutorPrivilegedAccounts = {
   // Key: account
   // Value: array of roles
-  [key: `0x${string}`]: `0x${string}`[];
+  [account: `0x${string}`]: UpgradeExecutorRoles[];
 };
 
 type RoleGrantedLogArgs = {
-  role: `0x${string}`;
+  role: UpgradeExecutorRoles;
   account: `0x${string}`;
   sender: `0x${string}`;
 };
 type RoleRevokedLogArgs = RoleGrantedLogArgs;
 
-const RoleGrantedEventAbi: AbiEvent = {
+const RoleGrantedEventAbi = {
   inputs: [
     {
       indexed: true,
@@ -51,9 +52,9 @@ const RoleGrantedEventAbi: AbiEvent = {
   ],
   name: 'RoleGranted',
   type: 'event',
-};
+} as const satisfies AbiEvent;
 
-const RoleRevokedEventAbi: AbiEvent = {
+const RoleRevokedEventAbi = {
   inputs: [
     {
       indexed: true,
@@ -76,7 +77,7 @@ const RoleRevokedEventAbi: AbiEvent = {
   ],
   name: 'RoleRevoked',
   type: 'event',
-};
+} as const satisfies AbiEvent;
 
 /**
  * Returns all accounts that have been granted a role in the UpgradeExecutor

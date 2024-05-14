@@ -11,7 +11,7 @@ import {
 } from './upgradeExecutorEncodeFunctionData';
 
 /**
- * Type for the params of the upgradeExecutorPrepareRemoveExecutorTransactionRequest function
+ * Type for the params of the {@link upgradeExecutorPrepareRemoveExecutorTransactionRequest} function
  */
 export type UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams = {
   account: Address;
