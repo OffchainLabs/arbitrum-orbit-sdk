@@ -1,6 +1,6 @@
 import { Address, PublicClient } from 'viem';
 import { AbiEvent } from 'abitype';
-import { UpgradeExecutorRoles } from './upgradeExecutorEncodeFunctionData';
+import { UpgradeExecutorRole } from './upgradeExecutorEncodeFunctionData';
 
 /**
  * This type is for the params of the {@link upgradeExecutorFetchPrivilegedAccounts} function
@@ -19,11 +19,11 @@ export type UpgradeExecutorFetchPrivilegedAccountsParams = {
 export type UpgradeExecutorPrivilegedAccounts = {
   // Key: account
   // Value: array of roles
-  [account: `0x${string}`]: UpgradeExecutorRoles[];
+  [account: `0x${string}`]: UpgradeExecutorRole[];
 };
 
 type RoleGrantedLogArgs = {
-  role: UpgradeExecutorRoles;
+  role: UpgradeExecutorRole;
   account: `0x${string}`;
   sender: `0x${string}`;
 };

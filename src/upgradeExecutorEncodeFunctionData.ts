@@ -7,7 +7,7 @@ import { GetFunctionName, Prettify } from './types/utils';
 export const UPGRADE_EXECUTOR_ROLE_ADMIN = keccak256(toHex('ADMIN_ROLE'));
 // 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63
 export const UPGRADE_EXECUTOR_ROLE_EXECUTOR = keccak256(toHex('EXECUTOR_ROLE'));
-export type UpgradeExecutorRoles =
+export type UpgradeExecutorRole =
   | typeof UPGRADE_EXECUTOR_ROLE_ADMIN
   | typeof UPGRADE_EXECUTOR_ROLE_EXECUTOR;
 
