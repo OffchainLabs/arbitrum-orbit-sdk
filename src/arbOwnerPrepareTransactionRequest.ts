@@ -9,7 +9,7 @@ import {
 
 import { arbOwner } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
-import { Prettify, GetFunctionName } from './types/utils';
+import { GetFunctionName } from './types/utils';
 
 type ArbOwnerAbi = typeof arbOwner.abi;
 export type ArbOwnerPrepareTransactionRequestFunctionName = GetFunctionName<ArbOwnerAbi>;
