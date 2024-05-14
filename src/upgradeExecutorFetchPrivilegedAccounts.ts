@@ -117,8 +117,8 @@ export async function upgradeExecutorFetchPrivilegedAccounts({
 
   // 2. Add the privileged accounts to the result object
   roleGrantedEvents.forEach((roleGrantedEvent) => {
-    const account = (roleGrantedEvent.args as RoleGrantedLogArgs).account;
-    const role = (roleGrantedEvent.args as RoleGrantedLogArgs).role;
+    const account = roleGrantedEvent.args.account!;
+    const role = roleGrantedEvent.args.role!;
 
     if (!(account in upgradeExecutorPrivilegedAccounts)) {
       upgradeExecutorPrivilegedAccounts[account] = [];
@@ -140,8 +140,8 @@ export async function upgradeExecutorFetchPrivilegedAccounts({
   // 3. Remove the revoked roles from the result object
   // (Note: if the same role has been added and revoked multiple times, it will be added and removed multiple times from upgradeExecutorPrivilegedAccounts[account] )
   roleRevokedEvents.forEach((roleRevokedEvent) => {
-    const account = (roleRevokedEvent.args as RoleRevokedLogArgs).account;
-    const role = (roleRevokedEvent.args as RoleRevokedLogArgs).role;
+    const account = roleRevokedEvent.args.account!;
+    const role = roleRevokedEvent.args.role!;
 
     const roleIndex = upgradeExecutorPrivilegedAccounts[account].findIndex(
       (accRole) => accRole == role,
