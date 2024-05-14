@@ -26,7 +26,7 @@ describe('ArgAggregator decorator tests', () => {
 
     const batchPosterFeeCollector = await nitroTestnodeL2Client.arbAggregatorReadContract({
       functionName: 'getFeeCollector',
-      args: [batchPosters[0] as `0x${string}`],
+      args: [batchPosters[0]],
     });
 
     expect(batchPosterFeeCollector).toEqual('0xA4b000000000000000000073657175656e636572');
@@ -42,7 +42,7 @@ describe('ArgAggregator decorator tests', () => {
     const setFeeCollectorTransactionRequest =
       await nitroTestnodeL2Client.arbAggregatorPrepareTransactionRequest({
         functionName: 'setFeeCollector',
-        args: [batchPosters[1] as `0x${string}`, randomAccount.address],
+        args: [batchPosters[1], randomAccount.address],
         upgradeExecutor: false,
         account: l2RollupOwner.address,
       });
@@ -53,7 +53,7 @@ describe('ArgAggregator decorator tests', () => {
     // Check the fee collector has changed
     const batchPosterFeeCollector = await nitroTestnodeL2Client.arbAggregatorReadContract({
       functionName: 'getFeeCollector',
-      args: [batchPosters[1] as `0x${string}`],
+      args: [batchPosters[1]],
     });
     expect(batchPosterFeeCollector).toEqual(randomAccount.address);
   });
