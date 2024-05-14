@@ -1,4 +1,4 @@
-import { Chain, PublicClient } from 'viem';
+import { Chain, PublicClient, Transport } from 'viem';
 
 import { chains, nitroTestnodeL3 } from '../chains';
 import { Prettify } from './utils';
@@ -34,9 +34,10 @@ export function validateParentChain(chainIdOrPublicClient: number | PublicClient
   return chainId;
 }
 
-export function validateParentChainPublicClient(
-  publicClient: PublicClient,
-): ParentChainPublicClient {
+export function validateParentChainPublicClient<
+  TTransport extends Transport = Transport,
+  TChain extends Chain | undefined = Chain | undefined,
+>(publicClient: PublicClient<TTransport, TChain>): ParentChainPublicClient {
   const chainId = publicClient.chain?.id;
 
   if (!isValidParentChainId(chainId)) {

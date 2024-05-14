@@ -51,13 +51,15 @@ import {
 } from './upgradeExecutorPrepareRemoveExecutorTransactionRequest';
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
+import { sequencerInboxActions } from './decorators/sequencerInboxActions';
+import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
-import { prepareNodeConfig } from './prepareNodeConfig';
+import { PrepareNodeConfigParams, prepareNodeConfig } from './prepareNodeConfig';
 import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
@@ -85,6 +87,8 @@ import * as utils from './utils';
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
+  sequencerInboxActions,
+  rollupAdminLogicPublicActions,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
@@ -128,6 +132,7 @@ export {
   ParentChainId,
   NodeConfig,
   NodeConfigChainInfoJson,
+  PrepareNodeConfigParams,
   prepareNodeConfig,
   prepareKeyset,
   utils,
