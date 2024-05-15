@@ -1,48 +1,35 @@
 import {
-  PublicClient,
+  Client,
   encodeFunctionData,
   EncodeFunctionDataParameters,
   Address,
   Chain,
   Transport,
+  GetFunctionArgs,
 } from 'viem';
 
-import { arbOwner } from './contracts';
+import { arbOwner, ArbOSVersions, ArbOwnerABIs } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
-import { GetFunctionName } from './types/utils';
+import { ArbOwnerPublicAbi, ArbOwnerPublicFunctionName } from './arbOwnerReadContract';
 
-type ArbOwnerAbi = typeof arbOwner.abi;
-export type ArbOwnerPrepareTransactionRequestFunctionName = GetFunctionName<ArbOwnerAbi>;
 export type ArbOwnerEncodeFunctionDataParameters<
-  TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
-> = EncodeFunctionDataParameters<ArbOwnerAbi, TFunctionName>;
-
-function arbOwnerEncodeFunctionData<
-  TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
->({ functionName, abi, args }: ArbOwnerEncodeFunctionDataParameters<TFunctionName>) {
-  return encodeFunctionData({
-    abi,
-    functionName,
-    args,
-  });
-}
-
-type ArbOwnerPrepareFunctionDataParameters<
-  TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
-> = ArbOwnerEncodeFunctionDataParameters<TFunctionName> & {
+  TArbOsVersion extends ArbOSVersions,
+  TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
+> = EncodeFunctionDataParameters<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName> & {
   upgradeExecutor: Address | false;
-  abi: ArbOwnerAbi;
 };
+
 function arbOwnerPrepareFunctionData<
-  TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
->(params: ArbOwnerPrepareFunctionDataParameters<TFunctionName>) {
+  TArbOsVersion extends ArbOSVersions,
+  TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
+>(params: ArbOwnerEncodeFunctionDataParameters<TArbOsVersion, TFunctionName>) {
   const { upgradeExecutor } = params;
 
   if (!upgradeExecutor) {
     return {
       to: arbOwner.address,
-      data: arbOwnerEncodeFunctionData(
-        params as ArbOwnerEncodeFunctionDataParameters<TFunctionName>,
+      data: encodeFunctionData(
+        params as EncodeFunctionDataParameters<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>,
       ),
       value: BigInt(0),
     };
@@ -54,7 +41,9 @@ function arbOwnerPrepareFunctionData<
       functionName: 'executeCall',
       args: [
         arbOwner.address, // target
-        arbOwnerEncodeFunctionData(params as ArbOwnerEncodeFunctionDataParameters<TFunctionName>), // targetCallData
+        encodeFunctionData(
+          params as EncodeFunctionDataParameters<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>,
+        ), // targetCallData
       ],
     }),
     value: BigInt(0),
@@ -62,27 +51,32 @@ function arbOwnerPrepareFunctionData<
 }
 
 export type ArbOwnerPrepareTransactionRequestParameters<
-  TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
-> = Omit<ArbOwnerPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+  TArbOsVersion extends ArbOSVersions,
+  TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
+> = {
+  functionName: TFunctionName;
   account: Address;
-};
+  upgradeExecutor: Address | false;
+} & GetFunctionArgs<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>;
 
 export async function arbOwnerPrepareTransactionRequest<
-  TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
+  TArbOsVersion extends ArbOSVersions,
   TChain extends Chain | undefined,
+  TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
 >(
-  client: PublicClient<Transport, TChain>,
-  params: ArbOwnerPrepareTransactionRequestParameters<TFunctionName>,
+  client: Client<Transport, TChain>,
+  params: ArbOwnerPrepareTransactionRequestParameters<TArbOsVersion, TFunctionName> & {
+    arbOsVersion: TArbOsVersion;
+  },
 ) {
   if (typeof client.chain === 'undefined') {
     throw new Error('[arbOwnerPrepareTransactionRequest] client.chain is undefined');
   }
 
-  // params is extending ArbOwnerPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = arbOwnerPrepareFunctionData({
     ...params,
-    abi: arbOwner.abi,
-  } as unknown as ArbOwnerPrepareFunctionDataParameters<TFunctionName>);
+    abi: ArbOwnerABIs[params.arbOsVersion],
+  } as unknown as ArbOwnerEncodeFunctionDataParameters<TArbOsVersion, TFunctionName>);
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await client.prepareTransactionRequest({

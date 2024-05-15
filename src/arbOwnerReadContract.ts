@@ -1,29 +1,41 @@
-import { Chain, GetFunctionArgs, PublicClient, ReadContractReturnType, Transport } from 'viem';
+import { Chain, GetFunctionArgs, Client, ReadContractReturnType, Transport } from 'viem';
 
-import { arbOwnerPublic } from './contracts';
+import { ArbOSVersions, ArbOwnerABIs, arbOwnerPublic } from './contracts';
 import { GetFunctionName } from './types/utils';
 
-export type ArbOwnerPublicAbi = typeof arbOwnerPublic.abi;
-export type ArbOwnerPublicFunctionName = GetFunctionName<ArbOwnerPublicAbi>;
+export type ArbOwnerPublicAbi<TArbOsVersion extends ArbOSVersions> =
+  (typeof ArbOwnerABIs)[TArbOsVersion];
 
-export type ArbOwnerReadContractParameters<TFunctionName extends ArbOwnerPublicFunctionName> = {
+export type ArbOwnerPublicFunctionName<TArbOsVersion extends ArbOSVersions> = GetFunctionName<
+  ArbOwnerPublicAbi<TArbOsVersion>
+>;
+
+export type ArbOwnerReadContractParameters<
+  TArbOsVersion extends ArbOSVersions,
+  TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
+> = {
   functionName: TFunctionName;
-} & GetFunctionArgs<ArbOwnerPublicAbi, TFunctionName>;
+} & GetFunctionArgs<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>;
 
-export type ArbOwnerReadContractReturnType<TFunctionName extends ArbOwnerPublicFunctionName> =
-  ReadContractReturnType<ArbOwnerPublicAbi, TFunctionName>;
+export type ArbOwnerReadContractReturnType<
+  TArbOsVersion extends ArbOSVersions,
+  TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
+> = ReadContractReturnType<ArbOwnerPublicAbi<TArbOsVersion>, TFunctionName>;
 
 export function arbOwnerReadContract<
+  TArbOsVersion extends ArbOSVersions,
   TChain extends Chain | undefined,
-  TFunctionName extends ArbOwnerPublicFunctionName,
+  TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
 >(
-  client: PublicClient<Transport, TChain>,
-  params: ArbOwnerReadContractParameters<TFunctionName>,
-): Promise<ArbOwnerReadContractReturnType<TFunctionName>> {
+  client: Client<Transport, TChain>,
+  params: ArbOwnerReadContractParameters<TArbOsVersion, TFunctionName> & {
+    arbOsVersion: TArbOsVersion;
+  },
+): Promise<ArbOwnerReadContractReturnType<TArbOsVersion, TFunctionName>> {
   // @ts-ignore (todo: fix viem type issue)
   return client.readContract({
     address: arbOwnerPublic.address,
-    abi: arbOwnerPublic.abi,
+    abi: ArbOwnerABIs[params.arbOsVersion],
     functionName: params.functionName,
     args: params.args,
   });
