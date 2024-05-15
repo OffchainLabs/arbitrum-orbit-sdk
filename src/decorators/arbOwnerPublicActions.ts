@@ -24,12 +24,24 @@ export type ArbOwnerPublicActions<
     TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
   >(
     args: ArbOwnerPrepareTransactionRequestParameters<TArbOsVersion, TFunctionName>,
-  ) => Promise<PrepareTransactionRequestReturnType<TChain>>;
+  ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
 const defaultArbOsVersion = 20;
 
-// arbOsVersion is passed as a parameter `client.extend(arbOwnerPublicActions({ arbOsVersion: 10 }))`
+// Client is passed explicitly
+// `arbOwnerPublicActions(client)`, `arbOwnerPublicActions(client, { arbOsVersion: 20 })`
+export function arbOwnerPublicActions<
+  TArbOsVersion extends ArbOSVersions,
+  TTransport extends Transport = Transport,
+  TChain extends Chain | undefined = Chain | undefined,
+  TAccount extends Account | undefined = Account | undefined,
+>(
+  client: Client<TTransport, TChain, TAccount>,
+  { arbOsVersion }: { arbOsVersion: TArbOsVersion },
+): ArbOwnerPublicActions<TArbOsVersion, TChain>;
+// arbOsVersion is passed as a parameter
+// `client.extend(arbOwnerPublicActions({ arbOsVersion: 10 }))`
 export function arbOwnerPublicActions<
   TArbOsVersion extends ArbOSVersions,
   TTransport extends Transport = Transport,
@@ -37,8 +49,9 @@ export function arbOwnerPublicActions<
   TAccount extends Account | undefined = Account | undefined,
 >(param: {
   arbOsVersion: TArbOsVersion;
-}): (client: Client) => ArbOwnerPublicActions<TArbOsVersion, TChain>;
-// No parameter are passed `client.extend(arbOwnerPublicActions)`
+}): (client: Client<TTransport, TChain, TAccount>) => ArbOwnerPublicActions<TArbOsVersion, TChain>;
+// No parameter are passed
+// `client.extend(arbOwnerPublicActions)`
 export function arbOwnerPublicActions<
   TArbOsVersion extends ArbOSVersions,
   TTransport extends Transport = Transport,
@@ -52,7 +65,11 @@ export function arbOwnerPublicActions<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
   TAccount extends Account | undefined = Account | undefined,
->(paramOrClient: { arbOsVersion: TArbOsVersion } | Client<TTransport, TChain, TAccount>) {
+>(
+  paramOrClient: { arbOsVersion: TArbOsVersion } | Client<TTransport, TChain, TAccount>,
+  options?: { arbOsVersion: TArbOsVersion },
+) {
+  // arbOsVersion is passed as a parameter, return actions with curried arbOsVersion
   if ('arbOsVersion' in paramOrClient) {
     const result: (
       client: Client<TTransport, TChain, TAccount>,
@@ -70,15 +87,24 @@ export function arbOwnerPublicActions<
     return result;
   }
 
-  const result: ArbOwnerPublicActions<typeof defaultArbOsVersion, TChain> = {
+  /**
+   * Parameter is a client, we either have:
+   * - client.extend(arbOwnerPublicActions)
+   * - arbOwnerPublicActions(client)
+   * - arbOwnerPublicActions(client, { arbOsVersion: X })
+   *
+   * If we don't have arbOsVersion (the 2 first cases), default the version to defaultArbOsVersion
+   */
+  const version = options?.arbOsVersion ?? defaultArbOsVersion;
+  const result: ArbOwnerPublicActions<typeof version, TChain> = {
     arbOwnerReadContract: (args) =>
       // @ts-ignore (todo: fix viem type issue)
-      arbOwnerReadContract(paramOrClient, { ...args, arbOsVersion: defaultArbOsVersion }),
+      arbOwnerReadContract(paramOrClient, { ...args, arbOsVersion: version }),
     arbOwnerPrepareTransactionRequest: (args) =>
       // @ts-ignore (todo: fix viem type issue)
       arbOwnerPrepareTransactionRequest(paramOrClient, {
         ...args,
-        arbOsVersion: defaultArbOsVersion,
+        arbOsVersion: version,
       }),
   };
   return result;
