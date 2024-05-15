@@ -44,7 +44,9 @@ export function arbOwnerPublicActions<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
   TAccount extends Account | undefined = Account | undefined,
->(param: Client<TTransport, TChain, TAccount>): ArbOwnerPublicActions<typeof defaultArbOsVersion, TChain>;
+>(
+  param: Client<TTransport, TChain, TAccount>,
+): ArbOwnerPublicActions<typeof defaultArbOsVersion, TChain>;
 export function arbOwnerPublicActions<
   TArbOsVersion extends ArbOSVersions,
   TTransport extends Transport = Transport,
