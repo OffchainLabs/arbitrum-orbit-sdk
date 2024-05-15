@@ -5,6 +5,10 @@ import { nitroTestnodeL2 } from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
+const clientWithoutParam = createPublicClient({
+  chain: nitroTestnodeL2,
+  transport: http(),
+}).extend(arbOwnerPublicActions);
 const client10 = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
@@ -19,6 +23,10 @@ const client20 = createPublicClient({
 }).extend(arbOwnerPublicActions({ arbOsVersion: 20 }));
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 const upgradeExecutorAddress = '0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b';
+const client = createPublicClient({
+  chain: nitroTestnodeL2,
+  transport: http(),
+})
 
 describe('Accept function name based on arbOSVersion', async () => {
   it('Version 10', () => {
@@ -86,6 +94,31 @@ describe('Accept function name based on arbOSVersion', async () => {
       }),
     ).rejects.toThrowError(AbiFunctionNotFoundError);
   });
+
+  it('Default version (20)', () => {
+    // arbOwnerPublicActions without params is defaulted to arbOsVersion 20
+    expectTypeOf<
+      typeof clientWithoutParam.arbOwnerReadContract<'getInfraFeeAccount'>
+    >().toBeCallableWith({
+      functionName: 'getInfraFeeAccount',
+    });
+
+    expectTypeOf<
+      typeof clientWithoutParam.arbOwnerPrepareTransactionRequest<'setL1PricingRewardRecipient'>
+    >().toBeCallableWith({
+      functionName: 'setL1PricingRewardRecipient',
+      account: randomAccount.address,
+      upgradeExecutor: upgradeExecutorAddress,
+      args: [randomAccount.address],
+    });
+
+    expect(
+      clientWithoutParam.arbOwnerReadContract({
+        // @ts-expect-error Not available for version 20
+        functionName: 'onlyOnArbOS10',
+      }),
+    ).rejects.toThrowError(AbiFunctionNotFoundError);
+  });
 });
 
 // Those tests won't fail if the return type is wrong
@@ -98,7 +131,6 @@ describe('Type return values for function in multiple versions', () => {
       }),
     ).resolves.toEqualTypeOf<`0x${string}`>();
   });
-
   it('Version 11', () => {
     expectTypeOf(
       client11.arbOwnerReadContract({
@@ -106,9 +138,16 @@ describe('Type return values for function in multiple versions', () => {
       }),
     ).resolves.toEqualTypeOf<bigint>();
   });
-  it('Version 11', () => {
+  it('Version 20', () => {
     expectTypeOf(
       client20.arbOwnerReadContract({
+        functionName: 'getAllChainOwners',
+      }),
+    ).resolves.toEqualTypeOf<readonly `0x${string}`[]>();
+  });
+  it('Default version (20)', () => {
+    expectTypeOf(
+      clientWithoutParam.arbOwnerReadContract({
         functionName: 'getAllChainOwners',
       }),
     ).resolves.toEqualTypeOf<readonly `0x${string}`[]>();
