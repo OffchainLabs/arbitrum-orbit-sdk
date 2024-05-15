@@ -23,10 +23,6 @@ const client20 = createPublicClient({
 }).extend(arbOwnerPublicActions({ arbOsVersion: 20 }));
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 const upgradeExecutorAddress = '0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b';
-const client = createPublicClient({
-  chain: nitroTestnodeL2,
-  transport: http(),
-})
 
 describe('Accept function name based on arbOSVersion', async () => {
   it('Version 10', () => {
@@ -50,7 +46,6 @@ describe('Accept function name based on arbOSVersion', async () => {
       }),
     ).rejects.toThrowError(AbiFunctionNotFoundError);
   });
-
   it('Version 11', () => {
     expectTypeOf<typeof client11.arbOwnerReadContract<'onlyOnArbOS11'>>().toBeCallableWith({
       functionName: 'onlyOnArbOS11',
@@ -72,7 +67,6 @@ describe('Accept function name based on arbOSVersion', async () => {
       }),
     ).rejects.toThrowError(AbiFunctionNotFoundError);
   });
-
   it('Version 20', () => {
     expectTypeOf<typeof client20.arbOwnerReadContract<'getInfraFeeAccount'>>().toBeCallableWith({
       functionName: 'getInfraFeeAccount',
@@ -94,7 +88,6 @@ describe('Accept function name based on arbOSVersion', async () => {
       }),
     ).rejects.toThrowError(AbiFunctionNotFoundError);
   });
-
   it('Default version (20)', () => {
     // arbOwnerPublicActions without params is defaulted to arbOsVersion 20
     expectTypeOf<

@@ -52,7 +52,9 @@ export function arbOwnerPublicActions<
   TAccount extends Account | undefined = Account | undefined,
 >(paramOrClient: { arbOsVersion: TArbOsVersion } | Client<TTransport, TChain, TAccount>) {
   if ('arbOsVersion' in paramOrClient) {
-    const result: (client: Client) => ArbOwnerPublicActions<TArbOsVersion, TChain> = (client) => ({
+    const result: (
+      client: Client<TTransport, TChain, TAccount>,
+    ) => ArbOwnerPublicActions<TArbOsVersion, TChain> = (client) => ({
       arbOwnerReadContract: (args) =>
         arbOwnerReadContract(client, { ...args, arbOsVersion: paramOrClient.arbOsVersion }),
       arbOwnerPrepareTransactionRequest: (args) =>

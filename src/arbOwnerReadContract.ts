@@ -1,4 +1,4 @@
-import { Chain, GetFunctionArgs, PublicClient, ReadContractReturnType, Transport } from 'viem';
+import { Chain, GetFunctionArgs, Client, ReadContractReturnType, Transport } from 'viem';
 
 import { ArbOSVersions, ArbOwnerABIs, arbOwnerPublic } from './contracts';
 import { GetFunctionName } from './types/utils';
@@ -27,7 +27,7 @@ export function arbOwnerReadContract<
   TChain extends Chain | undefined,
   TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
 >(
-  client: PublicClient<Transport, TChain>,
+  client: Client<Transport, TChain>,
   params: ArbOwnerReadContractParameters<TArbOsVersion, TFunctionName> & {
     arbOsVersion: TArbOsVersion;
   },
