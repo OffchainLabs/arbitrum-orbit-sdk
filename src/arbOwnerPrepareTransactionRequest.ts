@@ -1,5 +1,5 @@
 import {
-  PublicClient,
+  Client,
   encodeFunctionData,
   EncodeFunctionDataParameters,
   Address,
@@ -64,7 +64,7 @@ export async function arbOwnerPrepareTransactionRequest<
   TChain extends Chain | undefined,
   TFunctionName extends ArbOwnerPublicFunctionName<TArbOsVersion>,
 >(
-  client: PublicClient<Transport, TChain>,
+  client: Client<Transport, TChain>,
   params: ArbOwnerPrepareTransactionRequestParameters<TArbOsVersion, TFunctionName> & {
     arbOsVersion: TArbOsVersion;
   },
