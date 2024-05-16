@@ -89,7 +89,7 @@ export function sequencerInboxActions<
       ) => {
         return sequencerInboxReadContract(client, {
           ...args,
-          sequencerInbox: sequencerInbox || args.sequencerInbox,
+          sequencerInbox: args.sequencerInbox || sequencerInbox,
         } as SequencerInboxReadContractParameters<TFunctionName>);
       },
       sequencerInboxPrepareTransactionRequest: <
@@ -99,7 +99,7 @@ export function sequencerInboxActions<
       ) => {
         return sequencerInboxPrepareTransactionRequest(client, {
           ...args,
-          sequencerInbox: sequencerInbox || args.sequencerInbox,
+          sequencerInbox: args.sequencerInbox || sequencerInbox,
         } as SequencerInboxPrepareTransactionRequestParameters<TFunctionName>);
       },
     };

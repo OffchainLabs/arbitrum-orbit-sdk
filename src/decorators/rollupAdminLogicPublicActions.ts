@@ -63,7 +63,7 @@ export function rollupAdminLogicPublicActions<
       ) => {
         return rollupAdminLogicReadContract(client, {
           ...args,
-          rollup: rollup || args.rollup,
+          rollup: args.rollup || rollup,
         } as RollupAdminLogicReadContractParameters<TFunctionName>);
       },
       rollupAdminLogicPrepareTransactionRequest: <
@@ -73,7 +73,7 @@ export function rollupAdminLogicPublicActions<
       ) => {
         return rollupAdminLogicPrepareTransactionRequest(client, {
           ...args,
-          rollup: rollup || args.rollup,
+          rollup: args.rollup || rollup,
         } as RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>);
       },
     };
