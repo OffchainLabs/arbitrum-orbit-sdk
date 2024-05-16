@@ -10,12 +10,12 @@ import {
   ContractFunctionArgs,
 } from 'viem';
 
-import { sequencerInboxABI } from './abi/sequencerInboxABI';
+import { sequencerInbox } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
 import { validateParentChainPublicClient } from './types/ParentChain';
 import { GetPrepareTransactionRequestParams } from './types/utils';
 
-type SequencerInboxABI = typeof sequencerInboxABI;
+type SequencerInboxABI = typeof sequencerInbox.abi;
 export type SequencerInboxPrepareTransactionRequestFunctionName =
   GetPrepareTransactionRequestParams<SequencerInboxABI>;
 type SequencerInboxPrepareTransactionRequestArgs<
@@ -104,7 +104,7 @@ export async function sequencerInboxPrepareTransactionRequest<
   // params is extending SequencerInboxPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = sequencerInboxPrepareFunctionData({
     ...params,
-    abi: sequencerInboxABI,
+    abi: sequencerInbox.abi,
   } as unknown as SequencerInboxPrepareFunctionDataParameters<TFunctionName>);
 
   // @ts-ignore (todo: fix viem type issue)
