@@ -8,7 +8,7 @@ import {
 } from 'viem';
 
 import { sequencerInbox } from './contracts';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { GetFunctionName } from './types/utils';
 import { validateParentChainPublicClient } from './types/ParentChain';
 

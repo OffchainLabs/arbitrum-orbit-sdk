@@ -1,7 +1,7 @@
 import { Address, PublicClient, encodeFunctionData, parseAbi } from 'viem';
 
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 import { getEstimateForSettingGateway } from './createTokenBridge-ethers';
