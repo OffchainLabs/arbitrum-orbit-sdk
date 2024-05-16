@@ -2,14 +2,15 @@ import { Transport, Chain, PrepareTransactionRequestReturnType, PublicClient } f
 
 import {
   arbOwnerReadContract,
-  ArbOwnerPublicFunctionName,
   ArbOwnerReadContractParameters,
   ArbOwnerReadContractReturnType,
+  ArbOwnerPublicFunctionName,
 } from '../arbOwnerReadContract';
 import {
   arbOwnerPrepareTransactionRequest,
-  ArbOwnerPrepareTransactionRequestFunctionName,
   ArbOwnerPrepareTransactionRequestParameters,
+  ArbOwnerPrepareTransactionRequestReturnType,
+  ArbOwnerFunctionName,
 } from '../arbOwnerPrepareTransactionRequest';
 
 export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | undefined> = {
@@ -17,11 +18,9 @@ export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | und
     args: ArbOwnerReadContractParameters<TFunctionName>,
   ) => Promise<ArbOwnerReadContractReturnType<TFunctionName>>;
 
-  arbOwnerPrepareTransactionRequest: <
-    TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
-  >(
+  arbOwnerPrepareTransactionRequest: <TFunctionName extends ArbOwnerFunctionName>(
     args: ArbOwnerPrepareTransactionRequestParameters<TFunctionName>,
-  ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
+  ) => Promise<ArbOwnerPrepareTransactionRequestReturnType<TChain>>;
 };
 
 export function arbOwnerPublicActions<

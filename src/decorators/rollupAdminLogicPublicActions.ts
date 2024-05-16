@@ -1,4 +1,4 @@
-import { Transport, Chain, PrepareTransactionRequestReturnType, PublicClient, Address } from 'viem';
+import { Transport, Chain, PublicClient, Address } from 'viem';
 
 import {
   rollupAdminLogicReadContract,
@@ -9,6 +9,8 @@ import {
 import {
   rollupAdminLogicPrepareTransactionRequest,
   RollupAdminLogicPrepareTransactionRequestParameters,
+  RollupAdminLogicPrepareTransactionRequestReturnType,
+  RollupAdminLogicPrepareTransactionRequestFunctionName,
 } from '../rollupAdminLogicPrepareTransactionRequest';
 
 type RollupAdminLogicReadContractArgs<
@@ -21,7 +23,7 @@ type RollupAdminLogicReadContractArgs<
   : RollupAdminLogicReadContractParameters<TFunctionName>;
 type rollupAdminLogicPrepareTransactionRequestArgs<
   TRollupAdminLogic extends Address | undefined,
-  TFunctionName extends RollupAdminLogicFunctionName,
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
 > = TRollupAdminLogic extends Address
   ? Omit<RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>, 'rollup'> & {
       rollup?: Address;
@@ -36,9 +38,11 @@ export type RollupAdminLogicActions<
     args: RollupAdminLogicReadContractArgs<TRollupAdminLogic, TFunctionName>,
   ) => Promise<RollupAdminLogicReadContractReturnType<TFunctionName>>;
 
-  rollupAdminLogicPrepareTransactionRequest: <TFunctionName extends RollupAdminLogicFunctionName>(
+  rollupAdminLogicPrepareTransactionRequest: <
+    TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+  >(
     args: rollupAdminLogicPrepareTransactionRequestArgs<TRollupAdminLogic, TFunctionName>,
-  ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
+  ) => Promise<RollupAdminLogicPrepareTransactionRequestReturnType<TChain>>;
 };
 
 export function rollupAdminLogicPublicActions<
@@ -59,17 +63,17 @@ export function rollupAdminLogicPublicActions<
       ) => {
         return rollupAdminLogicReadContract(client, {
           ...args,
-          rollup: rollup || args.rollup,
+          rollup: args.rollup || rollup,
         } as RollupAdminLogicReadContractParameters<TFunctionName>);
       },
       rollupAdminLogicPrepareTransactionRequest: <
-        TFunctionName extends RollupAdminLogicFunctionName,
+        TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
       >(
         args: rollupAdminLogicPrepareTransactionRequestArgs<TParams['rollup'], TFunctionName>,
       ) => {
         return rollupAdminLogicPrepareTransactionRequest(client, {
           ...args,
-          rollup: rollup || args.rollup,
+          rollup: args.rollup || rollup,
         } as RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>);
       },
     };

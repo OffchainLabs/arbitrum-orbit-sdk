@@ -1,4 +1,4 @@
-import { erc, etherscan } from '@wagmi/cli/plugins';
+import { etherscan } from '@wagmi/cli/plugins';
 import { hashMessage } from 'viem';
 import dotenv from 'dotenv';
 
@@ -193,11 +193,6 @@ export default async function () {
   return {
     out: 'src/generated.ts',
     plugins: [
-      erc({
-        20: true,
-        721: false,
-        4626: false,
-      }),
       etherscan({
         chainId: arbitrumSepolia.id,
         apiKey: arbiscanApiKey,
