@@ -22,13 +22,6 @@ export type UpgradeExecutorPrivilegedAccounts = {
   [account: `0x${string}`]: UpgradeExecutorRole[];
 };
 
-type RoleGrantedLogArgs = {
-  role: UpgradeExecutorRole;
-  account: `0x${string}`;
-  sender: `0x${string}`;
-};
-type RoleRevokedLogArgs = RoleGrantedLogArgs;
-
 const RoleGrantedEventAbi = {
   inputs: [
     {
