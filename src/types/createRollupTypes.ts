@@ -6,7 +6,7 @@ export type CreateRollupFunctionInputs = ContractFunctionArgs<
   typeof rollupCreator.abi,
   AbiStateMutability,
   'createRollup'
-  >;
+>;
 
 type RequiredKeys = 'config' | 'batchPoster' | 'validators';
 
