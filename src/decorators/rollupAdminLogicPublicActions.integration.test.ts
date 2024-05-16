@@ -98,3 +98,47 @@ it('successfully enable/disable whitelist', async () => {
     ),
   });
 });
+
+it('successfully set minimum assertion period', async () => {
+  const minimumAssertionPeriod = await client.rollupAdminLogicReadContract({
+    functionName: 'minimumAssertionPeriod',
+  });
+
+  console.log(minimumAssertionPeriod);
+
+  const tx = await client.rollupAdminLogicPrepareTransactionRequest({
+    functionName: 'setMinimumAssertionPeriod',
+    args: [20n],
+    account: l3RollupOwner.address,
+    rollup: l3Rollup,
+    upgradeExecutor: l3UpgradeExecutor,
+  });
+
+  await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(
+      tx as PrepareTransactionRequestReturnType & { chainId: number },
+    ),
+  });
+
+  const minimumAssertionPeriodChanged = await client.rollupAdminLogicReadContract({
+    functionName: 'minimumAssertionPeriod',
+    rollup: l3Rollup,
+  });
+
+  expect(minimumAssertionPeriodChanged).toEqual(20n);
+
+  // Revert changes, so test can be run multiple time without issues
+  const revertTx = await client.rollupAdminLogicPrepareTransactionRequest({
+    functionName: 'setMinimumAssertionPeriod',
+    args: [36n],
+    account: l3RollupOwner.address,
+    rollup: l3Rollup,
+    upgradeExecutor: l3UpgradeExecutor,
+  });
+
+  await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(
+      revertTx as PrepareTransactionRequestReturnType & { chainId: number },
+    ),
+  });
+});
