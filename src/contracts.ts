@@ -1,7 +1,6 @@
 import { parseAbi } from 'viem';
 
 import {
-  erc20ABI,
   arbOwnerConfig,
   arbOwnerPublicConfig,
   rollupCreatorConfig,
@@ -9,6 +8,7 @@ import {
   arbGasInfoConfig,
 } from './generated';
 import { sequencerInboxABI } from './abi/sequencerInboxABI';
+import { erc20ABI } from './abi/erc20ABI';
 
 export const erc20 = {
   abi: erc20ABI,

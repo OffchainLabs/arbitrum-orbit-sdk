@@ -3,52 +3,68 @@ import {
   encodeFunctionData,
   EncodeFunctionDataParameters,
   Address,
-  Transport,
   Chain,
+  Transport,
+  PrepareTransactionRequestReturnType,
+  EncodeFunctionDataReturnType,
+  ContractFunctionArgs,
 } from 'viem';
 
 import { rollupAdminLogicABI } from './abi/rollupAdminLogicABI';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
-import { GetFunctionName } from './types/utils';
 import { validateParentChainPublicClient } from './types/ParentChain';
+import { GetPrepareTransactionRequestParams } from './types/utils';
 
-export type RollupAdminLogicAbi = typeof rollupAdminLogicABI;
-export type RollupAdminLogicFunctionName = GetFunctionName<RollupAdminLogicAbi>;
+type RollupAdminLogicAbi = typeof rollupAdminLogicABI;
+export type RollupAdminLogicPrepareTransactionRequestFunctionName =
+  GetPrepareTransactionRequestParams<RollupAdminLogicAbi>;
+type RollupAdminLogicPrepareTransactionRequestArgs<
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+> = ContractFunctionArgs<RollupAdminLogicAbi, 'nonpayable' | 'payable', TFunctionName>;
 
 type RollupAdminLogicEncodeFunctionDataParameters<
-  TFunctionName extends RollupAdminLogicFunctionName,
-> = EncodeFunctionDataParameters<RollupAdminLogicAbi, TFunctionName>;
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+  TArgs extends RollupAdminLogicPrepareTransactionRequestArgs<TFunctionName> = RollupAdminLogicPrepareTransactionRequestArgs<TFunctionName>,
+> = EncodeFunctionDataParameters<RollupAdminLogicAbi, TFunctionName> & {
+  args: TArgs;
+};
 
-function rollupAdminLogicEncodeFunctionData<TFunctionName extends RollupAdminLogicFunctionName>({
-  abi,
+function rollupAdminLogicEncodeFunctionData<
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+>({
   functionName,
+  abi,
   args,
-}: RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>) {
+}: RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>): EncodeFunctionDataReturnType {
   return encodeFunctionData({
     abi,
     functionName,
     args,
-  });
+  } as EncodeFunctionDataParameters);
 }
 
+type RollupAdminLogicPrepareFunctionDataReturnType = {
+  to: Address;
+  data: `0x${string}`;
+  value: BigInt;
+};
 type RollupAdminLogicPrepareFunctionDataParameters<
-  TFunctionName extends RollupAdminLogicFunctionName,
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
 > = RollupAdminLogicEncodeFunctionDataParameters<TFunctionName> & {
   upgradeExecutor: Address | false;
-  abi: RollupAdminLogicAbi;
   rollup: Address;
 };
-function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLogicFunctionName>(
+function rollupAdminLogicPrepareFunctionData<
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+>(
   params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>,
-) {
+): RollupAdminLogicPrepareFunctionDataReturnType {
   const { upgradeExecutor } = params;
 
   if (!upgradeExecutor) {
     return {
       to: params.rollup,
-      data: rollupAdminLogicEncodeFunctionData(
-        params as RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>,
-      ),
+      data: rollupAdminLogicEncodeFunctionData(params),
       value: BigInt(0),
     };
   }
@@ -59,9 +75,7 @@ function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLo
       functionName: 'executeCall',
       args: [
         params.rollup, // target
-        rollupAdminLogicEncodeFunctionData(
-          params as RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>,
-        ), // targetCallData
+        rollupAdminLogicEncodeFunctionData(params), // targetCallData
       ],
     }),
     value: BigInt(0),
@@ -69,19 +83,22 @@ function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLo
 }
 
 export type RollupAdminLogicPrepareTransactionRequestParameters<
-  TFunctionName extends RollupAdminLogicFunctionName,
-> = Omit<RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
+> = Omit<RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>, 'abi' | 'functionName'> & {
   account: Address;
+  functionName: TFunctionName;
 };
 
+export type RollupAdminLogicPrepareTransactionRequestReturnType<TChain extends Chain | undefined> =
+  PrepareTransactionRequestReturnType<TChain>;
 export async function rollupAdminLogicPrepareTransactionRequest<
-  TFunctionName extends RollupAdminLogicFunctionName,
+  TFunctionName extends RollupAdminLogicPrepareTransactionRequestFunctionName,
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
 >(
   client: PublicClient<TTransport, TChain>,
   params: RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>,
-) {
+): Promise<RollupAdminLogicPrepareTransactionRequestReturnType<TChain>> {
   const validatedPublicClient = validateParentChainPublicClient(client);
 
   // params is extending RollupAdminLogicPrepareFunctionDataParameters, it's safe to cast
@@ -99,5 +116,7 @@ export async function rollupAdminLogicPrepareTransactionRequest<
     account: params.account,
   });
 
-  return { ...request, chainId: validatedPublicClient.chain.id };
+  return { ...request, chainId: validatedPublicClient.chain.id } as unknown as Promise<
+    RollupAdminLogicPrepareTransactionRequestReturnType<TChain>
+  >;
 }

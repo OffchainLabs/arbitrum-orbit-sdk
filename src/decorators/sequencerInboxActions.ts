@@ -1,14 +1,16 @@
-import { Transport, Chain, PrepareTransactionRequestReturnType, PublicClient, Address } from 'viem';
+import { Transport, Chain, PublicClient, Address } from 'viem';
 
 import {
   sequencerInboxReadContract,
+  SequencerInboxFunctionName,
   SequencerInboxReadContractParameters,
   SequencerInboxReadContractReturnType,
 } from '../sequencerInboxReadContract';
 import {
-  SequencerInboxFunctionName,
   sequencerInboxPrepareTransactionRequest,
   SequencerInboxPrepareTransactionRequestParameters,
+  SequencerInboxPrepareTransactionRequestReturnType,
+  SequencerInboxPrepareTransactionRequestFunctionName,
 } from '../sequencerInboxPrepareTransactionRequest';
 
 type SequencerInboxReadContractArgs<
@@ -19,9 +21,9 @@ type SequencerInboxReadContractArgs<
       sequencerInbox?: Address;
     }
   : SequencerInboxReadContractParameters<TFunctionName>;
-type SequencerInboxPrepareTransactionRequestArgs<
+type sequencerInboxPrepareTransactionRequestArgs<
   TSequencerInbox extends Address | undefined,
-  TFunctionName extends SequencerInboxFunctionName,
+  TFunctionName extends SequencerInboxPrepareTransactionRequestFunctionName,
 > = TSequencerInbox extends Address
   ? Omit<SequencerInboxPrepareTransactionRequestParameters<TFunctionName>, 'sequencerInbox'> & {
       sequencerInbox?: Address;
@@ -36,9 +38,11 @@ export type SequencerInboxActions<
     args: SequencerInboxReadContractArgs<TSequencerInbox, TFunctionName>,
   ) => Promise<SequencerInboxReadContractReturnType<TFunctionName>>;
 
-  sequencerInboxPrepareTransactionRequest: <TFunctionName extends SequencerInboxFunctionName>(
-    args: SequencerInboxPrepareTransactionRequestArgs<TSequencerInbox, TFunctionName>,
-  ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
+  sequencerInboxPrepareTransactionRequest: <
+    TFunctionName extends SequencerInboxPrepareTransactionRequestFunctionName,
+  >(
+    args: sequencerInboxPrepareTransactionRequestArgs<TSequencerInbox, TFunctionName>,
+  ) => Promise<SequencerInboxPrepareTransactionRequestReturnType<TChain>>;
 };
 
 /**
@@ -67,13 +71,16 @@ export type SequencerInboxActions<
  *   sequencerInbox: contractAddress.anotherSequencerInbox
  * });
  */
-
 export function sequencerInboxActions<
   TParams extends { sequencerInbox?: Address },
   TTransport extends Transport = Transport,
-  TChain extends Chain | undefined = Chain | undefined,
->({ sequencerInbox }: TParams) {
-  return function sequencerInboxActionsWithSequencerInbox(
+  TChain extends Chain | undefined = Chain,
+>({
+  sequencerInbox,
+}: TParams): (
+  client: PublicClient<TTransport, TChain>,
+) => SequencerInboxActions<TParams['sequencerInbox'], TChain> {
+  return function sequencerInboxActionsWithSequencerInboxAddress(
     client: PublicClient<TTransport, TChain>,
   ) {
     const sequencerInboxExtensions: SequencerInboxActions<TParams['sequencerInbox'], TChain> = {
@@ -82,15 +89,17 @@ export function sequencerInboxActions<
       ) => {
         return sequencerInboxReadContract(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox || sequencerInbox,
+          sequencerInbox: sequencerInbox || args.sequencerInbox,
         } as SequencerInboxReadContractParameters<TFunctionName>);
       },
-      sequencerInboxPrepareTransactionRequest: <TFunctionName extends SequencerInboxFunctionName>(
-        args: SequencerInboxPrepareTransactionRequestArgs<TParams['sequencerInbox'], TFunctionName>,
+      sequencerInboxPrepareTransactionRequest: <
+        TFunctionName extends SequencerInboxPrepareTransactionRequestFunctionName,
+      >(
+        args: sequencerInboxPrepareTransactionRequestArgs<TParams['sequencerInbox'], TFunctionName>,
       ) => {
         return sequencerInboxPrepareTransactionRequest(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox || sequencerInbox,
+          sequencerInbox: sequencerInbox || args.sequencerInbox,
         } as SequencerInboxPrepareTransactionRequestParameters<TFunctionName>);
       },
     };
