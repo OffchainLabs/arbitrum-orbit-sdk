@@ -3,7 +3,7 @@ import { Address } from 'viem';
 import { validateParentChain } from './types/ParentChain';
 import { SetValidKeysetParams } from './setValidKeyset';
 import { setValidKeysetEncodeFunctionData } from './setValidKeysetEncodeFunctionData';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 
 export type SetValidKeysetPrepareTransactionRequestParams = Omit<
   SetValidKeysetParams,
