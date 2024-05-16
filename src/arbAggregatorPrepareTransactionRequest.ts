@@ -8,7 +8,7 @@ import {
 } from 'viem';
 
 import { arbAggregator } from './contracts';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { GetFunctionName } from './types/utils';
 
 type ArbAggregatorAbi = typeof arbAggregator.abi;
