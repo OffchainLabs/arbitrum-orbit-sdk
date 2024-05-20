@@ -51,6 +51,7 @@ import {
 } from './upgradeExecutorPrepareRemoveExecutorTransactionRequest';
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
+import { arbAggregatorActions } from './decorators/arbAggregatorActions';
 import { sequencerInboxActions } from './decorators/sequencerInboxActions';
 import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
 
@@ -87,6 +88,7 @@ import * as utils from './utils';
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
+  arbAggregatorActions,
   sequencerInboxActions,
   rollupAdminLogicPublicActions,
   createRollupPrepareTransactionRequest,
