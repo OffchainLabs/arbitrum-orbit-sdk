@@ -1,4 +1,4 @@
-import { it, expect, expectTypeOf, describe } from 'vitest';
+import { it, expect, expectTypeOf, describe, vi } from 'vitest';
 
 import {
   AbiEncodingLengthMismatchError,
@@ -10,6 +10,7 @@ import {
 import { nitroTestnodeL2 } from '../chains';
 import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
 
 const rollupAdminLogicAddress = '0x42b5da0625cf278067955f07045f63cafd79274f';
 
@@ -56,11 +57,11 @@ describe('RollupAdminLogic parameter:', () => {
     });
   });
 
-  it('Allow rollupAdminLogic override parameter if passed initially to the actions during initialization', () => {
+  it('Allow rollupAdminLogic override parameter if passed initially to the actions during initialization', async () => {
     const clientWithRollupAdminLogicAddress = createPublicClient({
       chain: nitroTestnodeL2,
       transport: http(),
-    }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
+    }).extend(rollupAdminLogicPublicActions({ rollup: randomAccount.address }));
 
     expectTypeOf<
       typeof clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract<'amountStaked'>
@@ -68,6 +69,20 @@ describe('RollupAdminLogic parameter:', () => {
       functionName: 'amountStaked',
       args: [randomAccount.address],
       rollup: rollupAdminLogicAddress,
+    });
+
+    const readContractSpy = vi.spyOn(clientWithRollupAdminLogicAddress, 'readContract');
+    await clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract({
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
+      rollup: rollupAdminLogicAddress,
+    });
+
+    expect(readContractSpy).toHaveBeenCalledWith({
+      address: rollupAdminLogicAddress,
+      abi: RollupAdminLogic__factory.abi,
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
     });
   });
 });
