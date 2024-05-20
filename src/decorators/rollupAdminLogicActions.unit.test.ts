@@ -6,6 +6,8 @@ import {
   InvalidAddressError,
   createPublicClient,
   http,
+  createClient,
+  ClientConfig,
 } from 'viem';
 import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
@@ -20,6 +22,22 @@ const client = createPublicClient({
 }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
 const randomAccount = privateKeyToAccount(generatePrivateKey());
+
+// Mock readContract (called internally with client.rollupAdminLogicReadContract)
+vi.mock('viem', async () => {
+  const viem: Record<string, unknown> = await vi.importActual('viem');
+
+  return {
+    ...viem,
+    createPublicClient: (args: ClientConfig) => {
+      const client = createClient(args);
+      Object.assign(client, {
+        readContract: vi.fn(),
+      });
+      return client;
+    },
+  };
+});
 
 describe('RollupAdminLogic parameter:', () => {
   it('require rollupAdminLogic parameter if not passed initially to the actions during initialization', () => {
@@ -43,7 +61,7 @@ describe('RollupAdminLogic parameter:', () => {
     });
   });
 
-  it('Doesn`t require rollupAdminLogic parameter if passed initially to the actions during initialization', () => {
+  it("Doesn't require rollupAdminLogic parameter if passed initially to the actions during initialization", async () => {
     const clientWithRollupAdminLogicAddress = createPublicClient({
       chain: mainnet,
       transport: http(),
@@ -55,13 +73,25 @@ describe('RollupAdminLogic parameter:', () => {
       functionName: 'amountStaked',
       args: [randomAccount.address],
     });
+
+    await clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract({
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
+    });
+
+    expect(clientWithRollupAdminLogicAddress.readContract).toHaveBeenCalledWith({
+      address: rollupAdminLogicAddress,
+      abi: RollupAdminLogic__factory.abi,
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
+    });
   });
 
   it('Allow rollupAdminLogic override parameter if passed initially to the actions during initialization', async () => {
     const clientWithRollupAdminLogicAddress = createPublicClient({
       chain: mainnet,
       transport: http(),
-    }).extend(rollupAdminLogicPublicActions({ rollup: randomAccount.address }));
+    }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
     expectTypeOf<
       typeof clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract<'amountStaked'>
@@ -71,20 +101,18 @@ describe('RollupAdminLogic parameter:', () => {
       rollup: rollupAdminLogicAddress,
     });
 
-    const readContractSpy = vi.spyOn(clientWithRollupAdminLogicAddress, 'readContract');
     await clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract({
       functionName: 'amountStaked',
       args: [randomAccount.address],
-      rollup: rollupAdminLogicAddress,
+      rollup: randomAccount.address,
     });
 
-    expect(readContractSpy).toHaveBeenCalledWith({
-      address: rollupAdminLogicAddress,
+    expect(clientWithRollupAdminLogicAddress.readContract).toHaveBeenCalledWith({
+      address: randomAccount.address,
       abi: RollupAdminLogic__factory.abi,
       functionName: 'amountStaked',
       args: [randomAccount.address],
     });
-    readContractSpy.mockClear();
   });
 });
 
