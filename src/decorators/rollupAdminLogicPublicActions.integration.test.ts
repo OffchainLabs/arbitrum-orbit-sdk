@@ -18,6 +18,7 @@ const client = createPublicClient({
   }),
 );
 
+console.log(l3Rollup);
 it('successfully set validators', async () => {
   const randomAccounts = [
     privateKeyToAccount(generatePrivateKey()).address,

@@ -84,6 +84,7 @@ describe('RollupAdminLogic parameter:', () => {
       functionName: 'amountStaked',
       args: [randomAccount.address],
     });
+    readContractSpy.mockClear();
   });
 });
 
