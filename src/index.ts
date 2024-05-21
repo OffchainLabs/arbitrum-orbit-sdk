@@ -36,14 +36,22 @@ import {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
 } from './setValidKeysetPrepareTransactionRequest';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import {
-  UpgradeExecutorAbi,
-  UpgradeExecutorFunctionName,
-  upgradeExecutorEncodeFunctionData,
-  UpgradeExecutorEncodeFunctionDataParameters,
-} from './upgradeExecutor';
+  upgradeExecutorFetchPrivilegedAccounts,
+  UpgradeExecutorFetchPrivilegedAccountsParams,
+} from './upgradeExecutorFetchPrivilegedAccounts';
+import {
+  upgradeExecutorPrepareAddExecutorTransactionRequest,
+  UpgradeExecutorPrepareAddExecutorTransactionRequestParams,
+} from './upgradeExecutorPrepareAddExecutorTransactionRequest';
+import {
+  upgradeExecutorPrepareRemoveExecutorTransactionRequest,
+  UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams,
+} from './upgradeExecutorPrepareRemoveExecutorTransactionRequest';
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
+import { arbAggregatorActions } from './decorators/arbAggregatorActions';
 import { sequencerInboxActions } from './decorators/sequencerInboxActions';
 import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
 
@@ -88,6 +96,7 @@ import * as utils from './utils';
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
+  arbAggregatorActions,
   sequencerInboxActions,
   rollupAdminLogicPublicActions,
   createRollupPrepareTransactionRequest,
@@ -118,10 +127,13 @@ export {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
   //
-  UpgradeExecutorAbi,
-  UpgradeExecutorFunctionName,
   upgradeExecutorEncodeFunctionData,
-  UpgradeExecutorEncodeFunctionDataParameters,
+  upgradeExecutorFetchPrivilegedAccounts,
+  UpgradeExecutorFetchPrivilegedAccountsParams,
+  upgradeExecutorPrepareAddExecutorTransactionRequest,
+  UpgradeExecutorPrepareAddExecutorTransactionRequestParams,
+  upgradeExecutorPrepareRemoveExecutorTransactionRequest,
+  UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams,
   //
   CoreContracts,
   ChainConfig,
