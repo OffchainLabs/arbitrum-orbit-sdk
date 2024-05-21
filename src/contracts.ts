@@ -9,7 +9,7 @@ import {
   arbGasInfoConfig,
   arbAggregatorConfig,
 } from './generated';
-import { sequencerInboxABI } from './abi/sequencerInboxABI';
+import { sequencerInboxABI, rollupAdminLogicABI } from './abi';
 
 export const erc20 = {
   abi: erc20ABI,
@@ -206,4 +206,8 @@ export const tokenBridgeCreator = {
 
 export const sequencerInbox = {
   abi: sequencerInboxABI,
+};
+
+export const rollupAdminLogic = {
+  abi: rollupAdminLogicABI,
 };
