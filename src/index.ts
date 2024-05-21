@@ -84,7 +84,6 @@ import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './crea
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
-import * as ABI from './abi';
 
 export {
   arbOwnerPublicActions,
@@ -153,6 +152,4 @@ export {
   createTokenBridgeFetchTokenBridgeContracts,
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
-  //
-  ABI,
 };
