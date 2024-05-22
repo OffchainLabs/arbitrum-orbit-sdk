@@ -1,6 +1,6 @@
 import { Address, PrepareTransactionRequestReturnType } from 'viem';
 
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 
 type SimplePrepareTransactionRequestReturnType = Pick<
   PrepareTransactionRequestReturnType,
