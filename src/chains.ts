@@ -4,6 +4,7 @@ import {
   holesky,
   arbitrum as arbitrumOne,
   arbitrumNova,
+  base,
   sepolia,
   arbitrumSepolia,
 } from 'viem/chains';
@@ -58,13 +59,16 @@ const nitroTestnodeL3 = defineChain({
 });
 
 export const chains = [
-  // mainnet
+  // mainnet L1
   mainnet,
+  // mainnet L2
   arbitrumOne,
   arbitrumNova,
-  // testnet
+  base,
+  // testnet L1
   sepolia,
   holesky,
+  // testnet L2
   arbitrumSepolia,
   // local nitro-testnode
   nitroTestnodeL1,
@@ -73,13 +77,16 @@ export const chains = [
 ] as const;
 
 export {
-  // mainnet
+  // mainnet L1
   mainnet,
+  // mainnet L2
   arbitrumOne,
   arbitrumNova,
-  // testnet
+  base,
+  // testnet L1
   sepolia,
   holesky,
+  // testnet L2
   arbitrumSepolia,
   // local nitro-testnode
   nitroTestnodeL1,

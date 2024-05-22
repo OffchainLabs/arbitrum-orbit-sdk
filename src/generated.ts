@@ -732,6 +732,7 @@ export const erc20ABI = [
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x90d68b056c411015eae3ec0b98ad94e2c91419f1)
  * -
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x850F050C65B34966895AdA26a4D06923901916DB)
  * -
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
@@ -929,6 +930,7 @@ export const rollupCreatorABI = [
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x90d68b056c411015eae3ec0b98ad94e2c91419f1)
  * -
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x850F050C65B34966895AdA26a4D06923901916DB)
  * -
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
@@ -938,6 +940,7 @@ export const rollupCreatorABI = [
 export const rollupCreatorAddress = {
   1: '0x90D68B056c411015eaE3EC0b98AD94E2C91419F1',
   1337: '0x596eAbE0291D4cdAfAC7ef53D16C92Bf6922b5e0',
+  8453: '0x850F050C65B34966895AdA26a4D06923901916DB',
   17000: '0xB512078282F462Ba104231ad856464Ceb0a7747e',
   42161: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
   42170: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
@@ -949,6 +952,7 @@ export const rollupCreatorAddress = {
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x90d68b056c411015eae3ec0b98ad94e2c91419f1)
  * -
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x850F050C65B34966895AdA26a4D06923901916DB)
  * -
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
@@ -967,6 +971,7 @@ export const rollupCreatorConfig = {
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x60D9A46F24D5a35b95A78Dd3E793e55D94EE0660)
  * -
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x4C240987d6fE4fa8C7a0004986e3db563150CA55)
  * -
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14)
@@ -1011,6 +1016,7 @@ export const tokenBridgeCreatorABI = [
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x60D9A46F24D5a35b95A78Dd3E793e55D94EE0660)
  * -
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x4C240987d6fE4fa8C7a0004986e3db563150CA55)
  * -
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14)
@@ -1020,6 +1026,7 @@ export const tokenBridgeCreatorABI = [
 export const tokenBridgeCreatorAddress = {
   1: '0x60D9A46F24D5a35b95A78Dd3E793e55D94EE0660',
   1337: '0x54B4D4e578E10178a6cA602bdb6df0F213296Af4',
+  8453: '0x4C240987d6fE4fa8C7a0004986e3db563150CA55',
   17000: '0xac890ED9bC2494C053cE701F138958df95966d94',
   42161: '0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e',
   42170: '0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14',
@@ -1031,6 +1038,7 @@ export const tokenBridgeCreatorAddress = {
 /**
  * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x60D9A46F24D5a35b95A78Dd3E793e55D94EE0660)
  * -
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x4C240987d6fE4fa8C7a0004986e3db563150CA55)
  * -
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14)

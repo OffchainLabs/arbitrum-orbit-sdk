@@ -7,6 +7,7 @@ import {
   arbitrumNova,
   arbitrumSepolia,
   nitroTestnodeL2,
+  base,
 } from './chains';
 import { ParentChainId } from './types/ParentChain';
 
@@ -18,6 +19,7 @@ export function createRollupGetMaxDataSize(parentChainId: ParentChainId) {
     // L2 testnet
     case sepolia.id:
     case holesky.id:
+    case base.id:
     // L2 nitro-testnode
     case nitroTestnodeL1.id:
       return BigInt(117_964);
