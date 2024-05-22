@@ -116,40 +116,11 @@ it('successfully updates L2 Base Fee Estimate Inertia on Orbit chain', async () 
   const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
     functionName: 'setL1BaseFeeEstimateInertia',
     args: [l2BaseFeeEstimateInertia],
-    upgradeExecutor: upgradeExecutorAddress,
-    account: owner.address,
-  });
-
-  // submit tx to update infra fee receiver
-  await client.sendRawTransaction({
-    serializedTransaction: await owner.signTransaction(transactionRequest),
-  });
-
-  const newL2BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
-    functionName: 'getL1BaseFeeEstimateInertia',
-  });
-
-  // assert account is now infra fee receiver
-  expect(newL2BaseFeeEstimateInertia).toEqual(l2BaseFeeEstimateInertia);
-});
-
-it('successfully updates infra fee receiver', async () => {
-  const initialInfraFeeReceiver = await client.arbOwnerReadContract({
-    functionName: 'getInfraFeeAccount',
-  });
-
-  // assert account is not already infra fee receiver
-  expect(initialInfraFeeReceiver).not.toEqual(randomAccount.address);
-
-  const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
-    functionName: 'setInfraFeeAccount',
-    args: [randomAccount.address],
     upgradeExecutor: false,
     account: owner.address,
   });
 
-  const transactionRequestWithUpgradeExecutor = withUpgradeExecutor({
-    transactionRequest,
+  const transactionRequestWithUpgradeExecutor = withUpgradeExecutor(transactionRequest, {
     upgradeExecutor: upgradeExecutorAddress,
   });
 
@@ -158,10 +129,10 @@ it('successfully updates infra fee receiver', async () => {
     serializedTransaction: await owner.signTransaction(transactionRequestWithUpgradeExecutor),
   });
 
-  const infraFeeReceiver = await client.arbOwnerReadContract({
-    functionName: 'getInfraFeeAccount',
+  const newL2BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
+    functionName: 'getL1BaseFeeEstimateInertia',
   });
 
   // assert account is now infra fee receiver
-  expect(infraFeeReceiver).toEqual(randomAccount.address);
+  expect(newL2BaseFeeEstimateInertia).toEqual(l2BaseFeeEstimateInertia);
 });

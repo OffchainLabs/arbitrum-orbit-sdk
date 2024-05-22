@@ -9,20 +9,23 @@ type SimplePrepareTransactionRequestReturnType = Pick<
 
 export function withUpgradeExecutor<
   TTransactionRequest extends SimplePrepareTransactionRequestReturnType,
->({
-  transactionRequest,
-  upgradeExecutor,
-}: {
-  transactionRequest: TTransactionRequest;
-  upgradeExecutor: Address;
-}): TTransactionRequest {
+>(
+  transactionRequest: TTransactionRequest,
+  {
+    upgradeExecutor,
+    upgradeExecutorFunctionName = 'executeCall',
+  }: {
+    upgradeExecutor: Address;
+    upgradeExecutorFunctionName?: 'execute' | 'executeCall';
+  },
+): TTransactionRequest {
   const data = upgradeExecutorEncodeFunctionData({
-    functionName: 'executeCall',
+    functionName: upgradeExecutorFunctionName,
     args: [
       transactionRequest.to!, // target
       transactionRequest.data!, // targetCallData
     ],
   });
 
-  return { ...transactionRequest, data, to: upgradeExecutor };
+  return { ...transactionRequest, to: upgradeExecutor, data };
 }
