@@ -84,6 +84,8 @@ import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './crea
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
+import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
+import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerInboxMaxTimeVariation';
 
 export {
   arbOwnerPublicActions,
@@ -152,4 +154,7 @@ export {
   createTokenBridgeFetchTokenBridgeContracts,
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+  //
+  getDefaultConfirmPeriodBlocks,
+  getDefaultSequencerInboxMaxTimeVariation,
 };
