@@ -10,10 +10,16 @@ export type SequencerInboxMaxTimeVariation = {
 export function getDefaultSequencerInboxMaxTimeVariation(
   parentChainId: ParentChainId,
 ): SequencerInboxMaxTimeVariation {
+  const delaySeconds = 60 * 60 * 24 * 4; // 4 days;
+  const delayBlocks = delaySeconds / 12;
+
+  const futureSeconds = 60 * 60; // 1 hour;
+  const futureBlocks = futureSeconds / 12;
+
   return {
-    delayBlocks: BigInt(5_760),
-    futureBlocks: BigInt(48),
-    delaySeconds: BigInt(86_400),
-    futureSeconds: BigInt(3_600),
+    delayBlocks: BigInt(delayBlocks),
+    futureBlocks: BigInt(futureBlocks),
+    delaySeconds: BigInt(delaySeconds),
+    futureSeconds: BigInt(futureSeconds),
   };
 }
