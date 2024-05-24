@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`returns default value for confirm period blocks 1`] = `
+exports[`returns default value for confirmPeriodBlocks 1`] = `
 {
   "1": 45818n,
   "11155111": 150n,
