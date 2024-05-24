@@ -2,6 +2,8 @@ import { ChainConfig } from './types/ChainConfig';
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 import { prepareChainConfig } from './prepareChainConfig';
 import { defaults as defaultsCommon } from './createRollupPrepareDeploymentParamsConfigDefaults';
+// importing for jsdoc @link to work
+import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 
 type RequiredKeys = 'chainId' | 'owner';
 
@@ -23,6 +25,9 @@ export const defaults = {
   },
 } as const;
 
+/**
+ * @deprecated Will be removed in a future release. Please use {@link createRollupPrepareDeploymentParamsConfig} instead.
+ */
 export function createRollupPrepareConfig({
   chainConfig,
   ...params
