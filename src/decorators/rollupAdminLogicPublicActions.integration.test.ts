@@ -5,6 +5,7 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { nitroTestnodeL2 } from '../chains';
 import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
 import { getInformationFromTestnode, getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
+import { getValidators } from '../getValidators';
 
 const { l3RollupOwner } = getNitroTestnodePrivateKeyAccounts();
 const { l3Rollup, l3UpgradeExecutor } = getInformationFromTestnode();
@@ -23,6 +24,9 @@ it('successfully set validators', async () => {
     privateKeyToAccount(generatePrivateKey()).address,
     privateKeyToAccount(generatePrivateKey()).address,
   ];
+
+  const initialValidators = await getValidators(client, { rollupAddress: l3Rollup })
+  expect(initialValidators).toHaveLength(10)
 
   const tx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
@@ -49,7 +53,9 @@ it('successfully set validators', async () => {
     }),
   ]);
 
+  const currentValidators = await getValidators(client, { rollupAddress: l3Rollup })
   expect(validators).toEqual([true, false]);
+  expect(currentValidators).toEqual(initialValidators.concat(randomAccounts[0]))
 
   const revertTx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
@@ -62,6 +68,8 @@ it('successfully set validators', async () => {
   await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(revertTx),
   });
+  const revertedValidators = await getValidators(client, { rollupAddress: l3Rollup })
+  expect(revertedValidators).toEqual(initialValidators)
 });
 
 it('successfully enable/disable whitelist', async () => {
