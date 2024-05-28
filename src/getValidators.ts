@@ -100,17 +100,19 @@ export async function getValidators(
           abi: rollupAdminLogicABI,
           data: upgradeExecutorCall.args[1],
         });
-        if (typeof isAdd === 'boolean' && typeof decodedValidators === 'string') {
-          if (isAdd) {
-            acc.add(decodedValidators);
-          } else {
-            acc.delete(decodedValidators);
-          }
+        if (Array.isArray(isAdd) && typeof isAdd[0] === 'boolean' && Array.isArray(decodedValidators) && typeof decodedValidators[0] === 'string') {
+          decodedValidators.forEach((validator, i) => {
+            if (isAdd[i]) {
+              acc.add(validator)
+            } else {
+              acc.delete(validator)
+            }
+          })
           return acc;
         }
 
         console.warn(
-          `[getValidators:setValidatorFunctionSelector] invalid data, tx id: ${tx.hash}`,
+          `[getValidators:upgradeExecutorExecuteCallFunctionSelector] invalid data, tx id: ${tx.hash}`,
         );
         return acc;
       }
