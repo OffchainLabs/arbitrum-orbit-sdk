@@ -1,11 +1,4 @@
-import {
-  Abi,
-  Address,
-  PublicClient,
-  decodeFunctionData,
-  getAbiItem,
-  getFunctionSelector,
-} from 'viem';
+import { Address, PublicClient, decodeFunctionData, getAbiItem, getFunctionSelector } from 'viem';
 import { rollupCreator, upgradeExecutor } from './contracts';
 import { rollupAdminLogicABI } from './abi';
 
@@ -42,7 +35,7 @@ function getValidatorsFromFunctionData<
 export async function getValidators(
   client: PublicClient,
   { rollupAddress }: { rollupAddress: Address },
-) {
+): Promise<Address[]> {
   const events = await client.getLogs({
     address: rollupAddress,
     event: ownerFunctionCalledEventAbi,
@@ -59,7 +52,7 @@ export async function getValidators(
     ),
   );
 
-  const validators = txs.flatMap((tx) => {
+  const validators = txs.reduce((acc, tx) => {
     const txSelectedFunction = tx.input.slice(0, 10);
 
     switch (txSelectedFunction) {
@@ -69,28 +62,34 @@ export async function getValidators(
           data: tx.input,
         });
         if (typeof data === 'object' && 'validators' in data) {
-          return data.validators;
+          acc = new Set([...acc, ...data.validators]);
+          return acc;
         }
 
         console.warn(
           `[getValidators:createRollupFunctionSelector] invalid data, tx id: ${tx.hash}`,
         );
-        return [];
+        return acc;
       }
       case setValidatorFunctionSelector: {
-        const [decodedValidators] = getValidatorsFromFunctionData({
+        const [decodedValidator, isAdd] = getValidatorsFromFunctionData({
           abi: rollupAdminLogicABI,
           data: tx.input,
         });
 
-        if (typeof decodedValidators === 'string') {
-          return decodedValidators;
+        if (typeof decodedValidator === 'string' && typeof isAdd === 'boolean') {
+          if (isAdd) {
+            acc.add(decodedValidator);
+          } else {
+            acc.delete(decodedValidator);
+          }
+          return acc;
         }
 
         console.warn(
           `[getValidators:setValidatorFunctionSelector] invalid data, tx id: ${tx.hash}`,
         );
-        return [];
+        return acc;
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
         const upgradeExecutorCall = decodeFunctionData({
@@ -102,19 +101,25 @@ export async function getValidators(
           data: upgradeExecutorCall.args[1],
         });
         if (typeof isAdd === 'boolean' && typeof decodedValidators === 'string') {
-          return isAdd ? decodedValidators : [];
+          if (isAdd) {
+            acc.add(decodedValidators);
+          } else {
+            acc.delete(decodedValidators);
+          }
+          return acc;
         }
 
         console.warn(
           `[getValidators:setValidatorFunctionSelector] invalid data, tx id: ${tx.hash}`,
         );
-        return [];
+        return acc;
       }
       default: {
         console.warn(`[getValidators] unknown 4bytes, tx id: ${tx.hash}`);
+        return acc;
       }
     }
-  });
+  }, new Set<Address>());
 
-  return validators.filter((validator) => validator) as `0x${string}`[];
+  return [...validators];
 }
