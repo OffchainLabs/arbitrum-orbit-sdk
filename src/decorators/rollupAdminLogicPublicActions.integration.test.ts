@@ -25,8 +25,8 @@ it('successfully set validators', async () => {
     privateKeyToAccount(generatePrivateKey()).address,
   ];
 
-  const initialValidators = await getValidators(client, { rollupAddress: l3Rollup })
-  expect(initialValidators).toHaveLength(10)
+  const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
+  expect(initialValidators).toHaveLength(10);
 
   const tx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
@@ -53,9 +53,9 @@ it('successfully set validators', async () => {
     }),
   ]);
 
-  const currentValidators = await getValidators(client, { rollupAddress: l3Rollup })
+  const currentValidators = await getValidators(client, { rollupAddress: l3Rollup });
   expect(validators).toEqual([true, false]);
-  expect(currentValidators).toEqual(initialValidators.concat(randomAccounts[0]))
+  expect(currentValidators).toEqual(initialValidators.concat(randomAccounts[0]));
 
   const revertTx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
@@ -68,8 +68,8 @@ it('successfully set validators', async () => {
   await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(revertTx),
   });
-  const revertedValidators = await getValidators(client, { rollupAddress: l3Rollup })
-  expect(revertedValidators).toEqual(initialValidators)
+  const revertedValidators = await getValidators(client, { rollupAddress: l3Rollup });
+  expect(revertedValidators).toEqual(initialValidators);
 });
 
 it('successfully enable/disable whitelist', async () => {
