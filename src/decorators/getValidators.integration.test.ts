@@ -36,7 +36,7 @@ async function toggleValidator(validator: Address, state: boolean) {
 describe('successfully get validators', async () => {
   it('when disabling the same validator multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
-    
+
     const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
     // By default, nitro chains have 10 validators
     expect(initialValidators).toHaveLength(10);
@@ -44,15 +44,15 @@ describe('successfully get validators', async () => {
     await toggleValidator(randomAccount, false);
     await toggleValidator(randomAccount, false);
 
-    const newValidators = await getValidators(client, { rollupAddress: l3Rollup })
+    const newValidators = await getValidators(client, { rollupAddress: l3Rollup });
     // Setting the same validator multiple time to false doesn't add new validators
-    expect(newValidators).toEqual(initialValidators)
+    expect(newValidators).toEqual(initialValidators);
 
     await toggleValidator(randomAccount, true);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
-      initialValidators.concat(randomAccount)
-    )
-    
+      initialValidators.concat(randomAccount),
+    );
+
     // Reset state for future tests
     await toggleValidator(randomAccount, false);
   });
@@ -61,11 +61,13 @@ describe('successfully get validators', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
     const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
-    expect(initialValidators).toHaveLength(10)
+    expect(initialValidators).toHaveLength(10);
 
     await toggleValidator(randomAccount, true);
     await toggleValidator(randomAccount, true);
-    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators.concat(randomAccount));
+    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
+      initialValidators.concat(randomAccount),
+    );
 
     await toggleValidator(randomAccount, false);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);

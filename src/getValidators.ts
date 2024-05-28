@@ -100,14 +100,19 @@ export async function getValidators(
           abi: rollupAdminLogicABI,
           data: upgradeExecutorCall.args[1],
         });
-        if (Array.isArray(isAdd) && typeof isAdd[0] === 'boolean' && Array.isArray(decodedValidators) && typeof decodedValidators[0] === 'string') {
+        if (
+          Array.isArray(isAdd) &&
+          typeof isAdd[0] === 'boolean' &&
+          Array.isArray(decodedValidators) &&
+          typeof decodedValidators[0] === 'string'
+        ) {
           decodedValidators.forEach((validator, i) => {
             if (isAdd[i]) {
-              acc.add(validator)
+              acc.add(validator);
             } else {
-              acc.delete(validator)
+              acc.delete(validator);
             }
-          })
+          });
           return acc;
         }
 
