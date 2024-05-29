@@ -3,15 +3,17 @@ import { parseEther, zeroAddress } from 'viem';
 import { ChainConfig } from './types/ChainConfig';
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 import { prepareChainConfig } from './prepareChainConfig';
-
-type RequiredKeys = 'chainId' | 'owner';
+import { Prettify } from './types/utils';
 
 export type CreateRollupPrepareConfigResult = CreateRollupFunctionInputs[0]['config'];
 
-export type CreateRollupPrepareConfigParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys> &
-  Partial<Omit<CreateRollupPrepareConfigResult | 'chainConfig', RequiredKeys>> & {
-    chainConfig?: ChainConfig;
-  };
+type RequiredKeys = 'chainId' | 'owner';
+type RequiredParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys>;
+type OptionalParams = Partial<Omit<CreateRollupPrepareConfigResult, 'chainConfig' | RequiredKeys>>;
+
+export type CreateRollupPrepareConfigParams = Prettify<
+  RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
+>;
 
 const wasmModuleRoot: `0x${string}` =
   // https://github.com/OffchainLabs/nitro/releases/tag/consensus-v20
