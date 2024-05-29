@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`returns default value for sequencerInboxMaxTimeVariation based on parent chain 1`] = `
+{
+  "1": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+  "11155111": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+  "1337": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+  "17000": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+  "412346": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+  "42161": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+  "421614": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+  "42170": {
+    "delayBlocks": 28800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 300n,
+    "futureSeconds": 3600n,
+  },
+}
+`;
