@@ -20,6 +20,7 @@ type OptionalParams = Partial<Omit<CreateRollupPrepareConfigResult, 'chainConfig
 export type CreateRollupPrepareConfigParams = Prettify<
   RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
 >;
+
 export function createRollupPrepareDeploymentParamsConfig(
   client: PublicClient,
   { chainConfig, ...params }: CreateRollupPrepareConfigParams,
