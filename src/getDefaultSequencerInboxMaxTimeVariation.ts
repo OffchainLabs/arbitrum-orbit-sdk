@@ -1,4 +1,6 @@
-import { ParentChainId } from './types/ParentChain';
+import { PublicClient } from 'viem';
+
+import { ParentChainId, validateParentChain } from './types/ParentChain';
 
 export type SequencerInboxMaxTimeVariation = {
   delayBlocks: bigint;
@@ -8,8 +10,10 @@ export type SequencerInboxMaxTimeVariation = {
 };
 
 export function getDefaultSequencerInboxMaxTimeVariation(
-  parentChainId: ParentChainId,
+  parentChainIdOrPublicClient: ParentChainId | PublicClient,
 ): SequencerInboxMaxTimeVariation {
+  validateParentChain(parentChainIdOrPublicClient);
+
   const delaySeconds = 60 * 60 * 24 * 4; // 4 days;
   const delayBlocks = delaySeconds / 12;
 

@@ -4,7 +4,7 @@ import { chains } from './chains';
 import { ParentChainId } from './types/ParentChain';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 
-it('returns default value for confirmPeriodBlocks', () => {
+it('returns default value for confirmPeriodBlocks based on parent chain', () => {
   expect(
     chains
       .filter((chain) => chain.id !== 333333)

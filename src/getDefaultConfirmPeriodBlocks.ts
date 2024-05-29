@@ -1,8 +1,12 @@
-import { ParentChainId } from './types/ParentChain';
+import { PublicClient } from 'viem';
+
+import { ParentChainId, validateParentChain } from './types/ParentChain';
 import { parentChainIsMainnet } from './parentChainIsMainnet';
 
-export function getDefaultConfirmPeriodBlocks(parentChainId: ParentChainId): bigint {
-  const isMainnet = parentChainIsMainnet(parentChainId);
+export function getDefaultConfirmPeriodBlocks(
+  parentChainIdOrPublicClient: ParentChainId | PublicClient,
+): bigint {
+  const isMainnet = parentChainIsMainnet(validateParentChain(parentChainIdOrPublicClient));
 
   if (!isMainnet) {
     return 150n;

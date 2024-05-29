@@ -4,7 +4,7 @@ import { chains } from './chains';
 import { ParentChainId } from './types/ParentChain';
 import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerInboxMaxTimeVariation';
 
-it('returns default value for sequencerInboxMaxTimeVariation', () => {
+it('returns default value for sequencerInboxMaxTimeVariation based on parent chain', () => {
   expect(
     chains
       .filter((chain) => chain.id !== 333333)
