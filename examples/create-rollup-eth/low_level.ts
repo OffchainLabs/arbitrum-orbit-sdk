@@ -2,7 +2,7 @@ import { Chain, createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import {
-  createRollupPrepareConfig,
+  createRollupPrepareDeploymentParamsConfig,
   prepareChainConfig,
   createRollupPrepareTransactionRequest,
   createRollupPrepareTransactionReceipt,
@@ -55,7 +55,7 @@ async function main() {
   // prepare the transaction for deploying the core contracts
   const request = await createRollupPrepareTransactionRequest({
     params: {
-      config: createRollupPrepareConfig({
+      config: createRollupPrepareDeploymentParamsConfig(parentChainPublicClient, {
         chainId: BigInt(chainId),
         owner: deployer.address,
         chainConfig,

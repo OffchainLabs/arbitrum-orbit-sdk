@@ -7,6 +7,7 @@ import { generateChainId, sanitizePrivateKey } from './utils';
 import { createRollup } from './createRollup';
 import { createRollupPrepareConfig } from './createRollupPrepareConfig';
 import { prepareChainConfig } from './prepareChainConfig';
+import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 
 config();
 
@@ -150,7 +151,7 @@ export async function createRollupHelper({
 }) {
   const chainId = generateChainId();
 
-  const createRollupConfig = createRollupPrepareConfig({
+  const createRollupConfig = createRollupPrepareDeploymentParamsConfig(client, {
     chainId: BigInt(chainId),
     owner: deployer.address,
     chainConfig: prepareChainConfig({
