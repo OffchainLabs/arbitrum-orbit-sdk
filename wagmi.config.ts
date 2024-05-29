@@ -11,6 +11,7 @@ import {
   sepolia,
   holesky,
   arbitrumSepolia,
+  baseSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
   nitroTestnodeL3,
@@ -69,6 +70,10 @@ const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string 
     url: 'https://api-sepolia.arbiscan.io/api',
     apiKey: arbiscanApiKey,
   },
+  [baseSepolia.id]: {
+    url: 'https://api-sepolia.basescan.org/api',
+    apiKey: basescanApikey,
+  },
   // local nitro-testnode / fine to omit these as we skip abi fetch
   [nitroTestnodeL1.id]: { url: '', apiKey: '' },
   [nitroTestnodeL2.id]: { url: '', apiKey: '' },
@@ -112,6 +117,7 @@ const contracts: ContractConfig[] = [
       [holesky.id]: '0xB512078282F462Ba104231ad856464Ceb0a7747e',
       // testnet L2
       [arbitrumSepolia.id]: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
+      [baseSepolia.id]: '0x1E0921818df948c338380e722C8aE91Bb285763C',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
       [nitroTestnodeL2.id]: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
@@ -132,6 +138,7 @@ const contracts: ContractConfig[] = [
       [holesky.id]: '0xac890ED9bC2494C053cE701F138958df95966d94',
       // testnet L2
       [arbitrumSepolia.id]: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
+      [baseSepolia.id]: '0xFC71d21a4FE10Cc0d34745ba9c713836f82f8DE3',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x54B4D4e578E10178a6cA602bdb6df0F213296Af4',
       [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',

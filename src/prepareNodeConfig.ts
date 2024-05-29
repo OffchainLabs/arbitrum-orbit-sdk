@@ -14,6 +14,7 @@ import {
   sepolia,
   holesky,
   arbitrumSepolia,
+  baseSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
 } from './chains';
@@ -41,6 +42,7 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
     case base.id:
     case sepolia.id:
     case holesky.id:
+    case baseSepolia.id:
     case nitroTestnodeL1.id:
       return false;
 

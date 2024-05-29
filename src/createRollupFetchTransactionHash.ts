@@ -12,6 +12,7 @@ import {
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
+  baseSepolia,
 } from './chains';
 
 export type CreateRollupFetchTransactionHashParams = {
@@ -51,6 +52,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [holesky.id]: 1083992n,
   // testnet L2
   [arbitrumSepolia.id]: 654628n,
+  [baseSepolia.id]: 10606961n,
   // local nitro-testnode
   [nitroTestnodeL1.id]: 0n,
   [nitroTestnodeL2.id]: 0n,

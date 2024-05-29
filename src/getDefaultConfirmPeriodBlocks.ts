@@ -2,7 +2,7 @@ import { PublicClient } from 'viem';
 
 import { ParentChainId, validateParentChain } from './types/ParentChain';
 import { parentChainIsMainnet } from './parentChainIsMainnet';
-import { base } from './chains';
+import { base, baseSepolia } from './chains';
 
 export function getDefaultConfirmPeriodBlocks(
   parentChainIdOrPublicClient: ParentChainId | PublicClient,
@@ -12,7 +12,7 @@ export function getDefaultConfirmPeriodBlocks(
   const isMainnet = parentChainIsMainnet(parentChainId);
   const confirmPeriodBlocks = isMainnet ? 45_818n : 150n;
 
-  if (parentChainId === base.id) {
+  if (parentChainId === base.id || parentChainId === baseSepolia.id) {
     // For Arbitrum L2s built on top of Ethereum, or Arbitrum L3s built on top of an Arbitrum L2, `block.number` always returns the L1 block number.
     // L1 blocks are produced every 12 seconds.
     //

@@ -7,6 +7,7 @@ import {
   base,
   sepolia,
   arbitrumSepolia,
+  baseSepolia,
 } from 'viem/chains';
 
 const nitroTestnodeL1 = defineChain({
@@ -70,6 +71,7 @@ export const chains = [
   holesky,
   // testnet L2
   arbitrumSepolia,
+  baseSepolia,
   // local nitro-testnode
   nitroTestnodeL1,
   nitroTestnodeL2,
@@ -88,6 +90,7 @@ export {
   holesky,
   // testnet L2
   arbitrumSepolia,
+  baseSepolia,
   // local nitro-testnode
   nitroTestnodeL1,
   nitroTestnodeL2,
