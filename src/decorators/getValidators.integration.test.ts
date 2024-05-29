@@ -86,13 +86,13 @@ describe('successfully get validators', async () => {
     const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
     expect(initialValidators).toHaveLength(10);
 
-    const firstValidator = initialValidators[0];
-    await setValidator(firstValidator, false);
+    const lastValidator = initialValidators[initialValidators.length - 1];
+    await setValidator(lastValidator, false);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
-      initialValidators.slice(1, initialValidators.length),
+      initialValidators.slice(0, -1),
     );
 
-    await setValidator(firstValidator, true);
+    await setValidator(lastValidator, true);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);
   });
 });
