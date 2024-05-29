@@ -8,7 +8,7 @@ This is an example for deploying the rollup contracts for your Orbit chain to it
 // set the custom fee token
 const nativeToken: Address = process.env.CUSTOM_FEE_TOKEN_ADDRESS as `0x${string}`;
 
-const createRollupConfig = createRollupPrepareConfig({
+const createRollupConfig = createRollupPrepareDeploymentParamsConfig(parentChainPublicClient, {
   chainId: BigInt(chainId),
   owner: deployer.address,
   chainConfig: prepareChainConfig({
