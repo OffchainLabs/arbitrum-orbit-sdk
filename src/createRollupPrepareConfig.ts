@@ -4,15 +4,17 @@ import { prepareChainConfig } from './prepareChainConfig';
 import { defaults as defaultsCommon } from './createRollupPrepareDeploymentParamsConfigDefaults';
 // importing for jsdoc @link to work
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
-
-type RequiredKeys = 'chainId' | 'owner';
+import { Prettify } from './types/utils';
 
 export type CreateRollupPrepareConfigResult = CreateRollupFunctionInputs[0]['config'];
 
-export type CreateRollupPrepareConfigParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys> &
-  Partial<Omit<CreateRollupPrepareConfigResult | 'chainConfig', RequiredKeys>> & {
-    chainConfig?: ChainConfig;
-  };
+type RequiredKeys = 'chainId' | 'owner';
+type RequiredParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys>;
+type OptionalParams = Partial<Omit<CreateRollupPrepareConfigResult, 'chainConfig' | RequiredKeys>>;
+
+export type CreateRollupPrepareConfigParams = Prettify<
+  RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
+>;
 
 export const defaults = {
   ...defaultsCommon,
