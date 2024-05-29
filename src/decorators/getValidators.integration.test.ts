@@ -19,7 +19,7 @@ const client = createPublicClient({
   }),
 );
 
-async function toggleValidator(validator: Address, state: boolean) {
+async function setValidator(validator: Address, state: boolean) {
   const tx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
     args: [[validator], [state]],
@@ -38,23 +38,23 @@ describe('successfully get validators', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
     const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
-    // By default, nitro chains have 10 validators
+    // By default, chains from nitro testnode has 10 validators
     expect(initialValidators).toHaveLength(10);
 
-    await toggleValidator(randomAccount, false);
-    await toggleValidator(randomAccount, false);
+    await setValidator(randomAccount, false);
+    await setValidator(randomAccount, false);
 
     const newValidators = await getValidators(client, { rollupAddress: l3Rollup });
     // Setting the same validator multiple time to false doesn't add new validators
     expect(newValidators).toEqual(initialValidators);
 
-    await toggleValidator(randomAccount, true);
+    await setValidator(randomAccount, true);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
       initialValidators.concat(randomAccount),
     );
 
     // Reset state for future tests
-    await toggleValidator(randomAccount, false);
+    await setValidator(randomAccount, false);
   });
 
   it('when enabling the same validators multiple time', async () => {
@@ -63,13 +63,36 @@ describe('successfully get validators', async () => {
     const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
     expect(initialValidators).toHaveLength(10);
 
-    await toggleValidator(randomAccount, true);
-    await toggleValidator(randomAccount, true);
+    await setValidator(randomAccount, true);
+    await setValidator(randomAccount, true);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
       initialValidators.concat(randomAccount),
     );
 
-    await toggleValidator(randomAccount, false);
+    await setValidator(randomAccount, false);
+    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);
+  });
+
+  it('when adding an existing validator', async () => {
+    const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
+    expect(initialValidators).toHaveLength(10);
+
+    const firstValidator = initialValidators[0];
+    await setValidator(firstValidator, true);
+    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);
+  });
+
+  it('when removing an existing validator', async () => {
+    const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
+    expect(initialValidators).toHaveLength(10);
+
+    const firstValidator = initialValidators[0];
+    await setValidator(firstValidator, false);
+    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
+      initialValidators.slice(1, initialValidators.length),
+    );
+
+    await setValidator(firstValidator, true);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);
   });
 });
