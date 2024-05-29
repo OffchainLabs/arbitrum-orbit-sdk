@@ -1,22 +1,25 @@
 import { PublicClient } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
+import { validateParentChain } from './types/ParentChain';
+import { Prettify } from './types/utils';
+
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 import { prepareChainConfig } from './prepareChainConfig';
-import { validateParentChain } from './types/ParentChain';
+
 import { defaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerInboxMaxTimeVariation';
 
-type RequiredKeys = 'chainId' | 'owner';
-
 export type CreateRollupPrepareConfigResult = CreateRollupFunctionInputs[0]['config'];
 
-export type CreateRollupPrepareConfigParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys> &
-  Partial<Omit<CreateRollupPrepareConfigResult | 'chainConfig', RequiredKeys>> & {
-    chainConfig?: ChainConfig;
-  };
+type RequiredKeys = 'chainId' | 'owner';
+type RequiredParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys>;
+type OptionalParams = Partial<Omit<CreateRollupPrepareConfigResult, 'chainConfig' | RequiredKeys>>;
 
+export type CreateRollupPrepareConfigParams = Prettify<
+  RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
+>;
 export function createRollupPrepareDeploymentParamsConfig(
   client: PublicClient,
   { chainConfig, ...params }: CreateRollupPrepareConfigParams,
