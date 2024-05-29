@@ -50,5 +50,11 @@ exports[`returns default value for sequencerInboxMaxTimeVariation based on paren
     "futureBlocks": 300n,
     "futureSeconds": 3600n,
   },
+  "8453": {
+    "delayBlocks": 172800n,
+    "delaySeconds": 345600n,
+    "futureBlocks": 1800n,
+    "futureSeconds": 3600n,
+  },
 }
 `;
