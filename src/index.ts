@@ -3,6 +3,11 @@ import {
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
+import {
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+} from './createRollupPrepareDeploymentParamsConfig';
 import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
@@ -101,9 +106,15 @@ export {
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
   CreateRollupParams,
+  //
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
+  //
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+  //
   prepareChainConfig,
   PrepareChainConfigParams,
   createRollupEnoughCustomFeeTokenAllowance,

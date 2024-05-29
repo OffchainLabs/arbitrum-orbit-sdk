@@ -11,20 +11,23 @@ import { defaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerInboxMaxTimeVariation';
 
-export type CreateRollupPrepareConfigResult = CreateRollupFunctionInputs[0]['config'];
+export type CreateRollupPrepareDeploymentParamsConfigResult =
+  CreateRollupFunctionInputs[0]['config'];
 
 type RequiredKeys = 'chainId' | 'owner';
-type RequiredParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys>;
-type OptionalParams = Partial<Omit<CreateRollupPrepareConfigResult, 'chainConfig' | RequiredKeys>>;
+type RequiredParams = Pick<CreateRollupPrepareDeploymentParamsConfigResult, RequiredKeys>;
+type OptionalParams = Partial<
+  Omit<CreateRollupPrepareDeploymentParamsConfigResult, 'chainConfig' | RequiredKeys>
+>;
 
-export type CreateRollupPrepareConfigParams = Prettify<
+export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
   RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
 >;
 
 export function createRollupPrepareDeploymentParamsConfig(
   client: PublicClient,
-  { chainConfig, ...params }: CreateRollupPrepareConfigParams,
-): CreateRollupPrepareConfigResult {
+  { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
+): CreateRollupPrepareDeploymentParamsConfigResult {
   const parentChainId = validateParentChain(client);
 
   const defaultsBasedOnParentChain = {
