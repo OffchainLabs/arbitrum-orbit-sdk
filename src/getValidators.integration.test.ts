@@ -28,8 +28,12 @@ async function setValidator(validator: Address, state: boolean) {
     rollup: l3Rollup,
   });
 
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(tx),
+  });
+
+  await client.waitForTransactionReceipt({
+    hash: txHash,
   });
 }
 
