@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { Address, createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
-import { nitroTestnodeL2 } from '../chains';
-import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
-import { getInformationFromTestnode, getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
-import { getValidators } from '../getValidators';
+import { nitroTestnodeL2 } from './chains';
+import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
+import { getInformationFromTestnode, getNitroTestnodePrivateKeyAccounts } from './testHelpers';
+import { getValidators } from './getValidators';
 
 const { l3RollupOwner } = getNitroTestnodePrivateKeyAccounts();
 const { l3Rollup, l3UpgradeExecutor } = getInformationFromTestnode();
