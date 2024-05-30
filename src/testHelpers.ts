@@ -5,9 +5,8 @@ import { execSync } from 'node:child_process';
 
 import { generateChainId, sanitizePrivateKey } from './utils';
 import { createRollup } from './createRollup';
-import { createRollupPrepareConfig } from './createRollupPrepareConfig';
-import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
+import { prepareChainConfig } from './prepareChainConfig';
 
 config();
 
