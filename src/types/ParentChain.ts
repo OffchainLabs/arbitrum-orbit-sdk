@@ -1,4 +1,4 @@
-import { Chain, PublicClient, Transport } from 'viem';
+import { Chain, Client, PublicClient, Transport } from 'viem';
 
 import { chains, nitroTestnodeL3 } from '../chains';
 import { Prettify } from './utils';
@@ -21,11 +21,11 @@ function isValidParentChainId(parentChainId: number | undefined): parentChainId 
   return ids.includes(Number(parentChainId));
 }
 
-export function validateParentChain(chainIdOrPublicClient: number | PublicClient): ParentChainId {
-  const chainId =
-    typeof chainIdOrPublicClient === 'number'
-      ? chainIdOrPublicClient
-      : chainIdOrPublicClient.chain?.id;
+export function validateParentChain<
+  TTransport extends Transport = Transport,
+  TChain extends Chain | undefined = Chain | undefined,
+>(chainIdOrClient: number | Client<TTransport, TChain>): ParentChainId {
+  const chainId = typeof chainIdOrClient === 'number' ? chainIdOrClient : chainIdOrClient.chain?.id;
 
   if (!isValidParentChainId(chainId)) {
     throw new Error(`Parent chain not supported: ${chainId}`);
