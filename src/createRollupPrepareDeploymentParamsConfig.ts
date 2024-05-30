@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem';
+import { Chain, Client, Transport } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
 import { validateParentChain } from './types/ParentChain';
@@ -63,8 +63,11 @@ export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
  *   }),
  * });
  */
-export function createRollupPrepareDeploymentParamsConfig(
-  client: PublicClient,
+export function createRollupPrepareDeploymentParamsConfig<
+  TTransport extends Transport = Transport,
+  TChain extends Chain | undefined = Chain | undefined,
+>(
+  client: Client<TTransport, TChain>,
   { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
 ): CreateRollupPrepareDeploymentParamsConfigResult {
   const parentChainId = validateParentChain(client);
