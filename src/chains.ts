@@ -1,11 +1,11 @@
 import { defineChain } from 'viem';
 import {
   mainnet,
-  holesky,
   arbitrum as arbitrumOne,
   arbitrumNova,
   base,
   sepolia,
+  holesky,
   arbitrumSepolia,
   baseSepolia,
 } from 'viem/chains';
