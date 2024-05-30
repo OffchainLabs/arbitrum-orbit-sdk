@@ -123,7 +123,7 @@ export type CreateRollupResults = {
  * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
  *
  * @example
- * const createRollupConfig = createRollupPrepareConfig({
+ * const createRollupConfig = createRollupPrepareDeploymentParamsConfig(parentChainPublicClient, {
  *   chainId: BigInt(chainId),
  *   owner: deployer.address,
  *   chainConfig: prepareChainConfig({
@@ -141,7 +141,7 @@ export type CreateRollupResults = {
  *   coreContracts,
  * } = await createRollup({
  *   params: {
- *    config: createRollupConfig,
+ *     config: createRollupConfig,
  *     batchPoster,
  *     validators,
  *  },
