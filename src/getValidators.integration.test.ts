@@ -19,6 +19,10 @@ const client = createPublicClient({
   }),
 );
 
+function sleep(ms: number = 1_000) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function setValidator(validator: Address, state: boolean) {
   const tx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
@@ -52,6 +56,7 @@ describe('successfully get validators', () => {
     expect(isCompleteInitially).toBeTruthy();
 
     await setValidator(randomAccount, false);
+    await sleep(1_000);
     await setValidator(randomAccount, false);
 
     const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
@@ -84,6 +89,7 @@ describe('successfully get validators', () => {
     expect(isCompleteInitially).toBeTruthy();
 
     await setValidator(randomAccount, true);
+    await sleep(1_000);
     await setValidator(randomAccount, true);
     const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
       rollupAddress: l3Rollup,
