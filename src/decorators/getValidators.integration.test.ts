@@ -37,21 +37,30 @@ describe('successfully get validators', async () => {
   it('when disabling the same validator multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
-    const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
+    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+      client,
+      {
+        rollupAddress: l3Rollup,
+      },
+    );
     // By default, chains from nitro testnode has 10 validators
     expect(initialValidators).toHaveLength(10);
+    expect(isCompleteInitially).toBeTruthy();
 
     await setValidator(randomAccount, false);
     await setValidator(randomAccount, false);
 
-    const newValidators = await getValidators(client, { rollupAddress: l3Rollup });
+    const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
+      rollupAddress: l3Rollup,
+    });
     // Setting the same validator multiple time to false doesn't add new validators
     expect(newValidators).toEqual(initialValidators);
+    expect(isStillComplete).toBeTruthy();
 
     await setValidator(randomAccount, true);
-    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
-      initialValidators.concat(randomAccount),
-    );
+    const { validators, isComplete } = await getValidators(client, { rollupAddress: l3Rollup });
+    expect(validators).toEqual(initialValidators.concat(randomAccount));
+    expect(isComplete).toBeTruthy();
 
     // Reset state for future tests
     await setValidator(randomAccount, false);
@@ -60,37 +69,60 @@ describe('successfully get validators', async () => {
   it('when enabling the same validators multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
-    const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
+    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+      client,
+      {
+        rollupAddress: l3Rollup,
+      },
+    );
+    // By default, chains from nitro testnode has 10 validators
     expect(initialValidators).toHaveLength(10);
+    expect(isCompleteInitially).toBeTruthy();
 
     await setValidator(randomAccount, true);
     await setValidator(randomAccount, true);
-    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
-      initialValidators.concat(randomAccount),
-    );
+    const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
+      rollupAddress: l3Rollup,
+    });
+
+    expect(newValidators).toEqual(initialValidators.concat(randomAccount));
+    expect(isStillComplete).toBeTruthy();
 
     await setValidator(randomAccount, false);
-    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);
+    const { validators, isComplete } = await getValidators(client, { rollupAddress: l3Rollup });
+    expect(validators).toEqual(initialValidators);
+    expect(isComplete).toBeTruthy();
   });
 
   it('when adding an existing validator', async () => {
-    const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
+    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+      client,
+      { rollupAddress: l3Rollup },
+    );
     expect(initialValidators).toHaveLength(10);
+    expect(isCompleteInitially).toBeTruthy();
 
     const firstValidator = initialValidators[0];
     await setValidator(firstValidator, true);
-    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);
+
+    const { isComplete, validators } = await getValidators(client, { rollupAddress: l3Rollup });
+    expect(validators).toEqual(initialValidators);
+    expect(isComplete).toBeTruthy();
   });
 
   it('when removing an existing validator', async () => {
-    const initialValidators = await getValidators(client, { rollupAddress: l3Rollup });
+    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+      client,
+      { rollupAddress: l3Rollup },
+    );
     expect(initialValidators).toHaveLength(10);
+    expect(isCompleteInitially).toBeTruthy();
 
     const lastValidator = initialValidators[initialValidators.length - 1];
     await setValidator(lastValidator, false);
-    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(
-      initialValidators.slice(0, -1),
-    );
+    const { isComplete, validators } = await getValidators(client, { rollupAddress: l3Rollup });
+    expect(validators).toEqual(initialValidators.slice(0, -1));
+    expect(isComplete).toBeTruthy();
 
     await setValidator(lastValidator, true);
     expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);

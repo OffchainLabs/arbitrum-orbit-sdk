@@ -12,10 +12,11 @@ const client = createPublicClient({
 });
 
 it('getValidators return all validators', async () => {
-  const validators = await getValidators(client, {
+  const { isComplete, validators } = await getValidators(client, {
     rollupAddress: rollupAdminLogicAddress,
   });
   expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
+  expect(isComplete).toBeTruthy();
 });
 
 it('getValidators return all validators', async () => {
@@ -81,9 +82,10 @@ it('getValidators return all validators', async () => {
     transport: mockTransport,
   });
 
-  const validators = await getValidators(mockClient, {
+  const { validators, isComplete } = await getValidators(mockClient, {
     rollupAddress: rollupAdminLogicAddress,
   });
 
   expect(validators).toEqual(['0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b']);
+  expect(isComplete).toBeTruthy();
 });

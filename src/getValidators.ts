@@ -32,10 +32,37 @@ function getValidatorsFromFunctionData<
   return args;
 }
 
+type GetValidatorsParams = {
+  /** Address of the rollup we're getting list of validators from */
+  rollupAddress: Address;
+};
+type GetValidatorsReturnType = {
+  /** If logs contain unknown signature, validators list is not guaranteed to be complete */
+  isComplete: boolean;
+  /** List of validators for the given rollup */
+  validators: Address[];
+};
+/**
+ *
+ * @param {PublicClient} client - The chain Viem Public Client
+ * @param {GetValidatorsParams} GetValidatorsParams {@link GetValidatorsParams}
+ * @param GetValidatorsParams.rollupAddress
+ *
+ * @returns Promise<{@link GetValidatorsReturnType}> - The validators with a flag, whether or not we guarantee that all validators were fetched
+ *
+ * @example
+ * const { isComplete, validators } = getValidators(client, { rollupAddress: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336' });
+ *
+ * if (isComplete) {
+ *   // Validators were all fetched properly
+ * } else {
+ *   // Some validators might be missing
+ * }
+ */
 export async function getValidators(
   client: PublicClient,
-  { rollupAddress }: { rollupAddress: Address },
-): Promise<Address[]> {
+  { rollupAddress }: GetValidatorsParams,
+): Promise<GetValidatorsReturnType> {
   const events = await client.getLogs({
     address: rollupAddress,
     event: ownerFunctionCalledEventAbi,
@@ -52,6 +79,7 @@ export async function getValidators(
     ),
   );
 
+  let isComplete = true;
   const validators = txs.reduce((acc, tx) => {
     const txSelectedFunction = tx.input.slice(0, 10);
 
@@ -69,6 +97,7 @@ export async function getValidators(
         console.warn(
           `[getValidators:createRollupFunctionSelector] invalid data, tx id: ${tx.hash}`,
         );
+        isComplete = false;
         return acc;
       }
       case setValidatorFunctionSelector: {
@@ -89,6 +118,7 @@ export async function getValidators(
         console.warn(
           `[getValidators:setValidatorFunctionSelector] invalid data, tx id: ${tx.hash}`,
         );
+        isComplete = false;
         return acc;
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
@@ -119,14 +149,19 @@ export async function getValidators(
         console.warn(
           `[getValidators:upgradeExecutorExecuteCallFunctionSelector] invalid data, tx id: ${tx.hash}`,
         );
+        isComplete = false;
         return acc;
       }
       default: {
         console.warn(`[getValidators] unknown 4bytes, tx id: ${tx.hash}`);
+        isComplete = false;
         return acc;
       }
     }
   }, new Set<Address>());
 
-  return [...validators];
+  return {
+    isComplete,
+    validators: [...validators],
+  };
 }
