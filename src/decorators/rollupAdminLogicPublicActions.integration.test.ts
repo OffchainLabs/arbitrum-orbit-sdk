@@ -42,8 +42,12 @@ it('successfully set validators', async () => {
     rollup: l3Rollup,
   });
 
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(tx),
+  });
+
+  await client.waitForTransactionReceipt({
+    hash: txHash,
   });
 
   const validators = await Promise.all([
@@ -75,9 +79,13 @@ it('successfully set validators', async () => {
     rollup: l3Rollup,
   });
 
-  await client.sendRawTransaction({
+  const revertTxHash = await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(revertTx),
   });
+  await client.waitForTransactionReceipt({
+    hash: revertTxHash,
+  });
+
   const { validators: revertedValidators, isComplete: revertedIsComplete } = await getValidators(
     client,
     {
@@ -104,8 +112,11 @@ it('successfully enable/disable whitelist', async () => {
     upgradeExecutor: l3UpgradeExecutor,
   });
 
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(tx),
+  });
+  await client.waitForTransactionReceipt({
+    hash: txHash,
   });
 
   const whitelistDisabled = await client.rollupAdminLogicReadContract({
@@ -124,7 +135,10 @@ it('successfully enable/disable whitelist', async () => {
     upgradeExecutor: l3UpgradeExecutor,
   });
 
-  await client.sendRawTransaction({
+  const revertTxHash = await client.sendRawTransaction({
     serializedTransaction: await l3RollupOwner.signTransaction(revertTx),
+  });
+  await client.waitForTransactionReceipt({
+    hash: revertTxHash,
   });
 });
