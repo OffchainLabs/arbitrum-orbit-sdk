@@ -1,7 +1,7 @@
 import { it, expect } from 'vitest';
 import { Address, createPublicClient, http } from 'viem';
 
-import { arbitrumOne, arbitrumSepolia } from './chains';
+import { arbitrumOne, arbitrumSepolia, base, baseSepolia } from './chains';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 
@@ -87,5 +87,33 @@ it('creates config for a chain on top of arbitrum sepolia with overrides', () =>
       arbitrumSepoliaClient,
       getOverrides({ owner: vitalik, chainId }),
     ),
+  ).toMatchSnapshot();
+});
+
+it('creates config for a chain on top of base with defaults', () => {
+  const baseClient = createPublicClient({
+    chain: base,
+    transport: http(),
+  });
+
+  expect(
+    createRollupPrepareDeploymentParamsConfig(baseClient, {
+      owner: vitalik,
+      chainId,
+    }),
+  ).toMatchSnapshot();
+});
+
+it('creates config for a chain on top of base sepolia with defaults', () => {
+  const baseSepoliaClient = createPublicClient({
+    chain: baseSepolia,
+    transport: http(),
+  });
+
+  expect(
+    createRollupPrepareDeploymentParamsConfig(baseSepoliaClient, {
+      owner: vitalik,
+      chainId,
+    }),
   ).toMatchSnapshot();
 });
