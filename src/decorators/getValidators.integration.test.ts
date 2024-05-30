@@ -125,6 +125,8 @@ describe('successfully get validators', async () => {
     expect(isComplete).toBeTruthy();
 
     await setValidator(lastValidator, true);
-    expect(await getValidators(client, { rollupAddress: l3Rollup })).toEqual(initialValidators);
+    const { isComplete: isCompleteFinal, validators: validatorsFinal } = await getValidators(client, { rollupAddress: l3Rollup })
+    expect(validatorsFinal).toEqual(initialValidators);
+    expect(isCompleteFinal).toBeTruthy()
   });
 });
