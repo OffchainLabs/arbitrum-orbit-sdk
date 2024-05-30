@@ -10,9 +10,9 @@ import {
   sepolia,
   holesky,
   arbitrumSepolia,
+  baseSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
-  baseSepolia,
 } from './chains';
 
 export type CreateRollupFetchTransactionHashParams = {
