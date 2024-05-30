@@ -115,7 +115,7 @@ describe('sequencerInboxReadContract', () => {
   });
 });
 
-describe('sequencerInboxPrepareTransactionRequest', async () => {
+describe('sequencerInboxPrepareTransactionRequest', () => {
   it('successfully call setValidKeyset', async () => {
     // Keyset needs to be set on anytrust chain
     const deployerAddress = deployer.address;

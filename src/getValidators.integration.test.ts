@@ -37,7 +37,7 @@ async function setValidator(validator: Address, state: boolean) {
   });
 }
 
-describe('successfully get validators', async () => {
+describe('successfully get validators', () => {
   it('when disabling the same validator multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
