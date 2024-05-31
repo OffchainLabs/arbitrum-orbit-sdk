@@ -49,7 +49,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [base.id]: 12978604n,
   // testnet L1
   [sepolia.id]: 4741823n,
-  [holesky.id]: 1083992n,
+  [holesky.id]: 1118493n,
   // testnet L2
   [arbitrumSepolia.id]: 654628n,
   [baseSepolia.id]: 10606961n,
