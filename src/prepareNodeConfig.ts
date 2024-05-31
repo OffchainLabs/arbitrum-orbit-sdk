@@ -66,9 +66,7 @@ export type PrepareNodeConfigParams = {
 };
 
 function getDisableBlobReader(parentChainId: ParentChainId): boolean {
-  const parentChainIsL1 = getParentChainLayer(parentChainId) === 1;
-
-  if (!parentChainIsL1 && !parentChainIsArbitrum(parentChainId)) {
+  if (getParentChainLayer(parentChainId) !== 1 && !parentChainIsArbitrum(parentChainId)) {
     return true;
   }
 
