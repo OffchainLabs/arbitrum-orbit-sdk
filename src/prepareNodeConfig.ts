@@ -10,9 +10,11 @@ import {
   mainnet,
   arbitrumOne,
   arbitrumNova,
+  base,
   sepolia,
   holesky,
   arbitrumSepolia,
+  baseSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
 } from './chains';
@@ -37,8 +39,10 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
     case mainnet.id:
+    case base.id:
     case sepolia.id:
     case holesky.id:
+    case baseSepolia.id:
     case nitroTestnodeL1.id:
       return false;
 
@@ -60,6 +64,14 @@ export type PrepareNodeConfigParams = {
   parentChainRpcUrl: string;
   parentChainBeaconRpcUrl?: string;
 };
+
+function getDisableBlobReader(parentChainId: ParentChainId): boolean {
+  if (getParentChainLayer(parentChainId) !== 1 && !parentChainIsArbitrum(parentChainId)) {
+    return true;
+  }
+
+  return false;
+}
 
 export function prepareNodeConfig({
   chainName,
@@ -133,6 +145,7 @@ export function prepareNodeConfig({
       },
       'dangerous': {
         'no-sequencer-coordinator': true,
+        'disable-blob-reader': getDisableBlobReader(parentChainId),
       },
     },
     'execution': {
