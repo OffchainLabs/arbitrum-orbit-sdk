@@ -45,7 +45,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [arbitrumNova.id]: 47798739n,
   // testnet
   [sepolia.id]: 4741823n,
-  [holesky.id]: 1083992n,
+  [holesky.id]: 1118493n,
   [arbitrumSepolia.id]: 654628n,
   // local nitro-testnode
   [nitroTestnodeL1.id]: 0n,
