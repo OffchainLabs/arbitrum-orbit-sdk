@@ -1,4 +1,4 @@
-import { Hex, createPublicClient, createTransport, http } from 'viem';
+import { EIP1193RequestFn, Hex, createPublicClient, createTransport, http } from 'viem';
 import { arbitrum } from 'viem/chains';
 import { it, expect, vi } from 'vitest';
 import { getValidators } from './getValidators';
@@ -57,20 +57,20 @@ function mockTransaction(data: Hex) {
 function mockData({
   logs,
   method,
-  param,
+  params,
 }: {
   logs: {
     [transactionHash: string]: Hex;
   };
   method: 'eth_getLogs' | 'eth_getTransactionByHash';
-  param: string;
+  params: string;
 }) {
   if (method === 'eth_getLogs') {
     return Object.keys(logs).map((transactionHash) => mockLog(transactionHash));
   }
 
   if (method === 'eth_getTransactionByHash') {
-    return mockTransaction(logs[param]);
+    return mockTransaction(logs[params]);
   }
 
   return null;
@@ -98,9 +98,9 @@ it('getValidators return all validators with complete flag set to true', async (
             '0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10': validInput,
           },
           method,
-          param: params,
+          params,
         });
-      }) as any,
+      }) as unknown as EIP1193RequestFn,
       type: 'mock',
     });
 
@@ -128,9 +128,9 @@ it('getValidators return all validators with complete flag set to false', async 
             '0x6e29af776e4b08f92b484a3d4ecc506a4b6455bbd335a2547c4e97d6151f588c': '0xdeadbeef',
           },
           method,
-          param: params,
+          params,
         });
-      }) as any,
+      }) as unknown as EIP1193RequestFn,
       type: 'mock',
     });
 
