@@ -19,10 +19,6 @@ const client = createPublicClient({
   }),
 );
 
-function sleep(ms: number = 1_000) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function setValidator(validator: Address, state: boolean) {
   const tx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
@@ -55,10 +51,7 @@ describe('successfully get validators', () => {
     expect(initialValidators).toHaveLength(10);
     expect(isCompleteInitially).toBeTruthy();
 
-    console.log('Setting validator to false (1)');
     await setValidator(randomAccount, false);
-    await sleep(1_000);
-    console.log('Setting validator to false (2)');
     await setValidator(randomAccount, false);
 
     const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
@@ -68,14 +61,12 @@ describe('successfully get validators', () => {
     expect(newValidators).toEqual(initialValidators);
     expect(isStillComplete).toBeTruthy();
 
-    console.log('Setting validator to true (1)');
     await setValidator(randomAccount, true);
     const { validators, isComplete } = await getValidators(client, { rollupAddress: l3Rollup });
     expect(validators).toEqual(initialValidators.concat(randomAccount));
     expect(isComplete).toBeTruthy();
 
     // Reset state for future tests
-    console.log('Setting validator back false');
     await setValidator(randomAccount, false);
   });
 
@@ -93,7 +84,6 @@ describe('successfully get validators', () => {
     expect(isCompleteInitially).toBeTruthy();
 
     await setValidator(randomAccount, true);
-    await sleep(1_000);
     await setValidator(randomAccount, true);
     const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
       rollupAddress: l3Rollup,
