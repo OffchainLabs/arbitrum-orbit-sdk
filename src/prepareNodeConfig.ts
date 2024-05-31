@@ -81,7 +81,7 @@ export type PrepareNodeConfigParams = {
   parentChainBeaconRpcUrl?: string;
 };
 
-function getDisableBlobReader(parentChainId: ParentChainId) {
+function getDisableBlobReader(parentChainId: ParentChainId): boolean {
   if (!parentChainIsL1(parentChainId) && !parentChainIsArbitrum(parentChainId)) {
     return true;
   }
