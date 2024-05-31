@@ -35,22 +35,6 @@ function stringifyBackendsJson(
   return JSON.stringify(backendsJson);
 }
 
-function parentChainIsL1(parentChainId: ParentChainId): boolean {
-  switch (parentChainId) {
-    // mainnet L1
-    case mainnet.id:
-    // testnet L1
-    case sepolia.id:
-    case holesky.id:
-    // local nitro-testnode L1
-    case nitroTestnodeL1.id:
-      return true;
-
-    default:
-      return false;
-  }
-}
-
 function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
@@ -82,7 +66,9 @@ export type PrepareNodeConfigParams = {
 };
 
 function getDisableBlobReader(parentChainId: ParentChainId): boolean {
-  if (!parentChainIsL1(parentChainId) && !parentChainIsArbitrum(parentChainId)) {
+  const parentChainIsL1 = getParentChainLayer(parentChainId) === 1;
+
+  if (!parentChainIsL1 && !parentChainIsArbitrum(parentChainId)) {
     return true;
   }
 
