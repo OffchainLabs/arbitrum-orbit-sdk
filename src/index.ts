@@ -3,6 +3,11 @@ import {
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
+import {
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+} from './createRollupPrepareDeploymentParamsConfig';
 import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
@@ -85,6 +90,12 @@ import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './crea
 import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
+import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
+import {
+  getDefaultSequencerInboxMaxTimeVariation,
+  SequencerInboxMaxTimeVariation,
+} from './getDefaultSequencerInboxMaxTimeVariation';
+
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
@@ -95,9 +106,15 @@ export {
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
   CreateRollupParams,
+  //
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
+  //
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+  //
   prepareChainConfig,
   PrepareChainConfigParams,
   createRollupEnoughCustomFeeTokenAllowance,
@@ -152,4 +169,8 @@ export {
   createTokenBridgeFetchTokenBridgeContracts,
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+  //
+  getDefaultConfirmPeriodBlocks,
+  getDefaultSequencerInboxMaxTimeVariation,
+  SequencerInboxMaxTimeVariation,
 };

@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 
 import { generateChainId, sanitizePrivateKey } from './utils';
 import { createRollup } from './createRollup';
-import { createRollupPrepareConfig } from './createRollupPrepareConfig';
+import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 import { prepareChainConfig } from './prepareChainConfig';
 
 config();
@@ -150,7 +150,7 @@ export async function createRollupHelper({
 }) {
   const chainId = generateChainId();
 
-  const createRollupConfig = createRollupPrepareConfig({
+  const createRollupConfig = createRollupPrepareDeploymentParamsConfig(client, {
     chainId: BigInt(chainId),
     owner: deployer.address,
     chainConfig: prepareChainConfig({
