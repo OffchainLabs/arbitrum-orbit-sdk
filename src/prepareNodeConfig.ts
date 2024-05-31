@@ -35,6 +35,22 @@ function stringifyBackendsJson(
   return JSON.stringify(backendsJson);
 }
 
+function parentChainIsL1(parentChainId: ParentChainId): boolean {
+  switch (parentChainId) {
+    // mainnet L1
+    case mainnet.id:
+    // testnet L1
+    case sepolia.id:
+    case holesky.id:
+    // local nitro-testnode L1
+    case nitroTestnodeL1.id:
+      return true;
+
+    default:
+      return false;
+  }
+}
+
 function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
@@ -64,6 +80,14 @@ export type PrepareNodeConfigParams = {
   parentChainRpcUrl: string;
   parentChainBeaconRpcUrl?: string;
 };
+
+function disableBlobReader(parentChainId: ParentChainId) {
+  if (!parentChainIsL1(parentChainId) && !parentChainIsArbitrum(parentChainId)) {
+    return true;
+  }
+
+  return false;
+}
 
 export function prepareNodeConfig({
   chainName,
@@ -137,6 +161,7 @@ export function prepareNodeConfig({
       },
       'dangerous': {
         'no-sequencer-coordinator': true,
+        'disable-blob-reader': disableBlobReader(parentChainId),
       },
     },
     'execution': {
