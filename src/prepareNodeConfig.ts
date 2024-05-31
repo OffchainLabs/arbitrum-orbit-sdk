@@ -81,7 +81,7 @@ export type PrepareNodeConfigParams = {
   parentChainBeaconRpcUrl?: string;
 };
 
-function disableBlobReader(parentChainId: ParentChainId) {
+function getDisableBlobReader(parentChainId: ParentChainId) {
   if (!parentChainIsL1(parentChainId) && !parentChainIsArbitrum(parentChainId)) {
     return true;
   }
@@ -161,7 +161,7 @@ export function prepareNodeConfig({
       },
       'dangerous': {
         'no-sequencer-coordinator': true,
-        'disable-blob-reader': disableBlobReader(parentChainId),
+        'disable-blob-reader': getDisableBlobReader(parentChainId),
       },
     },
     'execution': {
