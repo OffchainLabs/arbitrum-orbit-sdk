@@ -17,6 +17,31 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = 
   }>
 >;
 
+/**
+ * Creates a custom fee token approval transaction request for the Rollup chain.
+ * The function takes in parameters such as the amount, native token address,
+ * account address, and public client. It then validates the parent chain,
+ * generates the transaction request, and returns it along with the chain ID.
+ *
+ * @param {Object} params - The parameters for creating the approval transaction request.
+ * @param {bigint} [params.amount=createRollupDefaultRetryablesFees] - The amount of tokens to approve, optional, defaults to createRollupDefaultRetryablesFees.
+ * @param {Address} params.nativeToken - The native token address.
+ * @param {Address} params.account - The account address.
+ * @param {PublicClient} params.publicClient - The public client.
+ * @param {Address} [params.rollupCreatorAddressOverride] - Optional override for the rollup creator address.
+ *
+ * @returns {Promise<Object>} The custom fee token approval transaction request and the chain ID.
+ *
+ * @example
+ * const approvalRequest = await createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
+ *   amount: 1000n,
+ *   nativeToken: '0xTokenAddress',
+ *   account: '0xAccountAddress',
+ *   publicClient,
+ * });
+ *
+ * console.log(approvalRequest);
+ */
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
   amount = createRollupDefaultRetryablesFees,
   nativeToken,

@@ -89,6 +89,36 @@ const parentChainGatewayRouterAbi = [
   },
 ];
 
+/**
+ * Creates a transaction request to set the WETH gateway on the parent chain
+ * router for the TokenBridge. The request includes gas overrides for retryable
+ * transactions and ensures that the WETH gateway is not already registered.
+ * Returns the prepared transaction request with the chain ID.
+ *
+ * @param {CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams} params - The parameters for preparing the transaction request
+ * @param {Address} params.rollup - The rollup address
+ * @param {PublicClient} params.parentChainPublicClient - The parent chain public client
+ * @param {PublicClient} params.orbitChainPublicClient - The orbit chain public client
+ * @param {Address} params.account - The account address
+ * @param {TransactionRequestRetryableGasOverrides} [params.retryableGasOverrides] - Optional gas override options for retryable transactions
+ * @param {string} [params.tokenBridgeCreatorAddressOverride] - Optional override for the token bridge creator address
+ *
+ * @returns {Promise<Object>} The prepared transaction request with the chain ID
+ *
+ * @example
+ * const transactionRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
+ *   rollup: '0x123...',
+ *   parentChainPublicClient,
+ *   orbitChainPublicClient,
+ *   account: '0xabc...',
+ *   retryableGasOverrides: {
+ *     gasLimit: { base: 1000000n, percentIncrease: 10 },
+ *     maxFeePerGas: { base: 1000000000n, percentIncrease: 20 },
+ *     maxSubmissionCost: { base: 100000000000000n, percentIncrease: 15 }
+ *   },
+ *   tokenBridgeCreatorAddressOverride: '0xdef...'
+ * });
+ */
 export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   rollup,
   parentChainPublicClient,

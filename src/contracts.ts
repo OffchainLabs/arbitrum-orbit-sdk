@@ -11,32 +11,64 @@ import {
 } from './generated';
 import { sequencerInboxABI, rollupAdminLogicABI } from './abi';
 
+/**
+ * ERC-20 token contract configuration.
+ * @property {Array} abi - The ABI of the ERC-20 token contract.
+ */
 export const erc20 = {
   abi: erc20ABI,
 };
 
+/**
+ * Arbitrum owner configuration.
+ * @property {Object} arbOwnerConfig - The configuration object for the Arbitrum owner.
+ * @property {string} address - The address of the Arbitrum owner.
+ */
 export const arbOwner = {
   ...arbOwnerConfig,
   address: Object.values(arbOwnerConfig.address)[0],
 } as const;
 
+/**
+ * Gas information configuration for the Arbitrum network.
+ * @property {Object} arbGasInfoConfig - The configuration object for Arbitrum gas information.
+ * @property {string} address - The address for gas information.
+ */
 export const arbGasInfo = {
   ...arbGasInfoConfig,
   address: Object.values(arbGasInfoConfig.address)[0],
 } as const;
 
+/**
+ * Public configuration for the Arbitrum owner's address.
+ * @property {Object} arbOwnerPublicConfig - The configuration object for the Arbitrum owner's public address.
+ * @property {string} address - The public address of the Arbitrum owner.
+ */
 export const arbOwnerPublic = {
   ...arbOwnerPublicConfig,
   address: Object.values(arbOwnerPublicConfig.address)[0],
 } as const;
 
+/**
+ * Aggregator configuration for retrieving data from a specified source.
+ * @property {Object} arbAggregatorConfig - The configuration object for the Arbitrum aggregator.
+ * @property {string} address - The address of the aggregator.
+ */
 export const arbAggregator = {
   ...arbAggregatorConfig,
   address: Object.values(arbAggregatorConfig.address)[0],
 } as const;
 
+/**
+ * Rollup creator configuration.
+ * @property {Object} rollupCreatorConfig - The configuration object for the rollup creator.
+ */
 export const rollupCreator = rollupCreatorConfig;
 
+/**
+ * Executor for upgrades, calls, and role management.
+ * @property {Array} abi - The ABI for the upgrade executor contract.
+ */
 export const upgradeExecutor = {
   abi: parseAbi([
     'function execute(address upgrade, bytes upgradeCallData)',
@@ -93,19 +125,6 @@ const tokenBridgeCreatorABI = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'address', name: 'inbox', type: 'address' },
-      {
-        components: [
-          { internalType: 'address', name: 'router', type: 'address' },
-          { internalType: 'address', name: 'standardGateway', type: 'address' },
-          { internalType: 'address', name: 'customGateway', type: 'address' },
-          { internalType: 'address', name: 'wethGateway', type: 'address' },
-          { internalType: 'address', name: 'weth', type: 'address' },
-        ],
-        indexed: false,
-        internalType: 'struct L1DeploymentAddresses',
-        name: 'l1',
-        type: 'tuple',
-      },
       {
         components: [
           { internalType: 'address', name: 'router', type: 'address' },
@@ -199,15 +218,29 @@ const tokenBridgeCreatorABI = [
   },
 ] as const;
 
+/**
+ * Token bridge creator configuration and ABI.
+ * @property {Object} tokenBridgeCreatorConfig - The configuration object for the token bridge creator.
+ * @property {Array} abi - The ABI for the token bridge creator contract.
+ */
 export const tokenBridgeCreator = {
   ...tokenBridgeCreatorConfig,
   abi: tokenBridgeCreatorABI,
 } as const;
 
+/**
+ * Sequencer inbox contract configuration.
+ * @property {Array} abi - The ABI of the sequencer inbox contract.
+ */
 export const sequencerInbox = {
   abi: sequencerInboxABI,
 };
 
+/**
+ * Rollup Admin Logic contract configuration.
+ * @property {Array} abi - The ABI of the Rollup Admin Logic contract.
+ */
 export const rollupAdminLogic = {
   abi: rollupAdminLogicABI,
 };
+

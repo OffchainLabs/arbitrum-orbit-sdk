@@ -10,6 +10,15 @@ import {
 } from './chains';
 import { ParentChainId } from './types/ParentChain';
 
+/**
+ * Calculates and returns the maximum data size allowed for a given parent chain.
+ *
+ * This function determines the maximum data size for different chains such as mainnet,
+ * testnet, and nitro-testnode, returning the appropriate value as a BigInt.
+ *
+ * @param {ParentChainId} parentChainId - The ID of the parent chain.
+ * @returns {BigInt} - The maximum data size allowed for the specified parent chain.
+ */
 export function createRollupGetMaxDataSize(parentChainId: ParentChainId) {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {

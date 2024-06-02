@@ -1,3 +1,8 @@
+/**
+ * Variable "sequencerInboxABI" defines the ABI for the Sequencer Inbox
+ * contract, including error types, events, and functions such as adding a
+ * sequencer L2 batch and setting valid keysets.
+ */
 export const sequencerInboxABI = [
   { inputs: [], name: 'AlreadyInit', type: 'error' },
   {

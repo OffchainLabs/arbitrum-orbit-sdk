@@ -47,7 +47,7 @@ export async function upgradeExecutorPrepareAddExecutorTransactionRequest({
   upgradeExecutorAddress,
   executorAccountAddress,
   publicClient,
-}: UpgradeExecutorPrepareAddExecutorTransactionRequestParams) {
+}: UpgradeExecutorPrepareAddExecutorTransactionRequestParams): Promise<PrepareTransactionRequestReturnType> {
   const chainId = validateChain(publicClient);
 
   // 0. Verify that the account doesn't have the EXECUTOR role already

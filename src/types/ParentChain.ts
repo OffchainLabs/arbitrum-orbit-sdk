@@ -21,6 +21,11 @@ function isValidParentChainId(parentChainId: number | undefined): parentChainId 
   return ids.includes(Number(parentChainId));
 }
 
+/**
+ * Validates the provided parent chain ID to ensure it is supported by the
+ * system. If the parent chain ID is not valid, an error is thrown with a
+ * corresponding message. Returns the validated parent chain ID.
+ */
 export function validateParentChain<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
@@ -34,6 +39,11 @@ export function validateParentChain<
   return chainId;
 }
 
+/**
+ * Validates the parent chain of a {@link PublicClient} to ensure it is
+ * supported. If the parent chain is not supported, an error is thrown. Returns
+ * a {@link ParentChainPublicClient}.
+ */
 export function validateParentChainPublicClient<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,

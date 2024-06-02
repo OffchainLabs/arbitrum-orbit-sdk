@@ -15,40 +15,31 @@ import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerI
 export type CreateRollupPrepareDeploymentParamsConfigResult =
   CreateRollupFunctionInputs[0]['config'];
 
-type RequiredKeys = 'chainId' | 'owner';
-type RequiredParams = Pick<CreateRollupPrepareDeploymentParamsConfigResult, RequiredKeys>;
-type OptionalParams = Partial<
-  Omit<CreateRollupPrepareDeploymentParamsConfigResult, 'chainConfig' | RequiredKeys>
->;
-
-export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
-  RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
->;
+/**
+ * @typedef {Object} CreateRollupPrepareDeploymentParamsConfigParams
+ * @property {BigInt} chainId - The chain ID
+ * @property {string} owner - The owner of the chain
+ * @property {ChainConfig} [chainConfig] - Optional chain configuration
+ * @property {BigInt} [confirmPeriodBlocks] - Optional confirmation period blocks
+ * @property {BigInt} [extraChallengeTimeBlocks] - Optional extra challenge time blocks
+ * @property {string} [stakeToken] - Optional stake token
+ * @property {BigInt} [baseStake] - Optional base stake
+ * @property {string} [wasmModuleRoot] - Optional WASM module root
+ * @property {string} [loserStakeEscrow] - Optional loser stake escrow
+ * @property {BigInt} [genesisBlockNum] - Optional genesis block number
+ * @property {Object} [sequencerInboxMaxTimeVariation] - Optional sequencer inbox max time variation
+ * @property {BigInt} [sequencerInboxMaxTimeVariation.delayBlocks] - Optional delay blocks for sequencer inbox
+ * @property {BigInt} [sequencerInboxMaxTimeVariation.futureBlocks] - Optional future blocks for sequencer inbox
+ * @property {BigInt} [sequencerInboxMaxTimeVariation.delaySeconds] - Optional delay seconds for sequencer inbox
+ * @property {BigInt} [sequencerInboxMaxTimeVariation.futureSeconds] - Optional future seconds for sequencer inbox
+ */
 
 /**
  * Creates the configuration object to be used with {@link createRollup}.
  *
- * @param {PublicClient} client Parent chain client
- * @param {Object} params Chain configuration parameters
- * @see https://docs.arbitrum.io/launch-orbit-chain/how-tos/customize-deployment-configuration
- * @see https://docs.arbitrum.io/launch-orbit-chain/reference/additional-configuration-parameters
- * @param {string} params.owner
- * @param {BigInt} params.chainId
- * @param {ChainConfig} [params.chainConfig]
- * @param {BigInt} [params.confirmPeriodBlocks]
- * @param {BigInt} [params.extraChallengeTimeBlocks]
- * @param {string} [params.stakeToken]
- * @param {BigInt} [params.baseStake]
- * @param {string} [params.wasmModuleRoot]
- * @param {string} [params.loserStakeEscrow]
- * @param {BigInt} [params.genesisBlockNum]
- * @param {Object} [params.sequencerInboxMaxTimeVariation]
- * @param {BigInt} [params.sequencerInboxMaxTimeVariation.delayBlocks]
- * @param {BigInt} [params.sequencerInboxMaxTimeVariation.futureBlocks]
- * @param {BigInt} [params.sequencerInboxMaxTimeVariation.delaySeconds]
- * @param {BigInt} [params.sequencerInboxMaxTimeVariation.futureSeconds]
- *
- * @returns {Object} {@link CreateRollupPrepareDeploymentParamsConfigResult}
+ * @param {Client} client - Parent chain client
+ * @param {CreateRollupPrepareDeploymentParamsConfigParams} params - Chain configuration parameters
+ * @returns {CreateRollupPrepareDeploymentParamsConfigResult} - The configuration object to be used with createRollup
  *
  * @example
  * const config = createRollupPrepareDeploymentParamsConfig(parentPublicClient, {
@@ -90,3 +81,15 @@ export function createRollupPrepareDeploymentParamsConfig<
     ),
   };
 }
+
+// Define the required and optional parameters separately
+type RequiredKeys = 'chainId' | 'owner';
+type RequiredParams = Pick<CreateRollupPrepareDeploymentParamsConfigResult, RequiredKeys>;
+type OptionalParams = Partial<
+  Omit<CreateRollupPrepareDeploymentParamsConfigResult, 'chainConfig' | RequiredKeys>
+>;
+
+// Combine required and optional parameters into a single type
+export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
+  RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
+>;

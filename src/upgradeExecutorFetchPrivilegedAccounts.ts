@@ -92,7 +92,7 @@ const RoleRevokedEventAbi = {
 export async function upgradeExecutorFetchPrivilegedAccounts({
   upgradeExecutorAddress,
   publicClient,
-}: UpgradeExecutorFetchPrivilegedAccountsParams) {
+}: UpgradeExecutorFetchPrivilegedAccountsParams): Promise<UpgradeExecutorPrivilegedAccounts> {
   // 0. Initialize result object
   const upgradeExecutorPrivilegedAccounts: UpgradeExecutorPrivilegedAccounts = {};
 
@@ -149,3 +149,5 @@ export async function upgradeExecutorFetchPrivilegedAccounts({
 
   return upgradeExecutorPrivilegedAccounts;
 }
+
+

@@ -5,6 +5,12 @@ import {
 } from '@ethersproject/abstract-provider';
 import { BigNumber } from 'ethers';
 
+/**
+ * Converts a Viem log to an Ethers log.
+ *
+ * @param {ViemLog} log - The log object from Viem.
+ * @returns {EthersLog} - The converted log object for Ethers.
+ */
 function viemLogToEthersLog(log: ViemLog): EthersLog {
   return {
     blockNumber: Number(log.blockNumber),
@@ -19,6 +25,12 @@ function viemLogToEthersLog(log: ViemLog): EthersLog {
   };
 }
 
+/**
+ * Converts a Viem transaction receipt to an Ethers transaction receipt.
+ *
+ * @param {ViemTransactionReceipt} receipt - The transaction receipt object from Viem.
+ * @returns {EthersTransactionReceipt} - The converted transaction receipt object for Ethers.
+ */
 export function viemTransactionReceiptToEthersTransactionReceipt(
   receipt: ViemTransactionReceipt,
 ): EthersTransactionReceipt {

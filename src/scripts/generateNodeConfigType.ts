@@ -4,6 +4,11 @@ import { Project, WriterFunction, Writers } from 'ts-morph';
 
 const { objectType } = Writers;
 
+/**
+ * Retrieves the Nitro node image tag from command line arguments or returns the default tag.
+ *
+ * @returns {string} The Nitro node image tag.
+ */
 function getNitroNodeImageTag(): string {
   const defaultNitroNodeTag = 'v2.3.3-6a1c1a7';
   const argv = process.argv.slice(2);
@@ -24,6 +29,11 @@ const nitroNodeHelpOutputFile = `${nitroNodeImage.replace('/', '-')}-help.txt`;
 
 console.log(`Using image "${nitroNodeImage}".`);
 
+/**
+ * Generates a header comment for the output file.
+ *
+ * @returns {string} The header comment.
+ */
 function generateHeader() {
   return [
     `// ---`,
@@ -37,12 +47,27 @@ function generateHeader() {
   ].join('\n');
 }
 
+/**
+ * Represents a CLI option.
+ *
+ * @typedef {Object} CliOption
+ * @property {string} name - The name of the CLI option.
+ * @property {string} type - The type of the CLI option.
+ * @property {string[]} docs - The documentation for the CLI option.
+ */
 type CliOption = {
   name: string;
   type: string;
   docs: string[];
 };
 
+/**
+ * Parses the CLI options from the help file contents.
+ *
+ * @param {string} fileContents - The contents of the help file.
+ * @returns {CliOption[]} The parsed CLI options.
+ * @throws Will throw an error if an unknown type is encountered.
+ */
 function parseCliOptions(fileContents: string): CliOption[] {
   const types: Record<string, string | undefined> = {
     string: 'string',
@@ -112,10 +137,21 @@ function parseCliOptions(fileContents: string): CliOption[] {
   });
 }
 
+/**
+ * Represents a nested object of CLI options.
+ *
+ * @typedef {Object} CliOptionNestedObject
+ */
 type CliOptionNestedObject = {
   [key: string]: CliOption | CliOptionNestedObject;
 };
 
+/**
+ * Creates a nested object of CLI options from a flat array of CLI options.
+ *
+ * @param {CliOption[]} options - The flat array of CLI options.
+ * @returns {CliOptionNestedObject} The nested object of CLI options.
+ */
 function createCliOptionsNestedObject(options: CliOption[]): CliOptionNestedObject {
   const result: CliOptionNestedObject = {};
 
@@ -138,10 +174,22 @@ function createCliOptionsNestedObject(options: CliOption[]): CliOptionNestedObje
   return result;
 }
 
+/**
+ * Checks if the given value is a CLI option.
+ *
+ * @param {CliOption | CliOptionNestedObject} value - The value to check.
+ * @returns {boolean} True if the value is a CLI option, false otherwise.
+ */
 function isCliOption(value: CliOption | CliOptionNestedObject): value is CliOption {
   return 'type' in value;
 }
 
+/**
+ * Retrieves the documentation for a given CLI option or nested object.
+ *
+ * @param {CliOption | CliOptionNestedObject} value - The value to retrieve documentation for.
+ * @returns {string[]} The documentation for the value.
+ */
 function getDocs(value: CliOption | CliOptionNestedObject): string[] {
   if (isCliOption(value)) {
     return value.docs;
@@ -151,6 +199,12 @@ function getDocs(value: CliOption | CliOptionNestedObject): string[] {
   return [];
 }
 
+/**
+ * Recursively retrieves the type for a given CLI option or nested object.
+ *
+ * @param {CliOption | CliOptionNestedObject} value - The value to retrieve the type for.
+ * @returns {string | WriterFunction} The type of the value.
+ */
 function getTypeRecursively(value: CliOption | CliOptionNestedObject): string | WriterFunction {
   // if we reached the "primitive" property, we can just return its type
   if (isCliOption(value)) {
@@ -169,6 +223,9 @@ function getTypeRecursively(value: CliOption | CliOptionNestedObject): string | 
   });
 }
 
+/**
+ * Main function to generate the NodeConfig type.
+ */
 function main() {
   // run --help on the nitro binary and save the output to a file
   execSync(`docker run --rm ${nitroNodeImage} --help > ${nitroNodeHelpOutputFile} 2>&1`);

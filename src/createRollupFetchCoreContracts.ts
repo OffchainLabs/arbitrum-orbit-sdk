@@ -9,6 +9,24 @@ export type CreateRollupFetchCoreContractsParams = {
   publicClient: PublicClient;
 };
 
+/**
+ * Creates and fetches core contracts for a specified rollup using the provided
+ * public client. This function retrieves the transaction hash and prepares the
+ * transaction receipt to return the core contracts. Returns a {@link
+ * CoreContracts}.
+ *
+ * @param {CreateRollupFetchCoreContractsParams} createRollupFetchCoreContractsParams - The parameters for fetching core contracts
+ * @param {Address} createRollupFetchCoreContractsParams.rollup - The rollup address
+ * @param {PublicClient} createRollupFetchCoreContractsParams.publicClient - The public client
+ *
+ * @returns {Promise<CoreContracts>} - The core contracts
+ *
+ * @example
+ * const coreContracts = await createRollupFetchCoreContracts({
+ *   rollup: '0x1234567890abcdef1234567890abcdef12345678',
+ *   publicClient: viemPublicClient,
+ * });
+ */
 export async function createRollupFetchCoreContracts({
   rollup,
   publicClient,

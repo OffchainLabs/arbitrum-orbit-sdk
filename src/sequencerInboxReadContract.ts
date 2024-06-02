@@ -23,6 +23,30 @@ export type SequencerInboxReadContractParameters<TFunctionName extends Sequencer
 export type SequencerInboxReadContractReturnType<TFunctionName extends SequencerInboxFunctionName> =
   ReadContractReturnType<SequencerInboxAbi, TFunctionName>;
 
+/**
+ * Reads data from the sequencer inbox contract on a specified chain and returns
+ * the result.
+ *
+ * @template TChain - The type of the blockchain chain.
+ * @template TFunctionName - The name of the function to read from the contract.
+ * @param {PublicClient<Transport, TChain>} client - The public client to interact with the blockchain.
+ * @param {SequencerInboxReadContractParameters<TFunctionName>} params - The parameters for reading the contract.
+ * @param {TFunctionName} params.functionName - The name of the function to read from the contract.
+ * @param {Address} params.sequencerInbox - The address of the sequencer inbox contract.
+ * @param {...any} params.args - The arguments to pass to the contract function.
+ *
+ * @returns {Promise<SequencerInboxReadContractReturnType<TFunctionName>>} - A promise that resolves to the result of the contract function.
+ *
+ * @example
+ * const client = new PublicClient(...);
+ * const params = {
+ *   functionName: 'getInboxAccumulators',
+ *   sequencerInbox: '0x1234...abcd',
+ *   args: [],
+ * };
+ * const result = await sequencerInboxReadContract(client, params);
+ * console.log(result);
+ */
 export function sequencerInboxReadContract<
   TChain extends Chain | undefined,
   TFunctionName extends SequencerInboxFunctionName,

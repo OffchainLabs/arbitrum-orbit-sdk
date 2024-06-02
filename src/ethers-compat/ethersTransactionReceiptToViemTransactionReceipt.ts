@@ -10,6 +10,14 @@ import {
   TransactionReceipt as ViemTransactionReceipt,
 } from 'viem';
 
+/**
+ * Converts an Ethereum log (from `EthersLog`) to a Viem log (to `ViemLog`).
+ * This function maps the fields from the Ethereum log to the corresponding fields in the Viem log,
+ * including conversion of data types where necessary.
+ *
+ * @param {EthersLog} log - The Ethereum log to convert.
+ * @returns {ViemLog<bigint, number, false>} The converted Viem log.
+ */
 function ethersLogToViemLog(log: EthersLog): ViemLog<bigint, number, false> {
   return {
     blockNumber: BigInt(log.blockNumber),
@@ -24,6 +32,15 @@ function ethersLogToViemLog(log: EthersLog): ViemLog<bigint, number, false> {
   };
 }
 
+/**
+ * Converts an Ethereum transaction receipt (from `EthersTransactionReceipt`) to
+ * a Viem transaction receipt (to `ViemTransactionReceipt`). This function maps
+ * the fields from the Ethereum receipt to the corresponding fields in the Viem
+ * receipt, including conversion of data types where necessary.
+ *
+ * @param {EthersTransactionReceipt} receipt - The Ethereum transaction receipt to convert.
+ * @returns {ViemTransactionReceipt} The converted Viem transaction receipt.
+ */
 export function ethersTransactionReceiptToViemTransactionReceipt(
   receipt: EthersTransactionReceipt,
 ): ViemTransactionReceipt {

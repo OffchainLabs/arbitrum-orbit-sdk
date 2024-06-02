@@ -92,24 +92,19 @@ export type CreateTokenBridgeResults = {
  *
  * Returns the token bridge core contracts.
  *
- * @param {CreateTokenBridgeParams} createTokenBridgeParams
- * @param {String} createRollupParams.rollupOwner - The address of the rollup owner
- * @param {Object} createRollupParams.rollupAddress - The address of the Rollup contract
- * @param {Object} [createRollupParams.account] - The private key account to sign transactions
- * @param {String} [createRollupParams.nativeTokenAddress=] - Optional
- * If nativeTokenAddress is passed and different than zero address, deploy a token bridge with custom fee token.
- * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
- * @param {Object} createRollupParams.orbitChainPublicClient - The orbit chain Viem Public Client
- * @param {String} [createRollupParams.tokenBridgeCreatorAddressOverride=] - Optional
- * If tokenBridgeCreatorAddressOverride is passed, the address is overridden in the different transactions
- * @param {Object} [createRollupParams.gasOverrides=] - {@link TransactionRequestGasOverrides} Optional
- * Gas overrides for createTokenBridgePrepareTransactionRequest
- * @param {Object} createRollupParams.retryableGasOverrides - {@link TokenBridgeRetryableGasOverrides} Optional
- * Retryable gas overrides for createTokenBridgePrepareTransactionRequest
- * @param {Object} createRollupParams.setWethGatewayGasOverrides - {@link SetWethGatewayRetryableGasOverrides} Optional
- * Retryable gas overrides for createTokenBridgePrepareSetWethGatewayTransactionRequest
+ * @param {CreateTokenBridgeParams} createTokenBridgeParams - The parameters for creating the token bridge
+ * @param {Address} createTokenBridgeParams.rollupOwner - The address of the rollup owner
+ * @param {Address} createTokenBridgeParams.rollupAddress - The address of the Rollup contract
+ * @param {PrivateKeyAccount} createTokenBridgeParams.account - The private key account to sign transactions
+ * @param {Address} [createTokenBridgeParams.nativeTokenAddress] - Optional. If nativeTokenAddress is passed and different than zero address, deploy a token bridge with custom fee token.
+ * @param {PublicClient} createTokenBridgeParams.parentChainPublicClient - The parent chain Viem Public Client
+ * @param {PublicClient} createTokenBridgeParams.orbitChainPublicClient - The orbit chain Viem Public Client
+ * @param {Address} [createTokenBridgeParams.tokenBridgeCreatorAddressOverride] - Optional. If tokenBridgeCreatorAddressOverride is passed, the address is overridden in the different transactions
+ * @param {TransactionRequestGasOverrides} [createTokenBridgeParams.gasOverrides] - Optional. Gas overrides for createTokenBridgePrepareTransactionRequest
+ * @param {TokenBridgeRetryableGasOverrides} [createTokenBridgeParams.retryableGasOverrides] - Optional. Retryable gas overrides for createTokenBridgePrepareTransactionRequest
+ * @param {SetWethGatewayRetryableGasOverrides} [createTokenBridgeParams.setWethGatewayGasOverrides] - Optional. Retryable gas overrides for createTokenBridgePrepareSetWethGatewayTransactionRequest
  *
- * @returns Promise<{@link CreateTokenBridgeResults}>
+ * @returns {Promise<CreateTokenBridgeResults>} - The result of the token bridge creation
  *
  * @example
  * const tokenBridgeCreator = await deployTokenBridgeCreator({

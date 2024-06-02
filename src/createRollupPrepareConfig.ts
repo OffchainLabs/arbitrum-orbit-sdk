@@ -8,27 +8,32 @@ import { Prettify } from './types/utils';
 
 export type CreateRollupPrepareConfigResult = CreateRollupFunctionInputs[0]['config'];
 
-type RequiredKeys = 'chainId' | 'owner';
-type RequiredParams = Pick<CreateRollupPrepareConfigResult, RequiredKeys>;
-type OptionalParams = Partial<Omit<CreateRollupPrepareConfigResult, 'chainConfig' | RequiredKeys>>;
-
-export type CreateRollupPrepareConfigParams = Prettify<
-  RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
->;
-
-export const defaults = {
-  ...defaultsCommon,
-  confirmPeriodBlocks: BigInt(150),
-  sequencerInboxMaxTimeVariation: {
-    delayBlocks: BigInt(5_760),
-    futureBlocks: BigInt(48),
-    delaySeconds: BigInt(86_400),
-    futureSeconds: BigInt(3_600),
-  },
-} as const;
+...
 
 /**
+ * Prepares the configuration for creating a Rollup deployment.
+ *
  * @deprecated Will be removed in a future release. Please use {@link createRollupPrepareDeploymentParamsConfig} instead.
+ *
+ * @param {CreateRollupPrepareConfigParams} createRollupPrepareConfigParams - The parameters for preparing the Rollup config
+ * @param {ChainConfig} [createRollupPrepareConfigParams.chainConfig] - Optional chain configuration
+ * @param {bigint} createRollupPrepareConfigParams.chainId - The chain ID
+ * @param {string} createRollupPrepareConfigParams.owner - The owner of the chain
+ * @param {number} [createRollupPrepareConfigParams.confirmPeriodBlocks=150] - Optional, defaults to 150
+ * @param {Object} [createRollupPrepareConfigParams.sequencerInboxMaxTimeVariation] - Optional, default values provided
+ * @param {bigint} [createRollupPrepareConfigParams.sequencerInboxMaxTimeVariation.delayBlocks=5760] - Optional, defaults to 5760
+ * @param {bigint} [createRollupPrepareConfigParams.sequencerInboxMaxTimeVariation.futureBlocks=48] - Optional, defaults to 48
+ * @param {bigint} [createRollupPrepareConfigParams.sequencerInboxMaxTimeVariation.delaySeconds=86400] - Optional, defaults to 86400
+ * @param {bigint} [createRollupPrepareConfigParams.sequencerInboxMaxTimeVariation.futureSeconds=3600] - Optional, defaults to 3600
+ *
+ * @returns {CreateRollupPrepareConfigResult} - The prepared Rollup configuration
+ *
+ * @example
+ * const config = createRollupPrepareConfig({
+ *   chainId: 1234n,
+ *   owner: '0xYourAddress',
+ * });
+ * console.log(config);
  */
 export function createRollupPrepareConfig({
   chainConfig,

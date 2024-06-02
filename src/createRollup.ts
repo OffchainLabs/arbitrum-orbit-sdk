@@ -29,6 +29,11 @@ type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
  *
  * If not, perform an approval transaction to grant the custom fee token
  * spend allowance to the Rollup Creator address.
+ *
+ * @param {EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams} params - The parameters required to ensure custom gas token allowance
+ * @param {Address} params.nativeToken - The native token address
+ * @param {ParentChainPublicClient} params.parentChainPublicClient - The parent chain public client
+ * @param {PrivateKeyAccount} params.account - The rollup owner private key account
  */
 async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
   nativeToken,
@@ -80,7 +85,7 @@ export type CreateRollupFunctionParams = {
 /**
  * @param {Object} createRollupResults - results of the createRollup function
  * @param {Object} createRollupResults.transaction - the transaction for deploying the core contracts
- * @param {Object} createRollupResults.txReceipt - the transaction receipt
+ * @param {Object} createRollupResults.transactionReceipt - the transaction receipt
  * @param {Object} createRollupResults.coreContracts - the core contracts
  */
 export type CreateRollupResults = {

@@ -18,21 +18,40 @@ import {
 } from './chains';
 import { getParentChainLayer } from './utils';
 
-// this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
-function sanitizePrivateKey(privateKey: string) {
+/**
+ * Removes the '0x' prefix from a private key if it exists.
+ * @param {string} privateKey - The private key to sanitize.
+ * @returns {string} - The sanitized private key.
+ */
+function sanitizePrivateKey(privateKey: string): string {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
 }
 
+/**
+ * Converts NodeConfigChainInfoJson object to its JSON string representation.
+ * @param {NodeConfigChainInfoJson} infoJson - The info JSON object to stringify.
+ * @returns {string} - The JSON string representation of the info JSON object.
+ */
 function stringifyInfoJson(infoJson: NodeConfigChainInfoJson): string {
   return JSON.stringify(infoJson);
 }
 
+/**
+ * Converts NodeConfigDataAvailabilityRpcAggregatorBackendsJson object to its JSON string representation.
+ * @param {NodeConfigDataAvailabilityRpcAggregatorBackendsJson} backendsJson - The backends JSON object to stringify.
+ * @returns {string} - The JSON string representation of the backends JSON object.
+ */
 function stringifyBackendsJson(
   backendsJson: NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
 ): string {
   return JSON.stringify(backendsJson);
 }
 
+/**
+ * Checks if the parent chain is an Arbitrum chain.
+ * @param {ParentChainId} parentChainId - The ID of the parent chain.
+ * @returns {boolean} - True if the parent chain is an Arbitrum chain, false otherwise.
+ */
 function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
@@ -61,6 +80,39 @@ export type PrepareNodeConfigParams = {
   parentChainBeaconRpcUrl?: string;
 };
 
+/**
+ * Prepares the configuration object for a node based on the provided parameters.
+ *
+ * This function sets up various configurations such as chain information, parent chain details,
+ * HTTP settings, node features like sequencer and batch poster, execution parameters, and data
+ * availability settings if applicable.
+ *
+ * @param {PrepareNodeConfigParams} params - The parameters for preparing the node configuration.
+ * @param {string} params.chainName - The name of the chain.
+ * @param {ChainConfig} params.chainConfig - The chain configuration object.
+ * @param {CoreContracts} params.coreContracts - The core contracts for the chain.
+ * @param {string} params.batchPosterPrivateKey - The private key for the batch poster.
+ * @param {string} params.validatorPrivateKey - The private key for the validator.
+ * @param {ParentChainId} params.parentChainId - The ID of the parent chain.
+ * @param {string} params.parentChainRpcUrl - The RPC URL of the parent chain.
+ * @param {string} [params.parentChainBeaconRpcUrl] - The Beacon RPC URL of the parent chain, required for L2 Orbit chains.
+ * @returns {NodeConfig} - The prepared node configuration object.
+ *
+ * @throws Will throw an error if parentChainBeaconRpcUrl is not provided for L2 Orbit chains.
+ *
+ * @example
+ * const nodeConfig = prepareNodeConfig({
+ *   chainName: 'MyChain',
+ *   chainConfig: myChainConfig,
+ *   coreContracts: myCoreContracts,
+ *   batchPosterPrivateKey: '0xabc123',
+ *   validatorPrivateKey: '0xdef456',
+ *   parentChainId: mainnet.id,
+ *   parentChainRpcUrl: 'https://mainnet.infura.io/v3/YOUR-PROJECT-ID',
+ *   parentChainBeaconRpcUrl: 'https://beacon-mainnet.infura.io/v3/YOUR-PROJECT-ID',
+ * });
+ * console.log(nodeConfig);
+ */
 export function prepareNodeConfig({
   chainName,
   chainConfig,
@@ -170,7 +222,7 @@ export function prepareNodeConfig({
           {
             url: 'http://localhost:9876',
             pubkey:
-              'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
+              'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
             signermask: 1,
           },
         ]),

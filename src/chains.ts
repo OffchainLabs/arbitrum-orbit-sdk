@@ -57,6 +57,13 @@ const nitroTestnodeL3 = defineChain({
   testnet: true,
 });
 
+/**
+ * The `chains` variable contains an array of various blockchain configurations,
+ * including mainnet, testnet, and local nitro-testnode chains. Each chain
+ * object includes information such as network name, native currency details,
+ * RPC URLs, and testnet status. It provides a convenient way to access and
+ * reference different blockchain configurations within the application.
+ */
 export const chains = [
   // mainnet
   mainnet,

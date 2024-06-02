@@ -2,6 +2,14 @@ import { Address, PublicClient, WalletClient, encodeFunctionData } from 'viem';
 
 import { erc20 } from '../contracts';
 
+/**
+ * Encodes the function data for approving a spender to use a specified amount of tokens.
+ *
+ * @param {Object} params - The parameters for encoding the function data.
+ * @param {Address} params.spender - The address of the spender.
+ * @param {bigint} params.amount - The amount of tokens to approve.
+ * @returns {string} The encoded function data.
+ */
 function approveEncodeFunctionData({ spender, amount }: { spender: Address; amount: bigint }) {
   return encodeFunctionData({
     abi: erc20.abi,
@@ -18,6 +26,17 @@ export type ApprovePrepareTransactionRequestProps = {
   publicClient: PublicClient;
 };
 
+/**
+ * Prepares a transaction request to approve a specific amount of tokens for a spender.
+ *
+ * @param {ApprovePrepareTransactionRequestProps} props - The properties for preparing the transaction request.
+ * @param {Address} props.address - The address of the token contract.
+ * @param {Address} props.owner - The address of the token owner.
+ * @param {Address} props.spender - The address of the spender.
+ * @param {bigint} props.amount - The amount of tokens to approve.
+ * @param {PublicClient} props.publicClient - The public client to interact with the blockchain.
+ * @returns {Promise<Object>} The prepared transaction request.
+ */
 export async function approvePrepareTransactionRequest({
   address,
   owner,
@@ -42,6 +61,17 @@ export type ApproveProps = {
   walletClient: WalletClient;
 };
 
+/**
+ * Approves the spending of a specified amount of tokens by a designated address.
+ *
+ * @param {ApproveProps} props - The properties for the approve function.
+ * @param {Address} props.address - The address of the token contract.
+ * @param {Address} props.spender - The address of the spender.
+ * @param {bigint} props.amount - The amount of tokens to approve.
+ * @param {PublicClient} props.publicClient - The public client to interact with the blockchain.
+ * @param {WalletClient} props.walletClient - The wallet client to sign and send the transaction.
+ * @returns {Promise<Object>} The transaction receipt.
+ */
 export async function approve({
   address,
   spender,
@@ -74,6 +104,16 @@ export type FetchAllowanceProps = {
   publicClient: PublicClient;
 };
 
+/**
+ * Retrieves the allowance of tokens that the owner has approved to be spent by a specific spender.
+ *
+ * @param {FetchAllowanceProps} props - The properties for fetching the allowance.
+ * @param {Address} props.address - The address of the token contract.
+ * @param {Address} props.owner - The address of the token owner.
+ * @param {Address} props.spender - The address of the spender.
+ * @param {PublicClient} props.publicClient - The public client to interact with the blockchain.
+ * @returns {Promise<bigint>} The allowance amount.
+ */
 export async function fetchAllowance({
   address,
   owner,
@@ -88,6 +128,14 @@ export async function fetchAllowance({
   });
 }
 
+/**
+ * Retrieves the number of decimals for a specified ERC20 token at the given address.
+ *
+ * @param {Object} params - The parameters for fetching the decimals.
+ * @param {Address} params.address - The address of the token contract.
+ * @param {PublicClient} params.publicClient - The public client to interact with the blockchain.
+ * @returns {Promise<number>} The number of decimals.
+ */
 export function fetchDecimals({
   address,
   publicClient,
@@ -101,3 +149,4 @@ export function fetchDecimals({
     functionName: 'decimals',
   });
 }
+

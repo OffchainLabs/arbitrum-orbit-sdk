@@ -1,4 +1,5 @@
 import { Address, PublicClient } from 'viem';
+-
 import { AbiEvent } from 'abitype';
 
 import { validateParentChain } from './types/ParentChain';
@@ -52,6 +53,15 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [nitroTestnodeL2.id]: 0n,
 };
 
+/**
+ * createRollupFetchTransactionHash retrieves the transaction hash of the
+ * RollupInitialized event for a specified rollup contract on a given chain. It
+ * takes in the rollup contract address and a PublicClient, validates the parent
+ * chain, and then fetches the RollupInitialized event logs to extract the
+ * transaction hash. This function ensures that only one RollupInitialized event
+ * is found for the specified rollup address before returning the transaction
+ * hash.
+ */
 export async function createRollupFetchTransactionHash({
   rollup,
   publicClient,

@@ -19,6 +19,16 @@ type RollupAdminLogicEncodeFunctionDataParameters<
   TFunctionName extends RollupAdminLogicFunctionName,
 > = EncodeFunctionDataParameters<RollupAdminLogicAbi, TFunctionName>;
 
+/**
+ * Encodes the function data for a given Rollup Admin Logic function.
+ *
+ * @template TFunctionName - The name of the function to encode data for.
+ * @param {RollupAdminLogicEncodeFunctionDataParameters<TFunctionName>} params - The parameters for encoding the function data.
+ * @param {RollupAdminLogicAbi} params.abi - The ABI of the Rollup Admin Logic contract.
+ * @param {TFunctionName} params.functionName - The name of the function to encode data for.
+ * @param {Array} params.args - The arguments for the function.
+ * @returns {string} The encoded function data.
+ */
 function rollupAdminLogicEncodeFunctionData<TFunctionName extends RollupAdminLogicFunctionName>({
   abi,
   functionName,
@@ -38,6 +48,19 @@ type RollupAdminLogicPrepareFunctionDataParameters<
   abi: RollupAdminLogicAbi;
   rollup: Address;
 };
+
+/**
+ * Prepares the function data for a Rollup Admin Logic function.
+ *
+ * @template TFunctionName - The name of the function to prepare data for.
+ * @param {RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>} params - The parameters for preparing the function data.
+ * @param {Address | false} params.upgradeExecutor - The address of the upgrade executor, or false if not applicable.
+ * @param {RollupAdminLogicAbi} params.abi - The ABI of the Rollup Admin Logic contract.
+ * @param {TFunctionName} params.functionName - The name of the function to prepare data for.
+ * @param {Array} params.args - The arguments for the function.
+ * @param {Address} params.rollup - The address of the rollup.
+ * @returns {Object} An object containing the target address, encoded function data, and value.
+ */
 function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLogicFunctionName>(
   params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>,
 ) {
@@ -74,6 +97,22 @@ export type RollupAdminLogicPrepareTransactionRequestParameters<
   account: Address;
 };
 
+/**
+ * Prepares a transaction request for a Rollup Admin Logic function to be
+ * executed on a public client.
+ *
+ * @template TFunctionName - The name of the function to prepare a transaction request for.
+ * @template TTransport - The type of transport used by the public client.
+ * @template TChain - The type of chain the public client is connected to.
+ * @param {PublicClient<TTransport, TChain>} client - The public client to execute the transaction on.
+ * @param {RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>} params - The parameters for preparing the transaction request.
+ * @param {Address | false} params.upgradeExecutor - The address of the upgrade executor, or false if not applicable.
+ * @param {TFunctionName} params.functionName - The name of the function to prepare data for.
+ * @param {Array} params.args - The arguments for the function.
+ * @param {Address} params.rollup - The address of the rollup.
+ * @param {Address} params.account - The address of the account initiating the transaction.
+ * @returns {Promise<Object>} A promise that resolves to the prepared transaction request.
+ */
 export async function rollupAdminLogicPrepareTransactionRequest<
   TFunctionName extends RollupAdminLogicFunctionName,
   TTransport extends Transport = Transport,

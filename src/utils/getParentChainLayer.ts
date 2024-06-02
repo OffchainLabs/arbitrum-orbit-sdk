@@ -10,6 +10,14 @@ import {
 } from '../chains';
 import { ParentChainId } from '../types/ParentChain';
 
+/**
+ * Returns the layer of the parent chain identified by the provided
+ * ParentChainId.
+ *
+ * @param {ParentChainId} parentChainId - The identifier of the parent chain.
+ *
+ * @returns {number} - The layer of the parent chain (1 or 2).
+ */
 export function getParentChainLayer(parentChainId: ParentChainId) {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {

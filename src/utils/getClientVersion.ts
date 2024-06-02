@@ -6,6 +6,13 @@ type JsonRpcResult = {
   result: string;
 };
 
+/**
+ * Returns the client version of the provided PublicClient or RPC URL.
+ *
+ * @param {PublicClient | string} publicClientOrRpcUrl - The PublicClient instance or RPC URL string.
+ * @returns {Promise<string>} - A promise that resolves to the client version string.
+ * @throws {Error} - Throws an error if the RPC URL is invalid.
+ */
 export async function getClientVersion(
   publicClientOrRpcUrl: PublicClient | string,
 ): Promise<string> {

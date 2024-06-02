@@ -1,9 +1,5 @@
 {
-  "workspaces": [
-    "src",
-    "examples/*"
-  ],
-  "private": true,
+  "name": "@arbitrum/orbit-sdk",
   "type": "module",
   "scripts": {
     "prebuild": "rm -rf ./src/dist",

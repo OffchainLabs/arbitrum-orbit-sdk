@@ -36,6 +36,34 @@ export type CreateRollupPrepareTransactionRequestParams = Prettify<
   }>
 >;
 
+/**
+ * Prepares a transaction request to create a rollup chain on the specified
+ * parent chain. The function validates the input parameters, including the
+ * batch poster address and validator addresses, and checks if the native token
+ * is allowed based on the chain configuration. It then encodes the function
+ * data using the rollup creator ABI and prepares the transaction request with
+ * the necessary data, value, and gas limits. Returns the prepared transaction
+ * request along with the chain ID.
+ *
+ * @param {CreateRollupPrepareTransactionRequestParams} createRollupPrepareTransactionRequestParams - The parameters for preparing the transaction request
+ * @param {CreateRollupParams} createRollupPrepareTransactionRequestParams.params - The parameters for creating the rollup
+ * @param {Address} createRollupPrepareTransactionRequestParams.account - The account address
+ * @param {PublicClient} createRollupPrepareTransactionRequestParams.publicClient - The public client
+ * @param {TransactionRequestGasOverrides} [createRollupPrepareTransactionRequestParams.gasOverrides] - Optional gas overrides for the transaction request
+ * @param {Address} [createRollupPrepareTransactionRequestParams.rollupCreatorAddressOverride] - Optional override for the rollup creator address
+ *
+ * @returns {Promise<Object>} The prepared transaction request and the chain ID
+ * @throws {Error} If the batch poster address or validator addresses are invalid, or if the native token is not allowed
+ *
+ * @example
+ * const transactionRequest = await createRollupPrepareTransactionRequest({
+ *   params: createRollupParams,
+ *   account: '0xYourAccountAddress',
+ *   publicClient: yourPublicClientInstance,
+ *   gasOverrides: { gasLimit: { base: 500000, percentIncrease: 20 } },
+ *   rollupCreatorAddressOverride: '0xOverrideAddress',
+ * });
+ */
 export async function createRollupPrepareTransactionRequest({
   params,
   account,

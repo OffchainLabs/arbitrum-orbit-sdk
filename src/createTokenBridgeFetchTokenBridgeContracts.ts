@@ -14,6 +14,25 @@ export type CreateTokenBridgeFetchTokenBridgeContractsParams = Prettify<
   }>
 >;
 
+/**
+ * Creates and fetches the token bridge contracts on both the parent chain and
+ * the orbit chain. It retrieves addresses for various contracts including
+ * routers, gateways, WETH, proxy admin, beacon proxy factory, upgrade executor,
+ * and multicall on both chains. Returns {@link TokenBridgeContracts}.
+ *
+ * @param {CreateTokenBridgeFetchTokenBridgeContractsParams} createTokenBridgeFetchTokenBridgeContractsParams - The parameters for fetching token bridge contracts
+ * @param {Address} createTokenBridgeFetchTokenBridgeContractsParams.inbox - The inbox address
+ * @param {PublicClient} createTokenBridgeFetchTokenBridgeContractsParams.parentChainPublicClient - The parent chain public client
+ * @param {Address} [createTokenBridgeFetchTokenBridgeContractsParams.tokenBridgeCreatorAddressOverride] - Optional override for the token bridge creator address
+ * @returns {Promise<TokenBridgeContracts>} The token bridge contracts on both chains
+ *
+ * @example
+ * const contracts = await createTokenBridgeFetchTokenBridgeContracts({
+ *   inbox: '0xYourInboxAddress',
+ *   parentChainPublicClient: yourPublicClientInstance,
+ * });
+ * console.log(contracts);
+ */
 export async function createTokenBridgeFetchTokenBridgeContracts({
   inbox,
   parentChainPublicClient,

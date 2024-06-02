@@ -18,6 +18,16 @@ export type SequencerInboxFunctionName = GetFunctionName<SequencerInboxAbi>;
 type SequencerInboxEncodeFunctionDataParameters<TFunctionName extends SequencerInboxFunctionName> =
   EncodeFunctionDataParameters<SequencerInboxAbi, TFunctionName>;
 
+/**
+ * Encodes function data for the Sequencer Inbox contract.
+ *
+ * @template TFunctionName - The name of the function to encode.
+ * @param {SequencerInboxEncodeFunctionDataParameters<TFunctionName>} params - The parameters for encoding the function data.
+ * @param {SequencerInboxAbi} params.abi - The ABI of the Sequencer Inbox contract.
+ * @param {TFunctionName} params.functionName - The name of the function to encode.
+ * @param {Array<any>} params.args - The arguments for the function.
+ * @returns {string} The encoded function data.
+ */
 function sequencerInboxEncodeFunctionData<TFunctionName extends SequencerInboxFunctionName>({
   abi,
   functionName,
@@ -36,6 +46,17 @@ type SequencerInboxPrepareFunctionDataParameters<TFunctionName extends Sequencer
     abi: SequencerInboxAbi;
     sequencerInbox: Address;
   };
+
+/**
+ * Prepares function data for the Sequencer Inbox contract.
+ *
+ * @template TFunctionName - The name of the function to prepare.
+ * @param {SequencerInboxPrepareFunctionDataParameters<TFunctionName>} params - The parameters for preparing the function data.
+ * @param {Address | false} params.upgradeExecutor - The address of the upgrade executor or false if not applicable.
+ * @param {SequencerInboxAbi} params.abi - The ABI of the Sequencer Inbox contract.
+ * @param {Address} params.sequencerInbox - The address of the Sequencer Inbox contract.
+ * @returns {Object} The prepared function data including the target address, data, and value.
+ */
 function sequencerInboxPrepareFunctionData<TFunctionName extends SequencerInboxFunctionName>(
   params: SequencerInboxPrepareFunctionDataParameters<TFunctionName>,
 ) {
@@ -72,6 +93,21 @@ export type SequencerInboxPrepareTransactionRequestParameters<
   account: Address;
 };
 
+/**
+ * Prepares a transaction request to interact with the Sequencer Inbox contract on a specified chain.
+ *
+ * @template TFunctionName - The name of the function to call on the Sequencer Inbox contract.
+ * @template TTransport - The transport type for the PublicClient.
+ * @template TChain - The chain type.
+ * @param {PublicClient<TTransport, TChain>} client - The public client to use for the transaction.
+ * @param {SequencerInboxPrepareTransactionRequestParameters<TFunctionName>} params - The parameters for the transaction request.
+ * @param {TFunctionName} params.functionName - The name of the function to call on the Sequencer Inbox contract.
+ * @param {Array<any>} params.args - The arguments for the function call.
+ * @param {Address | false} params.upgradeExecutor - The address of the upgrade executor or false if not applicable.
+ * @param {Address} params.sequencerInbox - The address of the Sequencer Inbox contract.
+ * @param {Address} params.account - The account address to use for the transaction.
+ * @returns {Promise<Object>} The prepared transaction request object.
+ */
 export async function sequencerInboxPrepareTransactionRequest<
   TFunctionName extends SequencerInboxFunctionName,
   TTransport extends Transport = Transport,

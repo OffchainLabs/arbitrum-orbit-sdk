@@ -33,6 +33,33 @@ export type CreateTokenBridgePrepareTransactionRequestParams = Prettify<
   }>
 >;
 
+/**
+ * Creates a transaction request to prepare token bridge creation on the parent
+ * chain. Returns the prepared transaction request along with the chain ID.
+ *
+ * @param {CreateTokenBridgePrepareTransactionRequestParams} createTokenBridgePrepareTransactionRequestParams - The parameters for preparing the transaction request.
+ * @param {Object} createTokenBridgePrepareTransactionRequestParams.params - The parameters for the token bridge creation.
+ * @param {Address} createTokenBridgePrepareTransactionRequestParams.params.rollup - The rollup address.
+ * @param {Address} createTokenBridgePrepareTransactionRequestParams.params.rollupOwner - The rollup owner address.
+ * @param {PublicClient} createTokenBridgePrepareTransactionRequestParams.parentChainPublicClient - The public client for the parent chain.
+ * @param {PublicClient} createTokenBridgePrepareTransactionRequestParams.orbitChainPublicClient - The public client for the orbit chain.
+ * @param {Address} createTokenBridgePrepareTransactionRequestParams.account - The account address.
+ * @param {TransactionRequestGasOverrides} [createTokenBridgePrepareTransactionRequestParams.gasOverrides] - Optional gas overrides for the transaction request.
+ * @param {TransactionRequestRetryableGasOverrides} [createTokenBridgePrepareTransactionRequestParams.retryableGasOverrides] - Optional gas overrides for retryable transactions.
+ * @param {Address} [createTokenBridgePrepareTransactionRequestParams.tokenBridgeCreatorAddressOverride] - Optional override for the token bridge creator address.
+ *
+ * @returns {Promise<Object>} The prepared transaction request and the chain ID.
+ *
+ * @example
+ * const { request, chainId } = await createTokenBridgePrepareTransactionRequest({
+ *   params: { rollup: '0x...', rollupOwner: '0x...' },
+ *   parentChainPublicClient,
+ *   orbitChainPublicClient,
+ *   account: '0x...',
+ *   gasOverrides: { gasLimit: { base: 21000n, percentIncrease: 20 } },
+ *   retryableGasOverrides: { maxSubmissionCostForFactory: { base: 1000n, percentIncrease: 10 } },
+ * });
+ */
 export async function createTokenBridgePrepareTransactionRequest({
   params,
   parentChainPublicClient,

@@ -1,27 +1,28 @@
 {
-  "include": ["./src/**/*"],
-  "exclude": ["./src/dist/**/*"],
-  "compilerOptions": {
-    "strict": true,
-    "incremental": true,
+        "compilerOptions": {
+                "strict": true,
+                "incremental": true,
 
-    "lib": ["ES2021"],
-    "target": "ES2021",
+                "lib": ["ES2021"],
+                "target": "ES2021",
 
-    "moduleResolution": "node",
+                "moduleResolution": "node",
+                "rootDir": "./src",
 
-    // JavaScript support
-    "allowJs": false,
-    "checkJs": false,
+                // JavaScript support
+                "allowJs": false,
+                "checkJs": false,
 
-    // Skip type checking for node modules
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+                // Skip type checking for node modules
+                "skipLibCheck": true,
+                "resolveJsonModule": true,
+                "esModuleInterop": true,
+                "allowSyntheticDefaultImports": true,
+                "experimentalDecorators": true,
 
-    // Show all keys in type without hiding in "... more ..."
-    // Enabling this option cause typescript performance
-    "noErrorTruncation": false
-  }
+                // Show all keys in type without hiding in "... more ..."
+                // Enabling this option cause typescript performance
+                "noErrorTruncation": false
+        },
+        "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.js"]
 }

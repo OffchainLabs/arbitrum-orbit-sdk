@@ -12,7 +12,15 @@ import { isArbitrumChain } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { arbitrum, arbitrumNova, arbitrumSepolia, mainnet, sepolia } from 'viem/chains';
 import { nitroTestnodeL1, nitroTestnodeL2 } from '../chains';
 
-async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 'L1' | 'L2' }) {
+/**
+ * Checks if a network is registered as either L1 or L2.
+ *
+ * @param {JsonRpcProvider} provider - The JSON RPC provider to use for the network.
+ * @param {Object} options - Options for the network type.
+ * @param {('L1'|'L2')} options.type - The type of network to check (L1 or L2).
+ * @returns {Promise<boolean>} - Returns true if the network is registered, otherwise false.
+ */
+async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 'L1' | 'L2' }): Promise<boolean> {
   try {
     if (type === 'L1') {
       await getL1Network(provider);
@@ -26,7 +34,14 @@ async function isNetworkRegistered(provider: JsonRpcProvider, { type }: { type: 
   }
 }
 
-const parentChainIdFromChildChainId = (childChainId: number) => {
+/**
+ * Returns the parent chain ID for a given child chain ID.
+ *
+ * @param {number} childChainId - The ID of the child chain.
+ * @returns {number} - The ID of the parent chain.
+ * @throws Will throw an error if the child chain ID is invalid.
+ */
+const parentChainIdFromChildChainId = (childChainId: number): number => {
   const parentChainId = {
     [arbitrum.id]: mainnet.id,
     [arbitrumNova.id]: mainnet.id,
@@ -41,6 +56,16 @@ const parentChainIdFromChildChainId = (childChainId: number) => {
   return parentChainId;
 };
 
+/**
+ * Creates a child network based on the provided rollup address, parent provider, parent network, and child network.
+ *
+ * @param {Object} params - The parameters for creating the child network.
+ * @param {string} params.rollupAddress - The rollup address of the child network.
+ * @param {JsonRpcProvider} params.parentProvider - The JSON RPC provider for the parent network.
+ * @param {Network} params.parentNetwork - The parent network information.
+ * @param {Network} params.childNetwork - The child network information.
+ * @returns {Promise<L2Network>} - Returns the created child network as an L2Network.
+ */
 async function createChildNetwork({
   rollupAddress,
   parentProvider,
@@ -93,6 +118,16 @@ async function createChildNetwork({
   };
 }
 
+/**
+ * Creates a parent network based on the provided parent network, child network, and whether it is an Arbitrum network.
+ *
+ * @template TIsArbitrum - A boolean indicating if the network is an Arbitrum network.
+ * @param {Object} params - The parameters for creating the parent network.
+ * @param {Network} params.parentNetwork - The parent network information.
+ * @param {Network} params.childNetwork - The child network information.
+ * @param {TIsArbitrum} params.isArbitrum - A boolean indicating if the network is an Arbitrum network.
+ * @returns {Promise<L1Network | L2Network>} - Returns the created parent network as an L1Network or L2Network.
+ */
 async function createParentNetwork<TIsArbitrum extends boolean>({
   parentNetwork,
   childNetwork,
@@ -163,6 +198,14 @@ async function createParentNetwork<TIsArbitrum>({
   };
 }
 
+/**
+ * Registers a new network by creating parent and child networks based on the provided providers and rollup address.
+ *
+ * @param {JsonRpcProvider} parentProvider - The JSON RPC provider for the parent network.
+ * @param {JsonRpcProvider} childProvider - The JSON RPC provider for the child network.
+ * @param {string} rollupAddress - The rollup address of the child network.
+ * @returns {Promise<{parentNetwork: L1Network | L2Network, childNetwork: L2Network}>} - Returns an object containing the parent and child networks.
+ */
 export const registerNewNetwork = async (
   parentProvider: JsonRpcProvider,
   childProvider: JsonRpcProvider,
@@ -171,9 +214,21 @@ export const registerNewNetwork = async (
   parentNetwork: L1Network | L2Network;
   childNetwork: L2Network;
 }> => {
+  /**
+   * The variable `parentNetworkInfo` contains information about the parent
+   * network.
+   */
   const parentNetworkInfo = await parentProvider.getNetwork();
+  /**
+   * childNetworkInfo contains information about the child network obtained from
+   * the provided JsonRpcProvider.
+   */
   const childNetworkInfo = await childProvider.getNetwork();
 
+  /**
+   * childNetwork represents the child network for a given parent network. It is
+   * used to create and register L2 networks within the Arbitrum ecosystem.
+   */
   const childNetwork = await createChildNetwork({
     rollupAddress,
     parentProvider,
@@ -183,7 +238,15 @@ export const registerNewNetwork = async (
 
   // If the parent chain is an Arbitrum chain, we need to register parent and child chain both as L2 chains
   if (await isArbitrumChain(parentProvider)) {
+    /** Checks if the parent network is registered and returns a boolean value. */
+    /** isParentNetworkRegistered checks if a parent network is registered. */
     const isParentNetworkRegistered = await isNetworkRegistered(parentProvider, { type: 'L2' });
+    /** Represents the parent network used for creating a child network. */
+    /**
+     * The variable `parentNetwork` represents the parent network in the system.
+     * It is a {@link Network} that can be either an L1 or L2 network, depending
+     * on the context.
+     */
     const parentNetwork = await createParentNetwork({
       parentNetwork: parentNetworkInfo,
       childNetwork: childNetworkInfo,
@@ -194,6 +257,8 @@ export const registerNewNetwork = async (
       addCustomNetwork({ customL2Network: parentNetwork });
     }
 
+    /** Checks if a child network is registered and returns a boolean value. */
+    /** isChildNetworkRegistered checks if a child network is already registered. */
     const isChildNetworkRegistered = await isNetworkRegistered(childProvider, { type: 'L2' });
     if (!isChildNetworkRegistered) {
       addCustomNetwork({ customL2Network: childNetwork });

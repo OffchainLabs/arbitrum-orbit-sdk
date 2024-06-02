@@ -24,6 +24,30 @@ export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | und
   ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
+/**
+ * Returns an object with two functions: `arbOwnerReadContract` and
+ * `arbOwnerPrepareTransactionRequest`, which interact with the ArbOwner
+ * contract by reading contract data and preparing transaction requests,
+ * respectively.
+ *
+ * @param {PublicClient} client - The public client used to interact with the blockchain.
+ *
+ * @returns {ArbOwnerPublicActions} An object containing the functions to read contract data and prepare transaction requests.
+ *
+ * @example
+ * const publicClient = new PublicClient(...);
+ * const actions = arbOwnerPublicActions(publicClient);
+ *
+ * const readResult = await actions.arbOwnerReadContract({
+ *   functionName: 'someFunction',
+ *   args: [...],
+ * });
+ *
+ * const txRequest = await actions.arbOwnerPrepareTransactionRequest({
+ *   functionName: 'someOtherFunction',
+ *   args: [...],
+ * });
+ */
 export function arbOwnerPublicActions<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
