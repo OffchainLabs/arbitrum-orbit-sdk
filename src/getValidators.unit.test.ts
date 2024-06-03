@@ -108,11 +108,7 @@ function upgradeExecutorSetValidatorHelper(args: [Address[], boolean[]]) {
   }).data;
 }
 function safeSetValidatorHelper(args: [Address[], boolean[]]) {
-  const bytes = encodeFunctionData({
-    abi: rollupAdminLogicABI,
-    functionName: 'setValidator',
-    args,
-  });
+  const bytes = upgradeExecutorSetValidatorHelper(args);
   return encodeFunctionData({
     abi: safeL2ABI,
     functionName: 'execTransaction',

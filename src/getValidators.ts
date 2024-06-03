@@ -130,11 +130,15 @@ export async function getValidators(
         return setValidators(acc, upgradeExecutorCall.args[1]);
       }
       case safeL2FunctionSelector: {
-        const safeCall = decodeFunctionData({
+        const { args: execTransactionCalldata } = decodeFunctionData({
           abi: [execTransactionABI],
           data: tx.input,
         });
-        return setValidators(acc, safeCall.args[2]);
+        const { args: executeCallCalldata } = decodeFunctionData({
+          abi: [executeCallABI],
+          data: execTransactionCalldata[2],
+        });
+        return setValidators(acc, executeCallCalldata[1]);
       }
       default: {
         console.warn(`[getValidators] unknown 4bytes, tx id: ${tx.hash}`);
