@@ -124,7 +124,7 @@ export async function getValidators(
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
         const upgradeExecutorCall = decodeFunctionData({
-          abi: upgradeExecutor.abi,
+          abi: [executeCallABI],
           data: tx.input,
         });
         return setValidators(acc, upgradeExecutorCall.args[1]);
