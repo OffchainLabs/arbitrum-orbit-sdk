@@ -27,11 +27,7 @@ const ownerFunctionCalledEventAbi = getAbiItem({
 });
 
 function getValidatorsFromFunctionData<
-  TAbi extends
-    | (typeof createRollupABI)[]
-    | (typeof setValidatorABI)[]
-    | (typeof executeCallABI)[]
-    | (typeof execTransactionABI)[],
+  TAbi extends (typeof createRollupABI)[] | (typeof setValidatorABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
@@ -41,6 +37,24 @@ function getValidatorsFromFunctionData<
     return [];
   }
   return args;
+}
+
+function setValidators(acc: Set<Address>, input: Hex) {
+  const [validators, states] = getValidatorsFromFunctionData({
+    abi: [setValidatorABI],
+    data: input,
+  });
+
+  validators.forEach((validator, i) => {
+    const isAdd = states[i];
+    if (isAdd) {
+      acc.add(validator);
+    } else {
+      acc.delete(validator);
+    }
+  });
+
+  return acc;
 }
 
 type GetValidatorsParams = {
@@ -106,58 +120,21 @@ export async function getValidators(
         return acc;
       }
       case setValidatorFunctionSelector: {
-        const [validators, states] = getValidatorsFromFunctionData({
-          abi: [setValidatorABI],
-          data: tx.input,
-        });
-
-        validators.forEach((validator, i) => {
-          const isAdd = states[i];
-          if (isAdd) {
-            acc.add(validator);
-          } else {
-            acc.delete(validator);
-          }
-        });
-
-        return acc;
+        return setValidators(acc, tx.input);
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
         const upgradeExecutorCall = decodeFunctionData({
           abi: upgradeExecutor.abi,
           data: tx.input,
         });
-        const [validator, isAdd] = getValidatorsFromFunctionData({
-          abi: [executeCallABI],
-          data: upgradeExecutorCall.args[1],
-        });
-
-        if (isAdd) {
-          acc.add(validator);
-        } else {
-          acc.delete(validator);
-        }
-
-        return acc;
+        return setValidators(acc, upgradeExecutorCall.args[1]);
       }
       case safeL2FunctionSelector: {
         const safeCall = decodeFunctionData({
           abi: [execTransactionABI],
           data: tx.input,
         });
-
-        const [validator, isAdd] = getValidatorsFromFunctionData({
-          abi: [executeCallABI],
-          data: safeCall.args[2],
-        });
-
-        if (isAdd) {
-          acc.add(validator);
-        } else {
-          acc.delete(validator);
-        }
-
-        return acc;
+        return setValidators(acc, safeCall.args[2]);
       }
       default: {
         console.warn(`[getValidators] unknown 4bytes, tx id: ${tx.hash}`);
