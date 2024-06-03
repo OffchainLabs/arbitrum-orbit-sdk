@@ -10,5 +10,7 @@ exports[`returns default value for confirmPeriodBlocks based on parent chain 1`]
   "42161": 45818n,
   "421614": 150n,
   "42170": 45818n,
+  "8453": 274908n,
+  "84532": 900n,
 }
 `;

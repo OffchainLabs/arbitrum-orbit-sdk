@@ -6,9 +6,11 @@ import {
   mainnet,
   arbitrumOne,
   arbitrumNova,
+  base,
   sepolia,
   holesky,
   arbitrumSepolia,
+  baseSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
 } from './chains';
@@ -39,14 +41,18 @@ const RollupInitializedEventAbi: AbiEvent = {
 };
 
 const earliestRollupCreatorDeploymentBlockNumber = {
-  // mainnet
+  // mainnet L1
   [mainnet.id]: 18736164n,
+  // mainnet L2
   [arbitrumOne.id]: 150599584n,
   [arbitrumNova.id]: 47798739n,
-  // testnet
+  [base.id]: 12978604n,
+  // testnet L1
   [sepolia.id]: 4741823n,
-  [holesky.id]: 1083992n,
+  [holesky.id]: 1118493n,
+  // testnet L2
   [arbitrumSepolia.id]: 654628n,
+  [baseSepolia.id]: 10606961n,
   // local nitro-testnode
   [nitroTestnodeL1.id]: 0n,
   [nitroTestnodeL2.id]: 0n,
