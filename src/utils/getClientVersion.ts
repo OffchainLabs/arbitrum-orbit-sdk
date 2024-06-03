@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem';
+import { Client, Transport, Chain } from 'viem';
 
 type JsonRpcResult = {
   jsonrpc: '2.0';
@@ -6,13 +6,13 @@ type JsonRpcResult = {
   result: string;
 };
 
-export async function getClientVersion(
-  publicClientOrRpcUrl: PublicClient | string,
+export async function getClientVersion<TChain extends Chain | undefined>(
+  clientOrRpcUrl: Client<Transport, TChain> | string,
 ): Promise<string> {
   const rpcUrl =
-    typeof publicClientOrRpcUrl === 'string'
-      ? publicClientOrRpcUrl
-      : publicClientOrRpcUrl.chain?.rpcUrls.default.http[0];
+    typeof clientOrRpcUrl === 'string'
+      ? clientOrRpcUrl
+      : clientOrRpcUrl.chain?.rpcUrls.default.http[0];
 
   if (typeof rpcUrl === 'undefined') {
     throw new Error(`[getClientVersion] invalid rpc url: ${rpcUrl}`);
