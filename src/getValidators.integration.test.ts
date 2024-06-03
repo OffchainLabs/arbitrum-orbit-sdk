@@ -68,6 +68,14 @@ describe('successfully get validators', () => {
 
     // Reset state for future tests
     await setValidator(randomAccount, false);
+    const { isComplete: isCompleteFinal, validators: validatorsFinal } = await getValidators(
+      client,
+      {
+        rollupAddress: l3Rollup,
+      },
+    );
+    expect(validatorsFinal).toEqual(initialValidators);
+    expect(isCompleteFinal).toBeTruthy();
   });
 
   it('when enabling the same validators multiple time', async () => {
@@ -92,6 +100,7 @@ describe('successfully get validators', () => {
     expect(newValidators).toEqual(initialValidators.concat(randomAccount));
     expect(isStillComplete).toBeTruthy();
 
+    // Reset state for futures tests
     await setValidator(randomAccount, false);
     const { validators, isComplete } = await getValidators(client, { rollupAddress: l3Rollup });
     expect(validators).toEqual(initialValidators);
