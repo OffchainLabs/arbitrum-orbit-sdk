@@ -1,18 +1,25 @@
-import { Address, PublicClient, decodeFunctionData, getAbiItem, getFunctionSelector } from 'viem';
+import {
+  Address,
+  Hex,
+  PublicClient,
+  decodeFunctionData,
+  getAbiItem,
+  getFunctionSelector,
+} from 'viem';
 import { rollupCreator, upgradeExecutor } from './contracts';
-import { rollupAdminLogicABI } from './abi';
+import { rollupAdminLogicABI, safeL2ABI } from './abi';
 
-const createRollupFunctionSelector = getFunctionSelector(
-  getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' }),
-);
+const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
+const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
 
-const setValidatorFunctionSelector = getFunctionSelector(
-  getAbiItem({ abi: rollupAdminLogicABI, name: 'setValidator' }),
-);
+const setValidatorABI = getAbiItem({ abi: rollupAdminLogicABI, name: 'setValidator' });
+const setValidatorFunctionSelector = getFunctionSelector(setValidatorABI);
 
-const upgradeExecutorExecuteCallFunctionSelector = getFunctionSelector(
-  getAbiItem({ abi: upgradeExecutor.abi, name: 'executeCall' }),
-);
+const executeCallABI = getAbiItem({ abi: upgradeExecutor.abi, name: 'executeCall' });
+const upgradeExecutorExecuteCallFunctionSelector = getFunctionSelector(executeCallABI);
+
+const execTransactionABI = getAbiItem({ abi: safeL2ABI, name: 'execTransaction' });
+const safeL2FunctionSelector = getFunctionSelector(execTransactionABI);
 
 const ownerFunctionCalledEventAbi = getAbiItem({
   abi: rollupAdminLogicABI,
@@ -20,8 +27,12 @@ const ownerFunctionCalledEventAbi = getAbiItem({
 });
 
 function getValidatorsFromFunctionData<
-  TAbi extends typeof rollupCreator.abi | typeof rollupAdminLogicABI | typeof upgradeExecutor.abi,
->({ abi, data }: { abi: TAbi; data: `0x${string}` }) {
+  TAbi extends
+    | (typeof createRollupABI)[]
+    | (typeof setValidatorABI)[]
+    | (typeof executeCallABI)[]
+    | (typeof execTransactionABI)[],
+>({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
     data,
@@ -42,6 +53,7 @@ type GetValidatorsReturnType = {
   /** List of validators for the given rollup */
   validators: Address[];
 };
+
 /**
  *
  * @param {PublicClient} client - The chain Viem Public Client
@@ -85,40 +97,29 @@ export async function getValidators(
 
     switch (txSelectedFunction) {
       case createRollupFunctionSelector: {
-        const [data] = getValidatorsFromFunctionData({
-          abi: rollupCreator.abi,
+        const [{ validators }] = getValidatorsFromFunctionData({
+          abi: [createRollupABI],
           data: tx.input,
         });
-        if (typeof data === 'object' && 'validators' in data) {
-          acc = new Set([...acc, ...data.validators]);
-          return acc;
-        }
 
-        console.warn(
-          `[getValidators:createRollupFunctionSelector] invalid data, tx id: ${tx.hash}`,
-        );
-        isComplete = false;
+        acc = new Set([...acc, ...validators]);
         return acc;
       }
       case setValidatorFunctionSelector: {
-        const [decodedValidator, isAdd] = getValidatorsFromFunctionData({
-          abi: rollupAdminLogicABI,
+        const [validators, states] = getValidatorsFromFunctionData({
+          abi: [setValidatorABI],
           data: tx.input,
         });
 
-        if (typeof decodedValidator === 'string' && typeof isAdd === 'boolean') {
+        validators.forEach((validator, i) => {
+          const isAdd = states[i];
           if (isAdd) {
-            acc.add(decodedValidator);
+            acc.add(validator);
           } else {
-            acc.delete(decodedValidator);
+            acc.delete(validator);
           }
-          return acc;
-        }
+        });
 
-        console.warn(
-          `[getValidators:setValidatorFunctionSelector] invalid data, tx id: ${tx.hash}`,
-        );
-        isComplete = false;
         return acc;
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
@@ -126,30 +127,36 @@ export async function getValidators(
           abi: upgradeExecutor.abi,
           data: tx.input,
         });
-        const [decodedValidators, isAdd] = getValidatorsFromFunctionData({
-          abi: rollupAdminLogicABI,
+        const [validator, isAdd] = getValidatorsFromFunctionData({
+          abi: [executeCallABI],
           data: upgradeExecutorCall.args[1],
         });
-        if (
-          Array.isArray(isAdd) &&
-          typeof isAdd[0] === 'boolean' &&
-          Array.isArray(decodedValidators) &&
-          typeof decodedValidators[0] === 'string'
-        ) {
-          decodedValidators.forEach((validator, i) => {
-            if (isAdd[i]) {
-              acc.add(validator);
-            } else {
-              acc.delete(validator);
-            }
-          });
-          return acc;
+
+        if (isAdd) {
+          acc.add(validator);
+        } else {
+          acc.delete(validator);
         }
 
-        console.warn(
-          `[getValidators:upgradeExecutorExecuteCallFunctionSelector] invalid data, tx id: ${tx.hash}`,
-        );
-        isComplete = false;
+        return acc;
+      }
+      case safeL2FunctionSelector: {
+        const safeCall = decodeFunctionData({
+          abi: [execTransactionABI],
+          data: tx.input,
+        });
+
+        const [validator, isAdd] = getValidatorsFromFunctionData({
+          abi: [executeCallABI],
+          data: safeCall.args[2],
+        });
+
+        if (isAdd) {
+          acc.add(validator);
+        } else {
+          acc.delete(validator);
+        }
+
         return acc;
       }
       default: {
