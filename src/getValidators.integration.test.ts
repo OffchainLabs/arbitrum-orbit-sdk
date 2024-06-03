@@ -37,7 +37,8 @@ async function setValidator(validator: Address, state: boolean) {
   });
 }
 
-describe('successfully get validators', () => {
+// Tests can be enabled once we run one node per integration test
+describe.skip('successfully get validators', () => {
   it('when disabling the same validator multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
