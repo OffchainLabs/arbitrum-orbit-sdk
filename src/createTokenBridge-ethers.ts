@@ -1,4 +1,4 @@
-import { Address, PublicClient } from 'viem';
+import { Address, PublicClient, Transport, Chain } from 'viem';
 import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { L1ToL2MessageGasEstimator } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
@@ -31,14 +31,17 @@ export type CreateTokenBridgeGetInputsResult = {
   retryableFee: bigint;
 };
 
-export const createTokenBridgeGetInputs = async (
+export async function createTokenBridgeGetInputs<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>(
   l1DeployerAddress: string,
-  l1PublicClient: PublicClient,
-  l2PublicClient: PublicClient,
+  l1PublicClient: PublicClient<Transport, TParentChain>,
+  l2PublicClient: PublicClient<Transport, TOrbitChain>,
   l1TokenBridgeCreatorAddress: string,
   rollupAddress: string,
   retryableGasOverrides?: TransactionRequestRetryableGasOverrides,
-): Promise<CreateTokenBridgeGetInputsResult> => {
+): Promise<CreateTokenBridgeGetInputsResult> {
   const l1Provider = publicClientToProvider(l1PublicClient);
   const l2Provider = publicClientToProvider(l2PublicClient);
 
@@ -163,7 +166,7 @@ export const createTokenBridgeGetInputs = async (
     gasPrice: gasPrice.toBigInt(),
     retryableFee: retryableFee.toBigInt(),
   };
-};
+}
 
 const getEstimateForDeployingFactory = async (
   l1DeployerAddress: string,
@@ -189,14 +192,17 @@ const getEstimateForDeployingFactory = async (
   return deployFactoryGasParams;
 };
 
-export const getEstimateForSettingGateway = async (
+export async function getEstimateForSettingGateway<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>(
   l1ChainOwnerAddress: Address,
   l1UpgradeExecutorAddress: Address,
   l1GatewayRouterAddress: Address,
   setGatewaysCalldata: `0x${string}`,
-  parentChainPublicClient: PublicClient,
-  orbitChainPublicClient: PublicClient,
-) => {
+  parentChainPublicClient: PublicClient<Transport, TParentChain>,
+  orbitChainPublicClient: PublicClient<Transport, TOrbitChain>,
+) {
   // ethers providers
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
   const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
@@ -223,4 +229,4 @@ export const getEstimateForSettingGateway = async (
     maxSubmissionCost: setGatewaysGasParams.maxSubmissionCost.toBigInt(),
     deposit: setGatewaysGasParams.deposit.toBigInt(),
   };
-};
+}
