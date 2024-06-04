@@ -42,7 +42,7 @@ function getValidatorsFromFunctionData<
   return args;
 }
 
-function setValidators(acc: Set<Address>, input: Hex) {
+function updateAccumulator(acc: Set<Address>, input: Hex) {
   const [validators, states] = getValidatorsFromFunctionData({
     abi: [setValidatorABI],
     data: input,
