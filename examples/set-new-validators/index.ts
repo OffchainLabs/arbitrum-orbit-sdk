@@ -64,7 +64,7 @@ async function main() {
   // check the status of this address in validator list before executing
   const beforeStatus = await parentChainPublicClient.rollupAdminLogicReadContract({
     functionName: 'isValidator',
-    args: [newValidators[0]]
+    args: [newValidators[0]],
   });
   console.log(
     `Before executing, the address ${newValidators[0]} status in validator list is ${beforeStatus}`,
@@ -79,7 +79,7 @@ async function main() {
         newValidatorStatus, // validator status list
       ],
       upgradeExecutor: coreContracts.upgradeExecutor,
-      account: deployer.address
+      account: deployer.address,
     });
 
   // sign and send the transaction
