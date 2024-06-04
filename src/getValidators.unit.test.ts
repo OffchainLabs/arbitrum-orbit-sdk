@@ -293,7 +293,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
                   [true],
                 ]),
               '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
-                setValidatorHelper([
+                upgradeExecutorSetValidatorHelper([
                   [
                     '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
                     '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
@@ -339,7 +339,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
                   [true],
                 ]),
               '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
-                setValidatorHelper([
+                upgradeExecutorSetValidatorHelper([
                   [
                     '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
                     '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
@@ -379,7 +379,7 @@ describe('safeL2FunctionSelector', () => {
               '0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10':
                 safeSetValidatorHelper([['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962'], [true]]),
               '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
-                setValidatorHelper([
+                safeSetValidatorHelper([
                   [
                     '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
                     '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
@@ -421,7 +421,7 @@ describe('safeL2FunctionSelector', () => {
               '0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10':
                 safeSetValidatorHelper([['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962'], [true]]),
               '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
-                setValidatorHelper([
+                safeSetValidatorHelper([
                   [
                     '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
                     '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
