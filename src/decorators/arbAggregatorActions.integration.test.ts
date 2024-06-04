@@ -46,9 +46,10 @@ describe('ArgAggregator decorator tests', () => {
         upgradeExecutor: false,
         account: l2RollupOwner.address,
       });
-    await nitroTestnodeL2Client.sendRawTransaction({
+    const txHash = await nitroTestnodeL2Client.sendRawTransaction({
       serializedTransaction: await l2RollupOwner.signTransaction(setFeeCollectorTransactionRequest),
     });
+    await nitroTestnodeL2Client.waitForTransactionReceipt({ hash: txHash });
 
     // Check the fee collector has changed
     const batchPosterFeeCollector = await nitroTestnodeL2Client.arbAggregatorReadContract({
