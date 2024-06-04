@@ -30,7 +30,7 @@ function getBlockExplorerUrl(chain: Chain) {
 const parentChain = arbitrumSepolia;
 const parentChainPublicClient = createPublicClient({
   chain: parentChain,
-  transport: http(),
+  transport: http(process.env.PARENT_CHAIN_RPC),
 }).extend(
   rollupAdminLogicPublicActions({
     rollup: process.env.ROLLUP_ADDRESS as Address,
@@ -64,8 +64,7 @@ async function main() {
   // check the status of this address in validator list before executing
   const beforeStatus = await parentChainPublicClient.rollupAdminLogicReadContract({
     functionName: 'isValidator',
-    args: [newValidators[0]],
-    rollup: coreContracts.rollup,
+    args: [newValidators[0]]
   });
   console.log(
     `Before executing, the address ${newValidators[0]} status in validator list is ${beforeStatus}`,
@@ -80,8 +79,7 @@ async function main() {
         newValidatorStatus, // validator status list
       ],
       upgradeExecutor: coreContracts.upgradeExecutor,
-      account: deployer.address,
-      rollup: coreContracts.rollup,
+      account: deployer.address
     });
 
   // sign and send the transaction
