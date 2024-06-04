@@ -1,11 +1,11 @@
-import { Address, PublicClient, parseAbi } from 'viem';
+import { Address, PublicClient, Transport, Chain, parseAbi } from 'viem';
 
-export async function isCustomFeeTokenChain({
+export async function isCustomFeeTokenChain<TChain extends Chain | undefined>({
   rollup,
   parentChainPublicClient,
 }: {
   rollup: Address;
-  parentChainPublicClient: PublicClient;
+  parentChainPublicClient: PublicClient<Transport, TChain>;
 }) {
   const bridge = await parentChainPublicClient.readContract({
     address: rollup,
