@@ -123,11 +123,11 @@ export async function getValidators(
         return setValidators(acc, tx.input);
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
-        const upgradeExecutorCall = decodeFunctionData({
+        const { args: executeCallCalldata } = decodeFunctionData({
           abi: [executeCallABI],
           data: tx.input,
         });
-        return setValidators(acc, upgradeExecutorCall.args[1]);
+        return setValidators(acc, executeCallCalldata[1]);
       }
       case safeL2FunctionSelector: {
         const { args: execTransactionCalldata } = decodeFunctionData({
