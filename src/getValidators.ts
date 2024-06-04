@@ -57,11 +57,11 @@ function updateAccumulator(acc: Set<Address>, input: Hex) {
   return acc;
 }
 
-type GetValidatorsParams = {
+export type GetValidatorsParams = {
   /** Address of the rollup we're getting list of validators from */
   rollup: Address;
 };
-type GetValidatorsReturnType = {
+export type GetValidatorsReturnType = {
   /**
    * If logs contain unknown signature, validators list might:
    * - contain false positives (validators that were removed, but returned as validator)

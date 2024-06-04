@@ -95,6 +95,7 @@ import {
   getDefaultSequencerInboxMaxTimeVariation,
   SequencerInboxMaxTimeVariation,
 } from './getDefaultSequencerInboxMaxTimeVariation';
+import { getValidators, GetValidatorsParams, GetValidatorsReturnType } from './getValidators';
 
 export {
   arbOwnerPublicActions,
@@ -173,4 +174,8 @@ export {
   getDefaultConfirmPeriodBlocks,
   getDefaultSequencerInboxMaxTimeVariation,
   SequencerInboxMaxTimeVariation,
+  //
+  getValidators,
+  GetValidatorsParams,
+  GetValidatorsReturnType,
 };
