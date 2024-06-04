@@ -3,6 +3,7 @@ import {
   Chain,
   PrivateKeyAccount,
   PublicClient,
+  Transport,
   Transaction,
   TransactionReceipt,
 } from 'viem';
@@ -37,18 +38,25 @@ function getBlockExplorerUrl(chain: Chain | undefined) {
   return chain?.blockExplorers?.default.url;
 }
 
-export type CreateTokenBridgeParams = WithTokenBridgeCreatorAddressOverride<{
+export type CreateTokenBridgeParams<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+> = WithTokenBridgeCreatorAddressOverride<{
   rollupOwner: Address;
   rollupAddress: Address;
   account: PrivateKeyAccount;
   nativeTokenAddress?: Address;
-  parentChainPublicClient: PublicClient;
-  orbitChainPublicClient: PublicClient;
+  parentChainPublicClient: PublicClient<Transport, TParentChain>;
+  orbitChainPublicClient: PublicClient<Transport, TOrbitChain>;
   gasOverrides?: TransactionRequestGasOverrides;
   retryableGasOverrides?: TokenBridgeRetryableGasOverrides;
   setWethGatewayGasOverrides?: SetWethGatewayRetryableGasOverrides;
 }>;
-export type CreateTokenBridgeResults = {
+
+export type CreateTokenBridgeResults<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+> = {
   /**
    * Transaction of createTokenBridgePrepareTransactionRequest
    */
@@ -56,7 +64,7 @@ export type CreateTokenBridgeResults = {
   /**
    * Transaction receipt of createTokenBridgePrepareTransactionReceipt ({@link CreateTokenBridgeTransactionReceipt})
    */
-  transactionReceipt: CreateTokenBridgeTransactionReceipt;
+  transactionReceipt: CreateTokenBridgeTransactionReceipt<TParentChain, TOrbitChain>;
   /**
    * Retryable transaction receipts of createTokenBridgePrepareTransactionReceipt ({@link WaitForRetryablesResult})
    */
@@ -76,7 +84,7 @@ export type CreateTokenBridgeResults = {
     /**
      * Transaction receipt of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link createTokenBridgePrepareSetWethGatewayTransactionReceipt})
      */
-    transactionReceipt: CreateTokenBridgeSetWethGatewayTransactionReceipt;
+    transactionReceipt: CreateTokenBridgeSetWethGatewayTransactionReceipt<TOrbitChain>;
     /**
      * Retryable transaction receipt of createTokenBridgePrepareSetWethGatewayTransactionReceipt ({@link WaitForRetryablesResult})
      */
@@ -149,7 +157,10 @@ export type CreateTokenBridgeResults = {
  *   },
  * });
  */
-export async function createTokenBridge({
+export async function createTokenBridge<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>({
   rollupOwner,
   rollupAddress,
   account,
@@ -160,12 +171,14 @@ export async function createTokenBridge({
   gasOverrides,
   retryableGasOverrides,
   setWethGatewayGasOverrides,
-}: CreateTokenBridgeParams): Promise<CreateTokenBridgeResults> {
+}: CreateTokenBridgeParams<TParentChain, TOrbitChain>): Promise<
+  CreateTokenBridgeResults<TParentChain, TOrbitChain>
+> {
   const isCustomFeeTokenBridge = isCustomFeeTokenAddress(nativeTokenAddress);
   if (isCustomFeeTokenBridge) {
     // set the custom fee token
     // prepare transaction to approve custom fee token spend
-    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
+    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams<TParentChain> = {
       nativeToken: nativeTokenAddress,
       owner: account.address,
       publicClient: parentChainPublicClient,
@@ -230,6 +243,7 @@ export async function createTokenBridge({
   // wait for retryables to execute
   console.log(`Waiting for retryable tickets to execute on the Orbit chain...`);
   const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({
+    // @ts-ignore (todo: fix viem type issue)
     orbitPublicClient: orbitChainPublicClient,
   });
   console.log(`Retryables executed`);
@@ -242,6 +256,7 @@ export async function createTokenBridge({
 
   // fetching the TokenBridge contracts
   const tokenBridgeContracts = await txReceipt.getTokenBridgeContracts({
+    // @ts-ignore (todo: fix viem type issue)
     parentChainPublicClient,
   });
 
@@ -280,6 +295,7 @@ export async function createTokenBridge({
     // Wait for retryables to execute
     const orbitChainSetWethGatewayRetryableReceipt =
       await setWethGatewayTxReceipt.waitForRetryables({
+        // @ts-ignore (todo: fix viem type issue)
         orbitPublicClient: orbitChainPublicClient,
       });
     console.log(`Retryables executed`);
@@ -295,11 +311,13 @@ export async function createTokenBridge({
 
     return {
       transaction,
+      // @ts-ignore (todo: fix viem type issue)
       transactionReceipt: txReceipt,
       retryables: orbitChainRetryableReceipts,
       tokenBridgeContracts,
       setWethGateway: {
         transaction: setWethGatewayTransaction,
+        // @ts-ignore (todo: fix viem type issue)
         transactionReceipt: setWethGatewayTxReceipt,
         retryables: [orbitChainSetWethGatewayRetryableReceipt[0]],
       },
@@ -308,6 +326,7 @@ export async function createTokenBridge({
 
   return {
     transaction,
+    // @ts-ignore (todo: fix viem type issue)
     transactionReceipt: txReceipt,
     retryables: orbitChainRetryableReceipts,
     tokenBridgeContracts,
