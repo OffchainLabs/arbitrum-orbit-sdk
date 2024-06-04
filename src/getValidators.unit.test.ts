@@ -13,9 +13,6 @@ import { getValidators } from './getValidators';
 import { rollupAdminLogicABI, safeL2ABI } from './abi';
 import { rollupAdminLogicPrepareFunctionData } from './rollupAdminLogicPrepareTransactionRequest';
 
-// Xai
-const rollupAdminLogicAddress = '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336';
-
 const client = createPublicClient({
   chain: arbitrum,
   transport: http(),
@@ -129,7 +126,7 @@ function safeSetValidatorHelper(args: [Address[], boolean[]]) {
 
 it('getValidators return all validators (Xai)', async () => {
   const { isAccurate, validators } = await getValidators(client, {
-    rollup: rollupAdminLogicAddress,
+    rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336',
   });
   expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
   expect(isAccurate).toBeTruthy();
@@ -158,7 +155,7 @@ describe('createRollupFunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b']);
@@ -188,7 +185,7 @@ describe('createRollupFunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b']);
@@ -220,7 +217,7 @@ describe('setValidatorFunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
@@ -251,7 +248,7 @@ describe('setValidatorFunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
@@ -286,7 +283,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0x81209B63188f27339441B741518fF73F18b4Efd4']);
@@ -320,7 +317,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0x81209B63188f27339441B741518fF73F18b4Efd4']);
@@ -352,7 +349,7 @@ describe('safeL2FunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962']);
@@ -383,7 +380,7 @@ describe('safeL2FunctionSelector', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual(['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962']);
@@ -422,7 +419,7 @@ describe('Detect validators added or removed multiple times', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual([]);
@@ -456,7 +453,7 @@ describe('Detect validators added or removed multiple times', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual([]);
@@ -488,7 +485,7 @@ describe('Detect validators added or removed multiple times', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual([validator]);
@@ -522,7 +519,7 @@ describe('Detect validators added or removed multiple times', () => {
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
-      rollup: rollupAdminLogicAddress,
+      rollup: rollupAddress,
     });
 
     expect(validators).toEqual([validator]);
