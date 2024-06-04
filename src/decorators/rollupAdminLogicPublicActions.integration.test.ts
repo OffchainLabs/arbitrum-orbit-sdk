@@ -28,7 +28,7 @@ it('successfully set validators', async () => {
   const { validators: initialValidators, isComplete: isCompleteInitially } = await getValidators(
     client,
     {
-      rollupAddress: l3Rollup,
+      rollup: l3Rollup,
     },
   );
   expect(initialValidators).toHaveLength(10);
@@ -65,7 +65,7 @@ it('successfully set validators', async () => {
 
   const { validators: currentValidators, isComplete: currentIsComplete } = await getValidators(
     client,
-    { rollupAddress: l3Rollup },
+    { rollup: l3Rollup },
   );
   expect(validators).toEqual([true, false]);
   expect(currentValidators).toEqual(initialValidators.concat(randomAccounts[0]));
@@ -89,7 +89,7 @@ it('successfully set validators', async () => {
   const { validators: revertedValidators, isComplete: revertedIsComplete } = await getValidators(
     client,
     {
-      rollupAddress: l3Rollup,
+      rollup: l3Rollup,
     },
   );
   expect(revertedValidators).toEqual(initialValidators);

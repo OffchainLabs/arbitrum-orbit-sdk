@@ -61,7 +61,7 @@ function setValidators(acc: Set<Address>, input: Hex) {
 
 type GetValidatorsParams = {
   /** Address of the rollup we're getting list of validators from */
-  rollupAddress: Address;
+  rollup: Address;
 };
 type GetValidatorsReturnType = {
   /** If logs contain unknown signature, validators list is not guaranteed to be complete */
@@ -74,12 +74,12 @@ type GetValidatorsReturnType = {
  *
  * @param {PublicClient} client - The chain Viem Public Client
  * @param {GetValidatorsParams} GetValidatorsParams {@link GetValidatorsParams}
- * @param GetValidatorsParams.rollupAddress
+ * @param GetValidatorsParams.rollup
  *
  * @returns Promise<{@link GetValidatorsReturnType}> - The validators with a flag, whether or not we guarantee that all validators were fetched
  *
  * @example
- * const { isComplete, validators } = getValidators(client, { rollupAddress: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336' });
+ * const { isComplete, validators } = getValidators(client, { rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336' });
  *
  * if (isComplete) {
  *   // Validators were all fetched properly
@@ -89,10 +89,9 @@ type GetValidatorsReturnType = {
  */
 export async function getValidators<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  { rollupAddress }: GetValidatorsParams,
+  { rollup }: GetValidatorsParams,
 ): Promise<GetValidatorsReturnType> {
-  const events = await client.getLogs({
-    address: rollupAddress,
+    address: rollup,
     event: ownerFunctionCalledEventAbi,
     args: { id: 6n },
     fromBlock: 0n,
