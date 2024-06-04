@@ -140,8 +140,7 @@ export async function getValidators<TChain extends Chain | undefined>(
           data: tx.input,
         });
 
-        acc = new Set([...acc, ...validators]);
-        return acc;
+        return new Set([...acc, ...validators]);
       }
       case setValidatorFunctionSelector: {
         return updateAccumulator(acc, tx.input);
