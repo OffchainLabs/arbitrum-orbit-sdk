@@ -36,9 +36,6 @@ function getValidatorsFromFunctionData<
     abi,
     data,
   });
-  if (typeof args === 'undefined') {
-    return [];
-  }
   return args;
 }
 
