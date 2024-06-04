@@ -1,4 +1,4 @@
-import { Address, PublicClient, maxInt256 } from 'viem';
+import { Address, PublicClient, Transport, Chain, maxInt256 } from 'viem';
 
 import { approvePrepareTransactionRequest } from './utils/erc20';
 
@@ -7,22 +7,26 @@ import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getters';
 
-export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams = Prettify<
+export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<
+  TChain extends Chain | undefined,
+> = Prettify<
   WithTokenBridgeCreatorAddressOverride<{
     amount?: bigint;
     nativeToken: Address;
     owner: Address;
-    publicClient: PublicClient;
+    publicClient: PublicClient<Transport, TChain>;
   }>
 >;
 
-export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest({
+export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest<
+  TChain extends Chain | undefined,
+>({
   amount = maxInt256,
   nativeToken,
   owner,
   publicClient,
   tokenBridgeCreatorAddressOverride,
-}: CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams) {
+}: CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<TChain>) {
   const chainId = validateParentChain(publicClient);
 
   const request = await approvePrepareTransactionRequest({

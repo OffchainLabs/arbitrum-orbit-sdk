@@ -1,4 +1,4 @@
-import { PublicClient, TransactionReceipt } from 'viem';
+import { PublicClient, Transport, Chain, TransactionReceipt } from 'viem';
 import { L1ToL2MessageStatus, L1TransactionReceipt } from '@arbitrum/sdk';
 import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
 
@@ -11,24 +11,27 @@ type RedeemedRetryableTicket = {
   l2TxReceipt: EthersTransactionReceipt;
 };
 
-export type WaitForRetryablesParameters = {
-  orbitPublicClient: PublicClient;
+export type WaitForRetryablesParameters<TChain extends Chain | undefined> = {
+  orbitPublicClient: PublicClient<Transport, TChain>;
 };
 
 export type WaitForRetryablesResult = [TransactionReceipt];
 
-export type CreateTokenBridgeSetWethGatewayTransactionReceipt = TransactionReceipt & {
-  waitForRetryables(params: WaitForRetryablesParameters): Promise<WaitForRetryablesResult>;
-};
+export type CreateTokenBridgeSetWethGatewayTransactionReceipt<TChain extends Chain | undefined> =
+  TransactionReceipt & {
+    waitForRetryables(
+      params: WaitForRetryablesParameters<TChain>,
+    ): Promise<WaitForRetryablesResult>;
+  };
 
-export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
-  txReceipt: TransactionReceipt,
-): CreateTokenBridgeSetWethGatewayTransactionReceipt {
+export function createTokenBridgePrepareSetWethGatewayTransactionReceipt<
+  TChain extends Chain | undefined,
+>(txReceipt: TransactionReceipt): CreateTokenBridgeSetWethGatewayTransactionReceipt<TChain> {
   return {
     ...txReceipt,
     waitForRetryables: async function ({
       orbitPublicClient,
-    }: WaitForRetryablesParameters): Promise<WaitForRetryablesResult> {
+    }: WaitForRetryablesParameters<TChain>): Promise<WaitForRetryablesResult> {
       const ethersTxReceipt = viemTransactionReceiptToEthersTransactionReceipt(txReceipt);
       const parentChainTxReceipt = new L1TransactionReceipt(ethersTxReceipt);
       const orbitProvider = publicClientToProvider(orbitPublicClient);

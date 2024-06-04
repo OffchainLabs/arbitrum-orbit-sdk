@@ -238,7 +238,9 @@ describe('createTokenBridge utils function', () => {
 
     // -----------------------------
     // 2. approve custom fee token to be spent by the TokenBridgeCreator
-    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
+    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams<
+      typeof nitroTestnodeL2
+    > = {
       nativeToken: testnodeInformation.l3NativeToken,
       owner: l3RollupOwner.address,
       publicClient: nitroTestnodeL2Client,
