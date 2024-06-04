@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem';
+import { Client, Transport, Chain } from 'viem';
 
 import { ParentChainId, validateParentChain } from './types/ParentChain';
 import { base, baseSepolia } from './chains';
@@ -10,10 +10,10 @@ export type SequencerInboxMaxTimeVariation = {
   futureSeconds: bigint;
 };
 
-export function getDefaultSequencerInboxMaxTimeVariation(
-  parentChainIdOrPublicClient: ParentChainId | PublicClient,
+export function getDefaultSequencerInboxMaxTimeVariation<TChain extends Chain | undefined>(
+  parentChainIdOrClient: ParentChainId | Client<Transport, TChain>,
 ): SequencerInboxMaxTimeVariation {
-  const parentChainId = validateParentChain(parentChainIdOrPublicClient);
+  const parentChainId = validateParentChain(parentChainIdOrClient);
 
   const delaySeconds = 60 * 60 * 24 * 4; // 4 days;
   const futureSeconds = 60 * 60; // 1 hour;

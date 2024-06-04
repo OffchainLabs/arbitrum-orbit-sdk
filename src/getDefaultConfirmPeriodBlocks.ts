@@ -1,13 +1,13 @@
-import { PublicClient } from 'viem';
+import { Client, Transport, Chain } from 'viem';
 
 import { ParentChainId, validateParentChain } from './types/ParentChain';
 import { parentChainIsMainnet } from './parentChainIsMainnet';
 import { base, baseSepolia } from './chains';
 
-export function getDefaultConfirmPeriodBlocks(
-  parentChainIdOrPublicClient: ParentChainId | PublicClient,
+export function getDefaultConfirmPeriodBlocks<TChain extends Chain | undefined>(
+  parentChainIdOrClient: ParentChainId | Client<Transport, TChain>,
 ): bigint {
-  const parentChainId = validateParentChain(parentChainIdOrPublicClient);
+  const parentChainId = validateParentChain(parentChainIdOrClient);
 
   const isMainnet = parentChainIsMainnet(parentChainId);
   const confirmPeriodBlocks = isMainnet ? 45_818n : 150n;
