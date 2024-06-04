@@ -128,11 +128,11 @@ function safeSetValidatorHelper(args: [Address[], boolean[]]) {
 }
 
 it('getValidators return all validators (Xai)', async () => {
-  const { isComplete, validators } = await getValidators(client, {
+  const { isAccurate, validators } = await getValidators(client, {
     rollup: rollupAdminLogicAddress,
   });
   expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
-  expect(isComplete).toBeTruthy();
+  expect(isAccurate).toBeTruthy();
 });
 
 describe('createRollupFunctionSelector', () => {
@@ -157,12 +157,12 @@ describe('createRollupFunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b']);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
 
   it('getValidators return all validators with complete flag set to false', async () => {
@@ -187,12 +187,12 @@ describe('createRollupFunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b']);
-    expect(isComplete).toBeFalsy();
+    expect(isAccurate).toBeFalsy();
   });
 });
 
@@ -219,12 +219,12 @@ describe('setValidatorFunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
 
   it('getValidators return all validators with complete flag set to false', async () => {
@@ -250,12 +250,12 @@ describe('setValidatorFunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
-    expect(isComplete).toBeFalsy();
+    expect(isAccurate).toBeFalsy();
   });
 });
 
@@ -285,12 +285,12 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0x81209B63188f27339441B741518fF73F18b4Efd4']);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
 
   it('getValidators return all validators with complete flag set to false', async () => {
@@ -319,12 +319,12 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0x81209B63188f27339441B741518fF73F18b4Efd4']);
-    expect(isComplete).toBeFalsy();
+    expect(isAccurate).toBeFalsy();
   });
 });
 
@@ -351,12 +351,12 @@ describe('safeL2FunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962']);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
 
   it('getValidators return all validators with complete flag set to false', async () => {
@@ -382,12 +382,12 @@ describe('safeL2FunctionSelector', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual(['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962']);
-    expect(isComplete).toBeFalsy();
+    expect(isAccurate).toBeFalsy();
   });
 });
 
@@ -421,12 +421,12 @@ describe('Detect validators added or removed multiple times', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual([]);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
   it('when enabling the same validators multiple time', async () => {
     const validator = '0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962';
@@ -455,12 +455,12 @@ describe('Detect validators added or removed multiple times', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual([]);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
   it('when adding an existing validator', async () => {
     const validator = '0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962';
@@ -487,12 +487,12 @@ describe('Detect validators added or removed multiple times', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual([validator]);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
   it('when removing an existing validator', async () => {
     const validator = '0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962';
@@ -521,11 +521,11 @@ describe('Detect validators added or removed multiple times', () => {
       transport: mockTransport,
     });
 
-    const { validators, isComplete } = await getValidators(mockClient, {
+    const { validators, isAccurate } = await getValidators(mockClient, {
       rollup: rollupAdminLogicAddress,
     });
 
     expect(validators).toEqual([validator]);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
 });

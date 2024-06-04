@@ -65,8 +65,12 @@ type GetValidatorsParams = {
   rollup: Address;
 };
 type GetValidatorsReturnType = {
-  /** If logs contain unknown signature, validators list is not guaranteed to be complete */
-  isComplete: boolean;
+  /**
+   * If logs contain unknown signature, validators list might:
+   * - contain false positives (validators that were removed, but returned as validator)
+   * - contain false negatives (validators that were added, but not present in the list)
+   */
+  isAccurate: boolean;
   /** List of validators for the given rollup */
   validators: Address[];
 };
@@ -75,17 +79,20 @@ type GetValidatorsReturnType = {
  *
  * @param {PublicClient} publicClient - The chain Viem Public Client
  * @param {GetValidatorsParams} GetValidatorsParams {@link GetValidatorsParams}
- * @param GetValidatorsParams.rollup
  *
- * @returns Promise<{@link GetValidatorsReturnType}> - The validators with a flag, whether or not we guarantee that all validators were fetched
+ * @returns Promise<{@link GetValidatorsReturnType}>
+ *
+ * @remarks validators list is not guaranteed to be exhaustive if the `isAccurate` flag is false.
+ * It might contain false positive (validators that were removed, but returned as validator)
+ * or false negative (validators that were added, but not present in the list)
  *
  * @example
- * const { isComplete, validators } = getValidators(client, { rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336' });
+ * const { isAccurate, validators } = getValidators(client, { rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336' });
  *
- * if (isComplete) {
+ * if (isAccurate) {
  *   // Validators were all fetched properly
  * } else {
- *   // Some validators might be missing
+ *   // Validators list is not guaranteed to be accurate
  * }
  */
 export async function getValidators<TChain extends Chain | undefined>(
@@ -122,7 +129,7 @@ export async function getValidators<TChain extends Chain | undefined>(
     ),
   );
 
-  let isComplete = true;
+  let isAccurate = true;
   const validators = txs.reduce((acc, tx) => {
     const txSelectedFunction = tx.input.slice(0, 10);
 
@@ -159,14 +166,14 @@ export async function getValidators<TChain extends Chain | undefined>(
       }
       default: {
         console.warn(`[getValidators] unknown 4bytes, tx id: ${tx.hash}`);
-        isComplete = false;
+        isAccurate = false;
         return acc;
       }
     }
   }, new Set<Address>());
 
   return {
-    isComplete,
+    isAccurate,
     validators: [...validators],
   };
 }

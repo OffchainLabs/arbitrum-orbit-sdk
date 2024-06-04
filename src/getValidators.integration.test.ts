@@ -42,7 +42,7 @@ describe.skip('successfully get validators', () => {
   it('when disabling the same validator multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
-    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+    const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(
       client,
       {
         rollup: l3Rollup,
@@ -50,39 +50,39 @@ describe.skip('successfully get validators', () => {
     );
     // By default, chains from nitro testnode has 10 validators
     expect(initialValidators).toHaveLength(10);
-    expect(isCompleteInitially).toBeTruthy();
+    expect(isAccurateInitially).toBeTruthy();
 
     await setValidator(randomAccount, false);
     await setValidator(randomAccount, false);
 
-    const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
+    const { isAccurate: isStillAccurate, validators: newValidators } = await getValidators(client, {
       rollup: l3Rollup,
     });
     // Setting the same validator multiple time to false doesn't add new validators
     expect(newValidators).toEqual(initialValidators);
-    expect(isStillComplete).toBeTruthy();
+    expect(isStillAccurate).toBeTruthy();
 
     await setValidator(randomAccount, true);
-    const { validators, isComplete } = await getValidators(client, { rollup: l3Rollup });
+    const { validators, isAccurate } = await getValidators(client, { rollup: l3Rollup });
     expect(validators).toEqual(initialValidators.concat(randomAccount));
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
 
     // Reset state for future tests
     await setValidator(randomAccount, false);
-    const { isComplete: isCompleteFinal, validators: validatorsFinal } = await getValidators(
+    const { isAccurate: isAccurateFinal, validators: validatorsFinal } = await getValidators(
       client,
       {
         rollup: l3Rollup,
       },
     );
     expect(validatorsFinal).toEqual(initialValidators);
-    expect(isCompleteFinal).toBeTruthy();
+    expect(isAccurateFinal).toBeTruthy();
   });
 
   it('when enabling the same validators multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
-    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+    const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(
       client,
       {
         rollup: l3Rollup,
@@ -90,60 +90,60 @@ describe.skip('successfully get validators', () => {
     );
     // By default, chains from nitro testnode has 10 validators
     expect(initialValidators).toHaveLength(10);
-    expect(isCompleteInitially).toBeTruthy();
+    expect(isAccurateInitially).toBeTruthy();
 
     await setValidator(randomAccount, true);
     await setValidator(randomAccount, true);
-    const { isComplete: isStillComplete, validators: newValidators } = await getValidators(client, {
+    const { isAccurate: isStillAccurate, validators: newValidators } = await getValidators(client, {
       rollup: l3Rollup,
     });
 
     expect(newValidators).toEqual(initialValidators.concat(randomAccount));
-    expect(isStillComplete).toBeTruthy();
+    expect(isStillAccurate).toBeTruthy();
 
     // Reset state for futures tests
     await setValidator(randomAccount, false);
-    const { validators, isComplete } = await getValidators(client, { rollup: l3Rollup });
+    const { validators, isAccurate } = await getValidators(client, { rollup: l3Rollup });
     expect(validators).toEqual(initialValidators);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
 
   it('when adding an existing validator', async () => {
-    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+    const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(
       client,
       { rollup: l3Rollup },
     );
     expect(initialValidators).toHaveLength(10);
-    expect(isCompleteInitially).toBeTruthy();
+    expect(isAccurateInitially).toBeTruthy();
 
     const firstValidator = initialValidators[0];
     await setValidator(firstValidator, true);
 
-    const { isComplete, validators } = await getValidators(client, { rollup: l3Rollup });
+    const { isAccurate, validators } = await getValidators(client, { rollup: l3Rollup });
     expect(validators).toEqual(initialValidators);
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
   });
 
   it('when removing an existing validator', async () => {
-    const { isComplete: isCompleteInitially, validators: initialValidators } = await getValidators(
+    const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(
       client,
       { rollup: l3Rollup },
     );
     expect(initialValidators).toHaveLength(10);
-    expect(isCompleteInitially).toBeTruthy();
+    expect(isAccurateInitially).toBeTruthy();
 
     const lastValidator = initialValidators[initialValidators.length - 1];
     await setValidator(lastValidator, false);
-    const { isComplete, validators } = await getValidators(client, { rollup: l3Rollup });
+    const { isAccurate, validators } = await getValidators(client, { rollup: l3Rollup });
     expect(validators).toEqual(initialValidators.slice(0, -1));
-    expect(isComplete).toBeTruthy();
+    expect(isAccurate).toBeTruthy();
 
     await setValidator(lastValidator, true);
-    const { isComplete: isCompleteFinal, validators: validatorsFinal } = await getValidators(
+    const { isAccurate: isAccurateFinal, validators: validatorsFinal } = await getValidators(
       client,
       { rollup: l3Rollup },
     );
     expect(validatorsFinal).toEqual(initialValidators);
-    expect(isCompleteFinal).toBeTruthy();
+    expect(isAccurateFinal).toBeTruthy();
   });
 });
