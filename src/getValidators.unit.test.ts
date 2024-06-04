@@ -204,6 +204,14 @@ describe('setValidatorFunctionSelector', () => {
             logs: {
               '0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10':
                 setValidatorHelper([['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8'], [true]]),
+              '0x6e29af776e4b08f92b484a3d4ecc506a4b6455bbd335a2547c4e97d6151f588c':
+                setValidatorHelper([
+                  [
+                    '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+                    '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+                  ],
+                  [true, false],
+                ]),
             },
             method,
             params,
@@ -220,7 +228,10 @@ describe('setValidatorFunctionSelector', () => {
       rollup: rollupAddress,
     });
 
-    expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
+    expect(validators).toEqual([
+      '0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8',
+      '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+    ]);
     expect(isAccurate).toBeTruthy();
   });
 
@@ -235,6 +246,14 @@ describe('setValidatorFunctionSelector', () => {
               '0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10':
                 setValidatorHelper([['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8'], [true]]),
               '0x6e29af776e4b08f92b484a3d4ecc506a4b6455bbd335a2547c4e97d6151f588c': '0xdeadbeef',
+              '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
+                setValidatorHelper([
+                  [
+                    '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+                    '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+                  ],
+                  [false, true],
+                ]),
             },
             method,
             params,
@@ -251,7 +270,10 @@ describe('setValidatorFunctionSelector', () => {
       rollup: rollupAddress,
     });
 
-    expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
+    expect(validators).toEqual([
+      '0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8',
+      '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+    ]);
     expect(isAccurate).toBeFalsy();
   });
 });
@@ -270,6 +292,14 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
                   ['0x81209B63188f27339441B741518fF73F18b4Efd4'],
                   [true],
                 ]),
+              '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
+                setValidatorHelper([
+                  [
+                    '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+                    '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+                  ],
+                  [true, true],
+                ]),
             },
             method,
             params,
@@ -286,7 +316,11 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
       rollup: rollupAddress,
     });
 
-    expect(validators).toEqual(['0x81209B63188f27339441B741518fF73F18b4Efd4']);
+    expect(validators).toEqual([
+      '0x81209B63188f27339441B741518fF73F18b4Efd4',
+      '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+      '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+    ]);
     expect(isAccurate).toBeTruthy();
   });
 
@@ -303,6 +337,14 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
                 upgradeExecutorSetValidatorHelper([
                   ['0x81209B63188f27339441B741518fF73F18b4Efd4'],
                   [true],
+                ]),
+              '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
+                setValidatorHelper([
+                  [
+                    '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+                    '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+                  ],
+                  [false, false],
                 ]),
             },
             method,
@@ -336,6 +378,14 @@ describe('safeL2FunctionSelector', () => {
             logs: {
               '0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10':
                 safeSetValidatorHelper([['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962'], [true]]),
+              '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
+                setValidatorHelper([
+                  [
+                    '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+                    '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+                  ],
+                  [false, true],
+                ]),
             },
             method,
             params,
@@ -352,7 +402,10 @@ describe('safeL2FunctionSelector', () => {
       rollup: rollupAddress,
     });
 
-    expect(validators).toEqual(['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962']);
+    expect(validators).toEqual([
+      '0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962',
+      '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+    ]);
     expect(isAccurate).toBeTruthy();
   });
 
@@ -367,6 +420,14 @@ describe('safeL2FunctionSelector', () => {
               '0x6e29af776e4b08f92b484a3d4ecc506a4b6455bbd335a2547c4e97d6151f588c': '0xdeadbeef',
               '0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10':
                 safeSetValidatorHelper([['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962'], [true]]),
+              '0x10f4f4d214af281a67713ddaf799f0524f833c57818863e8c1b117394e872f3a':
+                setValidatorHelper([
+                  [
+                    '0x6a23CcC1c36D2aaA98AeF2a4471cf807DD22e45b',
+                    '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+                  ],
+                  [false, true],
+                ]),
             },
             method,
             params,
@@ -383,7 +444,10 @@ describe('safeL2FunctionSelector', () => {
       rollup: rollupAddress,
     });
 
-    expect(validators).toEqual(['0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962']);
+    expect(validators).toEqual([
+      '0xC0b97e2998edB3Bf5c6369e7f7eFfb49c36fA962',
+      '0x9481eF9e2CA814fc94676dEa3E8c3097B06b3a33',
+    ]);
     expect(isAccurate).toBeFalsy();
   });
 });
