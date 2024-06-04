@@ -1,10 +1,11 @@
 import { it, expect } from 'vitest';
-import { PrepareTransactionRequestReturnType, createPublicClient, http } from 'viem';
+import { createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL2 } from '../chains';
 import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
 import { getInformationFromTestnode, getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
+import { getValidators } from '../getValidators';
 
 const { l3RollupOwner } = getNitroTestnodePrivateKeyAccounts();
 const { l3Rollup, l3UpgradeExecutor } = getInformationFromTestnode();
@@ -24,6 +25,15 @@ it('successfully set validators', async () => {
     privateKeyToAccount(generatePrivateKey()).address,
   ];
 
+  const { validators: initialValidators, isAccurate: isAccurateInitially } = await getValidators(
+    client,
+    {
+      rollup: l3Rollup,
+    },
+  );
+  expect(initialValidators).toHaveLength(10);
+  expect(isAccurateInitially).toBeTruthy();
+
   const tx = await client.rollupAdminLogicPrepareTransactionRequest({
     functionName: 'setValidator',
     args: [randomAccounts, [true, false]],
@@ -32,10 +42,12 @@ it('successfully set validators', async () => {
     rollup: l3Rollup,
   });
 
-  await client.sendRawTransaction({
-    serializedTransaction: await l3RollupOwner.signTransaction(
-      tx as PrepareTransactionRequestReturnType & { chainId: number },
-    ),
+  const txHash = await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(tx),
+  });
+
+  await client.waitForTransactionReceipt({
+    hash: txHash,
   });
 
   const validators = await Promise.all([
@@ -51,7 +63,37 @@ it('successfully set validators', async () => {
     }),
   ]);
 
+  const { validators: currentValidators, isAccurate: currentIsAccurate } = await getValidators(
+    client,
+    { rollup: l3Rollup },
+  );
   expect(validators).toEqual([true, false]);
+  expect(currentValidators).toEqual(initialValidators.concat(randomAccounts[0]));
+  expect(currentIsAccurate).toBeTruthy();
+
+  const revertTx = await client.rollupAdminLogicPrepareTransactionRequest({
+    functionName: 'setValidator',
+    args: [randomAccounts, [false, false]],
+    account: l3RollupOwner.address,
+    upgradeExecutor: l3UpgradeExecutor,
+    rollup: l3Rollup,
+  });
+
+  const revertTxHash = await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(revertTx),
+  });
+  await client.waitForTransactionReceipt({
+    hash: revertTxHash,
+  });
+
+  const { validators: revertedValidators, isAccurate: revertedIsAccurate } = await getValidators(
+    client,
+    {
+      rollup: l3Rollup,
+    },
+  );
+  expect(revertedValidators).toEqual(initialValidators);
+  expect(revertedIsAccurate).toBeTruthy();
 });
 
 it('successfully enable/disable whitelist', async () => {
@@ -70,10 +112,11 @@ it('successfully enable/disable whitelist', async () => {
     upgradeExecutor: l3UpgradeExecutor,
   });
 
-  await client.sendRawTransaction({
-    serializedTransaction: await l3RollupOwner.signTransaction(
-      tx as PrepareTransactionRequestReturnType & { chainId: number },
-    ),
+  const txHash = await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(tx),
+  });
+  await client.waitForTransactionReceipt({
+    hash: txHash,
   });
 
   const whitelistDisabled = await client.rollupAdminLogicReadContract({
@@ -92,9 +135,10 @@ it('successfully enable/disable whitelist', async () => {
     upgradeExecutor: l3UpgradeExecutor,
   });
 
-  await client.sendRawTransaction({
-    serializedTransaction: await l3RollupOwner.signTransaction(
-      revertTx as PrepareTransactionRequestReturnType & { chainId: number },
-    ),
+  const revertTxHash = await client.sendRawTransaction({
+    serializedTransaction: await l3RollupOwner.signTransaction(revertTx),
+  });
+  await client.waitForTransactionReceipt({
+    hash: revertTxHash,
   });
 });

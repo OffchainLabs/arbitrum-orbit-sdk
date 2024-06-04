@@ -33,7 +33,7 @@ it('succesfully adds chain owner using upgrade executor', async () => {
   expect(isOwnerInitially).toEqual(false);
 
   // Adding random address as chain owner using upgrade executor
-  const transactionRequest2 = await client.arbOwnerPrepareTransactionRequest({
+  const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
     functionName: 'addChainOwner',
     args: [randomAccount.address],
     upgradeExecutor: upgradeExecutorAddress,
@@ -41,9 +41,11 @@ it('succesfully adds chain owner using upgrade executor', async () => {
   });
 
   // submit tx to add chain owner
-  await client.sendRawTransaction({
-    serializedTransaction: await owner.signTransaction(transactionRequest2),
+  const txHash = await client.sendRawTransaction({
+    serializedTransaction: await owner.signTransaction(transactionRequest),
   });
+  await client.waitForTransactionReceipt({ hash: txHash });
+
   const isOwner = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
     args: [randomAccount.address],
@@ -69,9 +71,10 @@ it('succesfully removes chain owner', async () => {
   });
 
   // submit tx to remove chain owner
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
+  await client.waitForTransactionReceipt({ hash: txHash });
 
   const isOwner = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
@@ -98,9 +101,10 @@ it('successfully updates infra fee receiver', async () => {
   });
 
   // submit tx to update infra fee receiver
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
+  await client.waitForTransactionReceipt({ hash: txHash });
 
   const infraFeeReceiver = await client.arbOwnerReadContract({
     functionName: 'getInfraFeeAccount',
@@ -120,9 +124,10 @@ it('successfully updates L2 Base Fee Estimate Inertia on Orbit chain', async () 
   });
 
   // submit tx to update infra fee receiver
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
+  await client.waitForTransactionReceipt({ hash: txHash });
 
   const newL2BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
     functionName: 'getL1BaseFeeEstimateInertia',

@@ -38,9 +38,9 @@ type RollupAdminLogicPrepareFunctionDataParameters<
   abi: RollupAdminLogicAbi;
   rollup: Address;
 };
-function rollupAdminLogicPrepareFunctionData<TFunctionName extends RollupAdminLogicFunctionName>(
-  params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>,
-) {
+export function rollupAdminLogicPrepareFunctionData<
+  TFunctionName extends RollupAdminLogicFunctionName,
+>(params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>) {
   const { upgradeExecutor } = params;
 
   if (!upgradeExecutor) {
