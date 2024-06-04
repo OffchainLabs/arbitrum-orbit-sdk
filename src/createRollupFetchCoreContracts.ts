@@ -9,6 +9,10 @@ export type CreateRollupFetchCoreContractsParams = {
   publicClient: PublicClient;
 };
 
+/**
+ * Creates core contract instances for a specified rollup using transaction hash
+ * and receipt data.
+ */
 export async function createRollupFetchCoreContracts({
   rollup,
   publicClient,

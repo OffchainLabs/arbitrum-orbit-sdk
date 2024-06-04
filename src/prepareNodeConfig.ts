@@ -73,6 +73,15 @@ function getDisableBlobReader(parentChainId: ParentChainId): boolean {
   return false;
 }
 
+/**
+ * Prepares the configuration for a node based on the provided parameters,
+ * including chain name, chain configuration, core contracts, private keys,
+ * parent chain information, and RPC URLs. The function constructs a NodeConfig
+ * object with detailed information about the chain, parent chain connection,
+ * HTTP settings, node settings (sequencer, batch poster, staker), execution
+ * parameters (forwarding target, caching), and additional configurations based
+ * on specific conditions.
+ */
 export function prepareNodeConfig({
   chainName,
   chainConfig,

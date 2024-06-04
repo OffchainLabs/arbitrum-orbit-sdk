@@ -58,6 +58,14 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [nitroTestnodeL2.id]: 0n,
 };
 
+/**
+ * createRollupFetchTransactionHash retrieves the transaction hash of the
+ * RollupInitialized event emitted by a specified Rollup contract on a given
+ * public chain. It takes in the Rollup contract address and a PublicClient
+ * instance as parameters, validates the parent chain, and fetches the event
+ * logs to find the RollupInitialized event. The function then returns the
+ * transaction hash associated with that event.
+ */
 export async function createRollupFetchTransactionHash({
   rollup,
   publicClient,

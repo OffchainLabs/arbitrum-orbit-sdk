@@ -13,6 +13,10 @@ export type ArbGasInfoPublicActions<TChain extends Chain | undefined = Chain | u
   ) => Promise<ArbGasInfoReadContractReturnType<TFunctionName>>;
 };
 
+/**
+ * Returns an object with a method `arbGasInfoReadContract` that takes arguments
+ * for reading contract information and returns the result asynchronously.
+ */
 export function arbGasInfoPublicActions<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,

@@ -1,3 +1,11 @@
+/**
+ * Variable "sequencerInboxABI" defines the ABI (Application Binary Interface)
+ * for the Sequencer Inbox contract. It includes various error types and events
+ * related to inbox message delivery, keyset validation, and batch processing.
+ * Additionally, it provides functions for adding sequencer L2 batches, force
+ * inclusion of messages, and managing keysets. This ABI serves as a blueprint
+ * for interacting with the Sequencer Inbox contract in a standardized way.
+ */
 export const sequencerInboxABI = [
   { inputs: [], name: 'AlreadyInit', type: 'error' },
   {

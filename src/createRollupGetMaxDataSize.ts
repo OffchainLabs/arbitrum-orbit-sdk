@@ -12,6 +12,10 @@ import {
 } from './chains';
 import { ParentChainId } from './types/ParentChain';
 
+/**
+ * Returns the maximum data size allowed for a rollup chain based on the
+ * specified {@link ParentChainId}.
+ */
 export function createRollupGetMaxDataSize(parentChainId: ParentChainId): bigint {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {

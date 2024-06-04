@@ -68,6 +68,11 @@ export type ArbAggregatorPrepareTransactionRequestParameters<
 > = Omit<ArbAggregatorPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
   account: Address;
 };
+/**
+ * Prepares a transaction request for the ArbAggregator contract by encoding the
+ * function data and determining the target address based on the upgrade
+ * executor.
+ */
 export async function arbAggregatorPrepareTransactionRequest<
   TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
   TChain extends Chain | undefined,

@@ -31,6 +31,10 @@ export type CreateRollupTransactionReceipt = TransactionReceipt & {
   getCoreContracts(): CoreContracts;
 };
 
+/**
+ * Creates a transaction receipt for preparing a rollup, including core contract
+ * information.
+ */
 export function createRollupPrepareTransactionReceipt(
   txReceipt: TransactionReceipt,
 ): CreateRollupTransactionReceipt {

@@ -31,6 +31,10 @@ export type CreateTokenBridgeGetInputsResult = {
   retryableFee: bigint;
 };
 
+/**
+ * Returns a {@link CreateTokenBridgeGetInputsResult} with inputs for creating a
+ * token bridge.
+ */
 export const createTokenBridgeGetInputs = async (
   l1DeployerAddress: string,
   l1PublicClient: PublicClient,
@@ -39,15 +43,25 @@ export const createTokenBridgeGetInputs = async (
   rollupAddress: string,
   retryableGasOverrides?: TransactionRequestRetryableGasOverrides,
 ): Promise<CreateTokenBridgeGetInputsResult> => {
+  /** l1Provider is a {@link ethers.providers.Provider} for the L1 chain. */
   const l1Provider = publicClientToProvider(l1PublicClient);
+  /** l2Provider is a provider for interacting with the L2 chain. */
   const l2Provider = publicClientToProvider(l2PublicClient);
 
   await registerNewNetwork(l1Provider, l2Provider, rollupAddress);
 
+  /**
+   * L1AtomicTokenBridgeCreator__factory creates a contract instance to interact
+   * with the L1 Atomic Token Bridge Creator contract on Ethereum.
+   */
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
     l1TokenBridgeCreatorAddress,
     L1AtomicTokenBridgeCreator.abi,
   );
+  /**
+   * l1TokenBridgeCreator connects to the L1AtomicTokenBridgeCreator contract
+   * using the provided provider.
+   */
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
 
   //// gasPrice
@@ -59,7 +73,15 @@ export const createTokenBridgeGetInputs = async (
     l1Provider,
     l2Provider,
   );
+  /**
+   * maxSubmissionCostForFactoryEstimation represents the maximum submission
+   * cost for estimating the deployment of an L2 factory.
+   */
   const maxSubmissionCostForFactoryEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
+  /**
+   * maxGasForFactoryEstimation returns the maximum gas limit for deploying the
+   * L2 factory.
+   */
   const maxGasForFactoryEstimation = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
 
   //// run retryable estimate for deploying L2 contracts
@@ -67,6 +89,10 @@ export const createTokenBridgeGetInputs = async (
   const l2FactoryTemplate = L2AtomicTokenBridgeFactory__factory.attach(
     await l1TokenBridgeCreator.l2TokenBridgeFactoryTemplate(),
   ).connect(l1Provider);
+  /**
+   * l2Code gets the bytecode for various templates from the
+   * L1AtomicTokenBridgeCreator contract on L1.
+   */
   const l2Code = {
     router: await l1Provider.getCode(await l1TokenBridgeCreator.l2RouterTemplate()),
     standardGateway: await l1Provider.getCode(
@@ -82,6 +108,10 @@ export const createTokenBridgeGetInputs = async (
     ),
     multicall: await l1Provider.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
   };
+  /**
+   * gasEstimateToDeployContracts estimates the gas required to deploy L2
+   * contracts.
+   */
   const gasEstimateToDeployContracts = await l2FactoryTemplate.estimateGas.deployL2Contracts(
     l2Code,
     ethers.Wallet.createRandom().address,
@@ -93,6 +123,7 @@ export const createTokenBridgeGetInputs = async (
     ethers.Wallet.createRandom().address,
     ethers.Wallet.createRandom().address,
   );
+  /** maxSubmissionCostForContractsEstimation returns a {@link BigNumber}. */
   const maxSubmissionCostForContractsEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
 
   //// apply gas overrides
@@ -108,6 +139,7 @@ export const createTokenBridgeGetInputs = async (
         )
       : maxSubmissionCostForFactoryEstimation;
 
+  /** maxGasForFactory is the maximum gas limit for deploying the L2 factory. */
   const maxGasForFactory =
     retryableGasOverrides && retryableGasOverrides.maxGasForFactory
       ? BigNumber.from(
@@ -120,6 +152,7 @@ export const createTokenBridgeGetInputs = async (
         )
       : maxGasForFactoryEstimation;
 
+  /** maxSubmissionCostForContracts returns a {@link BigNumber}. */
   const maxSubmissionCostForContracts =
     retryableGasOverrides && retryableGasOverrides.maxSubmissionCostForContracts
       ? BigNumber.from(
@@ -132,6 +165,7 @@ export const createTokenBridgeGetInputs = async (
         )
       : maxSubmissionCostForContractsEstimation;
 
+  /** maxGasForContracts is the maximum gas limit for deploying L2 contracts. */
   const maxGasForContracts =
     retryableGasOverrides && retryableGasOverrides.maxGasForContracts
       ? BigNumber.from(
@@ -144,11 +178,21 @@ export const createTokenBridgeGetInputs = async (
         )
       : gasEstimateToDeployContracts;
 
+  /**
+   * The variable `maxGasPrice` represents the maximum gas price to be used for
+   * transactions. It is typically set based on the current gas price fetched
+   * from the provider.
+   */
   const maxGasPrice =
     retryableGasOverrides && retryableGasOverrides.maxGasPrice
       ? retryableGasOverrides.maxGasPrice
       : gasPrice;
 
+  /**
+   * retryableFee calculates the total fee for retrying a transaction, including
+   * the submission cost for deploying L2 factory and contracts, multiplied by
+   * the gas price.
+   */
   let retryableFee = maxSubmissionCostForFactory
     .add(maxSubmissionCostForContracts)
     .add(maxGasForFactory.mul(maxGasPrice))
@@ -189,6 +233,14 @@ const getEstimateForDeployingFactory = async (
   return deployFactoryGasParams;
 };
 
+/**
+ * getEstimateForSettingGateway calculates the gas estimate for setting a token
+ * gateway in the router. It takes various parameters such as the addresses of
+ * the chain owner, upgrade executor, and gateway router, as well as the
+ * calldata for setting gateways. The function uses L1ToL2MessageGasEstimator to
+ * estimate the gas cost for the operation and returns an object containing gas
+ * limit, max fee per gas, max submission cost, and deposit values.
+ */
 export const getEstimateForSettingGateway = async (
   l1ChainOwnerAddress: Address,
   l1UpgradeExecutorAddress: Address,
@@ -199,11 +251,13 @@ export const getEstimateForSettingGateway = async (
 ) => {
   // ethers providers
   const parentChainProvider = publicClientToProvider(parentChainPublicClient);
+  /** orbitChainProvider estimates gas for setting a token gateway in the router. */
   const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
 
   // run retryable estimate for setting a token gateway in the router
   const l1ToL2MsgGasEstimate = new L1ToL2MessageGasEstimator(orbitChainProvider);
 
+  /** Estimates gas parameters for setting a token gateway in the router. */
   const setGatewaysGasParams = await l1ToL2MsgGasEstimate.estimateAll(
     {
       from: l1UpgradeExecutorAddress,

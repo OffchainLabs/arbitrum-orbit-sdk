@@ -10,6 +10,12 @@ export type SequencerInboxMaxTimeVariation = {
   futureSeconds: bigint;
 };
 
+/**
+ * getDefaultSequencerInboxMaxTimeVariation returns a {@link
+ * SequencerInboxMaxTimeVariation} object with delay and future blocks and
+ * seconds based on the parent chain ID or PublicClient provided. The variation
+ * values differ depending on the parent chain being either base or baseSepolia.
+ */
 export function getDefaultSequencerInboxMaxTimeVariation(
   parentChainIdOrPublicClient: ParentChainId | PublicClient,
 ): SequencerInboxMaxTimeVariation {

@@ -13,6 +13,10 @@ export type ArbGasInfoReadContractParameters<TFunctionName extends ArbGasInfoFun
 export type ArbGasInfoReadContractReturnType<TFunctionName extends ArbGasInfoFunctionName> =
   ReadContractReturnType<ArbGasInfoAbi, TFunctionName>;
 
+/**
+ * Reads information from the ArbGasInfo contract on the specified chain and
+ * returns the result.
+ */
 export function arbGasInfoReadContract<
   TChain extends Chain | undefined,
   TFunctionName extends ArbGasInfoFunctionName,

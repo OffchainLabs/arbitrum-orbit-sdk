@@ -89,6 +89,13 @@ const parentChainGatewayRouterAbi = [
   },
 ];
 
+/**
+ * Creates a transaction request to set the WETH gateway on a parent chain
+ * router contract. This function calculates gas estimates, applies gas
+ * overrides if provided, and prepares the transaction request for execution on
+ * the parent chain. The function returns the prepared transaction request along
+ * with the chain ID.
+ */
 export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   rollup,
   parentChainPublicClient,

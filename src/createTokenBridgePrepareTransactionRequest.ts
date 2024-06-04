@@ -33,6 +33,11 @@ export type CreateTokenBridgePrepareTransactionRequestParams = Prettify<
   }>
 >;
 
+/**
+ * Creates a token bridge prepare transaction request for the specified
+ * parameters and returns the prepared transaction request along with the chain
+ * ID.
+ */
 export async function createTokenBridgePrepareTransactionRequest({
   params,
   parentChainPublicClient,

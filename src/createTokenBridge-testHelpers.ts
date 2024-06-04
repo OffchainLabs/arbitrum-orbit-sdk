@@ -7,6 +7,7 @@ import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 const execPromise = promisify(exec);
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 
+/** Deploys a token bridge creator contract using the provided public client. */
 export async function deployTokenBridgeCreator({
   publicClient,
 }: {

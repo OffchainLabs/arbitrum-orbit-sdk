@@ -1,5 +1,12 @@
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 
+/**
+ * The `defaults` object contains default values for various blockchain
+ * parameters such as block numbers and flags. It also includes default settings
+ * for the Arbitrum chain configuration. The `prepareChainConfig` function
+ * merges these default values with any user-provided parameters to create a
+ * complete `ChainConfig` object.
+ */
 export const defaults = {
   homesteadBlock: 0,
   daoForkBlock: null,
@@ -36,6 +43,11 @@ export type PrepareChainConfigParams = Pick<ChainConfig, 'chainId'> &
       Partial<Omit<ChainConfigArbitrumParams, 'InitialChainOwner'>>;
   };
 
+/**
+ * prepareChainConfig prepares a ChainConfig object by merging default values
+ * with the provided parameters, including chainId and arbitrum configuration.
+ * It returns a ChainConfig object with the finalized configuration settings.
+ */
 export function prepareChainConfig(params: PrepareChainConfigParams): ChainConfig {
   return {
     ...defaults,

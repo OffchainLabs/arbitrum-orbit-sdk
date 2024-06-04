@@ -15,6 +15,7 @@ export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = Prettify<
   }>
 >;
 
+/** Creates a token bridge with enough custom fee token allowance. */
 export async function createTokenBridgeEnoughCustomFeeTokenAllowance({
   nativeToken,
   owner,

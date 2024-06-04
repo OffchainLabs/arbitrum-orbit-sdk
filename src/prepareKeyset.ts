@@ -16,6 +16,11 @@ function uint16ToBigEndian(value: number): Uint8Array {
   return new Uint8Array(buffer);
 }
 
+/**
+ * PrepareKeyset encodes a keyset consisting of public keys and an assumed
+ * honest value into a single hexadecimal representation. It returns a {@link
+ * `0x${string}`} representing the encoded keyset.
+ */
 export function prepareKeyset(publicKeys: string[], assumedHonest: number): `0x${string}` {
   const numberOfMembers = publicKeys.length;
   const membersBuffer: Uint8Array[] = [];

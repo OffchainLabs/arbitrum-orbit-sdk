@@ -12,6 +12,10 @@ import {
 } from '../chains';
 import { ParentChainId } from '../types/ParentChain';
 
+/**
+ * Returns the layer number (1 or 2) corresponding to the given {@link
+ * ParentChainId}.
+ */
 export function getParentChainLayer(parentChainId: ParentChainId): 1 | 2 {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {

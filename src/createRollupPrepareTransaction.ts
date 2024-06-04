@@ -14,6 +14,10 @@ export type CreateRollupTransaction = Transaction & {
   getInputs(): CreateRollupFunctionInputs;
 };
 
+/**
+ * Returns a {@link CreateRollupTransaction} with a method to extract inputs for
+ * creating a rollup transaction.
+ */
 export function createRollupPrepareTransaction(tx: Transaction): CreateRollupTransaction {
   return {
     ...tx,

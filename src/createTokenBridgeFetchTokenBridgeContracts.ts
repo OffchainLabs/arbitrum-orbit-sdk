@@ -14,6 +14,10 @@ export type CreateTokenBridgeFetchTokenBridgeContractsParams = Prettify<
   }>
 >;
 
+/**
+ * Fetches and returns the TokenBridge contracts on the parent chain and orbit
+ * chain based on the provided inbox address and parent chain public client.
+ */
 export async function createTokenBridgeFetchTokenBridgeContracts({
   inbox,
   parentChainPublicClient,

@@ -24,6 +24,10 @@ export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | und
   ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
+/**
+ * Returns an object with functions to interact with the ArbOwner contract on a
+ * specified chain.
+ */
 export function arbOwnerPublicActions<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,

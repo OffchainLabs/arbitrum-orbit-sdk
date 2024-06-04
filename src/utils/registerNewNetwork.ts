@@ -163,6 +163,7 @@ async function createParentNetwork<TIsArbitrum>({
   };
 }
 
+/** Registers a new network by adding the parent and child networks. */
 export const registerNewNetwork = async (
   parentProvider: JsonRpcProvider,
   childProvider: JsonRpcProvider,
@@ -171,9 +172,15 @@ export const registerNewNetwork = async (
   parentNetwork: L1Network | L2Network;
   childNetwork: L2Network;
 }> => {
+  /** Returns the network information of the parent chain. */
   const parentNetworkInfo = await parentProvider.getNetwork();
+  /**
+   * Creates a child network based on the provided rollup address, parent
+   * provider, parent network, and child network.
+   */
   const childNetworkInfo = await childProvider.getNetwork();
 
+  /** Creates and registers a child network that is an L2Network. */
   const childNetwork = await createChildNetwork({
     rollupAddress,
     parentProvider,
@@ -183,7 +190,25 @@ export const registerNewNetwork = async (
 
   // If the parent chain is an Arbitrum chain, we need to register parent and child chain both as L2 chains
   if (await isArbitrumChain(parentProvider)) {
+    /** Checks if the parent network is registered and returns a boolean value. */
+    /**
+     * Checks whether the parent network is registered and returns a boolean
+     * value.
+     */
     const isParentNetworkRegistered = await isNetworkRegistered(parentProvider, { type: 'L2' });
+    /**
+     * The `parentNetwork` variable represents the parent network in the system.
+     * It can be either an L1 or L2 network and is used to create a new child
+     * network. The `parentNetwork` is of type {@link Network} and contains
+     * information such as chain ID, name, and other network-specific details.
+     */
+    /**
+     * The `parentNetwork` variable represents the parent network in a
+     * blockchain ecosystem. It can be either an L1 or L2 network and is used to
+     * create a new child network. The `parentNetwork` is of type {@link
+     * Network} and contains information such as chain ID, name, confirm period
+     * blocks, explorer URL, and token bridge details.
+     */
     const parentNetwork = await createParentNetwork({
       parentNetwork: parentNetworkInfo,
       childNetwork: childNetworkInfo,
@@ -194,6 +219,8 @@ export const registerNewNetwork = async (
       addCustomNetwork({ customL2Network: parentNetwork });
     }
 
+    /** Check if the child network is registered in the system. */
+    /** Checks if the child network is registered and returns a {@link boolean}. */
     const isChildNetworkRegistered = await isNetworkRegistered(childProvider, { type: 'L2' });
     if (!isChildNetworkRegistered) {
       addCustomNetwork({ customL2Network: childNetwork });

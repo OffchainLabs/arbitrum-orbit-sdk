@@ -13,6 +13,10 @@ export type ArbAggregatorReadContractParameters<TFunctionName extends ArbAggrega
 export type ArbAggregatorReadContractReturnType<TFunctionName extends ArbAggregatorFunctionName> =
   ReadContractReturnType<ArbAggregatorAbi, TFunctionName>;
 
+/**
+ * Reads data from the ArbAggregator contract on the specified chain and returns
+ * the result as specified by the function name provided.
+ */
 export function arbAggregatorReadContract<
   TChain extends Chain | undefined,
   TFunctionName extends ArbAggregatorFunctionName,

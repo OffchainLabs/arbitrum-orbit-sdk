@@ -21,6 +21,12 @@ export type CreateTokenBridgeSetWethGatewayTransactionReceipt = TransactionRecei
   waitForRetryables(params: WaitForRetryablesParameters): Promise<WaitForRetryablesResult>;
 };
 
+/**
+ * Creates a {@link CreateTokenBridgeSetWethGatewayTransactionReceipt} object
+ * based on the input transaction receipt. The created object includes a
+ * `waitForRetryables` method that waits for retryable messages and returns the
+ * corresponding transaction receipts.
+ */
 export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
   txReceipt: TransactionReceipt,
 ): CreateTokenBridgeSetWethGatewayTransactionReceipt {

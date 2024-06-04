@@ -67,6 +67,10 @@ export type ArbOwnerPrepareTransactionRequestParameters<
   account: Address;
 };
 
+/**
+ * Prepares a transaction request for the arbOwner contract on the specified
+ * chain using the provided client and parameters.
+ */
 export async function arbOwnerPrepareTransactionRequest<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
   TChain extends Chain | undefined,

@@ -24,6 +24,10 @@ function ethersLogToViemLog(log: EthersLog): ViemLog<bigint, number, false> {
   };
 }
 
+/**
+ * Converts an Ethereum transaction receipt from Ethers format to Viem format.
+ * Returns a {@link ViemTransactionReceipt}.
+ */
 export function ethersTransactionReceiptToViemTransactionReceipt(
   receipt: EthersTransactionReceipt,
 ): ViemTransactionReceipt {

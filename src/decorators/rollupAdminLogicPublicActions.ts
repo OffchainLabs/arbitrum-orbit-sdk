@@ -41,6 +41,13 @@ export type RollupAdminLogicActions<
   ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
+/**
+ * Returns a rollupAdminLogicActionsWithRollupAdminLogicAddress function that
+ * takes a PublicClient and returns an object with two functions:
+ * rollupAdminLogicReadContract and rollupAdminLogicPrepareTransactionRequest.
+ * These functions allow interaction with the Rollup Admin Logic contract by
+ * reading contract data and preparing transaction requests.
+ */
 export function rollupAdminLogicPublicActions<
   TParams extends { rollup?: Address },
   TTransport extends Transport = Transport,

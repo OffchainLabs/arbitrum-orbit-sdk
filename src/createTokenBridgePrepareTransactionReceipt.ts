@@ -64,6 +64,13 @@ export type CreateTokenBridgeTransactionReceipt = TransactionReceipt & {
   ): Promise<TokenBridgeContracts>;
 };
 
+/**
+ * Creates a transaction receipt object with additional methods
+ * `waitForRetryables` and `getTokenBridgeContracts`. The `waitForRetryables`
+ * method waits for two L1 to L2 messages to be redeemed and returns the
+ * corresponding transaction receipts. The `getTokenBridgeContracts` method
+ * retrieves the TokenBridge contracts using the parent chain public client.
+ */
 export function createTokenBridgePrepareTransactionReceipt(
   txReceipt: TransactionReceipt,
 ): CreateTokenBridgeTransactionReceipt {

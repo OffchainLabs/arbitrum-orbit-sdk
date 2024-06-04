@@ -16,6 +16,10 @@ export type CreateRollupPrepareConfigParams = Prettify<
   RequiredParams & { chainConfig?: ChainConfig } & OptionalParams
 >;
 
+/**
+ * defaults adds default values for various configuration parameters used in
+ * creating a rollup prepare config.
+ */
 export const defaults = {
   ...defaultsCommon,
   confirmPeriodBlocks: BigInt(150),

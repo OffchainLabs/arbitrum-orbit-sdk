@@ -18,6 +18,10 @@ export type ApprovePrepareTransactionRequestProps = {
   publicClient: PublicClient;
 };
 
+/**
+ * ApprovePrepareTransactionRequest prepares a transaction request to approve a
+ * specified amount of tokens for a spender on the ERC20 token contract.
+ */
 export async function approvePrepareTransactionRequest({
   address,
   owner,
@@ -42,6 +46,10 @@ export type ApproveProps = {
   walletClient: WalletClient;
 };
 
+/**
+ * Approve allows a wallet owner to approve a specific amount of tokens to be
+ * spent by another address.
+ */
 export async function approve({
   address,
   spender,
@@ -74,6 +82,12 @@ export type FetchAllowanceProps = {
   publicClient: PublicClient;
 };
 
+/**
+ * fetchAllowance retrieves the allowance of tokens that the owner has approved
+ * for the spender. It reads the contract state by calling the 'allowance'
+ * function from the ERC20 contract ABI using the provided owner and spender
+ * addresses.
+ */
 export async function fetchAllowance({
   address,
   owner,
@@ -88,6 +102,11 @@ export async function fetchAllowance({
   });
 }
 
+/**
+ * FetchDecimals retrieves the number of decimal places used by the ERC20 token
+ * contract at the specified address. It returns the number of decimals as a
+ * {@link bigint}.
+ */
 export function fetchDecimals({
   address,
   publicClient,

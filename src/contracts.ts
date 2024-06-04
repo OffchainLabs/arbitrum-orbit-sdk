@@ -11,32 +11,45 @@ import {
 } from './generated';
 import { sequencerInboxABI, rollupAdminLogicABI } from './abi';
 
+/** erc20 is an object representing an ERC20 token with its ABI defined. */
 export const erc20 = {
   abi: erc20ABI,
 };
 
+/**
+ * arbOwner represents the configuration for the arbOwner contract on the
+ * Arbitrum blockchain. It includes the address of the arbOwner contract.
+ */
 export const arbOwner = {
   ...arbOwnerConfig,
   address: Object.values(arbOwnerConfig.address)[0],
 } as const;
 
+/** arbGasInfo provides information about gas usage in the Arbitrum network. */
 export const arbGasInfo = {
   ...arbGasInfoConfig,
   address: Object.values(arbGasInfoConfig.address)[0],
 } as const;
 
+/** arbOwnerPublic returns a {@link arbOwnerPublicConfig}. */
 export const arbOwnerPublic = {
   ...arbOwnerPublicConfig,
   address: Object.values(arbOwnerPublicConfig.address)[0],
 } as const;
 
+/** arbAggregator returns a {@link ArbAggregator}. */
 export const arbAggregator = {
   ...arbAggregatorConfig,
   address: Object.values(arbAggregatorConfig.address)[0],
 } as const;
 
+/** rollupCreator returns a {@link rollupCreatorConfig}. */
 export const rollupCreator = rollupCreatorConfig;
 
+/**
+ * upgradeExecutor provides functions for executing upgrades, checking roles,
+ * and granting/revoke roles. It returns a {@link Foo}.
+ */
 export const upgradeExecutor = {
   abi: parseAbi([
     'function execute(address upgrade, bytes upgradeCallData)',
@@ -199,15 +212,27 @@ const tokenBridgeCreatorABI = [
   },
 ] as const;
 
+/**
+ * tokenBridgeCreator creates a token bridge between two networks and deploys
+ * necessary contracts.
+ */
 export const tokenBridgeCreator = {
   ...tokenBridgeCreatorConfig,
   abi: tokenBridgeCreatorABI,
 } as const;
 
+/**
+ * sequencerInbox returns an {@link abi} for interacting with the sequencer
+ * inbox.
+ */
 export const sequencerInbox = {
   abi: sequencerInboxABI,
 };
 
+/**
+ * rollupAdminLogic provides the ABI for interacting with the Rollup Admin Logic
+ * contract.
+ */
 export const rollupAdminLogic = {
   abi: rollupAdminLogicABI,
 };

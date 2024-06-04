@@ -26,6 +26,11 @@ type NitroTestNodePrivateKeyAccounts = {
   // l3 token bridge deployer which holds custom gas token
 };
 
+/**
+ * Returns a Nitro Testnode's private key accounts, including the deployer, L2
+ * rollup owner, L3 rollup owner, L3 token bridge deployer, and L2 token bridge
+ * deployer.
+ */
 export function getNitroTestnodePrivateKeyAccounts(): NitroTestNodePrivateKeyAccounts {
   if (
     typeof process.env.NITRO_TESTNODE_DEPLOYER_PRIVATE_KEY === 'undefined' ||
@@ -89,6 +94,11 @@ type TestnodeInformation = {
   l3NativeToken: `0x${string}`;
 };
 
+/**
+ * getInformationFromTestnode retrieves information about the testnode setup
+ * including addresses for the bridge, rollup, sequencer inbox, batch poster,
+ * and more.
+ */
 export function getInformationFromTestnode(): TestnodeInformation {
   const containers = [
     'nitro_sequencer_1',
@@ -135,6 +145,10 @@ export function getInformationFromTestnode(): TestnodeInformation {
   throw new Error('nitro-testnode sequencer not found');
 }
 
+/**
+ * Creates a rollup chain with specified parameters and returns the
+ * configuration and information related to the rollup.
+ */
 export async function createRollupHelper({
   deployer,
   batchPoster,

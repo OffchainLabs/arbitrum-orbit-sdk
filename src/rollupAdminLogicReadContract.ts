@@ -26,6 +26,10 @@ export type RollupAdminLogicReadContractReturnType<
   TFunctionName extends RollupAdminLogicFunctionName,
 > = ReadContractReturnType<RollupAdminLogicAbi, TFunctionName>;
 
+/**
+ * Reads data from the RollupAdminLogic contract on a specified chain and
+ * returns the result.
+ */
 export function rollupAdminLogicReadContract<
   TChain extends Chain | undefined,
   TFunctionName extends RollupAdminLogicFunctionName,

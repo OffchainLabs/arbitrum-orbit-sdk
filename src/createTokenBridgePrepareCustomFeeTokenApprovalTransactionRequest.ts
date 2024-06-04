@@ -16,6 +16,10 @@ export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestPara
   }>
 >;
 
+/**
+ * Creates a custom fee token approval transaction request for the Token Bridge.
+ * Returns a {@link PrepareTransactionRequest}.
+ */
 export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest({
   amount = maxInt256,
   nativeToken,

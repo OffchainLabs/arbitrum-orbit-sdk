@@ -36,6 +36,15 @@ export type CreateRollupPrepareTransactionRequestParams = Prettify<
   }>
 >;
 
+/**
+ * Creates and prepares a transaction request to create a rollup chain. The
+ * function validates input parameters, including the batch poster address,
+ * validator addresses, and chain configuration. It also handles custom fee
+ * token validation and calculates the maximum data size for the chain. The
+ * final transaction request includes encoded function data, call value, gas
+ * limits, and potential gas overrides. Returns the prepared transaction request
+ * along with the chain ID.
+ */
 export async function createRollupPrepareTransactionRequest({
   params,
   account,

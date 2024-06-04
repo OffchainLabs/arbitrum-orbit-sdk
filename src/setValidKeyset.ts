@@ -12,6 +12,12 @@ export type SetValidKeysetParams = {
   walletClient: WalletClient;
 };
 
+/**
+ * setValidKeyset sets a valid keyset by executing a call to the upgrade
+ * executor contract on the parent chain. It takes in core contracts, a keyset,
+ * a public client, and a wallet client as parameters and returns a transaction
+ * receipt.
+ */
 export async function setValidKeyset({
   coreContracts,
   keyset,

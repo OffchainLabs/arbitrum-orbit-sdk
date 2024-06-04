@@ -17,6 +17,7 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams = 
   }>
 >;
 
+/** Creates a custom fee token approval transaction request for a rollup chain. */
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest({
   amount = createRollupDefaultRetryablesFees,
   nativeToken,

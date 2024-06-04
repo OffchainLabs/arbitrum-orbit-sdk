@@ -74,6 +74,10 @@ export type RollupAdminLogicPrepareTransactionRequestParameters<
   account: Address;
 };
 
+/**
+ * Prepares a transaction request for executing a function in the Rollup Admin
+ * Logic contract.
+ */
 export async function rollupAdminLogicPrepareTransactionRequest<
   TFunctionName extends RollupAdminLogicFunctionName,
   TTransport extends Transport = Transport,

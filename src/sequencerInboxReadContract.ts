@@ -23,6 +23,10 @@ export type SequencerInboxReadContractParameters<TFunctionName extends Sequencer
 export type SequencerInboxReadContractReturnType<TFunctionName extends SequencerInboxFunctionName> =
   ReadContractReturnType<SequencerInboxAbi, TFunctionName>;
 
+/**
+ * Reads data from the SequencerInbox contract and returns the specified data as
+ * per the provided function name.
+ */
 export function sequencerInboxReadContract<
   TChain extends Chain | undefined,
   TFunctionName extends SequencerInboxFunctionName,

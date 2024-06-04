@@ -6,6 +6,10 @@ type JsonRpcResult = {
   result: string;
 };
 
+/**
+ * Retrieves the client version from the specified client or RPC URL and returns
+ * it as a string.
+ */
 export async function getClientVersion<TChain extends Chain | undefined>(
   clientOrRpcUrl: Client<Transport, TChain> | string,
 ): Promise<string> {

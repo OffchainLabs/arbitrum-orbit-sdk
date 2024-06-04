@@ -9,6 +9,10 @@ function isValidChainId(chainId: number | undefined): chainId is ChainId {
   return ids.includes(Number(chainId));
 }
 
+/**
+ * Validates the provided chain ID or client and ensures that it is supported by
+ * the system. Returns a {@link ChainId}.
+ */
 export function validateChain<TChain extends Chain | undefined>(
   chainIdOrClient: number | Client<Transport, TChain>,
 ): ChainId {

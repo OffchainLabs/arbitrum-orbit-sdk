@@ -1,6 +1,7 @@
 import * as chains from './chains';
 import { ParentChainId } from './types/ParentChain';
 
+/** Checks if the provided {@link ParentChainId} belongs to the mainnet or not. */
 export function parentChainIsMainnet(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {

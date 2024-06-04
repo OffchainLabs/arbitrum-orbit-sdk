@@ -15,6 +15,11 @@ export type CreateRollupEnoughCustomFeeTokenAllowanceParams = Prettify<
   }>
 >;
 
+/**
+ * Ensures that the specified account has enough custom fee token allowance for
+ * creating a rollup transaction. Returns a boolean value indicating whether the
+ * allowance is sufficient.
+ */
 export async function createRollupEnoughCustomFeeTokenAllowance({
   nativeToken,
   account,

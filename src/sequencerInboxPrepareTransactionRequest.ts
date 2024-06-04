@@ -72,6 +72,10 @@ export type SequencerInboxPrepareTransactionRequestParameters<
   account: Address;
 };
 
+/**
+ * Returns a {@link PrepareTransactionRequest} for the given Sequencer Inbox
+ * function and parameters.
+ */
 export async function sequencerInboxPrepareTransactionRequest<
   TFunctionName extends SequencerInboxFunctionName,
   TTransport extends Transport = Transport,

@@ -59,6 +59,12 @@ const nitroTestnodeL3 = defineChain({
   testnet: true,
 });
 
+/**
+ * Represents an array of various chains including mainnet, testnet, and local
+ * nitro-testnodes. Each chain is defined with specific network details such as
+ * ID, network name, native currency, and RPC URLs. Returns an array of {@link
+ * Chain} objects.
+ */
 export const chains = [
   // mainnet L1
   mainnet,

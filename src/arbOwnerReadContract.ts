@@ -13,6 +13,7 @@ export type ArbOwnerReadContractParameters<TFunctionName extends ArbOwnerPublicF
 export type ArbOwnerReadContractReturnType<TFunctionName extends ArbOwnerPublicFunctionName> =
   ReadContractReturnType<ArbOwnerPublicAbi, TFunctionName>;
 
+/** Reads data from the contract owned by the arbiter. */
 export function arbOwnerReadContract<
   TChain extends Chain | undefined,
   TFunctionName extends ArbOwnerPublicFunctionName,

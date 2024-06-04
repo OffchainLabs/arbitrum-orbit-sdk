@@ -7,6 +7,10 @@ export type TransactionRequestGasOverrides = {
   gasLimit?: GasOverrideOptions;
 };
 
+/**
+ * applyPercentIncrease applies a percent increase to a base value and returns
+ * the updated value.
+ */
 export function applyPercentIncrease({
   base,
   percentIncrease = 0n,

@@ -19,6 +19,7 @@ function viemLogToEthersLog(log: ViemLog): EthersLog {
   };
 }
 
+/** Converts a Viem transaction receipt to an Ethers transaction receipt. */
 export function viemTransactionReceiptToEthersTransactionReceipt(
   receipt: ViemTransactionReceipt,
 ): EthersTransactionReceipt {

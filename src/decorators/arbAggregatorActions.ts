@@ -24,6 +24,15 @@ export type ArbAggregatorActions<TChain extends Chain | undefined = Chain | unde
   ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 
+/**
+ * arbAggregatorActions returns an object with two methods:
+ * arbAggregatorReadContract and arbAggregatorPrepareTransactionRequest. The
+ * arbAggregatorReadContract method takes arguments related to a specific
+ * function name and returns a Promise with the corresponding return type. The
+ * arbAggregatorPrepareTransactionRequest method takes arguments related to a
+ * specific function name and returns a Promise with the
+ * PrepareTransactionRequestReturnType along with the chainId.
+ */
 export function arbAggregatorActions<
   TTransport extends Transport = Transport,
   TChain extends Chain | undefined = Chain | undefined,
