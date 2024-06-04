@@ -1,23 +1,23 @@
-import { PublicClient, WalletClient } from 'viem';
+import { PublicClient, Transport, Chain, WalletClient } from 'viem';
 
 import { upgradeExecutor } from './contracts';
 import { validateParentChain } from './types/ParentChain';
 import { CoreContracts } from './types/CoreContracts';
 import { setValidKeysetEncodeFunctionData } from './setValidKeysetEncodeFunctionData';
 
-export type SetValidKeysetParams = {
+export type SetValidKeysetParams<TChain extends Chain | undefined> = {
   coreContracts: Pick<CoreContracts, 'upgradeExecutor' | 'sequencerInbox'>;
   keyset: `0x${string}`;
-  publicClient: PublicClient;
+  publicClient: PublicClient<Transport, TChain>;
   walletClient: WalletClient;
 };
 
-export async function setValidKeyset({
+export async function setValidKeyset<TChain extends Chain | undefined>({
   coreContracts,
   keyset,
   publicClient,
   walletClient,
-}: SetValidKeysetParams) {
+}: SetValidKeysetParams<TChain>) {
   validateParentChain(publicClient);
   const account = walletClient.account?.address;
 
@@ -25,6 +25,7 @@ export async function setValidKeyset({
     throw new Error('account is undefined');
   }
 
+  // @ts-ignore (todo: fix viem type issue)
   const { request } = await publicClient.simulateContract({
     address: coreContracts.upgradeExecutor,
     abi: upgradeExecutor.abi,
