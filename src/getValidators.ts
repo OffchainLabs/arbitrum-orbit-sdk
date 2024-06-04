@@ -10,6 +10,7 @@ import {
 } from 'viem';
 import { rollupCreator, upgradeExecutor } from './contracts';
 import { rollupAdminLogicABI, safeL2ABI } from './abi';
+import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
@@ -72,7 +73,7 @@ type GetValidatorsReturnType = {
 
 /**
  *
- * @param {PublicClient} client - The chain Viem Public Client
+ * @param {PublicClient} publicClient - The chain Viem Public Client
  * @param {GetValidatorsParams} GetValidatorsParams {@link GetValidatorsParams}
  * @param GetValidatorsParams.rollup
  *
@@ -88,19 +89,34 @@ type GetValidatorsReturnType = {
  * }
  */
 export async function getValidators<TChain extends Chain | undefined>(
-  client: PublicClient<Transport, TChain>,
+  publicClient: PublicClient<Transport, TChain>,
   { rollup }: GetValidatorsParams,
 ): Promise<GetValidatorsReturnType> {
+  let blockNumber: bigint | 'earliest';
+  try {
+    const createRollupTransactionHash = await createRollupFetchTransactionHash({
+      rollup,
+      publicClient,
+    });
+    const receipt = await publicClient.waitForTransactionReceipt({
+      hash: createRollupTransactionHash,
+    });
+    blockNumber = receipt.blockNumber;
+  } catch (e) {
+    blockNumber = 'earliest';
+  }
+
+  const events = await publicClient.getLogs({
     address: rollup,
     event: ownerFunctionCalledEventAbi,
     args: { id: 6n },
-    fromBlock: 0n,
+    fromBlock: blockNumber,
     toBlock: 'latest',
   });
 
   const txs = await Promise.all(
     events.map((event) =>
-      client.getTransaction({
+      publicClient.getTransaction({
         hash: event.transactionHash,
       }),
     ),
