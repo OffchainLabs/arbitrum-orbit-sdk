@@ -144,14 +144,14 @@ export async function getValidators<TChain extends Chain | undefined>(
         return acc;
       }
       case setValidatorFunctionSelector: {
-        return setValidators(acc, tx.input);
+        return updateAccumulator(acc, tx.input);
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
         const { args: executeCallCalldata } = decodeFunctionData({
           abi: [executeCallABI],
           data: tx.input,
         });
-        return setValidators(acc, executeCallCalldata[1]);
+        return updateAccumulator(acc, executeCallCalldata[1]);
       }
       case safeL2FunctionSelector: {
         const { args: execTransactionCalldata } = decodeFunctionData({
@@ -162,7 +162,7 @@ export async function getValidators<TChain extends Chain | undefined>(
           abi: [executeCallABI],
           data: execTransactionCalldata[2],
         });
-        return setValidators(acc, executeCallCalldata[1]);
+        return updateAccumulator(acc, executeCallCalldata[1]);
       }
       default: {
         console.warn(`[getValidators] unknown 4bytes, tx id: ${tx.hash}`);
