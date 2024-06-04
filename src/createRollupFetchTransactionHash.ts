@@ -1,4 +1,4 @@
-import { Address, PublicClient } from 'viem';
+import { Address, PublicClient, Transport, Chain } from 'viem';
 import { AbiEvent } from 'abitype';
 
 import { validateParentChain } from './types/ParentChain';
@@ -15,9 +15,9 @@ import {
   nitroTestnodeL2,
 } from './chains';
 
-export type CreateRollupFetchTransactionHashParams = {
+export type CreateRollupFetchTransactionHashParams<TChain extends Chain | undefined> = {
   rollup: Address;
-  publicClient: PublicClient;
+  publicClient: PublicClient<Transport, TChain>;
 };
 
 const RollupInitializedEventAbi: AbiEvent = {
@@ -58,10 +58,10 @@ const earliestRollupCreatorDeploymentBlockNumber = {
   [nitroTestnodeL2.id]: 0n,
 };
 
-export async function createRollupFetchTransactionHash({
+export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
   rollup,
   publicClient,
-}: CreateRollupFetchTransactionHashParams) {
+}: CreateRollupFetchTransactionHashParams<TChain>) {
   const chainId = validateParentChain(publicClient);
 
   const fromBlock =
