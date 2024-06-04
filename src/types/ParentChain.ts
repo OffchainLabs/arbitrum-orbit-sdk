@@ -8,9 +8,7 @@ export type ParentChain = Exclude<(typeof chains)[number], { id: typeof nitroTes
 export type ParentChainId = ParentChain['id'];
 
 export type ParentChainPublicClient<TChain extends Chain | undefined> = Prettify<
-  Omit<PublicClient<Transport, TChain>, 'chain'> & {
-    chain: Prettify<Omit<Chain, 'id'> & { id: ParentChainId }>;
-  }
+  PublicClient<Transport, TChain> & { chain: { id: ParentChainId } }
 >;
 
 function isValidParentChainId(parentChainId: number | undefined): parentChainId is ParentChainId {
