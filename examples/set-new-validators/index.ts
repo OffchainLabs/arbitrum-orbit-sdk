@@ -1,4 +1,4 @@
-import { Chain, createPublicClient, http } from 'viem';
+import { Chain, createPublicClient, http, Address } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import {
@@ -33,7 +33,7 @@ const parentChainPublicClient = createPublicClient({
   transport: http(),
 }).extend(
   rollupAdminLogicPublicActions({
-    rollup: process.env.ROLLUP_ADDRESS as `0x${string}`,
+    rollup: process.env.ROLLUP_ADDRESS as Address,
   }),
 );
 
@@ -48,7 +48,7 @@ async function main() {
   // get the core contracts
   console.log('Fetching UpgradeExecutor address in the parent chain...');
   const transactionHash = await createRollupFetchTransactionHash({
-    rollup: process.env.ROLLUP_ADDRESS as `0x${string}`,
+    rollup: process.env.ROLLUP_ADDRESS as Address,
     publicClient: parentChainPublicClient,
   });
   const transactionReceipt = createRollupPrepareTransactionReceipt(
@@ -58,7 +58,7 @@ async function main() {
   console.log(`UpgradeExecutor address: ${coreContracts.upgradeExecutor}`);
 
   // here we just set one new validator, so the array length is 1
-  const newValidators = [process.env.NEW_VALIDATOR_ADDRESS as `0x${string}`];
+  const newValidators = [process.env.NEW_VALIDATOR_ADDRESS as Address];
   const newValidatorStatus = [true];
 
   // check the status of this address in validator list before executing
