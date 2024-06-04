@@ -1,7 +1,9 @@
 import {
   Address,
+  Chain,
   Hex,
   PublicClient,
+  Transport,
   decodeFunctionData,
   getAbiItem,
   getFunctionSelector,
@@ -85,8 +87,8 @@ type GetValidatorsReturnType = {
  *   // Some validators might be missing
  * }
  */
-export async function getValidators(
-  client: PublicClient,
+export async function getValidators<TChain extends Chain | undefined>(
+  client: PublicClient<Transport, TChain>,
   { rollupAddress }: GetValidatorsParams,
 ): Promise<GetValidatorsReturnType> {
   const events = await client.getLogs({
