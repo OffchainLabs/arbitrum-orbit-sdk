@@ -91,6 +91,20 @@ export type PublicActionsParentChain<Curried extends boolean> = {
 };
 
 /**
+ * Simplifies the overall typing with curried sequencerInbox address
+ *
+ * By design, sequencerInbox is either passed initially from the decorator, or on each call
+ *
+ * Address passed through each call has the priority over the address passed to the decorator, for override
+ */
+function getSequencerInboxAddress(params: Params, args: { sequencerInbox?: Address }): Address {
+  if (params) {
+    return (args.sequencerInbox ?? params.sequencerInbox) as Address;
+  }
+  return args.sequencerInbox as Address;
+}
+
+/**
  * Public actions for parent chain
  *
  * @example
@@ -123,132 +137,69 @@ export function publicActionsParentChain<
 >(params: TParams) {
   return (client: PublicClient<TTransport, TChain>) => {
     // sequencerInbox is curried, sequencerInbox param is optional.
-    if (params) {
-      return {
-        getBatchCount: (args) =>
-          getBatchCount(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getBridge: (args) =>
-          getBridge(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getDasKeySetInfo: (args) =>
-          getDasKeySetInfo(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getDataAuthenticatedFlag: (args) =>
-          getDataAuthenticatedFlag(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getHeaderLength: (args) =>
-          getHeaderLength(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getInboxAccs: (args) =>
-          getInboxAccs(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getKeysetCreationBlock: (args) =>
-          getKeysetCreationBlock(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getMaxTimeVariation: (args) =>
-          getMaxTimeVariation(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getRollup: (args) =>
-          getRollup(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        getTotalDelayedMessagesRead: (args) =>
-          getTotalDelayedMessagesRead(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        isBatchPoster: (args) =>
-          isBatchPoster(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-        isValidKeysetHash: (args) =>
-          isValidKeysetHash(client, {
-            ...args,
-            sequencerInbox: (args && args.sequencerInbox) ?? params.sequencerInbox,
-          }),
-      } satisfies PublicActionsParentChain<true>;
-    }
-
     return {
       getBatchCount: (args) =>
         getBatchCount(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getBridge: (args) =>
         getBridge(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getDasKeySetInfo: (args) =>
         getDasKeySetInfo(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getDataAuthenticatedFlag: (args) =>
         getDataAuthenticatedFlag(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getHeaderLength: (args) =>
         getHeaderLength(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getInboxAccs: (args) =>
         getInboxAccs(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getKeysetCreationBlock: (args) =>
         getKeysetCreationBlock(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getMaxTimeVariation: (args) =>
         getMaxTimeVariation(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getRollup: (args) =>
         getRollup(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       getTotalDelayedMessagesRead: (args) =>
         getTotalDelayedMessagesRead(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       isBatchPoster: (args) =>
         isBatchPoster(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
       isValidKeysetHash: (args) =>
         isValidKeysetHash(client, {
           ...args,
-          sequencerInbox: args.sequencerInbox,
+          sequencerInbox: getSequencerInboxAddress(params, args),
         }),
-    } satisfies PublicActionsParentChain<false>;
+    } satisfies PublicActionsParentChain<
+      TParams extends { sequencerInbox: Address } ? true : false
+    >;
   };
 }
