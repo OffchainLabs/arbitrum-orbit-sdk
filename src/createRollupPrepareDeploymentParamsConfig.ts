@@ -63,11 +63,8 @@ export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
  *   }),
  * });
  */
-export function createRollupPrepareDeploymentParamsConfig<
-  TTransport extends Transport = Transport,
-  TChain extends Chain | undefined = Chain | undefined,
->(
-  client: Client<TTransport, TChain>,
+export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain | undefined>(
+  client: Client<Transport, TChain>,
   { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
 ): CreateRollupPrepareDeploymentParamsConfigResult {
   const parentChainId = validateParentChain(client);

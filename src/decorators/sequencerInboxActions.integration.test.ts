@@ -115,7 +115,7 @@ describe('sequencerInboxReadContract', () => {
   });
 });
 
-describe('sequencerInboxPrepareTransactionRequest', async () => {
+describe('sequencerInboxPrepareTransactionRequest', () => {
   it('successfully call setValidKeyset', async () => {
     // Keyset needs to be set on anytrust chain
     const deployerAddress = deployer.address;
@@ -178,9 +178,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       upgradeExecutor: l3UpgradeExecutor,
     });
 
-    await client.sendRawTransaction({
+    const txHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
+
+    await client.waitForTransactionReceipt({ hash: txHash });
 
     const result = await client.sequencerInboxReadContract({
       functionName: 'isBatchPoster',
@@ -197,9 +199,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       account: l3RollupOwner.address,
       upgradeExecutor: l3UpgradeExecutor,
     });
-    await client.sendRawTransaction({
+    const revertTxHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(revertTransactionRequest),
     });
+
+    await client.waitForTransactionReceipt({ hash: revertTxHash });
 
     const resultAfterReverting = await client.sequencerInboxReadContract({
       functionName: 'isBatchPoster',
@@ -229,9 +233,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       ],
       account: l3RollupOwner.address,
     });
-    await client.sendRawTransaction({
+    const txHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
+
+    await client.waitForTransactionReceipt({ hash: txHash });
 
     const result = await client.sequencerInboxReadContract({
       functionName: 'maxTimeVariation',
@@ -254,8 +260,10 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       ],
       account: l3RollupOwner.address,
     });
-    await client.sendRawTransaction({
+    const revertTxHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(transactionRequestRevert),
     });
+
+    await client.waitForTransactionReceipt({ hash: revertTxHash });
   });
 });

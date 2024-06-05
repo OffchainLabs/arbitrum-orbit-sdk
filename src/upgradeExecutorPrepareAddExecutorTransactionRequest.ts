@@ -1,6 +1,8 @@
 import {
   Address,
   PublicClient,
+  Transport,
+  Chain,
   encodeFunctionData,
   PrepareTransactionRequestReturnType,
 } from 'viem';
@@ -14,11 +16,13 @@ import { validateChain } from './utils/validateChain';
 /**
  * Type for the params of the {@link upgradeExecutorPrepareAddExecutorTransactionRequest} function
  */
-export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams = {
+export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams<
+  TChain extends Chain | undefined,
+> = {
   account: Address;
   upgradeExecutorAddress: Address;
   executorAccountAddress: Address;
-  publicClient: PublicClient;
+  publicClient: PublicClient<Transport, TChain>;
 };
 
 /**
@@ -42,12 +46,14 @@ export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams = {
  *   publicClient,
  * });
  */
-export async function upgradeExecutorPrepareAddExecutorTransactionRequest({
+export async function upgradeExecutorPrepareAddExecutorTransactionRequest<
+  TChain extends Chain | undefined,
+>({
   account,
   upgradeExecutorAddress,
   executorAccountAddress,
   publicClient,
-}: UpgradeExecutorPrepareAddExecutorTransactionRequestParams) {
+}: UpgradeExecutorPrepareAddExecutorTransactionRequestParams<TChain>) {
   const chainId = validateChain(publicClient);
 
   // 0. Verify that the account doesn't have the EXECUTOR role already
@@ -72,6 +78,7 @@ export async function upgradeExecutorPrepareAddExecutorTransactionRequest({
   });
 
   // 2. Prepare the transaction (must be called through the UpgradeExecutor)
+  // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: upgradeExecutorAddress,

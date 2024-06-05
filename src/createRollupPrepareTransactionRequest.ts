@@ -1,4 +1,4 @@
-import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
+import { Address, PublicClient, Transport, Chain, encodeFunctionData, zeroAddress } from 'viem';
 
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
@@ -27,22 +27,23 @@ function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   });
 }
 
-export type CreateRollupPrepareTransactionRequestParams = Prettify<
-  WithRollupCreatorAddressOverride<{
-    params: CreateRollupParams;
-    account: Address;
-    publicClient: PublicClient;
-    gasOverrides?: TransactionRequestGasOverrides;
-  }>
->;
+export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | undefined> =
+  Prettify<
+    WithRollupCreatorAddressOverride<{
+      params: CreateRollupParams;
+      account: Address;
+      publicClient: PublicClient<Transport, TChain>;
+      gasOverrides?: TransactionRequestGasOverrides;
+    }>
+  >;
 
-export async function createRollupPrepareTransactionRequest({
+export async function createRollupPrepareTransactionRequest<TChain extends Chain | undefined>({
   params,
   account,
   publicClient,
   gasOverrides,
   rollupCreatorAddressOverride,
-}: CreateRollupPrepareTransactionRequestParams) {
+}: CreateRollupPrepareTransactionRequestParams<TChain>) {
   const chainId = validateParentChain(publicClient);
 
   if (params.batchPoster === zeroAddress) {
@@ -74,6 +75,7 @@ export async function createRollupPrepareTransactionRequest({
   const maxDataSize = createRollupGetMaxDataSize(chainId);
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
 
+  // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),

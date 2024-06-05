@@ -1,13 +1,13 @@
-import { Address, PublicClient } from 'viem';
+import { Address, PublicClient, Transport, Chain } from 'viem';
 import { AbiEvent } from 'abitype';
 import { UpgradeExecutorRole } from './upgradeExecutorEncodeFunctionData';
 
 /**
  * This type is for the params of the {@link upgradeExecutorFetchPrivilegedAccounts} function
  */
-export type UpgradeExecutorFetchPrivilegedAccountsParams = {
+export type UpgradeExecutorFetchPrivilegedAccountsParams<TChain extends Chain | undefined> = {
   upgradeExecutorAddress: Address;
-  publicClient: PublicClient;
+  publicClient: PublicClient<Transport, TChain>;
 };
 
 /**
@@ -89,10 +89,10 @@ const RoleRevokedEventAbi = {
  *   publicClient,
  * });
  */
-export async function upgradeExecutorFetchPrivilegedAccounts({
+export async function upgradeExecutorFetchPrivilegedAccounts<TChain extends Chain | undefined>({
   upgradeExecutorAddress,
   publicClient,
-}: UpgradeExecutorFetchPrivilegedAccountsParams) {
+}: UpgradeExecutorFetchPrivilegedAccountsParams<TChain>) {
   // 0. Initialize result object
   const upgradeExecutorPrivilegedAccounts: UpgradeExecutorPrivilegedAccounts = {};
 

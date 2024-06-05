@@ -1,4 +1,4 @@
-import { Chain, Client, PublicClient, Transport } from 'viem';
+import { Client, PublicClient, Transport, Chain } from 'viem';
 
 import { chains, nitroTestnodeL3 } from '../chains';
 import { Prettify } from './utils';
@@ -7,10 +7,8 @@ import { Prettify } from './utils';
 export type ParentChain = Exclude<(typeof chains)[number], { id: typeof nitroTestnodeL3.id }>;
 export type ParentChainId = ParentChain['id'];
 
-export type ParentChainPublicClient = Prettify<
-  Omit<PublicClient, 'chain'> & {
-    chain: Prettify<Omit<Chain, 'id'> & { id: ParentChainId }>;
-  }
+export type ParentChainPublicClient<TChain extends Chain | undefined> = Prettify<
+  PublicClient<Transport, TChain> & { chain: { id: ParentChainId } }
 >;
 
 function isValidParentChainId(parentChainId: number | undefined): parentChainId is ParentChainId {
@@ -21,10 +19,9 @@ function isValidParentChainId(parentChainId: number | undefined): parentChainId 
   return ids.includes(Number(parentChainId));
 }
 
-export function validateParentChain<
-  TTransport extends Transport = Transport,
-  TChain extends Chain | undefined = Chain | undefined,
->(chainIdOrClient: number | Client<TTransport, TChain>): ParentChainId {
+export function validateParentChain<TChain extends Chain | undefined>(
+  chainIdOrClient: number | Client<Transport, TChain>,
+): ParentChainId {
   const chainId = typeof chainIdOrClient === 'number' ? chainIdOrClient : chainIdOrClient.chain?.id;
 
   if (!isValidParentChainId(chainId)) {
@@ -34,15 +31,14 @@ export function validateParentChain<
   return chainId;
 }
 
-export function validateParentChainPublicClient<
-  TTransport extends Transport = Transport,
-  TChain extends Chain | undefined = Chain | undefined,
->(publicClient: PublicClient<TTransport, TChain>): ParentChainPublicClient {
+export function validateParentChainPublicClient<TChain extends Chain | undefined>(
+  publicClient: PublicClient<Transport, TChain>,
+): ParentChainPublicClient<TChain> {
   const chainId = publicClient.chain?.id;
 
   if (!isValidParentChainId(chainId)) {
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  return publicClient as ParentChainPublicClient;
+  return publicClient as ParentChainPublicClient<TChain>;
 }
