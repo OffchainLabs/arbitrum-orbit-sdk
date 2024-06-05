@@ -12,6 +12,25 @@ export type SetValidKeysetPrepareTransactionRequestParams = Omit<
   account: Address;
 };
 
+/**
+ * Prepares a transaction request for setting a valid keyset.
+ *
+ * @param {Object} setValidKeysetPrepareTransactionRequestParams - Parameters for preparing the transaction request
+ * @param {Object} setValidKeysetPrepareTransactionRequestParams.coreContracts - The core contracts involved
+ * @param {Object} setValidKeysetPrepareTransactionRequestParams.keyset - The keyset to be set as valid
+ * @param {Address} setValidKeysetPrepareTransactionRequestParams.account - The account address initiating the transaction
+ * @param {Object} setValidKeysetPrepareTransactionRequestParams.publicClient - The public client to interact with the blockchain
+ *
+ * @returns {Promise<Object>} The prepared transaction request with chain ID
+ *
+ * @example
+ * const transactionRequest = await setValidKeysetPrepareTransactionRequest({
+ *   coreContracts: { upgradeExecutor: '0x...', sequencerInbox: '0x...' },
+ *   keyset: { keys: ['0x...'], threshold: 1 },
+ *   account: '0x...',
+ *   publicClient,
+ * });
+ */
 export async function setValidKeysetPrepareTransactionRequest({
   coreContracts,
   keyset,
