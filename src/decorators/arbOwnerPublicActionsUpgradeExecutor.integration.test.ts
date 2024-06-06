@@ -5,7 +5,6 @@ import { nitroTestnodeL3 } from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './arbGasInfoPublicActions';
 import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
-import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 // L3 Owner Private Key
 const devPrivateKey = getNitroTestnodePrivateKeyAccounts().l3RollupOwner.privateKey;
@@ -116,17 +115,13 @@ it('successfully updates L2 Base Fee Estimate Inertia on Orbit chain', async () 
   const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
     functionName: 'setL1BaseFeeEstimateInertia',
     args: [l2BaseFeeEstimateInertia],
-    upgradeExecutor: false,
-    account: owner.address,
-  });
-
-  const transactionRequestWithUpgradeExecutor = withUpgradeExecutor(transactionRequest, {
     upgradeExecutor: upgradeExecutorAddress,
+    account: owner.address,
   });
 
   // submit tx to update infra fee receiver
   await client.sendRawTransaction({
-    serializedTransaction: await owner.signTransaction(transactionRequestWithUpgradeExecutor),
+    serializedTransaction: await owner.signTransaction(transactionRequest),
   });
 
   const newL2BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
