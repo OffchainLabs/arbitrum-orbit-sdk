@@ -10,6 +10,7 @@ import {
 } from '../testHelpers';
 import { sequencerInboxActions } from './sequencerInboxActions';
 import { sequencerInboxABI } from '../abi/sequencerInboxABI';
+import { publicActionsParentChain } from './publicActionsParentChain';
 
 const { l3RollupOwner, l3TokenBridgeDeployer, deployer } = getNitroTestnodePrivateKeyAccounts();
 
@@ -22,6 +23,15 @@ const client = createPublicClient({
   chain: nitroTestnodeL2,
   transport: http(),
 }).extend(sequencerInboxActions({ sequencerInbox: l3SequencerInbox }));
+
+const client3 = createPublicClient({
+  chain: nitroTestnodeL2,
+  transport: http(),
+}).extend(
+  publicActionsParentChain({
+    sequencerInbox: '0xaaa',
+  }),
+);
 
 describe('sequencerInboxReadContract', () => {
   it('successfully fetches batchCount', async () => {
@@ -141,6 +151,12 @@ describe('sequencerInboxPrepareTransactionRequest', () => {
       account: l3TokenBridgeDeployer.address,
       upgradeExecutor: upgradeExecutor,
     });
+
+    const a = client3.buildAddSequencerL2Batch({
+      args: [10n, '0xa', 10n, '0xaa', 5n, 5n],
+      account: '0xacc',
+    });
+
     const transactionHash = await client.sendRawTransaction({
       serializedTransaction: await l3TokenBridgeDeployer.signTransaction(transactionRequest),
     });

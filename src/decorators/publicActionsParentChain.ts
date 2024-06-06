@@ -52,6 +52,11 @@ import {
 } from '../actions/isValidKeysetHash';
 
 import { getRollup, GetRollupActionParameters, GetRollupReturnType } from '../actions/getRollup';
+import {
+  buildAddSequencerL2Batch,
+  BuildAddSequencerL2BatchActionParameters,
+  BuildAddSequencerL2BatchReturnType,
+} from '../actions/addSequencerL2Batch';
 
 type Params = { sequencerInbox: Address } | void;
 
@@ -88,6 +93,9 @@ export type PublicActionsParentChain<Curried extends boolean> = {
   isValidKeysetHash: (
     parameters: IsValidKeysetHashActionParameters<Curried>,
   ) => Promise<IsValidKeysetHashReturnType>;
+  buildAddSequencerL2Batch: (
+    parameters: BuildAddSequencerL2BatchActionParameters<Curried>,
+  ) => Promise<BuildAddSequencerL2BatchReturnType>;
 };
 
 /**
@@ -195,6 +203,11 @@ export function publicActionsParentChain<
         }),
       isValidKeysetHash: (args) =>
         isValidKeysetHash(client, {
+          ...args,
+          sequencerInbox: getSequencerInboxAddress(params, args),
+        }),
+      buildAddSequencerL2Batch: (args) =>
+        buildAddSequencerL2Batch(client, {
           ...args,
           sequencerInbox: getSequencerInboxAddress(params, args),
         }),

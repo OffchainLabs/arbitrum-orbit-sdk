@@ -10,6 +10,7 @@ import {
 import { nitroTestnodeL2 } from '../chains';
 import { sequencerInboxActions } from './sequencerInboxActions';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { publicActionsParentChain } from './publicActionsParentChain';
 
 const l3SequencerInbox = '0x42b5da0625cf278067955f07045f63cafd79274f';
 
@@ -107,4 +108,49 @@ it('Infer parameters based on function name', async () => {
       functionName: 'notExisting',
     }),
   ).rejects.toThrowError(AbiFunctionNotFoundError);
+});
+
+const client2 = createPublicClient({
+  chain: nitroTestnodeL2,
+  transport: http(),
+}).extend(publicActionsParentChain());
+// Required (should error)
+client2.getBatchCount();
+// should work
+client2.getBatchCount({
+  sequencerInbox: '0xaa',
+});
+client2.isBatchPoster({
+  args: ['0xaa'],
+  sequencerInbox: '0xbbb',
+});
+
+const client3 = createPublicClient({
+  chain: nitroTestnodeL2,
+  transport: http(),
+}).extend(
+  publicActionsParentChain({
+    sequencerInbox: '0xaaa',
+  }),
+);
+// Should allow it
+client3.getBatchCount({
+  sequencerInbox: '0xb',
+});
+// Should work
+client3.getBatchCount();
+
+// Should allow it
+client3.isBatchPoster({
+  sequencerInbox: '0xb',
+  args: ['0xaa'],
+});
+// Should work
+client3.isBatchPoster({
+  args: ['0xbbb'],
+});
+
+client3.buildAddSequencerL2Batch({
+  args: [10n, '0xa', 10n, '0xaa', 5n, 5n],
+  account: '0xacc',
 });
