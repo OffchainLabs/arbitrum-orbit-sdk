@@ -6,19 +6,8 @@ import {
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChainId, validateParentChain } from './types/ParentChain';
-import {
-  mainnet,
-  arbitrumOne,
-  arbitrumNova,
-  base,
-  sepolia,
-  holesky,
-  arbitrumSepolia,
-  baseSepolia,
-  nitroTestnodeL1,
-  nitroTestnodeL2,
-} from './chains';
 import { getParentChainLayer } from './utils';
+import { parentChainIsArbitrum } from './parentChainIsArbitrum';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
@@ -33,25 +22,6 @@ function stringifyBackendsJson(
   backendsJson: NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
 ): string {
   return JSON.stringify(backendsJson);
-}
-
-function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
-  // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
-  switch (parentChainId) {
-    case mainnet.id:
-    case base.id:
-    case sepolia.id:
-    case holesky.id:
-    case baseSepolia.id:
-    case nitroTestnodeL1.id:
-      return false;
-
-    case arbitrumOne.id:
-    case arbitrumNova.id:
-    case arbitrumSepolia.id:
-    case nitroTestnodeL2.id:
-      return true;
-  }
 }
 
 export type PrepareNodeConfigParams = {
