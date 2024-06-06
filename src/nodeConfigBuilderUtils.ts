@@ -8,7 +8,8 @@ import {
   arbitrumSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
-  nitroTestnodeL3,
+  base,
+  baseSepolia,
 } from './chains';
 
 export function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
@@ -17,6 +18,8 @@ export function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
     case mainnet.id:
     case sepolia.id:
     case holesky.id:
+    case base.id:
+    case baseSepolia.id:
     case nitroTestnodeL1.id:
       return false;
 
@@ -24,7 +27,6 @@ export function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
     case arbitrumNova.id:
     case arbitrumSepolia.id:
     case nitroTestnodeL2.id:
-    case nitroTestnodeL3.id:
       return true;
   }
 }
