@@ -2,7 +2,8 @@ import _set from 'lodash.set';
 
 import { NodeConfig, NodeConfigOption } from './types/NodeConfig.generated';
 import { CoreContracts } from './types/CoreContracts';
-import { parentChainIsArbitrum, stringifyJson } from './nodeConfigBuilderUtils';
+import { stringifyJson } from './nodeConfigBuilderUtils';
+import { parentChainIsArbitrum } from './parentChainIsArbitrum';
 import { nodeConfigBuilderDefaults } from './nodeConfigBuilderDefaults';
 import { ParentChainId } from './types/ParentChain';
 import { ChainConfig } from './types/ChainConfig';
