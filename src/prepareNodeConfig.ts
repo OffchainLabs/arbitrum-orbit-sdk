@@ -10,13 +10,15 @@ import {
   mainnet,
   arbitrumOne,
   arbitrumNova,
+  base,
   sepolia,
   holesky,
   arbitrumSepolia,
+  baseSepolia,
   nitroTestnodeL1,
   nitroTestnodeL2,
-  nitroTestnodeL3,
 } from './chains';
+import { getParentChainLayer } from './utils';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
@@ -37,8 +39,10 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
     case mainnet.id:
+    case base.id:
     case sepolia.id:
     case holesky.id:
+    case baseSepolia.id:
     case nitroTestnodeL1.id:
       return false;
 
@@ -46,9 +50,27 @@ function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
     case arbitrumNova.id:
     case arbitrumSepolia.id:
     case nitroTestnodeL2.id:
-    case nitroTestnodeL3.id:
       return true;
   }
+}
+
+export type PrepareNodeConfigParams = {
+  chainName: string;
+  chainConfig: ChainConfig;
+  coreContracts: CoreContracts;
+  batchPosterPrivateKey: string;
+  validatorPrivateKey: string;
+  parentChainId: ParentChainId;
+  parentChainRpcUrl: string;
+  parentChainBeaconRpcUrl?: string;
+};
+
+function getDisableBlobReader(parentChainId: ParentChainId): boolean {
+  if (getParentChainLayer(parentChainId) !== 1 && !parentChainIsArbitrum(parentChainId)) {
+    return true;
+  }
+
+  return false;
 }
 
 export function prepareNodeConfig({
@@ -59,15 +81,13 @@ export function prepareNodeConfig({
   validatorPrivateKey,
   parentChainId,
   parentChainRpcUrl,
-}: {
-  chainName: string;
-  chainConfig: ChainConfig;
-  coreContracts: CoreContracts;
-  batchPosterPrivateKey: string;
-  validatorPrivateKey: string;
-  parentChainId: number;
-  parentChainRpcUrl: string;
-}): NodeConfig {
+  parentChainBeaconRpcUrl,
+}: PrepareNodeConfigParams): NodeConfig {
+  // For L2 Orbit chains settling to Ethereum mainnet or testnet, a parentChainBeaconRpcUrl is enforced
+  if (getParentChainLayer(parentChainId) === 1 && !parentChainBeaconRpcUrl) {
+    throw new Error(`"parentChainBeaconRpcUrl" is required for L2 Orbit chains.`);
+  }
+
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
@@ -125,6 +145,7 @@ export function prepareNodeConfig({
       },
       'dangerous': {
         'no-sequencer-coordinator': true,
+        'disable-blob-reader': getDisableBlobReader(parentChainId),
       },
     },
     'execution': {
@@ -139,6 +160,12 @@ export function prepareNodeConfig({
       },
     },
   };
+
+  if (parentChainBeaconRpcUrl) {
+    config['parent-chain']!['blob-client'] = {
+      'beacon-url': parentChainBeaconRpcUrl,
+    };
+  }
 
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
     config.node!['data-availability'] = {

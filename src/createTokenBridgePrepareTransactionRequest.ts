@@ -1,9 +1,8 @@
-import { Address, PublicClient, encodeFunctionData } from 'viem';
+import { Address, PublicClient, Transport, Chain, encodeFunctionData } from 'viem';
 
 import { tokenBridgeCreator } from './contracts';
 import { validateParentChain } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
-import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
 import {
   GasOverrideOptions,
@@ -23,18 +22,24 @@ export type TransactionRequestRetryableGasOverrides = {
   maxGasPrice?: bigint;
 };
 
-export type CreateTokenBridgePrepareTransactionRequestParams = Prettify<
+export type CreateTokenBridgePrepareTransactionRequestParams<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+> = Prettify<
   WithTokenBridgeCreatorAddressOverride<{
     params: { rollup: Address; rollupOwner: Address };
-    parentChainPublicClient: PublicClient;
-    orbitChainPublicClient: PublicClient;
+    parentChainPublicClient: PublicClient<Transport, TParentChain>;
+    orbitChainPublicClient: PublicClient<Transport, TOrbitChain>;
     account: Address;
     gasOverrides?: TransactionRequestGasOverrides;
     retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
   }>
 >;
 
-export async function createTokenBridgePrepareTransactionRequest({
+export async function createTokenBridgePrepareTransactionRequest<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>({
   params,
   parentChainPublicClient,
   orbitChainPublicClient,
@@ -42,19 +47,16 @@ export async function createTokenBridgePrepareTransactionRequest({
   gasOverrides,
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
-}: CreateTokenBridgePrepareTransactionRequestParams) {
+}: CreateTokenBridgePrepareTransactionRequestParams<TParentChain, TOrbitChain>) {
   const chainId = validateParentChain(parentChainPublicClient);
 
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
-  const parentChainProvider = publicClientToProvider(parentChainPublicClient);
-  const orbitChainProvider = publicClientToProvider(orbitChainPublicClient);
-
   const { inbox, maxGasForContracts, gasPrice, retryableFee } = await createTokenBridgeGetInputs(
     account,
-    parentChainProvider,
-    orbitChainProvider,
+    parentChainPublicClient,
+    orbitChainPublicClient,
     tokenBridgeCreatorAddress,
     params.rollup,
     retryableGasOverrides,
@@ -65,6 +67,7 @@ export async function createTokenBridgePrepareTransactionRequest({
     parentChainPublicClient,
   });
 
+  // @ts-ignore (todo: fix viem type issue)
   const request = await parentChainPublicClient.prepareTransactionRequest({
     chain: parentChainPublicClient.chain,
     to: tokenBridgeCreatorAddress,

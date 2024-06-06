@@ -1,13 +1,10 @@
-import { Chain, createPublicClient, http, Address } from 'viem';
+import { createPublicClient, http, Address } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { arbitrumSepolia } from 'viem/chains';
 import {
-  createRollupPrepareConfig,
   prepareChainConfig,
-  createRollupEnoughCustomFeeTokenAllowance,
-  createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
-  createRollupPrepareTransactionRequest,
-  createRollupPrepareTransactionReceipt,
+  createRollupPrepareDeploymentParamsConfig,
+  createRollup,
 } from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey, generateChainId } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
@@ -19,10 +16,6 @@ function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
   }
 
   return sanitizePrivateKey(privateKey);
-}
-
-function getBlockExplorerUrl(chain: Chain) {
-  return chain.blockExplorers?.default.url;
 }
 
 if (typeof process.env.DEPLOYER_PRIVATE_KEY === 'undefined') {
@@ -57,73 +50,32 @@ async function main() {
   // set the custom fee token
   const nativeToken: Address = process.env.CUSTOM_FEE_TOKEN_ADDRESS as `0x${string}`;
 
-  // create the chain config
-  const chainConfig = prepareChainConfig({
-    chainId,
-    arbitrum: {
-      InitialChainOwner: deployer.address,
-      DataAvailabilityCommittee: true,
-    },
+  const createRollupConfig = createRollupPrepareDeploymentParamsConfig(parentChainPublicClient, {
+    chainId: BigInt(chainId),
+    owner: deployer.address,
+    chainConfig: prepareChainConfig({
+      chainId,
+      arbitrum: {
+        InitialChainOwner: deployer.address,
+        DataAvailabilityCommittee: true,
+      },
+    }),
   });
 
-  const allowanceParams = {
-    nativeToken,
-    account: deployer.address,
-    publicClient: parentChainPublicClient,
-  };
-
-  if (!(await createRollupEnoughCustomFeeTokenAllowance(allowanceParams))) {
-    const approvalTxRequest = await createRollupPrepareCustomFeeTokenApprovalTransactionRequest(
-      allowanceParams,
-    );
-
-    // sign and send the transaction
-    const approvalTxHash = await parentChainPublicClient.sendRawTransaction({
-      serializedTransaction: await deployer.signTransaction(approvalTxRequest),
+  try {
+    await createRollup({
+      params: {
+        config: createRollupConfig,
+        batchPoster,
+        validators: [validator],
+        nativeToken,
+      },
+      account: deployer,
+      parentChainPublicClient,
     });
-
-    // get the transaction receipt after waiting for the transaction to complete
-    const approvalTxReceipt = createRollupPrepareTransactionReceipt(
-      await parentChainPublicClient.waitForTransactionReceipt({
-        hash: approvalTxHash,
-      }),
-    );
-
-    console.log(
-      `Tokens approved in ${getBlockExplorerUrl(parentChain)}/tx/${
-        approvalTxReceipt.transactionHash
-      }`,
-    );
+  } catch (error) {
+    console.error(`Rollup creation failed with error: ${error}`);
   }
-
-  // prepare the transaction for deploying the core contracts
-  const txRequest = await createRollupPrepareTransactionRequest({
-    params: {
-      config: createRollupPrepareConfig({
-        chainId: BigInt(chainId),
-        owner: deployer.address,
-        chainConfig,
-      }),
-      batchPoster,
-      validators: [validator],
-      nativeToken,
-      deployFactoriesToL2: true,
-    },
-    account: deployer.address,
-    publicClient: parentChainPublicClient,
-  });
-
-  // sign and send the transaction
-  const txHash = await parentChainPublicClient.sendRawTransaction({
-    serializedTransaction: await deployer.signTransaction(txRequest),
-  });
-
-  // get the transaction receipt after waiting for the transaction to complete
-  const txReceipt = createRollupPrepareTransactionReceipt(
-    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
-  );
-
-  console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);
 }
 
 main();
