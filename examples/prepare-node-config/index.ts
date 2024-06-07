@@ -28,11 +28,17 @@ if (typeof process.env.VALIDATOR_PRIVATE_KEY === 'undefined') {
   throw new Error(`Please provide the "VALIDATOR_PRIVATE_KEY" environment variable`);
 }
 
+if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CHAIN_RPC === '') {
+  console.warn(
+    `Warning: Note if use default rpc endpoint the script might not work as expected due to timeout errors, to save this please provide the "PARENT_CHAIN_RPC" environment variable`,
+  );
+}
+
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
 const parentChainPublicClient = createPublicClient({
   chain: parentChain,
-  transport: http(),
+  transport: http(process.env.PARENT_CHAIN_RPC),
 });
 
 if (

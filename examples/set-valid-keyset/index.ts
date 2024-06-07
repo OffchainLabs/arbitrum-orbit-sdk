@@ -12,12 +12,21 @@ if (typeof process.env.DEPLOYER_PRIVATE_KEY === 'undefined') {
   throw new Error(`Please provide the "DEPLOYER_PRIVATE_KEY" environment variable`);
 }
 
+if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CHAIN_RPC === '') {
+  console.warn(
+    `Warning: Note if use default rpc endpoint the script might not work as expected due to timeout errors, to save this please provide the "PARENT_CHAIN_RPC" environment variable`,
+  );
+}
+
 const keyset =
   '0x00000000000000010000000000000001012160000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
+const parentChainPublicClient = createPublicClient({
+  chain: parentChain,
+  transport: http(process.env.PARENT_CHAIN_RPC),
+});
 
 // load the deployer account
 const deployer = privateKeyToAccount(sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY));

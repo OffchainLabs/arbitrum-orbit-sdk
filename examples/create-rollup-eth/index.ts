@@ -22,6 +22,12 @@ if (typeof process.env.DEPLOYER_PRIVATE_KEY === 'undefined') {
   throw new Error(`Please provide the "DEPLOYER_PRIVATE_KEY" environment variable`);
 }
 
+if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CHAIN_RPC === '') {
+  console.warn(
+    `Warning: Note if use default rpc endpoint the script might not work as expected due to timeout errors, to save this please provide the "PARENT_CHAIN_RPC" environment variable`,
+  );
+}
+
 // load or generate a random batch poster account
 const batchPosterPrivateKey = withFallbackPrivateKey(process.env.BATCH_POSTER_PRIVATE_KEY);
 const batchPoster = privateKeyToAccount(batchPosterPrivateKey).address;
@@ -32,7 +38,10 @@ const validator = privateKeyToAccount(validatorPrivateKey).address;
 
 // set the parent chain and create a public client for it
 const parentChain = arbitrumSepolia;
-const parentChainPublicClient = createPublicClient({ chain: parentChain, transport: http() });
+const parentChainPublicClient = createPublicClient({
+  chain: parentChain,
+  transport: http(process.env.PARENT_CHAIN_RPC),
+});
 
 // load the deployer account
 const deployer = privateKeyToAccount(sanitizePrivateKey(process.env.DEPLOYER_PRIVATE_KEY));
