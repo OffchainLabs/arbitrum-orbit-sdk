@@ -17,6 +17,16 @@ export type ArbOwnerEncodeFunctionDataParameters<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
 > = EncodeFunctionDataParameters<ArbOwnerAbi, TFunctionName>;
 
+/**
+ * Encodes function data for ArbOwner contract.
+ *
+ * @template TFunctionName - Name of the function to encode
+ * @param {ArbOwnerEncodeFunctionDataParameters<TFunctionName>} params - Parameters for encoding function data
+ * @param {string} params.functionName - Name of the function to encode
+ * @param {ArbOwnerAbi} params.abi - ABI of the ArbOwner contract
+ * @param {Array<any>} params.args - Arguments for the function
+ * @returns {string} Encoded function data
+ */
 function arbOwnerEncodeFunctionData<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
 >({ functionName, abi, args }: ArbOwnerEncodeFunctionDataParameters<TFunctionName>) {
@@ -33,6 +43,16 @@ type ArbOwnerPrepareFunctionDataParameters<
   upgradeExecutor: Address | false;
   abi: ArbOwnerAbi;
 };
+
+/**
+ * Prepares function data for ArbOwner contract.
+ *
+ * @template TFunctionName - Name of the function to prepare data for
+ * @param {ArbOwnerPrepareFunctionDataParameters<TFunctionName>} params - Parameters for preparing function data
+ * @param {Address | false} params.upgradeExecutor - Address of the upgrade executor or false if not applicable
+ * @param {ArbOwnerAbi} params.abi - ABI of the ArbOwner contract
+ * @returns {Object} Prepared function data including target address, data and value
+ */
 function arbOwnerPrepareFunctionData<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
 >(params: ArbOwnerPrepareFunctionDataParameters<TFunctionName>) {
@@ -67,6 +87,31 @@ export type ArbOwnerPrepareTransactionRequestParameters<
   account: Address;
 };
 
+/**
+ * Prepares a transaction request for the ArbOwner contract.
+ *
+ * @template TFunctionName - Name of the function to prepare transaction for
+ * @template TChain - Type of the chain or undefined
+ * @param {PublicClient<Transport, TChain>} client - Public client to interact with the blockchain
+ * @param {ArbOwnerPrepareTransactionRequestParameters<TFunctionName>} params - Parameters for preparing the transaction request
+ * @param {Address} params.account - Account address
+ * @param {TFunctionName} params.functionName - Name of the function to encode
+ * @param {Array<any>} params.args - Arguments for the function
+ * @param {Address | false} params.upgradeExecutor - Address of the upgrade executor or false if not applicable
+ * @returns {Promise<Object>} Prepared transaction request including chainId
+ * @throws Will throw an error if client.chain is undefined
+ *
+ * @example
+ * const client = new PublicClient(...);
+ * const params = {
+ *   account: '0xYourAccountAddress',
+ *   functionName: 'yourFunctionName',
+ *   args: [...],
+ *   upgradeExecutor: '0xExecutorAddress',
+ * };
+ * const request = await arbOwnerPrepareTransactionRequest(client, params);
+ * console.log(request);
+ */
 export async function arbOwnerPrepareTransactionRequest<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
   TChain extends Chain | undefined,

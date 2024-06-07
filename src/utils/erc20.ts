@@ -2,6 +2,14 @@ import { Address, PublicClient, WalletClient, encodeFunctionData } from 'viem';
 
 import { erc20 } from '../contracts';
 
+/**
+ * Encodes the function data for the ERC20 approve function.
+ *
+ * @param {Object} params - The parameters for encoding function data
+ * @param {Address} params.spender - The address of the spender
+ * @param {bigint} params.amount - The amount of tokens to approve
+ * @returns {string} The encoded function data
+ */
 function approveEncodeFunctionData({ spender, amount }: { spender: Address; amount: bigint }) {
   return encodeFunctionData({
     abi: erc20.abi,
@@ -18,6 +26,27 @@ export type ApprovePrepareTransactionRequestProps = {
   publicClient: PublicClient;
 };
 
+/**
+ * Prepares a transaction request for the ERC20 approve function.
+ *
+ * @param {ApprovePrepareTransactionRequestProps} props - The properties for preparing the transaction request
+ * @param {Address} props.address - The address of the ERC20 token contract
+ * @param {Address} props.owner - The address of the token owner
+ * @param {Address} props.spender - The address of the spender
+ * @param {bigint} props.amount - The amount of tokens to approve
+ * @param {PublicClient} props.publicClient - The public client to use for the transaction
+ * @returns {Promise<Object>} The prepared transaction request
+ *
+ * @example
+ * const transactionRequest = await approvePrepareTransactionRequest({
+ *   address: '0xTokenAddress',
+ *   owner: '0xOwnerAddress',
+ *   spender: '0xSpenderAddress',
+ *   amount: BigInt(1000),
+ *   publicClient,
+ * });
+ * console.log(transactionRequest);
+ */
 export async function approvePrepareTransactionRequest({
   address,
   owner,
@@ -42,6 +71,28 @@ export type ApproveProps = {
   walletClient: WalletClient;
 };
 
+/**
+ * Approves the spender to spend a specified amount of tokens on behalf of the owner.
+ *
+ * @param {ApproveProps} props - The properties for the approve function
+ * @param {Address} props.address - The address of the ERC20 token contract
+ * @param {Address} props.spender - The address of the spender
+ * @param {bigint} props.amount - The amount of tokens to approve
+ * @param {PublicClient} props.publicClient - The public client to use for the transaction
+ * @param {WalletClient} props.walletClient - The wallet client to use for signing the transaction
+ * @returns {Promise<Object>} The transaction receipt
+ * @throws Will throw an error if the account is undefined
+ *
+ * @example
+ * const receipt = await approve({
+ *   address: '0xTokenAddress',
+ *   spender: '0xSpenderAddress',
+ *   amount: BigInt(1000),
+ *   publicClient,
+ *   walletClient,
+ * });
+ * console.log(receipt);
+ */
 export async function approve({
   address,
   spender,
@@ -74,6 +125,25 @@ export type FetchAllowanceProps = {
   publicClient: PublicClient;
 };
 
+/**
+ * Fetches the allowance of a spender for a specific owner.
+ *
+ * @param {FetchAllowanceProps} props - The properties for fetching the allowance
+ * @param {Address} props.address - The address of the ERC20 token contract
+ * @param {Address} props.owner - The address of the token owner
+ * @param {Address} props.spender - The address of the spender
+ * @param {PublicClient} props.publicClient - The public client to use for the transaction
+ * @returns {Promise<bigint>} The allowance amount
+ *
+ * @example
+ * const allowance = await fetchAllowance({
+ *   address: '0xTokenAddress',
+ *   owner: '0xOwnerAddress',
+ *   spender: '0xSpenderAddress',
+ *   publicClient,
+ * });
+ * console.log(allowance);
+ */
 export async function fetchAllowance({
   address,
   owner,
@@ -88,6 +158,21 @@ export async function fetchAllowance({
   });
 }
 
+/**
+ * Fetches the decimals of the ERC20 token.
+ *
+ * @param {Object} params - The parameters for fetching the decimals
+ * @param {Address} params.address - The address of the ERC20 token contract
+ * @param {PublicClient} params.publicClient - The public client to use for the transaction
+ * @returns {Promise<number>} The number of decimals
+ *
+ * @example
+ * const decimals = await fetchDecimals({
+ *   address: '0xTokenAddress',
+ *   publicClient,
+ * });
+ * console.log(decimals);
+ */
 export function fetchDecimals({
   address,
   publicClient,
@@ -101,3 +186,4 @@ export function fetchDecimals({
     functionName: 'decimals',
   });
 }
+

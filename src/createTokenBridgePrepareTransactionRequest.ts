@@ -33,6 +33,34 @@ export type CreateTokenBridgePrepareTransactionRequestParams = Prettify<
   }>
 >;
 
+/**
+ * Prepares a transaction request for creating a token bridge.
+ *
+ * This function sets up the transaction parameters required to deploy a token bridge
+ * on the parent chain. It validates the parent chain, retrieves the token bridge creator
+ * address, calculates necessary gas values, and prepares the transaction request.
+ *
+ * @param {CreateTokenBridgePrepareTransactionRequestParams} createTokenBridgePrepareTransactionRequestParams - Parameters for preparing the transaction request
+ * @param {Object} createTokenBridgePrepareTransactionRequestParams.params - Parameters for the token bridge
+ * @param {Address} createTokenBridgePrepareTransactionRequestParams.params.rollup - The rollup address
+ * @param {Address} createTokenBridgePrepareTransactionRequestParams.params.rollupOwner - The rollup owner address
+ * @param {PublicClient} createTokenBridgePrepareTransactionRequestParams.parentChainPublicClient - The parent chain public client
+ * @param {PublicClient} createTokenBridgePrepareTransactionRequestParams.orbitChainPublicClient - The orbit chain public client
+ * @param {Address} createTokenBridgePrepareTransactionRequestParams.account - The account address
+ * @param {TransactionRequestGasOverrides} [createTokenBridgePrepareTransactionRequestParams.gasOverrides] - Optional gas overrides for the transaction
+ * @param {TransactionRequestRetryableGasOverrides} [createTokenBridgePrepareTransactionRequestParams.retryableGasOverrides] - Optional retryable gas overrides for the transaction
+ * @param {Address} [createTokenBridgePrepareTransactionRequestParams.tokenBridgeCreatorAddressOverride] - Optional override for the token bridge creator address
+ *
+ * @returns {Promise<Object>} The prepared transaction request and the chain ID
+ *
+ * @example
+ * const transactionRequest = await createTokenBridgePrepareTransactionRequest({
+ *   params: { rollup: '0x...', rollupOwner: '0x...' },
+ *   parentChainPublicClient,
+ *   orbitChainPublicClient,
+ *   account: '0x...',
+ * });
+ */
 export async function createTokenBridgePrepareTransactionRequest({
   params,
   parentChainPublicClient,

@@ -1,8 +1,14 @@
 import { TransactionReceipt, getAbiItem, getEventSelector, Log, decodeEventLog } from 'viem';
-
 import { rollupCreator } from './contracts';
 import { CoreContracts } from './types/CoreContracts';
 
+/**
+ * Finds the RollupCreated event log in the transaction receipt logs.
+ *
+ * @param {TransactionReceipt} txReceipt - The transaction receipt
+ * @returns {Log<bigint, number>} - The log containing the RollupCreated event
+ * @throws {Error} - If no RollupCreated log is found
+ */
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {
   const abiItem = getAbiItem({ abi: rollupCreator.abi, name: 'RollupCreated' });
   const eventSelector = getEventSelector(abiItem);
@@ -17,6 +23,13 @@ function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {
   return log;
 }
 
+/**
+ * Decodes the RollupCreated event log.
+ *
+ * @param {Log<bigint, number>} log - The log to decode
+ * @returns {Object} - The decoded event log
+ * @throws {Error} - If the event name is not RollupCreated
+ */
 function decodeRollupCreatedEventLog(log: Log<bigint, number>) {
   const decodedEventLog = decodeEventLog({ ...log, abi: rollupCreator.abi });
 
@@ -28,9 +41,20 @@ function decodeRollupCreatedEventLog(log: Log<bigint, number>) {
 }
 
 export type CreateRollupTransactionReceipt = TransactionReceipt & {
+  /**
+   * Gets the core contracts from the transaction receipt.
+   *
+   * @returns {CoreContracts} - The core contracts
+   */
   getCoreContracts(): CoreContracts;
 };
 
+/**
+ * Prepares the transaction receipt by adding a method to get core contracts.
+ *
+ * @param {TransactionReceipt} txReceipt - The transaction receipt
+ * @returns {CreateRollupTransactionReceipt} - The prepared transaction receipt
+ */
 export function createRollupPrepareTransactionReceipt(
   txReceipt: TransactionReceipt,
 ): CreateRollupTransactionReceipt {

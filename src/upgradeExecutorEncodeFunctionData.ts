@@ -18,10 +18,18 @@ export type UpgradeExecutorEncodeFunctionDataParameters<
   TFunctionName extends UpgradeExecutorFunctionName,
 > = Prettify<Omit<EncodeFunctionDataParameters<UpgradeExecutorAbi, TFunctionName>, 'abi'>>;
 
-// Encodes a function call to be sent through the UpgradeExecutor
+/**
+ * Encodes a function call to be sent through the UpgradeExecutor.
+ *
+ * @template TFunctionName - The name of the function to encode.
+ * @param {Object} params - The parameters for encoding the function data.
+ * @param {TFunctionName} params.functionName - The name of the function to encode.
+ * @param {Array<any>} params.args - The arguments to pass to the function.
+ * @returns {string} The encoded function data.
+ */
 export function upgradeExecutorEncodeFunctionData<
   TFunctionName extends UpgradeExecutorFunctionName,
->({ functionName, args }: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>) {
+>({ functionName, args }: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>): string {
   // @ts-ignore (todo: fix viem type issue)
   return encodeFunctionData({
     abi: upgradeExecutor.abi,

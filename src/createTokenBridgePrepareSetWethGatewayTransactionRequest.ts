@@ -89,6 +89,22 @@ const parentChainGatewayRouterAbi = [
   },
 ];
 
+/**
+ * Prepares a transaction request to set the WETH gateway on the token bridge.
+ *
+ * This function registers networks, checks for custom fee token chains, fetches token bridge contracts,
+ * and encodes data for the setGateways call. It also applies gas overrides and prepares the transaction request.
+ *
+ * @param {CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams} params - The parameters for the transaction request.
+ * @param {Address} params.rollup - The address of the rollup.
+ * @param {PublicClient} params.parentChainPublicClient - The public client for the parent chain.
+ * @param {PublicClient} params.orbitChainPublicClient - The public client for the orbit chain.
+ * @param {Address} params.account - The address of the account.
+ * @param {TransactionRequestRetryableGasOverrides} [params.retryableGasOverrides] - Optional gas override options.
+ * @param {Address} [params.tokenBridgeCreatorAddressOverride] - Optional override for the token bridge creator address.
+ * @returns {Promise<Object>} The prepared transaction request and chain ID.
+ * @throws Will throw an error if the chain is a custom fee token chain or if the WETH gateway is already registered.
+ */
 export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   rollup,
   parentChainPublicClient,

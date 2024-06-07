@@ -10,7 +10,21 @@ import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrep
 import { registerNewNetwork } from './utils/registerNewNetwork';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
+/**
+ * Represents a named factory contract.
+ * @typedef {Object} NamedFactory
+ * @property {string} contractName - The name of the contract.
+ */
 type NamedFactory = ContractFactory & { contractName: string };
+
+/**
+ * Creates an instance of NamedFactory.
+ * @param {Object} contractJson - The contract JSON object.
+ * @param {Array} contractJson.abi - The ABI of the contract.
+ * @param {string} contractJson.bytecode - The bytecode of the contract.
+ * @param {string} contractJson.contractName - The name of the contract.
+ * @returns {NamedFactory} The named factory instance.
+ */
 const NamedFactoryInstance = (contractJson: {
   abi: any;
   bytecode: string;
@@ -24,6 +38,14 @@ const NamedFactoryInstance = (contractJson: {
 // import from token-bridge-contracts directly to make sure the bytecode is the same
 const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBridgeFactory);
 
+/**
+ * Represents the result of the createTokenBridgeGetInputs function.
+ * @typedef {Object} CreateTokenBridgeGetInputsResult
+ * @property {Address} inbox - The inbox address.
+ * @property {bigint} maxGasForContracts - The maximum gas for contracts.
+ * @property {bigint} gasPrice - The gas price.
+ * @property {bigint} retryableFee - The retryable fee.
+ */
 export type CreateTokenBridgeGetInputsResult = {
   inbox: Address;
   maxGasForContracts: bigint;
@@ -31,6 +53,17 @@ export type CreateTokenBridgeGetInputsResult = {
   retryableFee: bigint;
 };
 
+/**
+ * Gets the inputs required for creating a token bridge.
+ *
+ * @param {string} l1DeployerAddress - The L1 deployer address.
+ * @param {PublicClient} l1PublicClient - The L1 public client.
+ * @param {PublicClient} l2PublicClient - The L2 public client.
+ * @param {string} l1TokenBridgeCreatorAddress - The L1 token bridge creator address.
+ * @param {string} rollupAddress - The rollup address.
+ * @param {TransactionRequestRetryableGasOverrides} [retryableGasOverrides] - Optional gas overrides for the retryable transaction.
+ * @returns {Promise<CreateTokenBridgeGetInputsResult>} The inputs required for creating a token bridge.
+ */
 export const createTokenBridgeGetInputs = async (
   l1DeployerAddress: string,
   l1PublicClient: PublicClient,
@@ -165,6 +198,13 @@ export const createTokenBridgeGetInputs = async (
   };
 };
 
+/**
+ * Gets the estimate for deploying the factory.
+ * @param {string} l1DeployerAddress - The L1 deployer address.
+ * @param {ethers.providers.Provider} l1Provider - The L1 provider.
+ * @param {ethers.providers.Provider} l2Provider - The L2 provider.
+ * @returns {Promise<Object>} The gas parameters for deploying the factory.
+ */
 const getEstimateForDeployingFactory = async (
   l1DeployerAddress: string,
   l1Provider: ethers.providers.Provider,
@@ -189,6 +229,17 @@ const getEstimateForDeployingFactory = async (
   return deployFactoryGasParams;
 };
 
+/**
+ * Gets the estimate for setting a token gateway in the router.
+ *
+ * @param {Address} l1ChainOwnerAddress - The L1 chain owner address.
+ * @param {Address} l1UpgradeExecutorAddress - The L1 upgrade executor address.
+ * @param {Address} l1GatewayRouterAddress - The L1 gateway router address.
+ * @param {`0x${string}`} setGatewaysCalldata - The calldata for setting gateways.
+ * @param {PublicClient} parentChainPublicClient - The parent chain public client.
+ * @param {PublicClient} orbitChainPublicClient - The orbit chain public client.
+ * @returns {Promise<Object>} The gas parameters for setting the gateway.
+ */
 export const getEstimateForSettingGateway = async (
   l1ChainOwnerAddress: Address,
   l1UpgradeExecutorAddress: Address,
@@ -224,3 +275,4 @@ export const getEstimateForSettingGateway = async (
     deposit: setGatewaysGasParams.deposit.toBigInt(),
   };
 };
+

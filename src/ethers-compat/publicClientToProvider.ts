@@ -1,7 +1,24 @@
 import { PublicClient } from 'viem';
 import { providers } from 'ethers';
 
-// based on https://wagmi.sh/react/ethers-adapters#reference-implementation
+/**
+ * Converts a Viem PublicClient instance to an Ethers.js provider.
+ *
+ * @param {PublicClient} publicClient - The Viem PublicClient instance to convert.
+ * @returns {providers.StaticJsonRpcProvider} - The Ethers.js StaticJsonRpcProvider.
+ * @throws {Error} If the chain property is undefined in the publicClient.
+ *
+ * @example
+ * const viemClient = new PublicClient({
+ *   chain: {
+ *     id: 1,
+ *     name: 'mainnet',
+ *     rpcUrls: { default: { http: ['https://mainnet.infura.io/v3/YOUR-PROJECT-ID'] } },
+ *     contracts: { ensRegistry: { address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e' } },
+ *   },
+ * });
+ * const ethersProvider = publicClientToProvider(viemClient);
+ */
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain } = publicClient;
 

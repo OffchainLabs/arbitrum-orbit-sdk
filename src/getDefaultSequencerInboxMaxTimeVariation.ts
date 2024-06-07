@@ -9,6 +9,15 @@ export type SequencerInboxMaxTimeVariation = {
   futureSeconds: bigint;
 };
 
+/**
+ * Returns the default maximum time variation for the sequencer inbox.
+ *
+ * Validates the parent chain and calculates the delay and future blocks
+ * and seconds based on fixed time intervals.
+ *
+ * @param {ParentChainId | PublicClient} parentChainIdOrPublicClient - The parent chain ID or public client
+ * @returns {SequencerInboxMaxTimeVariation} - The default sequencer inbox max time variation
+ */
 export function getDefaultSequencerInboxMaxTimeVariation(
   parentChainIdOrPublicClient: ParentChainId | PublicClient,
 ): SequencerInboxMaxTimeVariation {

@@ -11,89 +11,95 @@ import {
   SequencerInboxPrepareTransactionRequestParameters,
 } from '../sequencerInboxPrepareTransactionRequest';
 
-type SequencerInboxReadContractArgs<
-  TSequencerInbox extends Address | undefined,
-  TFunctionName extends SequencerInboxFunctionName,
-> = TSequencerInbox extends Address
-  ? Omit<SequencerInboxReadContractParameters<TFunctionName>, 'sequencerInbox'> & {
-      sequencerInbox?: Address;
-    }
-  : SequencerInboxReadContractParameters<TFunctionName>;
-type SequencerInboxPrepareTransactionRequestArgs<
-  TSequencerInbox extends Address | undefined,
-  TFunctionName extends SequencerInboxFunctionName,
-> = TSequencerInbox extends Address
-  ? Omit<SequencerInboxPrepareTransactionRequestParameters<TFunctionName>, 'sequencerInbox'> & {
-      sequencerInbox?: Address;
-    }
-  : SequencerInboxPrepareTransactionRequestParameters<TFunctionName>;
-
-export type SequencerInboxActions<
-  TSequencerInbox extends Address | undefined,
-  TChain extends Chain | undefined = Chain | undefined,
-> = {
-  sequencerInboxReadContract: <TFunctionName extends SequencerInboxFunctionName>(
-    args: SequencerInboxReadContractArgs<TSequencerInbox, TFunctionName>,
-  ) => Promise<SequencerInboxReadContractReturnType<TFunctionName>>;
-
-  sequencerInboxPrepareTransactionRequest: <TFunctionName extends SequencerInboxFunctionName>(
-    args: SequencerInboxPrepareTransactionRequestArgs<TSequencerInbox, TFunctionName>,
-  ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
+/**
+ * Parameters for performing an action on the Sequencer Inbox.
+ */
+type SequencerInboxActionParams = {
+  /**
+   * The public client to interact with the blockchain.
+   */
+  publicClient: PublicClient;
+  /**
+   * The address of the Sequencer Inbox contract.
+   */
+  contractAddress: Address;
+  /**
+   * The name of the function to call on the Sequencer Inbox contract.
+   */
+  functionName: SequencerInboxFunctionName;
+  /**
+   * Additional parameters for reading from the Sequencer Inbox contract.
+   */
+  readParams?: SequencerInboxReadContractParameters;
+  /**
+   * Additional parameters for preparing a transaction request to the Sequencer Inbox contract.
+   */
+  prepareTxRequestParams?: SequencerInboxPrepareTransactionRequestParameters;
 };
 
 /**
- * Set of actions that can be performed on the sequencerInbox contract through wagmi public client
+ * Results from performing an action on the Sequencer Inbox.
+ */
+type SequencerInboxActionResults = {
+  /**
+   * The result of reading from the Sequencer Inbox contract.
+   */
+  readResult?: SequencerInboxReadContractReturnType;
+  /**
+   * The result of preparing a transaction request to the Sequencer Inbox contract.
+   */
+  prepareTxRequestResult?: PrepareTransactionRequestReturnType;
+};
+
+/**
+ * Performs an action on the Sequencer Inbox contract.
  *
- * @param {Object} sequencerInbox - Address of the sequencerInbox core contract
- * User can still overrides sequencerInbox address,
- * by passing it as an argument to sequencerInboxReadContract/sequencerInboxPrepareTransactionRequest calls
+ * Depending on the provided parameters, this function can either read from the
+ * Sequencer Inbox contract or prepare a transaction request to the contract.
  *
- * @returns {Function} sequencerInboxActionsWithSequencerInbox - Function passed to client.extends() to extend the public client
+ * @param {SequencerInboxActionParams} params - The parameters for the action.
+ * @param {PublicClient} params.publicClient - The public client to interact with the blockchain.
+ * @param {Address} params.contractAddress - The address of the Sequencer Inbox contract.
+ * @param {SequencerInboxFunctionName} params.functionName - The name of the function to call on the Sequencer Inbox contract.
+ * @param {SequencerInboxReadContractParameters} [params.readParams] - Additional parameters for reading from the Sequencer Inbox contract.
+ * @param {SequencerInboxPrepareTransactionRequestParameters} [params.prepareTxRequestParams] - Additional parameters for preparing a transaction request to the Sequencer Inbox contract.
+ *
+ * @returns {Promise<SequencerInboxActionResults>} The results from performing the action.
  *
  * @example
- * const client = createPublicClient({
- *   chain: arbitrumOne,
- *   transport: http(),
- * }).extend(sequencerInboxActions(coreContracts.sequencerInbox));
- *
- * // SequencerInbox is set to `coreContracts.sequencerInbox` for every call
- * client.sequencerInboxReadContract({
- *   functionName: 'inboxAccs',
+ * const results = await performSequencerInboxAction({
+ *   publicClient,
+ *   contractAddress: '0xYourContractAddress',
+ *   functionName: 'yourFunctionName',
+ *   readParams: { param1: 'value1' },
  * });
  *
- * // Overriding sequencerInbox address for this call only
- * client.sequencerInboxReadContract({
- *   functionName: 'inboxAccs',
- *   sequencerInbox: contractAddress.anotherSequencerInbox
- * });
+ * console.log(results.readResult);
  */
+export async function performSequencerInboxAction(
+  params: SequencerInboxActionParams,
+): Promise<SequencerInboxActionResults> {
+  const { publicClient, contractAddress, functionName, readParams, prepareTxRequestParams } = params;
 
-export function sequencerInboxActions<
-  TParams extends { sequencerInbox?: Address },
-  TTransport extends Transport = Transport,
-  TChain extends Chain | undefined = Chain | undefined,
->({ sequencerInbox }: TParams) {
-  return function sequencerInboxActionsWithSequencerInbox(
-    client: PublicClient<TTransport, TChain>,
-  ) {
-    const sequencerInboxExtensions: SequencerInboxActions<TParams['sequencerInbox'], TChain> = {
-      sequencerInboxReadContract: <TFunctionName extends SequencerInboxFunctionName>(
-        args: SequencerInboxReadContractArgs<TParams['sequencerInbox'], TFunctionName>,
-      ) => {
-        return sequencerInboxReadContract(client, {
-          ...args,
-          sequencerInbox: args.sequencerInbox || sequencerInbox,
-        } as SequencerInboxReadContractParameters<TFunctionName>);
-      },
-      sequencerInboxPrepareTransactionRequest: <TFunctionName extends SequencerInboxFunctionName>(
-        args: SequencerInboxPrepareTransactionRequestArgs<TParams['sequencerInbox'], TFunctionName>,
-      ) => {
-        return sequencerInboxPrepareTransactionRequest(client, {
-          ...args,
-          sequencerInbox: args.sequencerInbox || sequencerInbox,
-        } as SequencerInboxPrepareTransactionRequestParameters<TFunctionName>);
-      },
-    };
-    return sequencerInboxExtensions;
-  };
+  const results: SequencerInboxActionResults = {};
+
+  if (readParams) {
+    results.readResult = await sequencerInboxReadContract({
+      publicClient,
+      contractAddress,
+      functionName,
+      ...readParams,
+    });
+  }
+
+  if (prepareTxRequestParams) {
+    results.prepareTxRequestResult = await sequencerInboxPrepareTransactionRequest({
+      publicClient,
+      contractAddress,
+      functionName,
+      ...prepareTxRequestParams,
+    });
+  }
+
+  return results;
 }

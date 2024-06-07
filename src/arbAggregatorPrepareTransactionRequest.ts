@@ -17,6 +17,16 @@ export type ArbAggregatorEncodeFunctionDataParameters<
   TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
 > = EncodeFunctionDataParameters<ArbAggregatorAbi, TFunctionName>;
 
+/**
+ * Encodes function data for the ArbAggregator contract.
+ *
+ * @template TFunctionName - The function name type.
+ * @param {ArbAggregatorEncodeFunctionDataParameters<TFunctionName>} params - The parameters for encoding function data.
+ * @param {string} params.functionName - The name of the function to encode.
+ * @param {Array<any>} params.args - The arguments to be passed to the function.
+ * @param {Array<Object>} params.abi - The ABI of the contract.
+ * @returns {string} The encoded function data.
+ */
 function arbAggregatorEncodeFunctionData<
   TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
 >({ functionName, abi, args }: ArbAggregatorEncodeFunctionDataParameters<TFunctionName>) {
@@ -33,6 +43,18 @@ type ArbAggregatorPrepareFunctionDataParameters<
   upgradeExecutor: Address | false;
   abi: ArbAggregatorAbi;
 };
+
+/**
+ * Prepares function data for the ArbAggregator contract, optionally including an upgrade executor.
+ *
+ * @template TFunctionName - The function name type.
+ * @param {ArbAggregatorPrepareFunctionDataParameters<TFunctionName>} params - The parameters for preparing function data.
+ * @param {string} params.functionName - The name of the function to prepare.
+ * @param {Array<any>} params.args - The arguments to be passed to the function.
+ * @param {Array<Object>} params.abi - The ABI of the contract.
+ * @param {Address|false} params.upgradeExecutor - The address of the upgrade executor or false if not using an upgrade executor.
+ * @returns {Object} The prepared function data including `to`, `data`, and `value` fields.
+ */
 function arbAggregatorPrepareFunctionData<
   TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
 >(params: ArbAggregatorPrepareFunctionDataParameters<TFunctionName>) {
@@ -68,6 +90,21 @@ export type ArbAggregatorPrepareTransactionRequestParameters<
 > = Omit<ArbAggregatorPrepareFunctionDataParameters<TFunctionName>, 'abi'> & {
   account: Address;
 };
+
+/**
+ * Prepares a transaction request for the ArbAggregator contract.
+ *
+ * @template TFunctionName - The function name type.
+ * @template TChain - The chain type, can be undefined.
+ * @param {PublicClient<Transport, TChain>} client - The public client instance.
+ * @param {ArbAggregatorPrepareTransactionRequestParameters<TFunctionName>} params - The parameters for preparing the transaction request.
+ * @param {string} params.functionName - The name of the function to prepare.
+ * @param {Array<any>} params.args - The arguments to be passed to the function.
+ * @param {Address|false} params.upgradeExecutor - The address of the upgrade executor or false if not using an upgrade executor.
+ * @param {Address} params.account - The address of the account making the transaction.
+ * @returns {Promise<Object>} The prepared transaction request including chainId.
+ * @throws Will throw an error if `client.chain` is undefined.
+ */
 export async function arbAggregatorPrepareTransactionRequest<
   TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
   TChain extends Chain | undefined,

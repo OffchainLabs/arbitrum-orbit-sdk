@@ -8,6 +8,24 @@ import {
   arbitrumSepolia,
 } from 'viem/chains';
 
+/**
+ * Defines the Nitro Testnode L1 chain.
+ * @constant
+ * @type {Chain}
+ * @property {number} id - The chain ID
+ * @property {string} network - The network name
+ * @property {string} name - The chain name
+ * @property {Object} nativeCurrency - The native currency of the chain
+ * @property {string} nativeCurrency.name - The name of the native currency
+ * @property {string} nativeCurrency.symbol - The symbol of the native currency
+ * @property {number} nativeCurrency.decimals - The decimals of the native currency
+ * @property {Object} rpcUrls - The RPC URLs for the chain
+ * @property {Object} rpcUrls.default - The default RPC URLs
+ * @property {Array<string>} rpcUrls.default.http - The default HTTP RPC URLs
+ * @property {Object} rpcUrls.public - The public RPC URLs
+ * @property {Array<string>} rpcUrls.public.http - The public HTTP RPC URLs
+ * @property {boolean} testnet - Indicates if the chain is a testnet
+ */
 const nitroTestnodeL1 = defineChain({
   id: 1_337,
   network: 'Nitro Testnode L1',
@@ -24,6 +42,24 @@ const nitroTestnodeL1 = defineChain({
   testnet: true,
 });
 
+/**
+ * Defines the Nitro Testnode L2 chain.
+ * @constant
+ * @type {Chain}
+ * @property {number} id - The chain ID
+ * @property {string} network - The network name
+ * @property {string} name - The chain name
+ * @property {Object} nativeCurrency - The native currency of the chain
+ * @property {string} nativeCurrency.name - The name of the native currency
+ * @property {string} nativeCurrency.symbol - The symbol of the native currency
+ * @property {number} nativeCurrency.decimals - The decimals of the native currency
+ * @property {Object} rpcUrls - The RPC URLs for the chain
+ * @property {Object} rpcUrls.default - The default RPC URLs
+ * @property {Array<string>} rpcUrls.default.http - The default HTTP RPC URLs
+ * @property {Object} rpcUrls.public - The public RPC URLs
+ * @property {Array<string>} rpcUrls.public.http - The public HTTP RPC URLs
+ * @property {boolean} testnet - Indicates if the chain is a testnet
+ */
 const nitroTestnodeL2 = defineChain({
   id: 412_346,
   network: 'Nitro Testnode L2',
@@ -40,7 +76,24 @@ const nitroTestnodeL2 = defineChain({
   testnet: true,
 });
 
-// the L3 deployed as part of the nitro-testnode framework uses a custom fee token
+/**
+ * Defines the Nitro Testnode L3 chain.
+ * @constant
+ * @type {Chain}
+ * @property {number} id - The chain ID
+ * @property {string} network - The network name
+ * @property {string} name - The chain name
+ * @property {Object} nativeCurrency - The native currency of the chain
+ * @property {string} nativeCurrency.name - The name of the native currency
+ * @property {string} nativeCurrency.symbol - The symbol of the native currency
+ * @property {number} nativeCurrency.decimals - The decimals of the native currency
+ * @property {Object} rpcUrls - The RPC URLs for the chain
+ * @property {Object} rpcUrls.default - The default RPC URLs
+ * @property {Array<string>} rpcUrls.default.http - The default HTTP RPC URLs
+ * @property {Object} rpcUrls.public - The public RPC URLs
+ * @property {Array<string>} rpcUrls.public.http - The public HTTP RPC URLs
+ * @property {boolean} testnet - Indicates if the chain is a testnet
+ */
 const nitroTestnodeL3 = defineChain({
   id: 333333,
   network: 'Nitro Testnode L3',
@@ -57,6 +110,11 @@ const nitroTestnodeL3 = defineChain({
   testnet: true,
 });
 
+/**
+ * List of supported chains.
+ * @constant
+ * @type {Array<Chain>}
+ */
 export const chains = [
   // mainnet
   mainnet,

@@ -6,6 +6,17 @@ type JsonRpcResult = {
   result: string;
 };
 
+/**
+ * Retrieves the client version from a given PublicClient or RPC URL.
+ *
+ * @param {PublicClient | string} publicClientOrRpcUrl - The PublicClient instance or RPC URL string.
+ * @returns {Promise<string>} The client version as a string.
+ * @throws Will throw an error if the RPC URL is invalid.
+ *
+ * @example
+ * const version = await getClientVersion('https://mainnet.infura.io/v3/YOUR-PROJECT-ID');
+ * console.log(version); // e.g., "Geth/v1.10.8-stable"
+ */
 export async function getClientVersion(
   publicClientOrRpcUrl: PublicClient | string,
 ): Promise<string> {

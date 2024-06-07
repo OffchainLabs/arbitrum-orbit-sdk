@@ -16,6 +16,13 @@ import {
 import { CreateRollupParams } from './types/createRollupTypes';
 import { ParentChainPublicClient, validateParentChainPublicClient } from './types/ParentChain';
 
+/**
+ * Parameters for ensuring custom gas token allowance granted to Rollup Creator.
+ * @typedef {Object} EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams
+ * @property {Address} nativeToken - The native token address
+ * @property {ParentChainPublicClient} parentChainPublicClient - The parent chain public client
+ * @property {PrivateKeyAccount} account - The private key account of the rollup owner
+ */
 type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
   nativeToken: Address;
   parentChainPublicClient: ParentChainPublicClient;
@@ -29,6 +36,11 @@ type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
  *
  * If not, perform an approval transaction to grant the custom fee token
  * spend allowance to the Rollup Creator address.
+ *
+ * @param {EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams} params - The parameters for the function
+ * @param {Address} params.nativeToken - The native token address
+ * @param {ParentChainPublicClient} params.parentChainPublicClient - The parent chain public client
+ * @param {PrivateKeyAccount} params.account - The private key account of the rollup owner
  */
 async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
   nativeToken,
@@ -70,6 +82,10 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
 
 /**
  * This type is for the params of the createRollup function
+ * @typedef {Object} CreateRollupFunctionParams
+ * @property {CreateRollupParams} params - The rollup creation parameters
+ * @property {PrivateKeyAccount} account - The rollup owner private key account
+ * @property {PublicClient} parentChainPublicClient - The parent chain Viem Public Client
  */
 export type CreateRollupFunctionParams = {
   params: CreateRollupParams;
@@ -78,10 +94,10 @@ export type CreateRollupFunctionParams = {
 };
 
 /**
- * @param {Object} createRollupResults - results of the createRollup function
- * @param {Object} createRollupResults.transaction - the transaction for deploying the core contracts
- * @param {Object} createRollupResults.txReceipt - the transaction receipt
- * @param {Object} createRollupResults.coreContracts - the core contracts
+ * @typedef {Object} CreateRollupResults
+ * @property {CreateRollupTransaction} transaction - The transaction for deploying the core contracts
+ * @property {CreateRollupTransactionReceipt} transactionReceipt - The transaction receipt
+ * @property {CoreContracts} coreContracts - The core contracts
  */
 export type CreateRollupResults = {
   transaction: CreateRollupTransaction;
@@ -103,24 +119,19 @@ export type CreateRollupResults = {
  * - Example 1: [Create an ETH gas token chain](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-eth/index.ts)
  * - Example 2: [Create a custom gas token chain](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/create-rollup-custom-fee-token/index.ts)
  *
- * @param {CreateRollupFunctionParams} createRollupFunctionParams {@link CreateRollupFunctionParams}
- * @param {Object} createRollupFunctionParams.params - {@link CreateRollupParams}
+ * @param {CreateRollupFunctionParams} createRollupFunctionParams - The parameters for the createRollup function
+ * @param {CreateRollupParams} createRollupFunctionParams.params - The rollup creation parameters
  * @param {Object} createRollupFunctionParams.params.config - The chain config
  * @param {string} createRollupFunctionParams.params.batchPoster - The batchPoster address
  * @param {Array<string>} createRollupFunctionParams.params.validators - The validator(s) address array
- * @param {boolean} [createRollupFunctionParams.params.deployFactoriesToL2=] - Optional, defaults to true.
- * Deploying factories via retryable tickets at rollup creation time is the most reliable method to
- * do it since it doesn't require paying the L1 gas. If deployment is not done as part of rollup
- * creation TX, there is a risk that anyone can try to deploy factories and potentially burn
- * the nonce 0 (ie. due to gas price spike when doing direct child chain TX). That would mean we
- * permanently lost capability to deploy deterministic factory at expected address.
- * @param {string} [createRollupFunctionParams.params.nativeToken=] - The native token address, optional, defaults to ETH
- * @param {number} [createRollupFunctionParams.params.maxDataSize=] - The max calldata size, optional, defaults to 104_857 B for Orbit chains
- * @param {number} [createRollupFunctionParams.params.maxFeePerGasForRetryables=] - The max fee per gas for retryables, optional, defaults to 0.1 gwei
- * @param {Object} createRollupFunctionParams.account - The rollup owner private key account
- * @param {Object} createRollupFunctionParams.parentChainPublicClient - The parent chain Viem Public Client
+ * @param {boolean} [createRollupFunctionParams.params.deployFactoriesToL2=true] - Optional, defaults to true. Deploying factories via retryable tickets at rollup creation time is the most reliable method to do it since it doesn't require paying the L1 gas. If deployment is not done as part of rollup creation TX, there is a risk that anyone can try to deploy factories and potentially burn the nonce 0 (ie. due to gas price spike when doing direct child chain TX). That would mean we permanently lost capability to deploy deterministic factory at expected address.
+ * @param {string} [createRollupFunctionParams.params.nativeToken=zeroAddress] - The native token address, optional, defaults to ETH
+ * @param {number} [createRollupFunctionParams.params.maxDataSize=104857] - The max calldata size, optional, defaults to 104_857 B for Orbit chains
+ * @param {number} [createRollupFunctionParams.params.maxFeePerGasForRetryables=0.1] - The max fee per gas for retryables, optional, defaults to 0.1 gwei
+ * @param {PrivateKeyAccount} createRollupFunctionParams.account - The rollup owner private key account
+ * @param {PublicClient} createRollupFunctionParams.parentChainPublicClient - The parent chain Viem Public Client
  *
- * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
+ * @returns {Promise<CreateRollupResults>} - The transaction, the transaction receipt, and the core contracts.
  *
  * @example
  * const createRollupConfig = createRollupPrepareConfig({

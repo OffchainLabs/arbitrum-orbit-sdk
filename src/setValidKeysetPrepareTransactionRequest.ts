@@ -17,7 +17,11 @@ export type SetValidKeysetPrepareTransactionRequestParams = Omit<
  *
  * @param {Object} setValidKeysetPrepareTransactionRequestParams - Parameters for preparing the transaction request
  * @param {Object} setValidKeysetPrepareTransactionRequestParams.coreContracts - The core contracts involved
+ * @param {string} setValidKeysetPrepareTransactionRequestParams.coreContracts.upgradeExecutor - The address of the upgrade executor contract
+ * @param {string} setValidKeysetPrepareTransactionRequestParams.coreContracts.sequencerInbox - The address of the sequencer inbox contract
  * @param {Object} setValidKeysetPrepareTransactionRequestParams.keyset - The keyset to be set as valid
+ * @param {Array<string>} setValidKeysetPrepareTransactionRequestParams.keyset.keys - Array of keys in the keyset
+ * @param {number} setValidKeysetPrepareTransactionRequestParams.keyset.threshold - The threshold number of keys required
  * @param {Address} setValidKeysetPrepareTransactionRequestParams.account - The account address initiating the transaction
  * @param {Object} setValidKeysetPrepareTransactionRequestParams.publicClient - The public client to interact with the blockchain
  *

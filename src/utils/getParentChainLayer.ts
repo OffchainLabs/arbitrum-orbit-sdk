@@ -10,6 +10,12 @@ import {
 } from '../chains';
 import { ParentChainId } from '../types/ParentChain';
 
+/**
+ * Get the layer of the parent chain based on its ID.
+ *
+ * @param {ParentChainId} parentChainId - The ID of the parent chain.
+ * @returns {number} The layer of the parent chain (1 for L2, 2 for L3).
+ */
 export function getParentChainLayer(parentChainId: ParentChainId) {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {

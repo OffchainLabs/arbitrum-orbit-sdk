@@ -4,9 +4,9 @@ import { ARB_SYS_ADDRESS } from '@arbitrum/sdk/dist/lib/dataEntities/constants';
 /**
  * Returns the the ArbOS version from the provider passed in parameter.
  *
- * @param arbitrumPublicClient - viem public client
+ * @param {PublicClient} arbitrumPublicClient - viem public client
  * @throws if the provider is not an arbitrum chain
- * @returns the ArbOS version
+ * @returns {Promise<number>} the ArbOS version
  */
 export async function getArbOSVersion(arbitrumPublicClient: PublicClient): Promise<number> {
   const arbOSVersion = await arbitrumPublicClient.readContract({

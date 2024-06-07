@@ -18,21 +18,44 @@ import {
 } from './chains';
 import { getParentChainLayer } from './utils';
 
-// this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
-function sanitizePrivateKey(privateKey: string) {
+/**
+ * This is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix.
+ *
+ * @param {string} privateKey - The private key to sanitize.
+ * @returns {string} - The sanitized private key without the 0x prefix.
+ */
+function sanitizePrivateKey(privateKey: string): string {
   return privateKey.startsWith('0x') ? privateKey.slice(2) : privateKey;
 }
 
+/**
+ * Converts NodeConfigChainInfoJson object to a JSON string.
+ *
+ * @param {NodeConfigChainInfoJson} infoJson - The info JSON object to stringify.
+ * @returns {string} - The JSON string representation of the info JSON object.
+ */
 function stringifyInfoJson(infoJson: NodeConfigChainInfoJson): string {
   return JSON.stringify(infoJson);
 }
 
+/**
+ * Converts NodeConfigDataAvailabilityRpcAggregatorBackendsJson object to a JSON string.
+ *
+ * @param {NodeConfigDataAvailabilityRpcAggregatorBackendsJson} backendsJson - The backends JSON object to stringify.
+ * @returns {string} - The JSON string representation of the backends JSON object.
+ */
 function stringifyBackendsJson(
   backendsJson: NodeConfigDataAvailabilityRpcAggregatorBackendsJson,
 ): string {
   return JSON.stringify(backendsJson);
 }
 
+/**
+ * Checks if the given parent chain ID belongs to an Arbitrum chain.
+ *
+ * @param {ParentChainId} parentChainId - The parent chain ID to check.
+ * @returns {boolean} - True if the parent chain ID belongs to an Arbitrum chain, otherwise false.
+ */
 function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
@@ -61,6 +84,33 @@ export type PrepareNodeConfigParams = {
   parentChainBeaconRpcUrl?: string;
 };
 
+/**
+ * Prepares the node configuration for a given chain.
+ *
+ * @param {PrepareNodeConfigParams} params - The parameters for preparing the node configuration.
+ * @param {string} params.chainName - The name of the chain.
+ * @param {ChainConfig} params.chainConfig - The configuration of the chain.
+ * @param {CoreContracts} params.coreContracts - The core contracts of the chain.
+ * @param {string} params.batchPosterPrivateKey - The private key for the batch poster.
+ * @param {string} params.validatorPrivateKey - The private key for the validator.
+ * @param {ParentChainId} params.parentChainId - The ID of the parent chain.
+ * @param {string} params.parentChainRpcUrl - The RPC URL of the parent chain.
+ * @param {string} [params.parentChainBeaconRpcUrl] - The optional beacon RPC URL of the parent chain.
+ * @returns {NodeConfig} - The prepared node configuration.
+ * @throws {Error} - If parentChainBeaconRpcUrl is required but not provided.
+ *
+ * @example
+ * const nodeConfig = prepareNodeConfig({
+ *   chainName: 'MyChain',
+ *   chainConfig: myChainConfig,
+ *   coreContracts: myCoreContracts,
+ *   batchPosterPrivateKey: '0x123...',
+ *   validatorPrivateKey: '0xabc...',
+ *   parentChainId: mainnet.id,
+ *   parentChainRpcUrl: 'https://mainnet.infura.io/v3/YOUR-PROJECT-ID',
+ *   parentChainBeaconRpcUrl: 'https://beacon-mainnet.infura.io/v3/YOUR-PROJECT-ID',
+ * });
+ */
 export function prepareNodeConfig({
   chainName,
   chainConfig,

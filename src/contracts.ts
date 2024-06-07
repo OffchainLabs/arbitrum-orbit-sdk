@@ -11,32 +11,72 @@ import {
 } from './generated';
 import { sequencerInboxABI, rollupAdminLogicABI } from './abi';
 
+/**
+ * ERC-20 token contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the ERC-20 token contract.
+ */
 export const erc20 = {
   abi: erc20ABI,
 };
 
+/**
+ * Arbitrum Owner contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Arbitrum Owner contract.
+ * @property {Object} address - The address of the Arbitrum Owner contract.
+ */
 export const arbOwner = {
   ...arbOwnerConfig,
   address: Object.values(arbOwnerConfig.address)[0],
 } as const;
 
+/**
+ * Arbitrum Gas Info contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Arbitrum Gas Info contract.
+ * @property {Object} address - The address of the Arbitrum Gas Info contract.
+ */
 export const arbGasInfo = {
   ...arbGasInfoConfig,
   address: Object.values(arbGasInfoConfig.address)[0],
 } as const;
 
+/**
+ * Arbitrum Owner Public contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Arbitrum Owner Public contract.
+ * @property {Object} address - The address of the Arbitrum Owner Public contract.
+ */
 export const arbOwnerPublic = {
   ...arbOwnerPublicConfig,
   address: Object.values(arbOwnerPublicConfig.address)[0],
 } as const;
 
+/**
+ * Arbitrum Aggregator contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Arbitrum Aggregator contract.
+ * @property {Object} address - The address of the Arbitrum Aggregator contract.
+ */
 export const arbAggregator = {
   ...arbAggregatorConfig,
   address: Object.values(arbAggregatorConfig.address)[0],
 } as const;
 
+/**
+ * Rollup Creator contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Rollup Creator contract.
+ * @property {Object} address - The address of the Rollup Creator contract.
+ */
 export const rollupCreator = rollupCreatorConfig;
 
+/**
+ * Upgrade Executor contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Upgrade Executor contract.
+ */
 export const upgradeExecutor = {
   abi: parseAbi([
     'function execute(address upgrade, bytes upgradeCallData)',
@@ -47,6 +87,12 @@ export const upgradeExecutor = {
   ]),
 };
 
+/**
+ * Token Bridge Creator contract ABI and configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Token Bridge Creator contract.
+ * @property {Object} address - The address of the Token Bridge Creator contract.
+ */
 const tokenBridgeCreatorABI = [
   {
     anonymous: false,
@@ -93,19 +139,6 @@ const tokenBridgeCreatorABI = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'address', name: 'inbox', type: 'address' },
-      {
-        components: [
-          { internalType: 'address', name: 'router', type: 'address' },
-          { internalType: 'address', name: 'standardGateway', type: 'address' },
-          { internalType: 'address', name: 'customGateway', type: 'address' },
-          { internalType: 'address', name: 'wethGateway', type: 'address' },
-          { internalType: 'address', name: 'weth', type: 'address' },
-        ],
-        indexed: false,
-        internalType: 'struct L1DeploymentAddresses',
-        name: 'l1',
-        type: 'tuple',
-      },
       {
         components: [
           { internalType: 'address', name: 'router', type: 'address' },
@@ -199,15 +232,31 @@ const tokenBridgeCreatorABI = [
   },
 ] as const;
 
+/**
+ * Token Bridge Creator contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Token Bridge Creator contract.
+ * @property {Object} address - The address of the Token Bridge Creator contract.
+ */
 export const tokenBridgeCreator = {
   ...tokenBridgeCreatorConfig,
   abi: tokenBridgeCreatorABI,
 } as const;
 
+/**
+ * Sequencer Inbox contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Sequencer Inbox contract.
+ */
 export const sequencerInbox = {
   abi: sequencerInboxABI,
 };
 
+/**
+ * Rollup Admin Logic contract configuration.
+ * @type {Object}
+ * @property {Array} abi - The ABI of the Rollup Admin Logic contract.
+ */
 export const rollupAdminLogic = {
   abi: rollupAdminLogicABI,
 };

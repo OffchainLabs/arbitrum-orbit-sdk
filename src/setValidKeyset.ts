@@ -12,6 +12,41 @@ export type SetValidKeysetParams = {
   walletClient: WalletClient;
 };
 
+/**
+ * Sets a valid keyset for the core contracts.
+ *
+ * This function validates the parent chain, simulates the contract call, and writes the contract.
+ * It then waits for the transaction receipt and returns it.
+ *
+ * @param {SetValidKeysetParams} setValidKeysetParams - The parameters for setting the valid keyset.
+ * @param {Object} setValidKeysetParams.coreContracts - The core contracts involved in the operation.
+ * @param {Object} setValidKeysetParams.coreContracts.upgradeExecutor - The upgrade executor contract.
+ * @param {Object} setValidKeysetParams.coreContracts.sequencerInbox - The sequencer inbox contract.
+ * @param {string} setValidKeysetParams.keyset - The keyset to be set, in hexadecimal format.
+ * @param {Object} setValidKeysetParams.publicClient - The public client for interacting with the blockchain.
+ * @param {Object} setValidKeysetParams.walletClient - The wallet client for signing transactions.
+ *
+ * @returns {Promise<Object>} The transaction receipt.
+ *
+ * @throws {Error} If the account is undefined.
+ *
+ * @example
+ * const params = {
+ *   coreContracts: {
+ *     upgradeExecutor: '0x...',
+ *     sequencerInbox: '0x...'
+ *   },
+ *   keyset: '0x1234...',
+ *   publicClient: new PublicClient(),
+ *   walletClient: new WalletClient()
+ * };
+ *
+ * setValidKeyset(params).then(txReceipt => {
+ *   console.log(txReceipt);
+ * }).catch(error => {
+ *   console.error(error);
+ * });
+ */
 export async function setValidKeyset({
   coreContracts,
   keyset,

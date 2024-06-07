@@ -19,6 +19,12 @@ import {
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
 
+/**
+ * Encodes the function data for creating a rollup.
+ *
+ * @param {CreateRollupFunctionInputs} args - The inputs for creating the rollup.
+ * @returns {string} The encoded function data.
+ */
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
     abi: rollupCreator.abi,
@@ -36,6 +42,33 @@ export type CreateRollupPrepareTransactionRequestParams = Prettify<
   }>
 >;
 
+/**
+ * Prepares a transaction request for creating a rollup.
+ *
+ * @param {CreateRollupPrepareTransactionRequestParams} createRollupPrepareTransactionRequestParams - The parameters for preparing the transaction request.
+ * @param {CreateRollupParams} createRollupPrepareTransactionRequestParams.params - The parameters for creating the rollup.
+ * @param {Address} createRollupPrepareTransactionRequestParams.account - The address of the account creating the rollup.
+ * @param {PublicClient} createRollupPrepareTransactionRequestParams.publicClient - The public client for interacting with the blockchain.
+ * @param {TransactionRequestGasOverrides} [createRollupPrepareTransactionRequestParams.gasOverrides] - Optional gas overrides for the transaction.
+ * @param {string} [createRollupPrepareTransactionRequestParams.rollupCreatorAddressOverride] - Optional override for the rollup creator address.
+ * @returns {Promise<Object>} The prepared transaction request.
+ *
+ * @throws Will throw an error if the batchPoster address is the zero address.
+ * @throws Will throw an error if the validators array is empty or contains the zero address.
+ * @throws Will throw an error if a custom fee token is used on non-AnyTrust chains.
+ * @throws Will throw an error if a custom fee token with non-18 decimals is used.
+ *
+ * @example
+ * const txRequest = await createRollupPrepareTransactionRequest({
+ *   params: createRollupParams,
+ *   account: '0xYourAccountAddress',
+ *   publicClient: yourPublicClientInstance,
+ *   gasOverrides: { gasLimit: { base: 1000000n, percentIncrease: 20 } },
+ *   rollupCreatorAddressOverride: '0xRollupCreatorAddressOverride',
+ * });
+ *
+ * // Now you can use txRequest to send the transaction
+ */
 export async function createRollupPrepareTransactionRequest({
   params,
   account,

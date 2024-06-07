@@ -16,7 +16,14 @@ import { TokenBridgeContracts } from './types/TokenBridgeContracts';
 import { tokenBridgeCreator } from './contracts';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 
-function findOrbitTokenBridgeCreatedEventLog(txReceipt: TransactionReceipt) {
+/**
+ * Finds the OrbitTokenBridgeCreated event log in the transaction receipt.
+ *
+ * @param {TransactionReceipt} txReceipt - The transaction receipt to search for the event log.
+ * @returns {Log} - The log of the OrbitTokenBridgeCreated event.
+ * @throws Will throw an error if no OrbitTokenBridgeCreated log is found.
+ */
+function findOrbitTokenBridgeCreatedEventLog(txReceipt: TransactionReceipt): Log {
   const abiItem = getAbiItem({ abi: tokenBridgeCreator.abi, name: 'OrbitTokenBridgeCreated' });
   const eventSelector = getEventSelector(abiItem);
   const log = txReceipt.logs.find((log) => log.topics[0] === eventSelector);
@@ -30,7 +37,14 @@ function findOrbitTokenBridgeCreatedEventLog(txReceipt: TransactionReceipt) {
   return log;
 }
 
-function decodeOrbitTokenBridgeCreatedEventLog(log: Log<bigint, number>) {
+/**
+ * Decodes the OrbitTokenBridgeCreated event log.
+ *
+ * @param {Log<bigint, number>} log - The log to decode.
+ * @returns {Object} - The decoded event log.
+ * @throws Will throw an error if the event name is not OrbitTokenBridgeCreated.
+ */
+function decodeOrbitTokenBridgeCreatedEventLog(log: Log<bigint, number>): Object {
   const decodedEventLog = decodeEventLog({ ...log, abi: tokenBridgeCreator.abi });
 
   if (decodedEventLog.eventName !== 'OrbitTokenBridgeCreated') {
@@ -42,21 +56,44 @@ function decodeOrbitTokenBridgeCreatedEventLog(log: Log<bigint, number>) {
   return decodedEventLog;
 }
 
+/**
+ * @typedef {Object} RedeemedRetryableTicket
+ * @property {L1ToL2MessageStatus.REDEEMED} status - The status of the redeemed retryable ticket.
+ * @property {EthersTransactionReceipt} l2TxReceipt - The L2 transaction receipt.
+ */
 type RedeemedRetryableTicket = {
   status: L1ToL2MessageStatus.REDEEMED;
   l2TxReceipt: EthersTransactionReceipt;
 };
 
+/**
+ * @typedef {Object} WaitForRetryablesParameters
+ * @property {PublicClient} orbitPublicClient - The public client for the Orbit chain.
+ */
 export type WaitForRetryablesParameters = {
   orbitPublicClient: PublicClient;
 };
 
+/**
+ * @typedef {Array} WaitForRetryablesResult
+ * @property {TransactionReceipt} 0 - The first transaction receipt.
+ * @property {TransactionReceipt} 1 - The second transaction receipt.
+ */
 export type WaitForRetryablesResult = [TransactionReceipt, TransactionReceipt];
 
+/**
+ * @typedef {Object} GetTokenBridgeContractsParameters
+ * @property {PublicClient} parentChainPublicClient - The public client for the parent chain.
+ */
 type GetTokenBridgeContractsParameters = {
   parentChainPublicClient: PublicClient;
 };
 
+/**
+ * @typedef {TransactionReceipt} CreateTokenBridgeTransactionReceipt
+ * @property {function(WaitForRetryablesParameters): Promise<WaitForRetryablesResult>} waitForRetryables - Waits for the retryables to be redeemed.
+ * @property {function(GetTokenBridgeContractsParameters): Promise<TokenBridgeContracts>} getTokenBridgeContracts - Fetches the token bridge contracts.
+ */
 export type CreateTokenBridgeTransactionReceipt = TransactionReceipt & {
   waitForRetryables(params: WaitForRetryablesParameters): Promise<WaitForRetryablesResult>;
   getTokenBridgeContracts(
@@ -64,6 +101,19 @@ export type CreateTokenBridgeTransactionReceipt = TransactionReceipt & {
   ): Promise<TokenBridgeContracts>;
 };
 
+/**
+ * Enhances the transaction receipt with additional methods for waiting for retryables and fetching token bridge contracts.
+ *
+ * @param {TransactionReceipt} txReceipt - The transaction receipt to enhance.
+ * @returns {CreateTokenBridgeTransactionReceipt} - The enhanced transaction receipt.
+ *
+ * @example
+ * const txReceipt = await someFunctionThatReturnsATransactionReceipt();
+ * const enhancedTxReceipt = createTokenBridgePrepareTransactionReceipt(txReceipt);
+ *
+ * const retryablesResult = await enhancedTxReceipt.waitForRetryables({ orbitPublicClient });
+ * const tokenBridgeContracts = await enhancedTxReceipt.getTokenBridgeContracts({ parentChainPublicClient });
+ */
 export function createTokenBridgePrepareTransactionReceipt(
   txReceipt: TransactionReceipt,
 ): CreateTokenBridgeTransactionReceipt {

@@ -93,20 +93,20 @@ export type CreateTokenBridgeResults = {
  * Returns the token bridge core contracts.
  *
  * @param {CreateTokenBridgeParams} createTokenBridgeParams
- * @param {String} createRollupParams.rollupOwner - The address of the rollup owner
- * @param {Object} createRollupParams.rollupAddress - The address of the Rollup contract
- * @param {Object} [createRollupParams.account] - The private key account to sign transactions
- * @param {String} [createRollupParams.nativeTokenAddress=] - Optional
+ * @param {String} createTokenBridgeParams.rollupOwner - The address of the rollup owner
+ * @param {String} createTokenBridgeParams.rollupAddress - The address of the Rollup contract
+ * @param {Object} createTokenBridgeParams.account - The private key account to sign transactions
+ * @param {String} [createTokenBridgeParams.nativeTokenAddress=] - Optional
  * If nativeTokenAddress is passed and different than zero address, deploy a token bridge with custom fee token.
- * @param {Object} createRollupParams.parentChainPublicClient - The parent chain Viem Public Client
- * @param {Object} createRollupParams.orbitChainPublicClient - The orbit chain Viem Public Client
- * @param {String} [createRollupParams.tokenBridgeCreatorAddressOverride=] - Optional
+ * @param {Object} createTokenBridgeParams.parentChainPublicClient - The parent chain Viem Public Client
+ * @param {Object} createTokenBridgeParams.orbitChainPublicClient - The orbit chain Viem Public Client
+ * @param {String} [createTokenBridgeParams.tokenBridgeCreatorAddressOverride=] - Optional
  * If tokenBridgeCreatorAddressOverride is passed, the address is overridden in the different transactions
- * @param {Object} [createRollupParams.gasOverrides=] - {@link TransactionRequestGasOverrides} Optional
+ * @param {Object} [createTokenBridgeParams.gasOverrides=] - {@link TransactionRequestGasOverrides} Optional
  * Gas overrides for createTokenBridgePrepareTransactionRequest
- * @param {Object} createRollupParams.retryableGasOverrides - {@link TokenBridgeRetryableGasOverrides} Optional
+ * @param {Object} [createTokenBridgeParams.retryableGasOverrides=] - {@link TokenBridgeRetryableGasOverrides} Optional
  * Retryable gas overrides for createTokenBridgePrepareTransactionRequest
- * @param {Object} createRollupParams.setWethGatewayGasOverrides - {@link SetWethGatewayRetryableGasOverrides} Optional
+ * @param {Object} [createTokenBridgeParams.setWethGatewayGasOverrides=] - {@link SetWethGatewayRetryableGasOverrides} Optional
  * Retryable gas overrides for createTokenBridgePrepareSetWethGatewayTransactionRequest
  *
  * @returns Promise<{@link CreateTokenBridgeResults}>

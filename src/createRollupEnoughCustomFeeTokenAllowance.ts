@@ -15,12 +15,31 @@ export type CreateRollupEnoughCustomFeeTokenAllowanceParams = Prettify<
   }>
 >;
 
+/**
+ * Checks if the custom gas token allowance granted to the rollup creator is sufficient.
+ *
+ * @param {CreateRollupEnoughCustomFeeTokenAllowanceParams} params - The parameters for the function.
+ * @param {Address} params.nativeToken - The native token address.
+ * @param {Address} params.account - The account address.
+ * @param {PublicClient} params.publicClient - The public client.
+ * @param {Address} [params.rollupCreatorAddressOverride] - Optional override for the rollup creator address.
+ *
+ * @returns {Promise<boolean>} - Returns true if the allowance is sufficient, false otherwise.
+ *
+ * @example
+ * const isAllowanceSufficient = await createRollupEnoughCustomFeeTokenAllowance({
+ *   nativeToken: '0xTokenAddress',
+ *   account: '0xAccountAddress',
+ *   publicClient,
+ * });
+ * console.log(`Is allowance sufficient? ${isAllowanceSufficient}`);
+ */
 export async function createRollupEnoughCustomFeeTokenAllowance({
   nativeToken,
   account,
   publicClient,
   rollupCreatorAddressOverride,
-}: CreateRollupEnoughCustomFeeTokenAllowanceParams) {
+}: CreateRollupEnoughCustomFeeTokenAllowanceParams): Promise<boolean> {
   const allowance = await fetchAllowance({
     address: nativeToken,
     owner: account,

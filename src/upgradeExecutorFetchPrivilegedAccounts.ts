@@ -77,11 +77,11 @@ const RoleRevokedEventAbi = {
  *
  * Returns an object containing the addresses of the privileged accounts as keys, and an array with a hash for each role they have.
  *
- * @param {UpgradeExecutorFetchPrivilegedAccountsParams} upgradeExecutorFetchPrivilegedAccountsParams {@link UpgradeExecutorFetchPrivilegedAccountsParams}
+ * @param {UpgradeExecutorFetchPrivilegedAccountsParams} upgradeExecutorFetchPrivilegedAccountsParams - {@link UpgradeExecutorFetchPrivilegedAccountsParams}
  * @param {Address} upgradeExecutorFetchPrivilegedAccountsParams.upgradeExecutorAddress - Address of the UpgradeExecutor
  * @param {PublicClient} upgradeExecutorFetchPrivilegedAccountsParams.publicClient - The chain Viem Public Client
  *
- * @returns Promise<{@link UpgradeExecutorPrivilegedAccounts}> - an object containing the addresses of the privileged accounts as keys, and an array with a hash for each role they have
+ * @returns {Promise<UpgradeExecutorPrivilegedAccounts>} - an object containing the addresses of the privileged accounts as keys, and an array with a hash for each role they have
  *
  * @example
  * const privilegedAccounts = await upgradeExecutorFetchPrivilegedAccounts({
@@ -92,7 +92,7 @@ const RoleRevokedEventAbi = {
 export async function upgradeExecutorFetchPrivilegedAccounts({
   upgradeExecutorAddress,
   publicClient,
-}: UpgradeExecutorFetchPrivilegedAccountsParams) {
+}: UpgradeExecutorFetchPrivilegedAccountsParams): Promise<UpgradeExecutorPrivilegedAccounts> {
   // 0. Initialize result object
   const upgradeExecutorPrivilegedAccounts: UpgradeExecutorPrivilegedAccounts = {};
 
@@ -149,3 +149,5 @@ export async function upgradeExecutorFetchPrivilegedAccounts({
 
   return upgradeExecutorPrivilegedAccounts;
 }
+
+
