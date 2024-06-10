@@ -37,7 +37,7 @@ if (typeof process.env.CUSTOM_FEE_TOKEN_ADDRESS === 'undefined') {
 
 if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CHAIN_RPC === '') {
   console.warn(
-    `Warning: Note if use default rpc endpoint the script might not work as expected due to timeout errors, to save this please provide the "PARENT_CHAIN_RPC" environment variable`,
+    `Warning: you may encounter timeout errors while running the script with the default rpc endpoint. Please provide the "PARENT_CHAIN_RPC" environment variable instead.`,
   );
 }
 
