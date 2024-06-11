@@ -41,7 +41,12 @@ import {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
 } from './setValidKeysetPrepareTransactionRequest';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
+import {
+  upgradeExecutorEncodeFunctionData,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
+} from './upgradeExecutorEncodeFunctionData';
 import {
   upgradeExecutorFetchPrivilegedAccounts,
   UpgradeExecutorFetchPrivilegedAccountsParams,
@@ -138,6 +143,9 @@ export {
   SetValidKeysetPrepareTransactionRequestParams,
   //
   upgradeExecutorEncodeFunctionData,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
   upgradeExecutorFetchPrivilegedAccounts,
   UpgradeExecutorFetchPrivilegedAccountsParams,
   upgradeExecutorPrepareAddExecutorTransactionRequest,
