@@ -1,6 +1,8 @@
 import {
   Log,
   PublicClient,
+  Transport,
+  Chain,
   TransactionReceipt,
   decodeEventLog,
   getAbiItem,
@@ -47,26 +49,32 @@ type RedeemedRetryableTicket = {
   l2TxReceipt: EthersTransactionReceipt;
 };
 
-export type WaitForRetryablesParameters = {
-  orbitPublicClient: PublicClient;
+export type WaitForRetryablesParameters<TOrbitChain extends Chain | undefined> = {
+  orbitPublicClient: PublicClient<Transport, TOrbitChain>;
 };
 
 export type WaitForRetryablesResult = [TransactionReceipt, TransactionReceipt];
 
-type GetTokenBridgeContractsParameters = {
-  parentChainPublicClient: PublicClient;
+type GetTokenBridgeContractsParameters<TParentChain extends Chain | undefined> = {
+  parentChainPublicClient: PublicClient<Transport, TParentChain>;
 };
 
-export type CreateTokenBridgeTransactionReceipt = TransactionReceipt & {
-  waitForRetryables(params: WaitForRetryablesParameters): Promise<WaitForRetryablesResult>;
+export type CreateTokenBridgeTransactionReceipt<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+> = TransactionReceipt & {
+  waitForRetryables(
+    params: WaitForRetryablesParameters<TOrbitChain>,
+  ): Promise<WaitForRetryablesResult>;
   getTokenBridgeContracts(
-    parentChainPublicClient: GetTokenBridgeContractsParameters,
+    parentChainPublicClient: GetTokenBridgeContractsParameters<TParentChain>,
   ): Promise<TokenBridgeContracts>;
 };
 
-export function createTokenBridgePrepareTransactionReceipt(
-  txReceipt: TransactionReceipt,
-): CreateTokenBridgeTransactionReceipt {
+export function createTokenBridgePrepareTransactionReceipt<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>(txReceipt: TransactionReceipt): CreateTokenBridgeTransactionReceipt<TParentChain, TOrbitChain> {
   return {
     ...txReceipt,
     waitForRetryables: async function ({ orbitPublicClient }) {

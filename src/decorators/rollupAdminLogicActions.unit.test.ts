@@ -1,4 +1,4 @@
-import { it, expect, expectTypeOf, describe } from 'vitest';
+import { it, expect, expectTypeOf, describe, vi } from 'vitest';
 
 import {
   AbiEncodingLengthMismatchError,
@@ -6,24 +6,43 @@ import {
   InvalidAddressError,
   createPublicClient,
   http,
+  createClient,
+  ClientConfig,
 } from 'viem';
-import { nitroTestnodeL2 } from '../chains';
 import { rollupAdminLogicPublicActions } from './rollupAdminLogicPublicActions';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
+import { mainnet } from 'viem/chains';
 
-const rollupAdminLogicAddress = '0x42b5da0625cf278067955f07045f63cafd79274f';
+const rollupAdminLogicAddress = '0x5eF0D09d1E6204141B4d37530808eD19f60FBa35';
 
 const client = createPublicClient({
-  chain: nitroTestnodeL2,
+  chain: mainnet,
   transport: http(),
 }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
 const randomAccount = privateKeyToAccount(generatePrivateKey());
 
+// Mock readContract (called internally with client.rollupAdminLogicReadContract)
+vi.mock('viem', async () => {
+  const viem: Record<string, unknown> = await vi.importActual('viem');
+
+  return {
+    ...viem,
+    createPublicClient: (args: ClientConfig) => {
+      const client = createClient(args);
+      Object.assign(client, {
+        readContract: vi.fn(),
+      });
+      return client;
+    },
+  };
+});
+
 describe('RollupAdminLogic parameter:', () => {
   it('require rollupAdminLogic parameter if not passed initially to the actions during initialization', () => {
     const clientWithoutRollupAdminLogicAddress = createPublicClient({
-      chain: nitroTestnodeL2,
+      chain: mainnet,
       transport: http(),
     }).extend(rollupAdminLogicPublicActions({}));
 
@@ -42,9 +61,9 @@ describe('RollupAdminLogic parameter:', () => {
     });
   });
 
-  it('Doesn`t require rollupAdminLogic parameter if passed initially to the actions during initialization', () => {
+  it("Doesn't require rollupAdminLogic parameter if passed initially to the actions during initialization", async () => {
     const clientWithRollupAdminLogicAddress = createPublicClient({
-      chain: nitroTestnodeL2,
+      chain: mainnet,
       transport: http(),
     }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
@@ -54,11 +73,23 @@ describe('RollupAdminLogic parameter:', () => {
       functionName: 'amountStaked',
       args: [randomAccount.address],
     });
+
+    await clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract({
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
+    });
+
+    expect(clientWithRollupAdminLogicAddress.readContract).toHaveBeenCalledWith({
+      address: rollupAdminLogicAddress,
+      abi: RollupAdminLogic__factory.abi,
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
+    });
   });
 
-  it('Allow rollupAdminLogic override parameter if passed initially to the actions during initialization', () => {
+  it('Allow rollupAdminLogic override parameter if passed initially to the actions during initialization', async () => {
     const clientWithRollupAdminLogicAddress = createPublicClient({
-      chain: nitroTestnodeL2,
+      chain: mainnet,
       transport: http(),
     }).extend(rollupAdminLogicPublicActions({ rollup: rollupAdminLogicAddress }));
 
@@ -68,6 +99,19 @@ describe('RollupAdminLogic parameter:', () => {
       functionName: 'amountStaked',
       args: [randomAccount.address],
       rollup: rollupAdminLogicAddress,
+    });
+
+    await clientWithRollupAdminLogicAddress.rollupAdminLogicReadContract({
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
+      rollup: randomAccount.address,
+    });
+
+    expect(clientWithRollupAdminLogicAddress.readContract).toHaveBeenCalledWith({
+      address: randomAccount.address,
+      abi: RollupAdminLogic__factory.abi,
+      functionName: 'amountStaked',
+      args: [randomAccount.address],
     });
   });
 });

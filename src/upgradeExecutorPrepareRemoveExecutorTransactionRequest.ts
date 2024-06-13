@@ -1,6 +1,8 @@
 import {
   Address,
   PublicClient,
+  Transport,
+  Chain,
   encodeFunctionData,
   PrepareTransactionRequestReturnType,
 } from 'viem';
@@ -9,16 +11,18 @@ import {
   UPGRADE_EXECUTOR_ROLE_EXECUTOR,
   upgradeExecutorEncodeFunctionData,
 } from './upgradeExecutorEncodeFunctionData';
-import { validateChain } from './utils/validateChain';
+import { assertChainId } from './utils/assertChainId';
 
 /**
  * Type for the params of the {@link upgradeExecutorPrepareRemoveExecutorTransactionRequest} function
  */
-export type UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams = {
+export type UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams<
+  TChain extends Chain | undefined,
+> = {
   account: Address;
   upgradeExecutorAddress: Address;
   executorAccountAddress: Address;
-  publicClient: PublicClient;
+  publicClient: PublicClient<Transport, TChain>;
 };
 
 /**
@@ -42,13 +46,15 @@ export type UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams = {
  *   publicClient,
  * });
  */
-export async function upgradeExecutorPrepareRemoveExecutorTransactionRequest({
+export async function upgradeExecutorPrepareRemoveExecutorTransactionRequest<
+  TChain extends Chain | undefined,
+>({
   account,
   upgradeExecutorAddress,
   executorAccountAddress,
   publicClient,
-}: UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams) {
-  const chainId = validateChain(publicClient);
+}: UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams<TChain>) {
+  const chainId = assertChainId(publicClient);
 
   // 0. Verify that the account doesn't have the EXECUTOR role already
   const accountHasExecutorRole = await publicClient.readContract({
@@ -72,6 +78,7 @@ export async function upgradeExecutorPrepareRemoveExecutorTransactionRequest({
   });
 
   // 2. Prepare the transaction (must be called through the UpgradeExecutor)
+  // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: upgradeExecutorAddress,

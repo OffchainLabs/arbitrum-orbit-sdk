@@ -3,6 +3,11 @@ import {
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
+import {
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+} from './createRollupPrepareDeploymentParamsConfig';
 import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
@@ -36,7 +41,12 @@ import {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
 } from './setValidKeysetPrepareTransactionRequest';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
+import {
+  upgradeExecutorEncodeFunctionData,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
+} from './upgradeExecutorEncodeFunctionData';
 import {
   upgradeExecutorFetchPrivilegedAccounts,
   UpgradeExecutorFetchPrivilegedAccountsParams,
@@ -93,6 +103,13 @@ import {
 } from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
+import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
+import {
+  getDefaultSequencerInboxMaxTimeVariation,
+  SequencerInboxMaxTimeVariation,
+} from './getDefaultSequencerInboxMaxTimeVariation';
+import { getValidators, GetValidatorsParams, GetValidatorsReturnType } from './getValidators';
+
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
@@ -103,9 +120,15 @@ export {
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
   CreateRollupParams,
+  //
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
+  //
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+  //
   prepareChainConfig,
   PrepareChainConfigParams,
   createRollupEnoughCustomFeeTokenAllowance,
@@ -128,6 +151,9 @@ export {
   SetValidKeysetPrepareTransactionRequestParams,
   //
   upgradeExecutorEncodeFunctionData,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
   upgradeExecutorFetchPrivilegedAccounts,
   UpgradeExecutorFetchPrivilegedAccountsParams,
   upgradeExecutorPrepareAddExecutorTransactionRequest,
@@ -165,4 +191,12 @@ export {
   FeeRouterDeployChildToParentRouterParams,
   feeRouterDeployRewardDistributor,
   FeeRouterDeployRewardDistributorParams,
+  //
+  getDefaultConfirmPeriodBlocks,
+  getDefaultSequencerInboxMaxTimeVariation,
+  SequencerInboxMaxTimeVariation,
+  //
+  getValidators,
+  GetValidatorsParams,
+  GetValidatorsReturnType,
 };

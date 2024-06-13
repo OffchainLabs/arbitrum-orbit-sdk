@@ -1,4 +1,4 @@
-import { Address, Chain, PrivateKeyAccount, PublicClient, zeroAddress } from 'viem';
+import { Address, Chain, PrivateKeyAccount, PublicClient, Transport, zeroAddress } from 'viem';
 
 import { CoreContracts } from './types/CoreContracts';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
@@ -16,9 +16,9 @@ import {
 import { CreateRollupParams } from './types/createRollupTypes';
 import { ParentChainPublicClient, validateParentChainPublicClient } from './types/ParentChain';
 
-type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
+type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain extends Chain | undefined> = {
   nativeToken: Address;
-  parentChainPublicClient: ParentChainPublicClient;
+  parentChainPublicClient: ParentChainPublicClient<TChain>;
   account: PrivateKeyAccount;
 };
 
@@ -30,11 +30,13 @@ type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
  * If not, perform an approval transaction to grant the custom fee token
  * spend allowance to the Rollup Creator address.
  */
-async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
+async function ensureCustomGasTokenAllowanceGrantedToRollupCreator<
+  TChain extends Chain | undefined,
+>({
   nativeToken,
   parentChainPublicClient,
   account,
-}: EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams) {
+}: EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain>) {
   const allowanceParams = {
     nativeToken,
     account: account.address,
@@ -71,10 +73,10 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
 /**
  * This type is for the params of the createRollup function
  */
-export type CreateRollupFunctionParams = {
+export type CreateRollupFunctionParams<TChain extends Chain | undefined> = {
   params: CreateRollupParams;
   account: PrivateKeyAccount;
-  parentChainPublicClient: PublicClient;
+  parentChainPublicClient: PublicClient<Transport, TChain>;
 };
 
 /**
@@ -123,7 +125,7 @@ export type CreateRollupResults = {
  * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
  *
  * @example
- * const createRollupConfig = createRollupPrepareConfig({
+ * const createRollupConfig = createRollupPrepareDeploymentParamsConfig(parentChainPublicClient, {
  *   chainId: BigInt(chainId),
  *   owner: deployer.address,
  *   chainConfig: prepareChainConfig({
@@ -141,7 +143,7 @@ export type CreateRollupResults = {
  *   coreContracts,
  * } = await createRollup({
  *   params: {
- *    config: createRollupConfig,
+ *     config: createRollupConfig,
  *     batchPoster,
  *     validators,
  *  },
@@ -149,11 +151,11 @@ export type CreateRollupResults = {
  *  parentChainPublicClient,
  * });
  */
-export async function createRollup({
+export async function createRollup<TChain extends Chain | undefined>({
   params,
   account,
   parentChainPublicClient,
-}: CreateRollupFunctionParams): Promise<CreateRollupResults> {
+}: CreateRollupFunctionParams<TChain>): Promise<CreateRollupResults> {
   const validatedParentChainPublicClient = validateParentChainPublicClient(parentChainPublicClient);
   const parentChain = validatedParentChainPublicClient.chain;
   const nativeToken = params.nativeToken ?? zeroAddress;
@@ -190,6 +192,7 @@ export async function createRollup({
   // from RPCs that use load balancing and caching. More information can be found here:
   // https://github.com/wevm/viem/issues/1056#issuecomment-1689800265 )
   const tx = createRollupPrepareTransaction(
+    // @ts-ignore (todo: fix viem type issue)
     await validatedParentChainPublicClient.getTransaction({ hash: txHash }),
   );
 

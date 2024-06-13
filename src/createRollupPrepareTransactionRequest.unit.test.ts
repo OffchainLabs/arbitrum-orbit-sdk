@@ -4,7 +4,7 @@ import { arbitrumSepolia } from 'viem/chains';
 
 import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
-import { createRollupPrepareConfig } from './createRollupPrepareConfig';
+import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import { rollupCreator } from './contracts';
 
@@ -32,7 +32,7 @@ it(`fails to prepare transaction request if "params.batchPoster" is set to the z
   await expect(
     createRollupPrepareTransactionRequest({
       params: {
-        config: createRollupPrepareConfig({
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
           chainId: BigInt(chainId),
           owner: deployer.address,
           chainConfig,
@@ -61,7 +61,7 @@ it(`fails to prepare transaction request if "params.validators" is set to an emp
   await expect(
     createRollupPrepareTransactionRequest({
       params: {
-        config: createRollupPrepareConfig({
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
           chainId: BigInt(chainId),
           owner: deployer.address,
           chainConfig,
@@ -90,7 +90,7 @@ it(`fails to prepare transaction request if "params.validators" includes the zer
   await expect(
     createRollupPrepareTransactionRequest({
       params: {
-        config: createRollupPrepareConfig({
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
           chainId: BigInt(chainId),
           owner: deployer.address,
           chainConfig,
@@ -119,7 +119,7 @@ it(`fails to prepare transaction request if "params.nativeToken" is custom and c
   await expect(
     createRollupPrepareTransactionRequest({
       params: {
-        config: createRollupPrepareConfig({
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
           chainId: BigInt(chainId),
           owner: deployer.address,
           chainConfig,
@@ -151,7 +151,7 @@ it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 
   await expect(
     createRollupPrepareTransactionRequest({
       params: {
-        config: createRollupPrepareConfig({
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
           chainId: BigInt(chainId),
           owner: deployer.address,
           chainConfig,
@@ -181,7 +181,7 @@ it(`successfully prepares a transaction request with the default rollup creator 
 
   const txRequest = await createRollupPrepareTransactionRequest({
     params: {
-      config: createRollupPrepareConfig({
+      config: createRollupPrepareDeploymentParamsConfig(publicClient, {
         chainId: BigInt(chainId),
         owner: deployer.address,
         chainConfig,
@@ -213,7 +213,7 @@ it(`successfully prepares a transaction request with a custom rollup creator and
 
   const txRequest = await createRollupPrepareTransactionRequest({
     params: {
-      config: createRollupPrepareConfig({
+      config: createRollupPrepareDeploymentParamsConfig(publicClient, {
         chainId: BigInt(chainId),
         owner: deployer.address,
         chainConfig,
