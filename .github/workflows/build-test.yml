@@ -4,6 +4,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   ARBISCAN_API_KEY: ${{ secrets.ARBISCAN_API_KEY }}
 

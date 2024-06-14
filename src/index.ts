@@ -3,6 +3,11 @@ import {
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
 } from './createRollupPrepareConfig';
+import {
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+} from './createRollupPrepareDeploymentParamsConfig';
 import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
@@ -37,13 +42,28 @@ import {
   SetValidKeysetPrepareTransactionRequestParams,
 } from './setValidKeysetPrepareTransactionRequest';
 import {
-  UpgradeExecutorAbi,
-  UpgradeExecutorFunctionName,
   upgradeExecutorEncodeFunctionData,
-  UpgradeExecutorEncodeFunctionDataParameters,
-} from './upgradeExecutor';
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
+} from './upgradeExecutorEncodeFunctionData';
+import {
+  upgradeExecutorFetchPrivilegedAccounts,
+  UpgradeExecutorFetchPrivilegedAccountsParams,
+} from './upgradeExecutorFetchPrivilegedAccounts';
+import {
+  upgradeExecutorPrepareAddExecutorTransactionRequest,
+  UpgradeExecutorPrepareAddExecutorTransactionRequestParams,
+} from './upgradeExecutorPrepareAddExecutorTransactionRequest';
+import {
+  upgradeExecutorPrepareRemoveExecutorTransactionRequest,
+  UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams,
+} from './upgradeExecutorPrepareRemoveExecutorTransactionRequest';
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
+import { arbAggregatorActions } from './decorators/arbAggregatorActions';
+import { sequencerInboxActions } from './decorators/sequencerInboxActions';
+import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
@@ -75,16 +95,32 @@ import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './crea
 import { prepareKeyset } from './prepareKeyset';
 import * as utils from './utils';
 
+import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
+import {
+  getDefaultSequencerInboxMaxTimeVariation,
+  SequencerInboxMaxTimeVariation,
+} from './getDefaultSequencerInboxMaxTimeVariation';
+import { getValidators, GetValidatorsParams, GetValidatorsReturnType } from './getValidators';
+
 export {
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
+  arbAggregatorActions,
+  sequencerInboxActions,
+  rollupAdminLogicPublicActions,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
   CreateRollupParams,
+  //
   createRollupPrepareConfig,
   CreateRollupPrepareConfigParams,
   CreateRollupPrepareConfigResult,
+  //
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigParams,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+  //
   prepareChainConfig,
   PrepareChainConfigParams,
   createRollupEnoughCustomFeeTokenAllowance,
@@ -106,10 +142,16 @@ export {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
   //
-  UpgradeExecutorAbi,
-  UpgradeExecutorFunctionName,
   upgradeExecutorEncodeFunctionData,
-  UpgradeExecutorEncodeFunctionDataParameters,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
+  upgradeExecutorFetchPrivilegedAccounts,
+  UpgradeExecutorFetchPrivilegedAccountsParams,
+  upgradeExecutorPrepareAddExecutorTransactionRequest,
+  UpgradeExecutorPrepareAddExecutorTransactionRequestParams,
+  upgradeExecutorPrepareRemoveExecutorTransactionRequest,
+  UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams,
   //
   CoreContracts,
   ChainConfig,
@@ -136,4 +178,12 @@ export {
   createTokenBridgeFetchTokenBridgeContracts,
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+  //
+  getDefaultConfirmPeriodBlocks,
+  getDefaultSequencerInboxMaxTimeVariation,
+  SequencerInboxMaxTimeVariation,
+  //
+  getValidators,
+  GetValidatorsParams,
+  GetValidatorsReturnType,
 };

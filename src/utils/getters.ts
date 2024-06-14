@@ -1,9 +1,11 @@
-import { Chain, PublicClient } from 'viem';
+import { Client, Transport, Chain } from 'viem';
 
 import { rollupCreator, tokenBridgeCreator } from '../contracts';
 import { validateParentChain } from '../types/ParentChain';
 
-export function getRollupCreatorAddress(client: PublicClient) {
+export function getRollupCreatorAddress<TChain extends Chain | undefined>(
+  client: Client<Transport, TChain>,
+) {
   const chainId = validateParentChain(client);
 
   if (!rollupCreator.address[chainId]) {
@@ -13,7 +15,9 @@ export function getRollupCreatorAddress(client: PublicClient) {
   return rollupCreator.address[chainId];
 }
 
-export function getTokenBridgeCreatorAddress(client: PublicClient) {
+export function getTokenBridgeCreatorAddress<TChain extends Chain | undefined>(
+  client: Client<Transport, TChain>,
+) {
   const chainId = validateParentChain(client);
 
   if (!tokenBridgeCreator.address[chainId]) {

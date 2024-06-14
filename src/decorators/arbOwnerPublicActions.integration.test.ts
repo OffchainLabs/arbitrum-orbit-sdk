@@ -50,9 +50,11 @@ it('succesfully adds chain owner', async () => {
   });
 
   // submit tx to add chain owner
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
+
+  await client.waitForTransactionReceipt({ hash: txHash });
 
   const isOwner = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
@@ -80,9 +82,11 @@ it('succesfully removes chain owner', async () => {
   });
 
   // submit tx to remove chain owner
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
+
+  await client.waitForTransactionReceipt({ hash: txHash });
 
   const isOwner = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
@@ -109,9 +113,11 @@ it('succesfully updates infra fee receiver', async () => {
   });
 
   // submit tx to update infra fee receiver
-  await client.sendRawTransaction({
+  const txHash = await client.sendRawTransaction({
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
+
+  await client.waitForTransactionReceipt({ hash: txHash });
 
   const infraFeeReceiver = await client.arbOwnerReadContract({
     functionName: 'getInfraFeeAccount',

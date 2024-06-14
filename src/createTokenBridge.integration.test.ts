@@ -18,7 +18,7 @@ import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from
 import { erc20 } from './contracts';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
-import { CreateTokenBridgeParams, createTokenBridge } from './createTokenBridge';
+import { createTokenBridge } from './createTokenBridge';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
@@ -238,7 +238,9 @@ describe('createTokenBridge utils function', () => {
 
     // -----------------------------
     // 2. approve custom fee token to be spent by the TokenBridgeCreator
-    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
+    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams<
+      typeof nitroTestnodeL2
+    > = {
       nativeToken: testnodeInformation.l3NativeToken,
       owner: l3RollupOwner.address,
       publicClient: nitroTestnodeL2Client,

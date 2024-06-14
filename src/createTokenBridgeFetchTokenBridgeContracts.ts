@@ -1,4 +1,4 @@
-import { Address, PublicClient } from 'viem';
+import { Address, PublicClient, Transport, Chain } from 'viem';
 
 import { tokenBridgeCreator } from './contracts';
 
@@ -7,18 +7,19 @@ import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridge
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
 import { getTokenBridgeCreatorAddress } from './utils/getters';
 
-export type CreateTokenBridgeFetchTokenBridgeContractsParams = Prettify<
-  WithTokenBridgeCreatorAddressOverride<{
-    inbox: Address;
-    parentChainPublicClient: PublicClient;
-  }>
->;
+export type CreateTokenBridgeFetchTokenBridgeContractsParams<TChain extends Chain | undefined> =
+  Prettify<
+    WithTokenBridgeCreatorAddressOverride<{
+      inbox: Address;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+    }>
+  >;
 
-export async function createTokenBridgeFetchTokenBridgeContracts({
+export async function createTokenBridgeFetchTokenBridgeContracts<TChain extends Chain | undefined>({
   inbox,
   parentChainPublicClient,
   tokenBridgeCreatorAddressOverride,
-}: CreateTokenBridgeFetchTokenBridgeContractsParams): Promise<TokenBridgeContracts> {
+}: CreateTokenBridgeFetchTokenBridgeContractsParams<TChain>): Promise<TokenBridgeContracts> {
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 

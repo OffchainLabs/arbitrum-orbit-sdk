@@ -8,6 +8,7 @@ import {
 } from '../arbOwnerReadContract';
 import {
   arbOwnerPrepareTransactionRequest,
+  ArbOwnerPrepareTransactionRequestFunctionName,
   ArbOwnerPrepareTransactionRequestParameters,
 } from '../arbOwnerPrepareTransactionRequest';
 
@@ -16,8 +17,10 @@ export type ArbOwnerPublicActions<TChain extends Chain | undefined = Chain | und
     args: ArbOwnerReadContractParameters<TFunctionName>,
   ) => Promise<ArbOwnerReadContractReturnType<TFunctionName>>;
 
-  arbOwnerPrepareTransactionRequest: (
-    args: ArbOwnerPrepareTransactionRequestParameters,
+  arbOwnerPrepareTransactionRequest: <
+    TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
+  >(
+    args: ArbOwnerPrepareTransactionRequestParameters<TFunctionName>,
   ) => Promise<PrepareTransactionRequestReturnType<TChain> & { chainId: number }>;
 };
 

@@ -1,18 +1,18 @@
-import { Address, PublicClient } from 'viem';
+import { Address, PublicClient, Chain, Transport } from 'viem';
 
 import { CoreContracts } from './types/CoreContracts';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
 
-export type CreateRollupFetchCoreContractsParams = {
+export type CreateRollupFetchCoreContractsParams<TChain extends Chain | undefined> = {
   rollup: Address;
-  publicClient: PublicClient;
+  publicClient: PublicClient<Transport, TChain>;
 };
 
-export async function createRollupFetchCoreContracts({
+export async function createRollupFetchCoreContracts<TChain extends Chain | undefined>({
   rollup,
   publicClient,
-}: CreateRollupFetchCoreContractsParams): Promise<CoreContracts> {
+}: CreateRollupFetchCoreContractsParams<TChain>): Promise<CoreContracts> {
   // getting core contract addresses
   const transactionHash = await createRollupFetchTransactionHash({
     rollup,
