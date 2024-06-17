@@ -21,7 +21,7 @@ const client = createPublicClient({
 function mockLog(transactionHash: string) {
   return {
     address: '0x193e2887031c148ab54f5e856ea51ae521661200',
-    args: { id: 6n },
+    args: { id: 1n },
     blockHash: '0x3bafb9574d8a3a7c09070935dc3ca936a5df06e2abd09cbd2a3cd489562e748f',
     blockNumber: 55635757n,
     data: '0x',

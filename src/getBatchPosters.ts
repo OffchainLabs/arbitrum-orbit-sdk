@@ -116,9 +116,9 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
   const sequencerInboxEvents = await publicClient.getLogs({
     address: sequencerInbox,
     event: ownerFunctionCalledEventAbi,
-    args: { id: 6n },
+    args: { id: 1n },
     fromBlock: blockNumber,
-    toBlock: blockNumber,
+    toBlock: 'latest',
   });
 
   const events = createRollupTransactionHash
