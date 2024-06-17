@@ -7,7 +7,7 @@ import {
   encodeFunctionData,
   http,
 } from 'viem';
-import { arbitrum } from 'viem/chains';
+import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
 import { getValidators } from './getValidators';
 import { rollupAdminLogicABI, safeL2ABI } from './abi';
@@ -23,7 +23,7 @@ function mockLog(transactionHash: string) {
     address: '0x193e2887031c148ab54f5e856ea51ae521661200',
     args: { id: 6n },
     blockHash: '0x3bafb9574d8a3a7c09070935dc3ca936a5df06e2abd09cbd2a3cd489562e748f',
-    blockNumber: 36723964n,
+    blockNumber: 35635757n,
     data: '0x',
     eventName: 'OwnerFunctionCalled',
     logIndex: 42,
@@ -40,7 +40,7 @@ function mockTransaction(data: Hex) {
   return {
     accessList: [],
     blockHash: '0x3bafb9574d8a3a7c09070935dc3ca936a5df06e2abd09cbd2a3cd489562e748f',
-    blockNumber: 36723964n,
+    blockNumber: 35635757n,
     chainId: 421614,
     from: '0xfd5735380689a53e6b048e980f34cb94be9fd0c7',
     gas: 7149526n,
@@ -69,7 +69,11 @@ function mockData({
   logs: {
     [transactionHash: string]: Hex;
   };
-  method: 'eth_getLogs' | 'eth_getTransactionByHash';
+  method:
+    | 'eth_getLogs'
+    | 'eth_getTransactionByHash'
+    | 'eth_getTransactionReceipt'
+    | 'eth_blockNumber';
   params: string;
 }) {
   if (method === 'eth_getLogs') {
@@ -78,6 +82,16 @@ function mockData({
 
   if (method === 'eth_getTransactionByHash') {
     return mockTransaction(logs[params]);
+  }
+
+  if (method === 'eth_getTransactionReceipt') {
+    return {
+      blockNumber: 35635757,
+    };
+  }
+
+  if (method === 'eth_blockNumber') {
+    return 35635757;
   }
 
   return null;
@@ -152,6 +166,7 @@ describe('createRollupFunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -182,6 +197,7 @@ describe('createRollupFunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -222,6 +238,7 @@ describe('setValidatorFunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -264,6 +281,7 @@ describe('setValidatorFunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -310,6 +328,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -356,6 +375,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -396,6 +416,7 @@ describe('safeL2FunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -438,6 +459,7 @@ describe('safeL2FunctionSelector', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -480,6 +502,7 @@ describe('Detect validators added or removed multiple times', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -514,6 +537,7 @@ describe('Detect validators added or removed multiple times', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -546,6 +570,7 @@ describe('Detect validators added or removed multiple times', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
@@ -580,6 +605,7 @@ describe('Detect validators added or removed multiple times', () => {
 
     const mockClient = createPublicClient({
       transport: mockTransport,
+      chain: arbitrumSepolia,
     });
 
     const { validators, isAccurate } = await getValidators(mockClient, {
