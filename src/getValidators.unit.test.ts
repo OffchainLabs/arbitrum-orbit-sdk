@@ -133,7 +133,7 @@ it('getValidators return all validators (Xai)', async () => {
 });
 
 describe('createRollupFunctionSelector', () => {
-  it('getValidators return all validators with complete flag set to true', async () => {
+  it('getValidators return all validators with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -162,7 +162,7 @@ describe('createRollupFunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getValidators return all validators with complete flag set to false', async () => {
+  it('getValidators return all validators with isAccurate flag set to false', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -194,7 +194,7 @@ describe('createRollupFunctionSelector', () => {
 });
 
 describe('setValidatorFunctionSelector', () => {
-  it('getValidators return all validators with complete flag set to true', async () => {
+  it('getValidators return all validators with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -235,7 +235,7 @@ describe('setValidatorFunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getValidators return all validators with complete flag set to false', async () => {
+  it('getValidators return all validators with isAccurate flag set to false', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -279,7 +279,7 @@ describe('setValidatorFunctionSelector', () => {
 });
 
 describe('upgradeExecutorExecuteCallFunctionSelector', () => {
-  it('getValidators return all validators with complete flag set to true', async () => {
+  it('getValidators return all validators with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -324,7 +324,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getValidators return all validators with complete flag set to false', async () => {
+  it('getValidators return all validators with isAccurate flag set to false', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -368,7 +368,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
 });
 
 describe('safeL2FunctionSelector', () => {
-  it('getValidators return all validators with complete flag set to true', async () => {
+  it('getValidators return all validators with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -409,7 +409,7 @@ describe('safeL2FunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getValidators return all validators with complete flag set to false', async () => {
+  it('getValidators return all validators with isAccurate flag set to false', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',

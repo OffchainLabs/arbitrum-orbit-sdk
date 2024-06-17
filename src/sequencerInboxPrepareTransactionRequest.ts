@@ -36,7 +36,7 @@ type SequencerInboxPrepareFunctionDataParameters<TFunctionName extends Sequencer
     abi: SequencerInboxAbi;
     sequencerInbox: Address;
   };
-function sequencerInboxPrepareFunctionData<TFunctionName extends SequencerInboxFunctionName>(
+export function sequencerInboxPrepareFunctionData<TFunctionName extends SequencerInboxFunctionName>(
   params: SequencerInboxPrepareFunctionDataParameters<TFunctionName>,
 ) {
   const { upgradeExecutor } = params;
