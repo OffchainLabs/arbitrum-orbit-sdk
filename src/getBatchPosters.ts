@@ -99,7 +99,7 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
   { rollup, sequencerInbox }: GetBatchPostersParams,
 ): Promise<GetBatchPostersReturnType> {
   let blockNumber: bigint | 'earliest';
-  let createRollupTransactionHash = null;
+  let createRollupTransactionHash: Address | null = null;
   try {
     createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
