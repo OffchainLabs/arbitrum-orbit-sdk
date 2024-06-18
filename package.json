@@ -16,11 +16,13 @@
     "test:integration": "vitest integration.test",
     "postinstall": "patch-package",
     "prettier:check": "prettier --check '**/*.{ts,md,json,yml}'",
-    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'"
+    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'",
+    "audit:ci": "audit-ci --config ./audit-ci.jsonc"
   },
   "devDependencies": {
     "@offchainlabs/prettier-config": "0.2.1",
     "@wagmi/cli": "^1.5.2",
+    "audit-ci": "^7.0.1",
     "dotenv": "^16.3.1",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
