@@ -2,7 +2,7 @@
   "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   "low": true,
   "allowlist": [
-    // Open Zepplin
+    // OpenZeppelin
     ////////////
     // https://github.com/advisories/GHSA-4g63-c64m-25w9
     // OpenZeppelin Contracts's SignatureChecker may revert on invalid EIP-1271 signers
