@@ -180,7 +180,7 @@ describe('createRollupFunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getBatchPosters return all batch posters with isAccurate flag set to false', async () => {
+  it('getBatchPosters returns batch posters with isAccurate flag set to false when there are non-parsable calldata from event logs', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
