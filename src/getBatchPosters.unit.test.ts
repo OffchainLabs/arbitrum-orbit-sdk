@@ -97,6 +97,7 @@ function mockData({
   return null;
 }
 
+// Taken from https://sepolia.arbiscan.io/tx/0x448fdaac1651fba39640e2103d83f78ff4695f95727f318f0f9e62c3e2d77a10 (Input data)
 const validInput =
   '0xcb73d6e2000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000725d217057e509dd284ee0e13ac846cfea0b7bb100000000000000000000000000000000000000000000000000000000000005400000000000000000000000000000000000000000000000000000000000019999000000000000000000000000d1fe5b0a963a0e557aabb59cb61ffdd568b4605c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000005f5e100000000000000000000000000000000000000000000000000000000000000009600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016345785d8a00000754e09320c381566cc0449904c377a52bd34a6b9404432e80afd573b67f7b17000000000000000000000000fd5735380689a53e6b048e980f34cb94be9fd0c700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fe22e119e00000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001680000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000000000000000000e1000000000000000000000000000000000000000000000000000000000000002757b22686f6d657374656164426c6f636b223a302c2264616f466f726b426c6f636b223a6e756c6c2c2264616f466f726b537570706f7274223a747275652c22656970313530426c6f636b223a302c2265697031353048617368223a22307830303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030222c22656970313535426c6f636b223a302c22656970313538426c6f636b223a302c2262797a616e7469756d426c6f636b223a302c22636f6e7374616e74696e6f706c65426c6f636b223a302c2270657465727362757267426c6f636b223a302c22697374616e62756c426c6f636b223a302c226d756972476c6163696572426c6f636b223a302c226265726c696e426c6f636b223a302c226c6f6e646f6e426c6f636b223a302c22636c69717565223a7b22706572696f64223a302c2265706f6368223a307d2c22617262697472756d223a7b22456e61626c654172624f53223a747275652c22416c6c6f774465627567507265636f6d70696c6573223a66616c73652c2244617461417661696c6162696c697479436f6d6d6974746565223a747275652c22496e697469616c4172624f5356657273696f6e223a31312c2247656e65736973426c6f636b4e756d223a302c224d6178436f646553697a65223a32343537362c224d6178496e6974436f646553697a65223a34393135322c22496e697469616c436861696e4f776e6572223a22307846643537333533383036383941353365364230343865393830463334634239346265396644306337227d2c22636861696e4964223a36383231393137393432327d000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000006a23ccc1c36d2aaa98aef2a4471cf807dd22e45b';
 const upgradeExecutorAddress = '0x314f3c2f9803f8828a1050127be5bb29a4940f29';
@@ -139,7 +140,7 @@ function safeSetBatchPosterHelper(args: [Address, boolean]) {
   });
 }
 
-it('getBatchPosters return all batch posters (Xai)', async () => {
+it('getBatchPosters returns all batch posters (Xai)', async () => {
   const { isAccurate, batchPosters } = await getBatchPosters(client, {
     rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336',
     sequencerInbox: '0x995a9d3ca121D48d21087eDE20bc8acb2398c8B1',
@@ -149,7 +150,7 @@ it('getBatchPosters return all batch posters (Xai)', async () => {
 });
 
 describe('createRollupFunctionSelector', () => {
-  it('getBatchPosters return all batch posters with isAccurate flag set to true', async () => {
+  it('getBatchPosters returns all batch posters with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -213,7 +214,7 @@ describe('createRollupFunctionSelector', () => {
 });
 
 describe('setBatchPosterFunctionSelector', () => {
-  it('getBatchPosters return all batch posters with isAccurate flag set to true', async () => {
+  it('getBatchPosters returns all batch posters with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -249,7 +250,7 @@ describe('setBatchPosterFunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getBatchPosters return all batch posters with isAccurate flag set to false', async () => {
+  it('getBatchPosters returns batch posters with isAccurate flag set to false when there are non-parsable calldata from event logs', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -288,7 +289,7 @@ describe('setBatchPosterFunctionSelector', () => {
 });
 
 describe('upgradeExecutorExecuteCallFunctionSelector', () => {
-  it('getBatchPosters return all batch posters with isAccurate flag set to true', async () => {
+  it('getBatchPosters returns all batch posters with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -330,7 +331,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getBatchPosters return all batch posters with isAccurate flag set to false', async () => {
+  it('getBatchPosters returns batch posters with isAccurate flag set to false when there are non-parsable calldata from event logs', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -372,7 +373,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
 });
 
 describe('safeL2FunctionSelector', () => {
-  it('getBatchPosters return all batch posters with isAccurate flag set to true', async () => {
+  it('getBatchPosters returns all batch posters with isAccurate flag set to true', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -405,7 +406,7 @@ describe('safeL2FunctionSelector', () => {
     expect(isAccurate).toBeTruthy();
   });
 
-  it('getBatchPosters return all batch posters with isAccurate flag set to false', async () => {
+  it('getBatchPosters returns batch posters with isAccurate flag set to false when there are non-parsable calldata from event logs', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
