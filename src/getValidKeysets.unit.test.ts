@@ -124,7 +124,7 @@ describe('setValidKeysetFunctionSelector/invalidateKeysetFunctionSelector', () =
     expect(isAccurate).toBeTruthy();
   });
 
-  it.only('getValidKeysets return all keysets with with isAccurate flag set to false when there are event with missing args', async () => {
+  it('getValidKeysets return all keysets with with isAccurate flag set to false when there are event with missing args', async () => {
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -191,7 +191,7 @@ describe('Detect keysets added or removed multiple times', () => {
       sequencerInbox: sequencerInboxAddress,
     });
 
-    expect(keysets).toEqual([]);
+    expect(keysets).toEqual({});
     expect(isAccurate).toBeTruthy();
   });
   it('when enabling the same keyset multiple time', async () => {
@@ -223,7 +223,7 @@ describe('Detect keysets added or removed multiple times', () => {
       sequencerInbox: sequencerInboxAddress,
     });
 
-    expect(keysets).toEqual([]);
+    expect(keysets).toEqual({});
     expect(isAccurate).toBeTruthy();
   });
   it('when adding an existing keyset', async () => {
@@ -254,7 +254,9 @@ describe('Detect keysets added or removed multiple times', () => {
       sequencerInbox: sequencerInboxAddress,
     });
 
-    expect(keysets).toEqual([keyset]);
+    expect(keysets).toEqual({
+      [keysetHash]: keyset,
+    });
     expect(isAccurate).toBeTruthy();
   });
   it('when removing an existing keyset', async () => {
@@ -286,7 +288,9 @@ describe('Detect keysets added or removed multiple times', () => {
       sequencerInbox: sequencerInboxAddress,
     });
 
-    expect(keysets).toEqual([keysetForZeroPK]);
+    expect(keysets).toEqual({
+      [keysetHashForZeroPK]: keysetForZeroPK,
+    });
     expect(isAccurate).toBeTruthy();
   });
 });
