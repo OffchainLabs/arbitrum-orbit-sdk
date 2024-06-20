@@ -18,7 +18,9 @@ export type GetKeysetsReturnType = {
    * - contain false negatives (keysets that were added, but not present in the list)
    */
   isAccurate: boolean;
-  /** List of keysets for the given rollup */
+  /** Map of keyset hash to keyset bytes
+   *  keyset hash are used to invalidate a given keyset
+   */
   keysets: {
     [keysetHash: Hex]: Address;
   };
