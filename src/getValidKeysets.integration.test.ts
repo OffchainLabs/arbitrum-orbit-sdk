@@ -117,36 +117,31 @@ describe('successfully get valid keysets', () => {
       sequencerInbox,
     });
 
-    // By default, chains from nitro testnode has no keyset by default
+    // By default, chains from nitro testnode has no keyset
     expect(initialKeysets).toEqual({});
     expect(isAccurateInitially).toBeTruthy();
 
-    await invalidateKeyset({
-      keysetHash,
-      sequencerInbox,
-      upgradeExecutor,
-      account: l3TokenBridgeDeployer,
-    });
-    await invalidateKeyset({
-      keysetHash,
-      sequencerInbox,
-      upgradeExecutor,
-      account: l3TokenBridgeDeployer,
-    });
-
-    const { isAccurate: isStillAccurate, keysets: newKeysets } = await getKeysets(client, {
-      rollup,
-      sequencerInbox,
-    });
-    expect(newKeysets).toEqual({});
-    expect(isStillAccurate).toBeTruthy();
-
+    // Calling invalidateKeysetHash multiple time for the same keyset hash throws error
+    // We need to call setValidKeyset first
     await setValidKeyset({
       keysetBytes: keyset,
       sequencerInbox,
       upgradeExecutor,
       account: l3TokenBridgeDeployer,
     });
+    await invalidateKeyset({
+      keysetHash: keysetHash,
+      sequencerInbox,
+      upgradeExecutor,
+      account: l3TokenBridgeDeployer,
+    });
+    await setValidKeyset({
+      keysetBytes: keyset,
+      sequencerInbox,
+      upgradeExecutor,
+      account: l3TokenBridgeDeployer,
+    });
+
     const { keysets, isAccurate } = await getKeysets(client, {
       rollup,
       sequencerInbox,
@@ -157,66 +152,36 @@ describe('successfully get valid keysets', () => {
     });
     expect(isAccurate).toBeTruthy();
 
-    // Reset state for future tests
-    await invalidateKeyset({
-      keysetHash,
-      sequencerInbox,
-      upgradeExecutor,
-      account: l3TokenBridgeDeployer,
-    });
-    const { isAccurate: isAccurateFinal, keysets: keysetsFinal } = await getKeysets(client, {
-      rollup,
-      sequencerInbox,
-    });
-    expect(keysetsFinal).toEqual(initialKeysets);
-    expect(isAccurateFinal).toBeTruthy();
-  });
-
-  it('when enabling the same batch poster multiple time', async () => {
-    const { createRollupInformation } = await createAnytrustRollup();
-    const { sequencerInbox, upgradeExecutor, rollup } = createRollupInformation.coreContracts;
-    const { isAccurate: isAccurateInitially, keysets: initialKeysets } = await getKeysets(client, {
-      rollup,
-      sequencerInbox,
-    });
-
-    // By default, chains from nitro testnode has no keyset by default
-    expect(initialKeysets).toEqual({});
-    expect(isAccurateInitially).toBeTruthy();
-
-    await setValidKeyset({
-      keysetBytes: keyset,
-      sequencerInbox,
-      upgradeExecutor,
-      account: l3TokenBridgeDeployer,
-    });
-    await setValidKeyset({
-      keysetBytes: keyset,
-      sequencerInbox,
-      upgradeExecutor,
-      account: l3TokenBridgeDeployer,
-    });
-
-    const { isAccurate: isStillAccurate, keysets: newKeysets } = await getKeysets(client, {
-      rollup,
-      sequencerInbox,
-    });
-    // Setting the same keyset multiple time doesn't add new keyset
-    expect(newKeysets).toEqual({});
-    expect(isStillAccurate).toBeTruthy();
-
     await invalidateKeyset({
       keysetHash: keysetHash,
       sequencerInbox,
       upgradeExecutor,
       account: l3TokenBridgeDeployer,
     });
-    const { keysets, isAccurate } = await getKeysets(client, {
+
+    const { keysets: emptyKeysets, isAccurate: isAccurateIntermediate } = await getKeysets(client, {
       rollup,
       sequencerInbox,
     });
 
-    expect(keysets).toEqual({});
-    expect(isAccurate).toBeTruthy();
+    expect(emptyKeysets).toEqual({});
+    expect(isAccurateIntermediate).toBeTruthy();
+
+    await setValidKeyset({
+      keysetBytes: keysetForZeroPK,
+      sequencerInbox,
+      upgradeExecutor,
+      account: l3TokenBridgeDeployer,
+    });
+
+    const { keysets: finalKeysets, isAccurate: finalIsAccurate } = await getKeysets(client, {
+      rollup,
+      sequencerInbox,
+    });
+
+    expect(finalKeysets).toEqual({
+      [keysetHashForZeroPK]: keysetForZeroPK,
+    });
+    expect(finalIsAccurate).toBeTruthy();
   });
 });
