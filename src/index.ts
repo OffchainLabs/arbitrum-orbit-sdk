@@ -41,7 +41,12 @@ import {
   setValidKeysetPrepareTransactionRequest,
   SetValidKeysetPrepareTransactionRequestParams,
 } from './setValidKeysetPrepareTransactionRequest';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
+import {
+  upgradeExecutorEncodeFunctionData,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
+} from './upgradeExecutorEncodeFunctionData';
 import {
   upgradeExecutorFetchPrivilegedAccounts,
   UpgradeExecutorFetchPrivilegedAccountsParams,
@@ -96,6 +101,11 @@ import {
   SequencerInboxMaxTimeVariation,
 } from './getDefaultSequencerInboxMaxTimeVariation';
 import { getValidators, GetValidatorsParams, GetValidatorsReturnType } from './getValidators';
+import {
+  getBatchPosters,
+  GetBatchPostersParams,
+  GetBatchPostersReturnType,
+} from './getBatchPosters';
 
 export {
   arbOwnerPublicActions,
@@ -138,6 +148,9 @@ export {
   SetValidKeysetPrepareTransactionRequestParams,
   //
   upgradeExecutorEncodeFunctionData,
+  UPGRADE_EXECUTOR_ROLE_ADMIN,
+  UPGRADE_EXECUTOR_ROLE_EXECUTOR,
+  UpgradeExecutorRole,
   upgradeExecutorFetchPrivilegedAccounts,
   UpgradeExecutorFetchPrivilegedAccountsParams,
   upgradeExecutorPrepareAddExecutorTransactionRequest,
@@ -179,4 +192,8 @@ export {
   getValidators,
   GetValidatorsParams,
   GetValidatorsReturnType,
+  //
+  getBatchPosters,
+  GetBatchPostersParams,
+  GetBatchPostersReturnType,
 };

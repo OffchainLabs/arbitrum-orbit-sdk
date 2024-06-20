@@ -11,7 +11,7 @@ import {
   UPGRADE_EXECUTOR_ROLE_EXECUTOR,
   upgradeExecutorEncodeFunctionData,
 } from './upgradeExecutorEncodeFunctionData';
-import { validateChain } from './utils/validateChain';
+import { assertChainId } from './utils/assertChainId';
 
 /**
  * Type for the params of the {@link upgradeExecutorPrepareAddExecutorTransactionRequest} function
@@ -54,7 +54,7 @@ export async function upgradeExecutorPrepareAddExecutorTransactionRequest<
   executorAccountAddress,
   publicClient,
 }: UpgradeExecutorPrepareAddExecutorTransactionRequestParams<TChain>) {
-  const chainId = validateChain(publicClient);
+  const chainId = assertChainId(publicClient);
 
   // 0. Verify that the account doesn't have the EXECUTOR role already
   const accountHasExecutorRole = await publicClient.readContract({

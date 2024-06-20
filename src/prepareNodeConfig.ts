@@ -33,6 +33,7 @@ export type PrepareNodeConfigParams = {
   parentChainId: ParentChainId;
   parentChainRpcUrl: string;
   parentChainBeaconRpcUrl?: string;
+  dasServerUrl?: string;
 };
 
 function getDisableBlobReader(parentChainId: ParentChainId): boolean {
@@ -52,6 +53,7 @@ export function prepareNodeConfig({
   parentChainId,
   parentChainRpcUrl,
   parentChainBeaconRpcUrl,
+  dasServerUrl,
 }: PrepareNodeConfigParams): NodeConfig {
   // For L2 Orbit chains settling to Ethereum mainnet or testnet, a parentChainBeaconRpcUrl is enforced
   if (getParentChainLayer(parentChainId) === 1 && !parentChainBeaconRpcUrl) {
@@ -137,6 +139,8 @@ export function prepareNodeConfig({
     };
   }
 
+  const dasServerUrlWithFallback = dasServerUrl ?? 'http://localhost';
+
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
     config.node!['data-availability'] = {
       'enable': true,
@@ -144,14 +148,14 @@ export function prepareNodeConfig({
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: ['http://localhost:9877'],
+        urls: [`${dasServerUrlWithFallback}:9877`],
       },
       'rpc-aggregator': {
         'enable': true,
         'assumed-honest': 1,
         'backends': stringifyBackendsJson([
           {
-            url: 'http://localhost:9876',
+            url: `${dasServerUrlWithFallback}:9876`,
             pubkey:
               'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
             signermask: 1,

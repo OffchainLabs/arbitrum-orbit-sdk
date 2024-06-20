@@ -22,6 +22,12 @@ if (typeof process.env.NEW_VALIDATOR_ADDRESS === 'undefined') {
   throw new Error(`Please provide the "NEW_VALIDATOR_ADDRESS" environment variable`);
 }
 
+if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CHAIN_RPC === '') {
+  console.warn(
+    `Warning: you may encounter timeout errors while running the script with the default rpc endpoint. Please provide the "PARENT_CHAIN_RPC" environment variable instead.`,
+  );
+}
+
 function getBlockExplorerUrl(chain: Chain) {
   return chain.blockExplorers?.default.url;
 }
