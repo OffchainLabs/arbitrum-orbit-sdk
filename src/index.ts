@@ -101,6 +101,11 @@ import {
   SequencerInboxMaxTimeVariation,
 } from './getDefaultSequencerInboxMaxTimeVariation';
 import { getValidators, GetValidatorsParams, GetValidatorsReturnType } from './getValidators';
+import {
+  getBatchPosters,
+  GetBatchPostersParams,
+  GetBatchPostersReturnType,
+} from './getBatchPosters';
 
 export {
   arbOwnerPublicActions,
@@ -186,4 +191,8 @@ export {
   getValidators,
   GetValidatorsParams,
   GetValidatorsReturnType,
+  //
+  getBatchPosters,
+  GetBatchPostersParams,
+  GetBatchPostersReturnType,
 };
