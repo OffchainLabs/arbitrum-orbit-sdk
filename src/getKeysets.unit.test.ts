@@ -1,7 +1,7 @@
 import { EIP1193RequestFn, Hex, createPublicClient, createTransport, http } from 'viem';
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
-import { getKeysets } from './getValidKeysets';
+import { getKeysets } from './getKeysets';
 
 const client = createPublicClient({
   chain: arbitrum,

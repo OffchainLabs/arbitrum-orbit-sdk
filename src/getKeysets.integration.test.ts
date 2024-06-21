@@ -16,7 +16,7 @@ import {
   getInformationFromTestnode,
   getNitroTestnodePrivateKeyAccounts,
 } from './testHelpers';
-import { getKeysets } from './getValidKeysets';
+import { getKeysets } from './getKeysets';
 
 const { l3SequencerInbox } = getInformationFromTestnode();
 const { l3TokenBridgeDeployer, deployer } = getNitroTestnodePrivateKeyAccounts();

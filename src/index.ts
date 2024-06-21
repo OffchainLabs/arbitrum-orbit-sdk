@@ -106,6 +106,7 @@ import {
   GetBatchPostersParams,
   GetBatchPostersReturnType,
 } from './getBatchPosters';
+import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
 
 export {
   arbOwnerPublicActions,
@@ -195,4 +196,8 @@ export {
   getBatchPosters,
   GetBatchPostersParams,
   GetBatchPostersReturnType,
+  //
+  getKeysets,
+  GetKeysetsParams,
+  GetKeysetsReturnType,
 };
