@@ -106,6 +106,7 @@ import {
   GetBatchPostersParams,
   GetBatchPostersReturnType,
 } from './getBatchPosters';
+import { isAnyTrust } from './isAnyTrust';
 
 export {
   arbOwnerPublicActions,
@@ -195,4 +196,6 @@ export {
   getBatchPosters,
   GetBatchPostersParams,
   GetBatchPostersReturnType,
+  //
+  isAnyTrust,
 };
