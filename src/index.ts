@@ -107,6 +107,7 @@ import {
   GetBatchPostersReturnType,
 } from './getBatchPosters';
 import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
+import { isAnyTrust } from './isAnyTrust';
 
 export {
   arbOwnerPublicActions,
@@ -200,4 +201,6 @@ export {
   getKeysets,
   GetKeysetsParams,
   GetKeysetsReturnType,
+  //
+  isAnyTrust,
 };
