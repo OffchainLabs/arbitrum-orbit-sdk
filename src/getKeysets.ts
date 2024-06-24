@@ -6,23 +6,15 @@ const SetValidKeysetEventAbi = getAbiItem({ abi: sequencerInboxABI, name: 'SetVa
 const InvalidateKeysetEventAbi = getAbiItem({ abi: sequencerInboxABI, name: 'InvalidateKeyset' });
 
 export type GetKeysetsParams = {
-  /** Address of the rollup we're getting list of keysets from */
-  rollup: Address;
   /** Address of the sequencerInbox we're getting logs from */
   sequencerInbox: Address;
 };
 export type GetKeysetsReturnType = {
-  /**
-   * If logs contain unknown signature, keysets list might:
-   * - contain false positives (keysets that were removed, but returned as keyset)
-   * - contain false negatives (keysets that were added, but not present in the list)
-   */
-  isAccurate: boolean;
   /** Map of keyset hash to keyset bytes
    *  keyset hash are used to invalidate a given keyset
    */
   keysets: {
-    [keysetHash: Hex]: Address;
+    [keysetHash: Hex]: Hex;
   };
 };
 
@@ -33,28 +25,23 @@ export type GetKeysetsReturnType = {
  *
  * @returns Promise<{@link GetKeysetsReturnType}>
  *
- * @remarks keysets list is not guaranteed to be exhaustive if the `isAccurate` flag is false.
- * It might contain false positive (keysets that were removed, but returned as keyset)
- * or false negative (keysets that were added, but not present in the list)
- *
  * @example
- * const { isAccurate, keysets } = getKeysets(client, {
- *   rollup: '0xFb209827c58283535b744575e11953DCC4bEAD88',
+ * const { keysets } = getKeysets(client, {
  *   sequencerInbox: '0x211E1c4c7f1bF5351Ac850Ed10FD68CFfCF6c21b'
  * });
  *
- * if (isAccurate) {
- *   // keysets were all fetched properly
- * } else {
- *   // keysets list is not guaranteed to be accurate
- * }
  */
 export async function getKeysets<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { rollup, sequencerInbox }: GetKeysetsParams,
+  { sequencerInbox }: GetKeysetsParams,
 ): Promise<GetKeysetsReturnType> {
   let blockNumber: bigint | 'earliest';
   let createRollupTransactionHash: Address | null = null;
+  const rollup = await publicClient.readContract({
+    functionName: 'rollup',
+    address: sequencerInbox,
+    abi: sequencerInboxABI,
+  });
   try {
     createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
@@ -76,13 +63,11 @@ export async function getKeysets<TChain extends Chain | undefined>(
     toBlock: 'latest',
   });
 
-  let isAccurate = true;
   const keysets = events.reduce((acc, event) => {
     switch (event.eventName) {
       case SetValidKeysetEventAbi.name: {
         const { keysetHash, keysetBytes } = event.args;
         if (!keysetHash || !keysetBytes) {
-          isAccurate = false;
           console.warn(`[getKeysets] Missing args for event: ${event.transactionHash}`);
           return acc;
         }
@@ -92,7 +77,6 @@ export async function getKeysets<TChain extends Chain | undefined>(
       case InvalidateKeysetEventAbi.name: {
         const { keysetHash } = event.args;
         if (!keysetHash) {
-          isAccurate = false;
           console.warn(`[getKeysets] Missing args for event: ${event.transactionHash}`);
           return acc;
         }
@@ -100,10 +84,9 @@ export async function getKeysets<TChain extends Chain | undefined>(
         return acc;
       }
     }
-  }, new Map<Hex, Address>());
+  }, new Map<Hex, Hex>());
 
   return {
-    isAccurate,
     keysets: Object.fromEntries(keysets),
   };
 }

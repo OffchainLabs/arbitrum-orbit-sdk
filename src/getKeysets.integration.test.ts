@@ -112,14 +112,12 @@ describe.skip('successfully get valid keysets', () => {
   it('when disabling the same keyset multiple time', async () => {
     const { createRollupInformation } = await createAnytrustRollup();
     const { sequencerInbox, upgradeExecutor, rollup } = createRollupInformation.coreContracts;
-    const { isAccurate: isAccurateInitially, keysets: initialKeysets } = await getKeysets(client, {
-      rollup,
+    const { keysets: initialKeysets } = await getKeysets(client, {
       sequencerInbox,
     });
 
     // By default, chains from nitro testnode has no keyset
     expect(initialKeysets).toEqual({});
-    expect(isAccurateInitially).toBeTruthy();
 
     // Calling invalidateKeysetHash multiple time for the same keyset hash throws error
     // We need to call setValidKeyset first
@@ -142,15 +140,13 @@ describe.skip('successfully get valid keysets', () => {
       account: l3TokenBridgeDeployer,
     });
 
-    const { keysets, isAccurate } = await getKeysets(client, {
-      rollup,
+    const { keysets } = await getKeysets(client, {
       sequencerInbox,
     });
 
     expect(keysets).toEqual({
       [keysetHash]: keyset,
     });
-    expect(isAccurate).toBeTruthy();
 
     await invalidateKeyset({
       keysetHash: keysetHash,
@@ -159,13 +155,11 @@ describe.skip('successfully get valid keysets', () => {
       account: l3TokenBridgeDeployer,
     });
 
-    const { keysets: emptyKeysets, isAccurate: isAccurateIntermediate } = await getKeysets(client, {
-      rollup,
+    const { keysets: emptyKeysets } = await getKeysets(client, {
       sequencerInbox,
     });
 
     expect(emptyKeysets).toEqual({});
-    expect(isAccurateIntermediate).toBeTruthy();
 
     await setValidKeyset({
       keysetBytes: keysetForZeroPK,
@@ -174,14 +168,12 @@ describe.skip('successfully get valid keysets', () => {
       account: l3TokenBridgeDeployer,
     });
 
-    const { keysets: finalKeysets, isAccurate: finalIsAccurate } = await getKeysets(client, {
-      rollup,
+    const { keysets: finalKeysets } = await getKeysets(client, {
       sequencerInbox,
     });
 
     expect(finalKeysets).toEqual({
       [keysetHashForZeroPK]: keysetForZeroPK,
     });
-    expect(finalIsAccurate).toBeTruthy();
   });
 });
