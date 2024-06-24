@@ -108,7 +108,7 @@ async function createAnytrustRollup() {
 }
 
 // Tests can be enabled once we run one node per integration test
-describe('successfully get valid keysets', () => {
+describe.skip('successfully get valid keysets', () => {
   it('when disabling the same keyset multiple time', async () => {
     const { createRollupInformation } = await createAnytrustRollup();
     const { sequencerInbox, upgradeExecutor, rollup } = createRollupInformation.coreContracts;
