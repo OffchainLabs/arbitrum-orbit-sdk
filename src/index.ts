@@ -106,6 +106,7 @@ import {
   GetBatchPostersParams,
   GetBatchPostersReturnType,
 } from './getBatchPosters';
+import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
 import { isAnyTrust } from './isAnyTrust';
 
 export {
@@ -196,6 +197,10 @@ export {
   getBatchPosters,
   GetBatchPostersParams,
   GetBatchPostersReturnType,
+  //
+  getKeysets,
+  GetKeysetsParams,
+  GetKeysetsReturnType,
   //
   isAnyTrust,
 };
