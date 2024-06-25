@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import { createPublicClient, http } from 'viem';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 import { arbitrumOne } from './chains';
@@ -35,7 +35,7 @@ it('should return core contracts', async () => {
 
 it("should fallback to multicall if there's any error", async () => {
   // Trigger the fallback to multicall
-  client.getLogs = async () => [];
+  vi.spyOn(client, 'getLogs').mockImplementation(async () => []);
 
   const coreContracts = await createRollupFetchCoreContracts({
     rollup: xaiRollupAddress,
