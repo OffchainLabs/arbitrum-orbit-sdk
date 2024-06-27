@@ -68,7 +68,7 @@ import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPubl
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
-import { NodeConfig } from './types/NodeConfig.generated';
+import { NodeConfig, NodeConfigOption } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { PrepareNodeConfigParams, prepareNodeConfig } from './prepareNodeConfig';
 import {
@@ -166,6 +166,7 @@ export {
   ParentChain,
   ParentChainId,
   NodeConfig,
+  NodeConfigOption,
   NodeConfigChainInfoJson,
   PrepareNodeConfigParams,
   prepareNodeConfig,

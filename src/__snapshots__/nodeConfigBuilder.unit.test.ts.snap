@@ -1,0 +1,164 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`creates node config 1`] = `
+{
+  "chain": {
+    "info-json": "[{\\"chain-id\\":123456,\\"chain-name\\":\\"my-l3-chain\\",\\"chain-config\\":{\\"homesteadBlock\\":0,\\"daoForkBlock\\":null,\\"daoForkSupport\\":true,\\"eip150Block\\":0,\\"eip150Hash\\":\\"0x0000000000000000000000000000000000000000000000000000000000000000\\",\\"eip155Block\\":0,\\"eip158Block\\":0,\\"byzantiumBlock\\":0,\\"constantinopleBlock\\":0,\\"petersburgBlock\\":0,\\"istanbulBlock\\":0,\\"muirGlacierBlock\\":0,\\"berlinBlock\\":0,\\"londonBlock\\":0,\\"clique\\":{\\"period\\":0,\\"epoch\\":0},\\"arbitrum\\":{\\"EnableArbOS\\":true,\\"AllowDebugPrecompiles\\":false,\\"DataAvailabilityCommittee\\":false,\\"InitialArbOSVersion\\":11,\\"GenesisBlockNum\\":0,\\"MaxCodeSize\\":24576,\\"MaxInitCodeSize\\":49152,\\"InitialChainOwner\\":\\"0x1000000000000000000000000000000000000000\\"},\\"chainId\\":123456},\\"parent-chain-id\\":421614,\\"parent-chain-is-arbitrum\\":true,\\"rollup\\":{\\"bridge\\":\\"0x0000000000000000000000000000000000000001\\",\\"inbox\\":\\"0x0000000000000000000000000000000000000002\\",\\"sequencer-inbox\\":\\"0x0000000000000000000000000000000000000003\\",\\"rollup\\":\\"0x0000000000000000000000000000000000000004\\",\\"validator-utils\\":\\"0x0000000000000000000000000000000000000005\\",\\"validator-wallet-creator\\":\\"0x0000000000000000000000000000000000000006\\",\\"deployed-at\\":456789}}]",
+    "name": "my-l3-chain",
+  },
+  "http": {
+    "addr": "0.0.0.0",
+    "api": [
+      "eth",
+      "net",
+      "web3",
+      "arb",
+      "debug",
+    ],
+    "corsdomain": [
+      "*",
+    ],
+    "port": 8449,
+    "vhosts": [
+      "*",
+    ],
+  },
+  "parent-chain": {
+    "connection": {
+      "url": "https://sepolia-rollup.arbitrum.io/rpc",
+    },
+    "id": 421614,
+  },
+}
+`;
+
+exports[`creates node config with data availability service 1`] = `
+{
+  "chain": {
+    "info-json": "[{\\"chain-id\\":123456,\\"chain-name\\":\\"my-l3-chain\\",\\"chain-config\\":{\\"homesteadBlock\\":0,\\"daoForkBlock\\":null,\\"daoForkSupport\\":true,\\"eip150Block\\":0,\\"eip150Hash\\":\\"0x0000000000000000000000000000000000000000000000000000000000000000\\",\\"eip155Block\\":0,\\"eip158Block\\":0,\\"byzantiumBlock\\":0,\\"constantinopleBlock\\":0,\\"petersburgBlock\\":0,\\"istanbulBlock\\":0,\\"muirGlacierBlock\\":0,\\"berlinBlock\\":0,\\"londonBlock\\":0,\\"clique\\":{\\"period\\":0,\\"epoch\\":0},\\"arbitrum\\":{\\"EnableArbOS\\":true,\\"AllowDebugPrecompiles\\":false,\\"DataAvailabilityCommittee\\":false,\\"InitialArbOSVersion\\":11,\\"GenesisBlockNum\\":0,\\"MaxCodeSize\\":24576,\\"MaxInitCodeSize\\":49152,\\"InitialChainOwner\\":\\"0x1000000000000000000000000000000000000000\\"},\\"chainId\\":123456},\\"parent-chain-id\\":421614,\\"parent-chain-is-arbitrum\\":true,\\"rollup\\":{\\"bridge\\":\\"0x0000000000000000000000000000000000000001\\",\\"inbox\\":\\"0x0000000000000000000000000000000000000002\\",\\"sequencer-inbox\\":\\"0x0000000000000000000000000000000000000003\\",\\"rollup\\":\\"0x0000000000000000000000000000000000000004\\",\\"validator-utils\\":\\"0x0000000000000000000000000000000000000005\\",\\"validator-wallet-creator\\":\\"0x0000000000000000000000000000000000000006\\",\\"deployed-at\\":456789}}]",
+    "name": "my-l3-chain",
+  },
+  "http": {
+    "addr": "0.0.0.0",
+    "api": [
+      "eth",
+      "net",
+      "web3",
+      "arb",
+      "debug",
+    ],
+    "corsdomain": [
+      "*",
+    ],
+    "port": 8449,
+    "vhosts": [
+      "*",
+    ],
+  },
+  "node": {
+    "data-availability": {
+      "enable": true,
+      "rest-aggregator": {
+        "enable": true,
+        "urls": [
+          "http://localhost:9877",
+        ],
+      },
+      "rpc-aggregator": {
+        "assumed-honest": 1,
+        "backends": "[{\\"url\\":\\"http://localhost:9876\\",\\"pubkey\\":\\"YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==\\",\\"signermask\\":1}]",
+        "enable": true,
+      },
+    },
+  },
+  "parent-chain": {
+    "connection": {
+      "url": "https://sepolia-rollup.arbitrum.io/rpc",
+    },
+    "id": 421614,
+  },
+}
+`;
+
+exports[`creates node config with sequencer, batch poster and staker 1`] = `
+{
+  "chain": {
+    "info-json": "[{\\"chain-id\\":123456,\\"chain-name\\":\\"my-l3-chain\\",\\"chain-config\\":{\\"homesteadBlock\\":0,\\"daoForkBlock\\":null,\\"daoForkSupport\\":true,\\"eip150Block\\":0,\\"eip150Hash\\":\\"0x0000000000000000000000000000000000000000000000000000000000000000\\",\\"eip155Block\\":0,\\"eip158Block\\":0,\\"byzantiumBlock\\":0,\\"constantinopleBlock\\":0,\\"petersburgBlock\\":0,\\"istanbulBlock\\":0,\\"muirGlacierBlock\\":0,\\"berlinBlock\\":0,\\"londonBlock\\":0,\\"clique\\":{\\"period\\":0,\\"epoch\\":0},\\"arbitrum\\":{\\"EnableArbOS\\":true,\\"AllowDebugPrecompiles\\":false,\\"DataAvailabilityCommittee\\":false,\\"InitialArbOSVersion\\":11,\\"GenesisBlockNum\\":0,\\"MaxCodeSize\\":24576,\\"MaxInitCodeSize\\":49152,\\"InitialChainOwner\\":\\"0x1000000000000000000000000000000000000000\\"},\\"chainId\\":123456},\\"parent-chain-id\\":421614,\\"parent-chain-is-arbitrum\\":true,\\"rollup\\":{\\"bridge\\":\\"0x0000000000000000000000000000000000000001\\",\\"inbox\\":\\"0x0000000000000000000000000000000000000002\\",\\"sequencer-inbox\\":\\"0x0000000000000000000000000000000000000003\\",\\"rollup\\":\\"0x0000000000000000000000000000000000000004\\",\\"validator-utils\\":\\"0x0000000000000000000000000000000000000005\\",\\"validator-wallet-creator\\":\\"0x0000000000000000000000000000000000000006\\",\\"deployed-at\\":456789}}]",
+    "name": "my-l3-chain",
+  },
+  "execution": {
+    "caching": {
+      "archive": true,
+    },
+    "forwarding-target": "",
+    "sequencer": {
+      "enable": true,
+      "max-block-speed": "250ms",
+      "max-tx-data-size": 85000,
+    },
+  },
+  "http": {
+    "addr": "0.0.0.0",
+    "api": [
+      "eth",
+      "net",
+      "web3",
+      "arb",
+      "debug",
+    ],
+    "corsdomain": [
+      "*",
+    ],
+    "port": 8449,
+    "vhosts": [
+      "*",
+    ],
+  },
+  "node": {
+    "batch-poster": {
+      "enable": true,
+      "max-size": 90000,
+      "parent-chain-wallet": {
+        "private-key": "BATCH_POSTER_PRIVATE_KEY",
+      },
+    },
+    "dangerous": {
+      "no-sequencer-coordinator": true,
+    },
+    "delayed-sequencer": {
+      "enable": true,
+      "finalize-distance": 1,
+      "use-merge-finality": false,
+    },
+    "sequencer": true,
+    "staker": {
+      "enable": true,
+      "parent-chain-wallet": {
+        "private-key": "STAKER_PRIVATE_KEY",
+      },
+      "strategy": "MakeNodes",
+    },
+  },
+  "parent-chain": {
+    "connection": {
+      "url": "https://sepolia-rollup.arbitrum.io/rpc",
+    },
+    "id": 421614,
+  },
+}
+`;
+
+exports[`creates node config without defaults 1`] = `
+{
+  "chain": {
+    "info-json": "[{\\"chain-id\\":123456,\\"chain-name\\":\\"my-l3-chain\\",\\"chain-config\\":{\\"homesteadBlock\\":0,\\"daoForkBlock\\":null,\\"daoForkSupport\\":true,\\"eip150Block\\":0,\\"eip150Hash\\":\\"0x0000000000000000000000000000000000000000000000000000000000000000\\",\\"eip155Block\\":0,\\"eip158Block\\":0,\\"byzantiumBlock\\":0,\\"constantinopleBlock\\":0,\\"petersburgBlock\\":0,\\"istanbulBlock\\":0,\\"muirGlacierBlock\\":0,\\"berlinBlock\\":0,\\"londonBlock\\":0,\\"clique\\":{\\"period\\":0,\\"epoch\\":0},\\"arbitrum\\":{\\"EnableArbOS\\":true,\\"AllowDebugPrecompiles\\":false,\\"DataAvailabilityCommittee\\":false,\\"InitialArbOSVersion\\":11,\\"GenesisBlockNum\\":0,\\"MaxCodeSize\\":24576,\\"MaxInitCodeSize\\":49152,\\"InitialChainOwner\\":\\"0x1000000000000000000000000000000000000000\\"},\\"chainId\\":123456},\\"parent-chain-id\\":421614,\\"parent-chain-is-arbitrum\\":true,\\"rollup\\":{\\"bridge\\":\\"0x0000000000000000000000000000000000000001\\",\\"inbox\\":\\"0x0000000000000000000000000000000000000002\\",\\"sequencer-inbox\\":\\"0x0000000000000000000000000000000000000003\\",\\"rollup\\":\\"0x0000000000000000000000000000000000000004\\",\\"validator-utils\\":\\"0x0000000000000000000000000000000000000005\\",\\"validator-wallet-creator\\":\\"0x0000000000000000000000000000000000000006\\",\\"deployed-at\\":456789}}]",
+    "name": "my-l3-chain",
+  },
+  "parent-chain": {
+    "connection": {
+      "url": "https://sepolia-rollup.arbitrum.io/rpc",
+    },
+    "id": 421614,
+  },
+}
+`;

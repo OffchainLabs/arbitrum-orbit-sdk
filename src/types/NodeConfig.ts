@@ -19,10 +19,8 @@ export type NodeConfigChainInfoJson = [
   },
 ];
 
-export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = [
-  {
-    url: string;
-    pubkey: string;
-    signermask: number;
-  },
-];
+export type NodeConfigDataAvailabilityRpcAggregatorBackendsJson = {
+  url: string;
+  pubkey: string;
+  signermask: number;
+}[];

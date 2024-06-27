@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import { readFileSync, rmSync } from 'fs';
 import { Project, WriterFunction, Writers } from 'ts-morph';
 
-const { objectType } = Writers;
+const { objectType, unionType } = Writers;
 
 function getNitroNodeImageTag(): string {
   const defaultNitroNodeTag = 'v2.3.3-6a1c1a7';
@@ -188,7 +188,32 @@ function main() {
   sourceFile.addTypeAlias({
     name: 'NodeConfig',
     type: getTypeRecursively(cliOptionsNestedObject),
-    docs: ['Nitro node configuration options'],
+    docs: ['Nitro node configuration object'],
+    isExported: true,
+  });
+  // append NodeConfigOption type declaration
+  sourceFile.addTypeAlias({
+    name: 'NodeConfigOption',
+    type: unionType(
+      // not sure why ts-morph is acting weird here
+      // @ts-ignore
+      ...cliOptions.map((option) =>
+        objectType({
+          properties: [
+            {
+              name: 'key',
+              type: `"${option.name}"`,
+              docs: option.docs,
+            },
+            {
+              name: 'type',
+              type: option.type,
+            },
+          ],
+        }),
+      ),
+    ),
+    docs: ['Union type for all Nitro node configuration options'],
     isExported: true,
   });
 
