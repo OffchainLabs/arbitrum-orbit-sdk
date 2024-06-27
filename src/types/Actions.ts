@@ -20,3 +20,7 @@ export type ActionParameters<Args, ContractName extends string, Curried extends 
         [key in ContractName]?: Address;
       }
 >;
+
+export type WithAccount<Args> = Args & {
+  account: Address;
+};
