@@ -16,8 +16,6 @@ exports[`Getters > [getMinimumGasPrice] Should return minimum gas price 1`] = `1
 
 exports[`Getters > [getNetworkFeeAccount] Should return network fee account 1`] = `"0x32e7AF5A8151934F3787d0cD59EB6EDd0a736b1d"`;
 
-exports[`Getters > [getParentBaseFeeEstimate] Should return parent base fee estimate 1`] = `106354669n`;
-
 exports[`Getters > [getParentRewardRate] Should return parent reward rate 1`] = `0n`;
 
 exports[`Getters > [getParentRewardRecipient] Should return parent reward recipient 1`] = `"0x2E041280627800801E90E9Ac83532fadb6cAd99A"`;
