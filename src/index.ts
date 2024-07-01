@@ -93,6 +93,14 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
+import {
+  feeRouterDeployChildToParentRouter,
+  FeeRouterDeployChildToParentRouterParams,
+} from './feeRouterDeployChildToParentRouter';
+import {
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
+} from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
@@ -185,6 +193,11 @@ export {
   createTokenBridgeFetchTokenBridgeContracts,
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
+  //
+  feeRouterDeployChildToParentRouter,
+  FeeRouterDeployChildToParentRouterParams,
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
   //
   getDefaultConfirmPeriodBlocks,
   getDefaultSequencerInboxMaxTimeVariation,
