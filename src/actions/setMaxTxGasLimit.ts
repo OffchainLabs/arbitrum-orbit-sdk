@@ -26,7 +26,7 @@ function arbOwnerFunctionData({ limit }: SetMaxTxGasLimitParameters) {
   });
 }
 
-export async function setL1PricingRewardRecipient<TChain extends Chain | undefined>(
+export async function setMaxTxGasLimit<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
   args: SetMaxTxGasLimitParameters,
 ): Promise<SetMaxTxGasLimitReturnType> {
