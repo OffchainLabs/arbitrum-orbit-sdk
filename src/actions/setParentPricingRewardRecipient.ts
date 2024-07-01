@@ -1,43 +1,43 @@
-import {
-  Address,
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Address, Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { arbOwner } from '../contracts';
-import { WithAccount } from '../types/Actions';
+import {
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { validateChildChainPublicClient } from '../types/validateChildChainPublicClient';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 export type SetParentPricingRewardRecipientParameters = Prettify<
-  WithAccount<{
-    recipient: Address;
-  }>
+  WithUpgradeExecutor<
+    WithAccount<{
+      recipient: Address;
+    }>
+  >
 >;
 
-export type SetParentPricingRewardRecipientReturnType = PrepareTransactionRequestReturnType;
-
-function arbOwnerFunctionData({ recipient }: SetParentPricingRewardRecipientParameters) {
-  return encodeFunctionData({
-    abi: arbOwner.abi,
-    functionName: 'setL1PricingRewardRecipient',
-    args: [recipient],
-  });
-}
+export type SetParentPricingRewardRecipientReturnType =
+  PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setParentPricingRewardRecipient<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetParentPricingRewardRecipientParameters,
+  params: SetParentPricingRewardRecipientParameters,
 ): Promise<SetParentPricingRewardRecipientReturnType> {
-  const data = arbOwnerFunctionData(args);
+  const validatedPublicClient = validateChildChainPublicClient(client);
+  const { account, upgradeExecutor, recipient } = params;
 
-  return client.prepareTransactionRequest({
-    to: arbOwner.address,
-    value: BigInt(0),
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: arbOwner.address,
+      upgradeExecutor,
+      args: [recipient],
+      abi: arbOwner.abi,
+      functionName: 'setL1PricingRewardRecipient',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

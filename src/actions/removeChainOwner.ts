@@ -1,43 +1,43 @@
-import {
-  Address,
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Address, Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { arbOwner } from '../contracts';
-import { WithAccount } from '../types/Actions';
+import {
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
+import { validateParentChainPublicClient } from '../types/ParentChain';
+import { validateChildChainPublicClient } from '../types/validateChildChainPublicClient';
 
 export type RemoveChainOwnerParameters = Prettify<
-  WithAccount<{
-    owner: Address;
-  }>
+  WithUpgradeExecutor<
+    WithAccount<{
+      owner: Address;
+    }>
+  >
 >;
 
-export type RemoveChainOwnerReturnType = PrepareTransactionRequestReturnType;
-
-function arbOwnerFunctionData({ owner }: RemoveChainOwnerParameters) {
-  return encodeFunctionData({
-    abi: arbOwner.abi,
-    functionName: 'removeChainOwner',
-    args: [owner],
-  });
-}
+export type RemoveChainOwnerReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function removeChainOwner<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: RemoveChainOwnerParameters,
+  params: RemoveChainOwnerParameters,
 ): Promise<RemoveChainOwnerReturnType> {
-  const data = arbOwnerFunctionData(args);
+  const validatedPublicClient = validateChildChainPublicClient(client);
+  const { account, upgradeExecutor, owner } = params;
 
-  return client.prepareTransactionRequest({
-    to: arbOwner.address,
-    value: BigInt(0),
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: arbOwner.address,
+      upgradeExecutor,
+      args: [owner],
+      abi: arbOwner.abi,
+      functionName: 'removeChainOwner',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

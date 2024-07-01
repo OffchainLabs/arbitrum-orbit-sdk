@@ -1,42 +1,42 @@
-import {
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { arbOwner } from '../contracts';
-import { WithAccount } from '../types/Actions';
+import {
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
+import { validateChildChainPublicClient } from '../types/validateChildChainPublicClient';
 
 export type SetMaxTxGasLimitParameters = Prettify<
-  WithAccount<{
-    limit: bigint;
-  }>
+  WithUpgradeExecutor<
+    WithAccount<{
+      limit: bigint;
+    }>
+  >
 >;
 
-export type SetMaxTxGasLimitReturnType = PrepareTransactionRequestReturnType;
+export type SetMaxTxGasLimitReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
-function arbOwnerFunctionData({ limit }: SetMaxTxGasLimitParameters) {
-  return encodeFunctionData({
-    abi: arbOwner.abi,
-    functionName: 'setMaxTxGasLimit',
-    args: [limit],
-  });
-}
-
-export async function setL1PricingRewardRecipient<TChain extends Chain | undefined>(
+export async function setMaxTxGasLimit<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetMaxTxGasLimitParameters,
+  params: SetMaxTxGasLimitParameters,
 ): Promise<SetMaxTxGasLimitReturnType> {
-  const data = arbOwnerFunctionData(args);
+  const validatedPublicClient = validateChildChainPublicClient(client);
+  const { account, upgradeExecutor, limit } = params;
 
-  return client.prepareTransactionRequest({
-    to: arbOwner.address,
-    value: BigInt(0),
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: arbOwner.address,
+      upgradeExecutor,
+      args: [limit],
+      abi: arbOwner.abi,
+      functionName: 'setMaxTxGasLimit',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

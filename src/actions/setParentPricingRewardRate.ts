@@ -1,42 +1,42 @@
-import {
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { arbOwner } from '../contracts';
-import { WithAccount } from '../types/Actions';
+import {
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { validateChildChainPublicClient } from '../types/validateChildChainPublicClient';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 export type SetParentPricingRewardRateParameters = Prettify<
-  WithAccount<{
-    weiPerUnit: bigint;
-  }>
+  WithUpgradeExecutor<
+    WithAccount<{
+      weiPerUnit: bigint;
+    }>
+  >
 >;
 
-export type SetParentPricingRewardRateReturnType = PrepareTransactionRequestReturnType;
-
-function arbOwnerFunctionData({ weiPerUnit }: SetParentPricingRewardRateParameters) {
-  return encodeFunctionData({
-    abi: arbOwner.abi,
-    functionName: 'setL1PricingRewardRate',
-    args: [weiPerUnit],
-  });
-}
+export type SetParentPricingRewardRateReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setParentPricingRewardRate<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetParentPricingRewardRateParameters,
+  params: SetParentPricingRewardRateParameters,
 ): Promise<SetParentPricingRewardRateReturnType> {
-  const data = arbOwnerFunctionData(args);
+  const validatedPublicClient = validateChildChainPublicClient(client);
+  const { account, upgradeExecutor, weiPerUnit } = params;
 
-  return client.prepareTransactionRequest({
-    to: arbOwner.address,
-    value: BigInt(0),
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: arbOwner.address,
+      upgradeExecutor,
+      args: [weiPerUnit],
+      abi: arbOwner.abi,
+      functionName: 'setL1PricingRewardRate',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

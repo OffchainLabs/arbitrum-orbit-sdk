@@ -1,42 +1,42 @@
-import {
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { arbOwner } from '../contracts';
-import { WithAccount } from '../types/Actions';
+import {
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
+import { validateChildChainPublicClient } from '../types/validateChildChainPublicClient';
 
 export type SetSpeedLimitParameters = Prettify<
-  WithAccount<{
-    limit: bigint;
-  }>
+  WithUpgradeExecutor<
+    WithAccount<{
+      limit: bigint;
+    }>
+  >
 >;
 
-export type SetSpeedLimitReturnType = PrepareTransactionRequestReturnType;
-
-function arbOwnerFunctionData({ limit }: SetSpeedLimitParameters) {
-  return encodeFunctionData({
-    abi: arbOwner.abi,
-    functionName: 'setSpeedLimit',
-    args: [limit],
-  });
-}
+export type SetSpeedLimitReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setSpeedLimit<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetSpeedLimitParameters,
+  params: SetSpeedLimitParameters,
 ): Promise<SetSpeedLimitReturnType> {
-  const data = arbOwnerFunctionData(args);
+  const validatedPublicClient = validateChildChainPublicClient(client);
+  const { account, upgradeExecutor, limit } = params;
 
-  return client.prepareTransactionRequest({
-    to: arbOwner.address,
-    value: BigInt(0),
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: arbOwner.address,
+      upgradeExecutor,
+      args: [limit],
+      abi: arbOwner.abi,
+      functionName: 'setSpeedLimit',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }
