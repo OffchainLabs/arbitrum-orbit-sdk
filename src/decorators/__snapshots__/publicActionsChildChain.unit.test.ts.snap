@@ -1,0 +1,30 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Getters > [getAllChainOwners] Should return all chain owners 1`] = `[]`;
+
+exports[`Getters > [getGasAccountingParams] Should return gas accounting params 1`] = `
+[
+  7000000n,
+  32000000n,
+  32000000n,
+]
+`;
+
+exports[`Getters > [getInfraFeeAccount] Should return infra fee account 1`] = `"0xbF5041Fc07E1c866D15c749156657B8eEd0fb649"`;
+
+exports[`Getters > [getMinimumGasPrice] Should return minimum gas price 1`] = `10000000n`;
+
+exports[`Getters > [getNetworkFeeAccount] Should return network fee account 1`] = `"0x32e7AF5A8151934F3787d0cD59EB6EDd0a736b1d"`;
+
+exports[`Getters > [getParentBaseFeeEstimate] Should return parent base fee estimate 1`] = `106354669n`;
+
+exports[`Getters > [getParentRewardRate] Should return parent reward rate 1`] = `0n`;
+
+exports[`Getters > [getParentRewardRecipient] Should return parent reward recipient 1`] = `"0x2E041280627800801E90E9Ac83532fadb6cAd99A"`;
+
+exports[`Getters > [getScheduledUpgrade] Should return scheduled upgrade 1`] = `
+{
+  "arbosVersion": 0n,
+  "scheduledForTimestamp": 0n,
+}
+`;
