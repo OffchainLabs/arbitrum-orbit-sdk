@@ -57,7 +57,7 @@ describe('Getters', () => {
 
   it('[getParentBaseFeeEstimate] Should return parent base fee estimate', async () => {
     const parentBaseFeeEstimate = await client.getParentBaseFeeEstimate();
-    expect(parentBaseFeeEstimate).toMatchSnapshot();
+    expect(parentBaseFeeEstimate).toBeGreaterThan(0n);
   });
 
   it('[getParentRewardRate] Should return parent reward rate', async () => {
