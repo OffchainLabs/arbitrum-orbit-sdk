@@ -55,6 +55,8 @@ describe('AdminChanged', () => {
   it('getUpgradeExecutor return current upgradeExecutor', async () => {
     const randomAddress = privateKeyToAccount(generatePrivateKey()).address;
     const randomAddress2 = privateKeyToAccount(generatePrivateKey()).address;
+    const randomAddress3 = privateKeyToAccount(generatePrivateKey()).address;
+
     const mockTransport = () =>
       createTransport({
         key: 'mock',
@@ -62,9 +64,9 @@ describe('AdminChanged', () => {
         request: vi.fn(({ method, params }) => {
           return mockData({
             logs: [
-              mockAdminChangedEvent(zeroAddress, randomAddress),
-              mockAdminChangedEvent(randomAddress, zeroAddress),
-              mockAdminChangedEvent(zeroAddress, randomAddress),
+              mockAdminChangedEvent(randomAddress3, randomAddress),
+              mockAdminChangedEvent(randomAddress, randomAddress3),
+              mockAdminChangedEvent(randomAddress3, randomAddress),
               mockAdminChangedEvent(randomAddress, randomAddress2),
             ],
             method,
