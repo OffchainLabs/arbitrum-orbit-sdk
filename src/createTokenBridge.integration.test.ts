@@ -104,7 +104,7 @@ async function checkWethGateways(
   expect(tokenBridgeContracts.orbitChainContracts.wethGateway).not.toEqual(zeroAddress);
 }
 
-describe.skip('createTokenBridge utils function', () => {
+describe('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
     const testnodeInformation = getInformationFromTestnode();
 
@@ -322,7 +322,7 @@ describe.skip('createTokenBridge utils function', () => {
   });
 });
 
-describe.skip('createTokenBridge', () => {
+describe('createTokenBridge', () => {
   it('successfully deploys token bridge contracts', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
