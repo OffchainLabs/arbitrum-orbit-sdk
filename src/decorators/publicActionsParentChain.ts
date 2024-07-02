@@ -72,9 +72,13 @@ export type PublicActionsParentChain<Curried extends boolean> = {
 
 function getSequencerInboxAddress(
   params: Params,
-  args: { sequencerInbox?: Address } | void,
+  args: { sequencerInbox?: Address } | {} | void,
 ): Address {
-  return ((args && args.sequencerInbox) ?? (params && params.sequencerInbox)) as unknown as Address;
+  if (args && 'sequencerInbox' in args && args.sequencerInbox) {
+    return args.sequencerInbox;
+  }
+
+  return (params && params.sequencerInbox) as Address;
 }
 
 /**
