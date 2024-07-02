@@ -1,8 +1,6 @@
 import { Address } from 'viem';
 import { Prettify } from './utils';
 
-type RemoveUndefinedArgs<T> = T extends { args?: undefined } ? Omit<T, 'args'> : T;
-
 /**
  * Actions require contract address, but as part of decorators, the address might have been passed already to the decorator.
  *
@@ -11,8 +9,8 @@ type RemoveUndefinedArgs<T> = T extends { args?: undefined } ? Omit<T, 'args'> :
  */
 export type ActionParameters<Args, ContractName extends string, Curried extends boolean> = Prettify<
   Curried extends false
-    ? RemoveUndefinedArgs<Args & { [key in ContractName]: Address }>
-    : Args extends { args?: undefined }
+    ? Args & { [key in ContractName]: Address }
+    : Args extends Record<string, never>
     ?
         | {
             [key in ContractName]: Address;
