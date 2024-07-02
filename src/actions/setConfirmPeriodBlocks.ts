@@ -7,19 +7,12 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import { WithAccount, WithContractAddress } from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { getRollupAddress } from '../getRollupAddress';
 
 export type SetConfirmPeriodBlocksParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<
-    ActionParameters<
-      {
-        newPeriod: bigint;
-      },
-      'rollupAdminLogic',
-      Curried
-    >
-  >
+  WithAccount<WithContractAddress<{ newPeriod: bigint }, 'rollupAdminLogic', Curried>>
 >;
 
 export type SetConfirmPeriodBlocksReturnType = PrepareTransactionRequestReturnType;
@@ -37,9 +30,9 @@ export async function setConfirmPeriodBlocks<TChain extends Chain | undefined>(
   args: SetConfirmPeriodBlocksParameters,
 ): Promise<SetConfirmPeriodBlocksReturnType> {
   const data = rollupAdminLogicFunctionData(args);
-
+  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
   return client.prepareTransactionRequest({
-    to: args.rollupAdminLogic,
+    to: rollupAdminLogicAddresss,
     value: BigInt(0),
     chain: client.chain,
     data,

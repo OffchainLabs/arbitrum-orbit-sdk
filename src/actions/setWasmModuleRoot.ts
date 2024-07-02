@@ -8,12 +8,13 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import { WithAccount, WithContractAddress } from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { getRollupAddress } from '../getRollupAddress';
 
 export type SetWasmModuleRootParameters<Curried extends boolean = false> = Prettify<
   WithAccount<
-    ActionParameters<
+    WithContractAddress<
       {
         newWasmModuleRoot: Hex;
       },
@@ -38,9 +39,9 @@ export async function setWasmModuleRoot<TChain extends Chain | undefined>(
   args: SetWasmModuleRootParameters,
 ): Promise<SetWasmModuleRootReturnType> {
   const data = rollupAdminLogicFunctionData(args);
-
+  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
   return client.prepareTransactionRequest({
-    to: args.rollupAdminLogic,
+    to: rollupAdminLogicAddresss,
     value: BigInt(0),
     chain: client.chain,
     data,
