@@ -7,11 +7,12 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import { WithAccount, WithContractAddress } from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { getRollupAddress } from '../getRollupAddress';
 
 export type SetValidatorWhitelistDisabledParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<ActionParameters<{}, 'rollupAdminLogic', Curried>>
+  WithAccount<WithContractAddress<{}, 'rollupAdminLogic', Curried>>
 >;
 
 export type SetValidatorWhitelistDisabledReturnType = PrepareTransactionRequestReturnType;
@@ -31,8 +32,9 @@ async function setValidatorWhitelistDisabled<TChain extends Chain | undefined>(
   args: SetValidatorWhitelistDisabledParameters & { enable: boolean },
 ): Promise<SetValidatorWhitelistDisabledReturnType> {
   const data = rollupAdminLogicFunctionData(args);
+  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
   return client.prepareTransactionRequest({
-    to: args.rollupAdminLogic,
+    to: rollupAdminLogicAddresss,
     value: BigInt(0),
     chain: client.chain,
     data,

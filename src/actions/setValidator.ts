@@ -8,16 +8,21 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import { WithAccount, WithContractAddress } from '../types/Actions';
 import { Prettify } from '../types/utils';
-
-type Args = {
-  add: Address[];
-  remove: Address[];
-};
+import { getRollupAddress } from '../getRollupAddress';
 
 export type SetIsValidatorParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<ActionParameters<Args, 'rollupAdminLogic', Curried>>
+  WithAccount<
+    WithContractAddress<
+      {
+        add: Address[];
+        remove: Address[];
+      },
+      'rollupAdminLogic',
+      Curried
+    >
+  >
 >;
 
 export type SetIsValidatorReturnType = PrepareTransactionRequestReturnType;
@@ -37,8 +42,9 @@ export async function setValidators<TChain extends Chain | undefined>(
   args: SetIsValidatorParameters,
 ): Promise<SetIsValidatorReturnType> {
   const data = rollupAdminLogicFunctionData(args);
+  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
   return client.prepareTransactionRequest({
-    to: args.rollupAdminLogic,
+    to: rollupAdminLogicAddresss,
     value: BigInt(0),
     chain: client.chain,
     data,
