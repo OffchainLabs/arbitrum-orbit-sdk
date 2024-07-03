@@ -81,6 +81,7 @@ type TestnodeInformation = {
   rollup: Address;
   sequencerInbox: Address;
   l3SequencerInbox: Address;
+  upgradeExecutor: Address;
   l3Bridge: Address;
   batchPoster: Address;
   l3BatchPoster: Address;
@@ -120,6 +121,7 @@ export function getInformationFromTestnode(): TestnodeInformation {
         rollup: deploymentJson['rollup'],
         sequencerInbox: deploymentJson['sequencer-inbox'],
         batchPoster: sequencerConfig.node['batch-poster']['parent-chain-wallet'].account,
+        upgradeExecutor: deploymentJson['upgrade-executor'],
         l3Bridge: l3DeploymentJson['bridge'],
         l3Rollup: l3DeploymentJson['rollup'],
         l3SequencerInbox: l3DeploymentJson['sequencer-inbox'],

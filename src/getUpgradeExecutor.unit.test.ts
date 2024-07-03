@@ -11,6 +11,7 @@ import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
 import { getUpgradeExecutor } from './getUpgradeExecutor';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { xai } from './chains';
 
 const client = createPublicClient({
   chain: arbitrum,
@@ -41,6 +42,10 @@ function mockData({ logs, method }: { logs: unknown[]; method: 'eth_getLogs' }) 
     return logs;
   }
 
+  if (method === 'eth_call') {
+    return [padHex('0xe0875cbd144fe66c015a95e5b2d2c15c3b612179')];
+  }
+
   return null;
 }
 
@@ -52,7 +57,7 @@ it('getUpgradeExecutor return current upgradeExecutor (Xai)', async () => {
 });
 
 describe('AdminChanged', () => {
-  it('getUpgradeExecutor return current upgradeExecutor', async () => {
+  it('getUpgradeExecutor return current upgradeExecutor for parent chain', async () => {
     const randomAddress = privateKeyToAccount(generatePrivateKey()).address;
     const randomAddress2 = privateKeyToAccount(generatePrivateKey()).address;
     const randomAddress3 = privateKeyToAccount(generatePrivateKey()).address;
@@ -78,6 +83,41 @@ describe('AdminChanged', () => {
     const mockClient = createPublicClient({
       transport: mockTransport,
       chain: arbitrumSepolia,
+    });
+
+    const upgradeExecutor = await getUpgradeExecutor(mockClient, {
+      rollup: rollupAddress,
+    });
+
+    expect(upgradeExecutor).toEqual(randomAddress2);
+  });
+
+  it.only('getUpgradeExecutor return current upgradeExecutor for child chain', async () => {
+    const randomAddress = privateKeyToAccount(generatePrivateKey()).address;
+    const randomAddress2 = privateKeyToAccount(generatePrivateKey()).address;
+    const randomAddress3 = privateKeyToAccount(generatePrivateKey()).address;
+
+    const mockTransport = () =>
+      createTransport({
+        key: 'mock',
+        name: 'Mock Transport',
+        request: vi.fn(({ method, params }) => {
+          return mockData({
+            logs: [
+              mockAdminChangedEvent(randomAddress3, randomAddress),
+              mockAdminChangedEvent(randomAddress, randomAddress3),
+              mockAdminChangedEvent(randomAddress3, randomAddress),
+              mockAdminChangedEvent(randomAddress, randomAddress2),
+            ],
+            method,
+          });
+        }) as unknown as EIP1193RequestFn,
+        type: 'mock',
+      });
+
+    const mockClient = createPublicClient({
+      transport: mockTransport,
+      chain: xai,
     });
 
     const upgradeExecutor = await getUpgradeExecutor(mockClient, {
