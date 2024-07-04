@@ -5,7 +5,7 @@ import { nitroTestnodeL2, nitroTestnodeL3 } from './chains';
 import { getInformationFromTestnode } from './testHelpers';
 import { getUpgradeExecutor } from './getUpgradeExecutor';
 
-const { l3UpgradeExecutor, l3Rollup } = getInformationFromTestnode();
+const { upgradeExecutor, l3UpgradeExecutor, l3Rollup } = getInformationFromTestnode();
 
 // Tests can be enabled once we run one node per integration test
 describe('successfully get upgrade executor', () => {
@@ -15,10 +15,10 @@ describe('successfully get upgrade executor', () => {
       transport: http(),
     });
 
-    const initialUpgradeExecutor = await getUpgradeExecutor(parentChainClient, {
+    const upgradeExecutor = await getUpgradeExecutor(parentChainClient, {
       rollup: l3Rollup,
     });
-    expect(initialUpgradeExecutor?.toLowerCase()).toEqual(l3UpgradeExecutor.toLowerCase());
+    expect(upgradeExecutor?.toLowerCase()).toEqual(l3UpgradeExecutor);
   });
 
   it('from child chain', async () => {
@@ -26,7 +26,7 @@ describe('successfully get upgrade executor', () => {
       chain: nitroTestnodeL3,
       transport: http(),
     });
-    const initialUpgradeExecutor = await getUpgradeExecutor(childChainClient);
-    expect(initialUpgradeExecutor?.toLowerCase()).toEqual(l3UpgradeExecutor.toLowerCase());
+    const upgradeExecutor = await getUpgradeExecutor(childChainClient);
+    expect(upgradeExecutor).toEqual(upgradeExecutor);
   });
 });
