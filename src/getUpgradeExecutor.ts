@@ -1,5 +1,5 @@
-import { Address, Chain, PublicClient, Transport, decodeFunctionData, getAbiItem, getFunctionSelector } from 'viem';
-import { rollupAdminLogicABI, safeL2ABI } from './abi';
+import { Address, Chain, PublicClient, Transport, getAbiItem } from 'viem';
+import { rollupAdminLogicABI } from './abi';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { isValidParentChainId } from './types/ParentChain';
 import { arbOwnerPublic, upgradeExecutor } from './contracts';
@@ -33,9 +33,9 @@ export async function getUpgradeExecutor<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   params: GetUpgradeExecutorParams,
 ): Promise<GetUpgradeExecutorReturnType> {
-  const isParentChain = isValidParentChainId(publicClient.chain?.id)
+  const isParentChain = isValidParentChainId(publicClient.chain?.id);
   if (isParentChain && !params) {
-    throw new Error('[getUpgradeExecutor] requires a rollup address')
+    throw new Error('[getUpgradeExecutor] requires a rollup address');
   }
 
   // Parent chain, get the newOwner args from the last event
@@ -71,15 +71,21 @@ export async function getUpgradeExecutor<TChain extends Chain | undefined>(
   const chainOwners = await publicClient.readContract({
     abi: arbOwnerPublic.abi,
     functionName: 'getAllChainOwners',
-    address: arbOwnerPublic.address
+    address: arbOwnerPublic.address,
   });
 
-  const results = await Promise.allSettled(chainOwners.map(chainOwner => publicClient.readContract({
-    address: chainOwner,
-    abi: upgradeExecutor.abi,
-    functionName: 'hasRole',
-    args: [UPGRADE_EXECUTOR_ROLE_ADMIN, chainOwner],
-  })))
-  const upgradeExecutorIndex = results.findIndex(p => p.status === 'fulfilled' && p.value === true)
-  return chainOwners[upgradeExecutorIndex]
+  const results = await Promise.allSettled(
+    chainOwners.map((chainOwner) =>
+      publicClient.readContract({
+        address: chainOwner,
+        abi: upgradeExecutor.abi,
+        functionName: 'hasRole',
+        args: [UPGRADE_EXECUTOR_ROLE_ADMIN, chainOwner],
+      }),
+    ),
+  );
+  const upgradeExecutorIndex = results.findIndex(
+    (p) => p.status === 'fulfilled' && p.value === true,
+  );
+  return chainOwners[upgradeExecutorIndex];
 }

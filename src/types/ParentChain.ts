@@ -11,7 +11,9 @@ export type ParentChainPublicClient<TChain extends Chain | undefined> = Prettify
   PublicClient<Transport, TChain> & { chain: { id: ParentChainId } }
 >;
 
-export function isValidParentChainId(parentChainId: number | undefined): parentChainId is ParentChainId {
+export function isValidParentChainId(
+  parentChainId: number | undefined,
+): parentChainId is ParentChainId {
   const ids = chains
     // exclude nitro-testnode L3 from the list of parent chains
     .filter((chain) => chain.id !== nitroTestnodeL3.id)

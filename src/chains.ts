@@ -108,7 +108,7 @@ export const xai = defineChain({
     },
     public: {
       http: ['https://xai-chain.net/rpc'],
-    }
+    },
   },
   blockExplorers: {
     default: {
@@ -123,4 +123,4 @@ export const xai = defineChain({
     },
   },
   testnet: false,
-})
+});
