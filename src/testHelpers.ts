@@ -1,4 +1,4 @@
-import { Address, Client, PublicClient, zeroAddress } from 'viem';
+import { Address, PublicClient, defineChain, zeroAddress } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
 import { execSync } from 'node:child_process';
@@ -181,3 +181,31 @@ export async function createRollupHelper({
     createRollupInformation,
   };
 }
+
+export const xai = defineChain({
+  id: 660279,
+  network: 'Xai Mainnet',
+  name: 'Xai Mainnet',
+  nativeCurrency: { name: 'Xai', symbol: 'XAI', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://xai-chain.net/rpc'],
+    },
+    public: {
+      http: ['https://xai-chain.net/rpc'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Blockscout',
+      url: 'https://explorer.xai-chain.net',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xca11bde05977b3631167028862be2a173976ca11',
+      blockCreated: 222549,
+    },
+  },
+  testnet: false,
+});

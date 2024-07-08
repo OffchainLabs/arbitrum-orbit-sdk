@@ -3,7 +3,7 @@ import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, vi, describe } from 'vitest';
 import { getUpgradeExecutor } from './getUpgradeExecutor';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { xai } from './chains';
+import { xai } from './testHelpers';
 
 const rollupAddress = '0xe0875cbd144fe66c015a95e5b2d2c15c3b612179';
 
