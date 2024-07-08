@@ -70,24 +70,6 @@
     // Uncontrolled resource consumption in braces
     // eslint and hardhat dependency, only used in dev
     // from: hardhat>braces & eslint>braces
-    "GHSA-grv7-fg5c-xmjg",
-    // https://github.com/advisories/GHSA-8jhw-289h-jh2g
-    // Vite's `server.fs.deny` did not deny requests for patterns with directories.
-    // vite is only used to run test
-    // from: vitest>vite
-    // from: vitest>vite-node>vite
-    "GHSA-8jhw-289h-jh2g",
-    // https://github.com/advisories/GHSA-92r3-m2mg-pj97
-    // Vite XSS vulnerability in `server.transformIndexHtml` via URL payload
-    // vite is only used to run test
-    // from: vitest>vite
-    // from: vitest>vite-node>vite
-    "GHSA-92r3-m2mg-pj97",
-    // https://github.com/advisories/GHSA-c24v-8rfc-w8vw
-    // Vite dev server option `server.fs.deny` can be bypassed when hosted on case-insensitive filesystem
-    // vite is only used to run test
-    // from: vitest>vite
-    // from: vitest>vite-node>vite
-    "GHSA-c24v-8rfc-w8vw"
+    "GHSA-grv7-fg5c-xmjg"
   ]
 }

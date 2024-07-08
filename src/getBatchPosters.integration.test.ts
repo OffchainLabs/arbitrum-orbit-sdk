@@ -38,7 +38,7 @@ async function setBatchPoster(batchPoster: Address, state: boolean) {
 }
 
 // Tests can be enabled once we run one node per integration test
-describe.skip('successfully get batch posters', () => {
+describe('successfully get batch posters', () => {
   it('when disabling the same batch posters multiple time', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
