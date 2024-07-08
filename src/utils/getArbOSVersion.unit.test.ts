@@ -15,7 +15,7 @@ it('Returns the ArbOS version for arbitrum chain', async () => {
 it(
   'Throws if the provider is not an Arbitrum provider',
   {
-    timeout: 10_000, // This test might take sometime a bit longer during CI
+    timeout: 60_000, // This test might take sometime a bit longer during CI
   },
   async () => {
     const mainnetProvider = createPublicClient({
