@@ -5,7 +5,7 @@ import { nitroTestnodeL2, nitroTestnodeL3 } from './chains';
 import { getInformationFromTestnode } from './testHelpers';
 import { getUpgradeExecutor } from './getUpgradeExecutor';
 
-const { upgradeExecutor, l3UpgradeExecutor, l3Rollup } = getInformationFromTestnode();
+const { l3UpgradeExecutor, l3Rollup } = getInformationFromTestnode();
 
 // Tests can be enabled once we run one node per integration test
 describe('successfully get upgrade executor', () => {
