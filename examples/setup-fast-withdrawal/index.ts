@@ -35,8 +35,8 @@ function getTimeDelayFromNumberOfBlocks(chainId: number, blocks: bigint): string
 }
 
 // check environment variables
-if (typeof process.env.SAFE_OWNER_PRIVATE_KEY === 'undefined') {
-  throw new Error(`Please provide the "SAFE_OWNER_PRIVATE_KEY" environment variable`);
+if (typeof process.env.CHAIN_OWNER_PRIVATE_KEY === 'undefined') {
+  throw new Error(`Please provide the "CHAIN_OWNER_PRIVATE_KEY" environment variable`);
 }
 
 if (typeof process.env.PARENT_CHAIN_ID === 'undefined') {
@@ -66,7 +66,7 @@ const parentChainPublicClient = createPublicClient({
 );
 
 // load the deployer account
-const safeOwner = privateKeyToAccount(sanitizePrivateKey(process.env.SAFE_OWNER_PRIVATE_KEY));
+const safeOwner = privateKeyToAccount(sanitizePrivateKey(process.env.CHAIN_OWNER_PRIVATE_KEY));
 
 // sanitize validator addresses
 const fcValidators = JSON.parse(process.env.FC_VALIDATORS);
