@@ -2,7 +2,7 @@ import { it, expect } from 'vitest';
 
 import { getArbOSVersion } from './getArbOSVersion';
 import { createPublicClient, http } from 'viem';
-import { arbitrum, mainnet } from 'viem/chains';
+import { arbitrum, sepolia } from 'viem/chains';
 
 it('Returns the ArbOS version for arbitrum chain', async () => {
   const arbProvider = createPublicClient({
@@ -13,9 +13,9 @@ it('Returns the ArbOS version for arbitrum chain', async () => {
 });
 
 it('Throws if the provider is not an Arbitrum provider', async () => {
-  const mainnetProvider = createPublicClient({
-    chain: mainnet,
+  const sepoliaProvider = createPublicClient({
+    chain: sepolia,
     transport: http(),
   });
-  await expect(getArbOSVersion(mainnetProvider)).rejects.toThrowError();
+  await expect(getArbOSVersion(sepoliaProvider)).rejects.toThrowError();
 });
