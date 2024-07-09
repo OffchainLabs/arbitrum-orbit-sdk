@@ -10,7 +10,7 @@ const AdminChangedAbi = getAbiItem({ abi: rollupAdminLogicABI, name: 'AdminChang
 export type GetUpgradeExecutorParams = {
   /** Address of the rollup we're getting logs from */
   rollup: Address;
-} | void;
+};
 /**
  * Address of the current upgrade executor
  */
@@ -34,10 +34,10 @@ export type GetUpgradeExecutorReturnType = Address | undefined;
  */
 export async function getUpgradeExecutor<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  params: GetUpgradeExecutorParams,
+  params?: GetUpgradeExecutorParams,
 ): Promise<GetUpgradeExecutorReturnType> {
   const isParentChain = isValidParentChainId(publicClient.chain?.id);
-  if (isParentChain && !params) {
+  if (isParentChain && !params?.rollup) {
     throw new Error('[getUpgradeExecutor] requires a rollup address');
   }
 
