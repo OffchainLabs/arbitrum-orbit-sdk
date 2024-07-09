@@ -27,6 +27,6 @@ describe('successfully get upgrade executor', () => {
       transport: http(),
     });
     const upgradeExecutor = await getUpgradeExecutor(childChainClient);
-    expect(upgradeExecutor).toEqual(upgradeExecutor);
+    expect(upgradeExecutor).toMatchSnapshot();
   });
 });

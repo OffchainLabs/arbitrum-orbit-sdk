@@ -17,6 +17,9 @@ export type GetUpgradeExecutorParams = {
 export type GetUpgradeExecutorReturnType = Address | undefined;
 
 /**
+ * Return upgrade executor address for a parent or child chain
+ *
+ * Docs: https://docs.arbitrum.io/launch-orbit-chain/concepts/chain-ownership
  *
  * @param {PublicClient} publicClient - The chain Viem Public Client
  * @param {GetUpgradeExecutorParams} GetUpgradeExecutorParams {@link GetUpgradeExecutorParams}
@@ -41,10 +44,9 @@ export async function getUpgradeExecutor<TChain extends Chain | undefined>(
   // Parent chain, get the newOwner args from the last event
   if (isParentChain && params) {
     let blockNumber: bigint | 'earliest';
-    let createRollupTransactionHash: Address | null = null;
 
     try {
-      createRollupTransactionHash = await createRollupFetchTransactionHash({
+      const createRollupTransactionHash = await createRollupFetchTransactionHash({
         rollup: params.rollup,
         publicClient,
       });
@@ -59,6 +61,15 @@ export async function getUpgradeExecutor<TChain extends Chain | undefined>(
 
     const events = await publicClient.getLogs({
       address: params.rollup,
+      /**
+       * The event comes from:
+       * - event AdminChanged(address previousAdmin, address newAdmin)
+       * - ERC1967Upgrade
+       * - DoubleLogicUUPSUpgradeable
+       * - RollupAdminLogic
+       *
+       * see https://github.com/OffchainLabs/nitro-contracts/blob/90037b996509312ef1addb3f9352457b8a99d6a6/src/rollup/RollupAdminLogic.sol#L182
+       */
       events: [AdminChangedAbi],
       fromBlock: blockNumber,
       toBlock: 'latest',
