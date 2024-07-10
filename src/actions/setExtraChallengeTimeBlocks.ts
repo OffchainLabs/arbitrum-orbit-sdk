@@ -7,12 +7,12 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, WithContractAddress } from '../types/Actions';
+import { WithAccount, ActionParameters } from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
 
 export type SetExtraChallengeTimeBlocksParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<WithContractAddress<{ newExtraTimeBlocks: bigint }, 'rollupAdminLogic', Curried>>
+  WithAccount<ActionParameters<{ newExtraTimeBlocks: bigint }, 'rollupAdminLogic', Curried>>
 >;
 
 export type SetExtraChallengeTimeBlocksReturnType = PrepareTransactionRequestReturnType;

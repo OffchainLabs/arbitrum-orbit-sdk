@@ -8,13 +8,13 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, WithContractAddress } from '../types/Actions';
+import { WithAccount, ActionParameters } from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
 
 export type SetWasmModuleRootParameters<Curried extends boolean = false> = Prettify<
   WithAccount<
-    WithContractAddress<
+    ActionParameters<
       {
         newWasmModuleRoot: Hex;
       },

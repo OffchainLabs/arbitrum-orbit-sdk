@@ -7,12 +7,12 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, WithContractAddress } from '../types/Actions';
+import { WithAccount, ActionParameters } from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
 
 export type SetMinimumAssertionPeriodParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<WithContractAddress<{ newPeriod: bigint }, 'rollupAdminLogic', Curried>>
+  WithAccount<ActionParameters<{ newPeriod: bigint }, 'rollupAdminLogic', Curried>>
 >;
 
 export type SetMinimumAssertionPeriodReturnType = PrepareTransactionRequestReturnType;
