@@ -1,7 +1,7 @@
 import { Address, Chain, PublicClient, Transport } from 'viem';
 import { sequencerInboxABI } from './abi';
 
-const cache: Record<Address, Address> = {};
+const cache: Record<string, Address> = {};
 export async function getRollupAddress<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   params: { sequencerInbox: Address } | { rollupAdminLogic: Address },
@@ -11,7 +11,7 @@ export async function getRollupAddress<TChain extends Chain | undefined>(
     return params.rollupAdminLogic;
   }
 
-  const addressFromCache = cache[params.sequencerInbox];
+  const addressFromCache = cache[`${publicClient.chain?.id}_${params.sequencerInbox}`];
   if (addressFromCache) {
     return addressFromCache;
   }
@@ -22,6 +22,6 @@ export async function getRollupAddress<TChain extends Chain | undefined>(
     address: params.sequencerInbox,
     abi: sequencerInboxABI,
   });
-  cache[params.sequencerInbox] = rollupAddress;
+  cache[`${publicClient.chain?.id}_${params.sequencerInbox}`] = rollupAddress;
   return rollupAddress;
 }
