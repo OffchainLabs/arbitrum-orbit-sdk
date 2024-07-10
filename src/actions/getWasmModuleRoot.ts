@@ -1,9 +1,9 @@
 import { Chain, PublicClient, ReadContractReturnType, Transport } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithContractAddress } from '../types/Actions';
+import { ActionParameters } from '../types/Actions';
 import { getRollupAddress } from '../getRollupAddress';
 
-export type GetWasmModuleRootParameters<Curried extends boolean = false> = WithContractAddress<
+export type GetWasmModuleRootParameters<Curried extends boolean = false> = ActionParameters<
   {},
   'rollupAdminLogic',
   Curried

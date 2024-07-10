@@ -1,10 +1,13 @@
 import { Chain, PublicClient, ReadContractReturnType, Transport } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithContractAddress } from '../types/Actions';
+import { ActionParameters } from '../types/Actions';
 import { getRollupAddress } from '../getRollupAddress';
 
-export type GetMinimumAssertionPeriodParameters<Curried extends boolean = false> =
-  WithContractAddress<{}, 'rollupAdminLogic', Curried>;
+export type GetMinimumAssertionPeriodParameters<Curried extends boolean = false> = ActionParameters<
+  {},
+  'rollupAdminLogic',
+  Curried
+>;
 
 export type GetMinimumAssertionPeriodReturnType = ReadContractReturnType<
   typeof rollupAdminLogic.abi,
