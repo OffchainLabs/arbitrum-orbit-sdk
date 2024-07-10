@@ -8,18 +8,18 @@ type Args = {
   address: Address;
 };
 type UpgradeExecutorABI = typeof upgradeExecutor.abi;
-export type hasRoleParameters<Curried extends boolean = false> = ActionParameters<
+export type HasRoleParameters<Curried extends boolean = false> = ActionParameters<
   Args,
   'upgradeExecutor',
   Curried
 >;
 
-export type hasRoleReturnType = ReadContractReturnType<UpgradeExecutorABI, 'hasRole'>;
+export type HasRoleReturnType = ReadContractReturnType<UpgradeExecutorABI, 'hasRole'>;
 
 export async function hasRole<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: hasRoleParameters,
-): Promise<hasRoleReturnType> {
+  args: HasRoleParameters,
+): Promise<HasRoleReturnType> {
   return client.readContract({
     abi: upgradeExecutor.abi,
     functionName: 'hasRole',
