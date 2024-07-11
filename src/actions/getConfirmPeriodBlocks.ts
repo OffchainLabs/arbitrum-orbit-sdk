@@ -1,9 +1,9 @@
 import { Chain, PublicClient, ReadContractReturnType, Transport } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { ActionParameters } from '../types/Actions';
+import { WithContractAddress } from '../types/Actions';
 import { getRollupAddress } from '../getRollupAddress';
 
-export type GetConfirmPeriodBlocksParameters<Curried extends boolean = false> = ActionParameters<
+export type GetConfirmPeriodBlocksParameters<Curried extends boolean = false> = WithContractAddress<
   {},
   'rollupAdminLogic',
   Curried
