@@ -4,10 +4,10 @@ import {
   EncodeFunctionDataParameters as ViemEncodeFunctionDataParameters,
 } from 'viem';
 import { GetFunctionName } from './types/utils';
-import { arbOwner, sequencerInbox } from './contracts';
+import { arbOwner, rollupAdminLogic, sequencerInbox } from './contracts';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 
-type ABIs = typeof sequencerInbox.abi | typeof arbOwner.abi;
+type ABIs = typeof sequencerInbox.abi | typeof arbOwner.abi | typeof rollupAdminLogic.abi;
 type FunctionName<TAbi extends ABIs> = GetFunctionName<TAbi>;
 
 type EncodeFunctionDataParameters<

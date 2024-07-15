@@ -8,43 +8,52 @@ import {
   encodeFunctionData,
 } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, ActionParameters } from '../types/Actions';
+import {
+  WithAccount,
+  ActionParameters,
+  WithUpgradeExecutor,
+  PrepareTransactionRequestReturnTypeWithChainId,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
+import { validateParentChainPublicClient } from '../types/ParentChain';
 
 export type SetWasmModuleRootParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<
-    ActionParameters<
-      {
-        newWasmModuleRoot: Hex;
-      },
-      'rollupAdminLogic',
-      Curried
+  WithUpgradeExecutor<
+    WithAccount<
+      ActionParameters<
+        {
+          newWasmModuleRoot: Hex;
+        },
+        'rollupAdminLogic',
+        Curried
+      >
     >
   >
 >;
 
-export type SetWasmModuleRootReturnType = PrepareTransactionRequestReturnType;
-
-function rollupAdminLogicFunctionData({ newWasmModuleRoot }: SetWasmModuleRootParameters) {
-  return encodeFunctionData({
-    abi: rollupAdminLogic.abi,
-    functionName: 'setWasmModuleRoot',
-    args: [newWasmModuleRoot],
-  });
-}
+export type SetWasmModuleRootReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setWasmModuleRoot<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetWasmModuleRootParameters,
+  params: SetWasmModuleRootParameters,
 ): Promise<SetWasmModuleRootReturnType> {
-  const data = rollupAdminLogicFunctionData(args);
-  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
-  return client.prepareTransactionRequest({
-    to: rollupAdminLogicAddresss,
-    value: BigInt(0),
+  const validatedPublicClient = validateParentChainPublicClient(client);
+  const rollupAdminLogicAddresss = await getRollupAddress(client, params);
+  const { account, upgradeExecutor, newWasmModuleRoot } = params;
+
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: rollupAdminLogicAddresss,
+      upgradeExecutor,
+      args: [newWasmModuleRoot],
+      abi: rollupAdminLogic.abi,
+      functionName: 'setWasmModuleRoot',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

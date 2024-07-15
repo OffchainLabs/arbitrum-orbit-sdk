@@ -1,43 +1,43 @@
-import {
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, ActionParameters } from '../types/Actions';
+import {
+  WithAccount,
+  ActionParameters,
+  WithUpgradeExecutor,
+  PrepareTransactionRequestReturnTypeWithChainId,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
+import { validateParentChainPublicClient } from '../types/ParentChain';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 export type SetExtraChallengeTimeBlocksParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<ActionParameters<{ newExtraTimeBlocks: bigint }, 'rollupAdminLogic', Curried>>
+  WithUpgradeExecutor<
+    WithAccount<ActionParameters<{ newExtraTimeBlocks: bigint }, 'rollupAdminLogic', Curried>>
+  >
 >;
 
-export type SetExtraChallengeTimeBlocksReturnType = PrepareTransactionRequestReturnType;
-
-function rollupAdminLogicFunctionData({
-  newExtraTimeBlocks,
-}: SetExtraChallengeTimeBlocksParameters) {
-  return encodeFunctionData({
-    abi: rollupAdminLogic.abi,
-    functionName: 'setExtraChallengeTimeBlocks',
-    args: [newExtraTimeBlocks],
-  });
-}
+export type SetExtraChallengeTimeBlocksReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setExtraChallengeTimeBlocks<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetExtraChallengeTimeBlocksParameters,
+  params: SetExtraChallengeTimeBlocksParameters,
 ): Promise<SetExtraChallengeTimeBlocksReturnType> {
-  const data = rollupAdminLogicFunctionData(args);
-  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
-  return client.prepareTransactionRequest({
-    to: rollupAdminLogicAddresss,
-    value: BigInt(0),
+  const validatedPublicClient = validateParentChainPublicClient(client);
+  const rollupAdminLogicAddresss = await getRollupAddress(client, params);
+  const { account, upgradeExecutor, newExtraTimeBlocks } = params;
+
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: rollupAdminLogicAddresss,
+      upgradeExecutor,
+      args: [newExtraTimeBlocks],
+      abi: rollupAdminLogic.abi,
+      functionName: 'setExtraChallengeTimeBlocks',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

@@ -1,41 +1,43 @@
-import {
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, ActionParameters } from '../types/Actions';
+import {
+  WithAccount,
+  ActionParameters,
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
+import { validateParentChainPublicClient } from '../types/ParentChain';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 export type SetMinimumAssertionPeriodParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<ActionParameters<{ newPeriod: bigint }, 'rollupAdminLogic', Curried>>
+  WithUpgradeExecutor<
+    WithAccount<ActionParameters<{ newPeriod: bigint }, 'rollupAdminLogic', Curried>>
+  >
 >;
 
-export type SetMinimumAssertionPeriodReturnType = PrepareTransactionRequestReturnType;
-
-function rollupAdminLogicFunctionData({ newPeriod }: SetMinimumAssertionPeriodParameters) {
-  return encodeFunctionData({
-    abi: rollupAdminLogic.abi,
-    functionName: 'setMinimumAssertionPeriod',
-    args: [newPeriod],
-  });
-}
+export type SetMinimumAssertionPeriodReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setMinimumAssertionPeriod<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetMinimumAssertionPeriodParameters,
+  params: SetMinimumAssertionPeriodParameters,
 ): Promise<SetMinimumAssertionPeriodReturnType> {
-  const data = rollupAdminLogicFunctionData(args);
-  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
-  return client.prepareTransactionRequest({
-    to: rollupAdminLogicAddresss,
-    value: BigInt(0),
+  const validatedPublicClient = validateParentChainPublicClient(client);
+  const rollupAdminLogicAddresss = await getRollupAddress(client, params);
+  const { account, upgradeExecutor, newPeriod } = params;
+
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: rollupAdminLogicAddresss,
+      upgradeExecutor,
+      args: [newPeriod],
+      abi: rollupAdminLogic.abi,
+      functionName: 'setMinimumAssertionPeriod',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

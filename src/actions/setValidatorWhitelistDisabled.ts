@@ -1,45 +1,44 @@
-import {
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, ActionParameters } from '../types/Actions';
+import {
+  WithAccount,
+  ActionParameters,
+  WithUpgradeExecutor,
+  PrepareTransactionRequestReturnTypeWithChainId,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
+import { validateParentChainPublicClient } from '../types/ParentChain';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 export type SetValidatorWhitelistDisabledParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<ActionParameters<{}, 'rollupAdminLogic', Curried>>
+  WithUpgradeExecutor<WithAccount<ActionParameters<{}, 'rollupAdminLogic', Curried>>>
 >;
 
-export type SetValidatorWhitelistDisabledReturnType = PrepareTransactionRequestReturnType;
-
-function rollupAdminLogicFunctionData({
-  enable,
-}: SetValidatorWhitelistDisabledParameters & { enable: boolean }) {
-  return encodeFunctionData({
-    abi: rollupAdminLogic.abi,
-    functionName: 'setValidatorWhitelistDisabled',
-    args: [enable],
-  });
-}
+export type SetValidatorWhitelistDisabledReturnType =
+  PrepareTransactionRequestReturnTypeWithChainId;
 
 async function setValidatorWhitelistDisabled<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetValidatorWhitelistDisabledParameters & { enable: boolean },
+  params: SetValidatorWhitelistDisabledParameters & { enable: boolean },
 ): Promise<SetValidatorWhitelistDisabledReturnType> {
-  const data = rollupAdminLogicFunctionData(args);
-  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
-  return client.prepareTransactionRequest({
-    to: rollupAdminLogicAddresss,
-    value: BigInt(0),
+  const validatedPublicClient = validateParentChainPublicClient(client);
+  const rollupAdminLogicAddresss = await getRollupAddress(client, params);
+  const { account, upgradeExecutor, enable } = params;
+
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: rollupAdminLogicAddresss,
+      upgradeExecutor,
+      args: [enable],
+      abi: rollupAdminLogic.abi,
+      functionName: 'setValidatorWhitelistDisabled',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }
 
 export async function enableValidatorWhitelist<TChain extends Chain | undefined>(

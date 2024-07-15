@@ -1,53 +1,55 @@
-import {
-  Address,
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Address, Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { rollupAdminLogic } from '../contracts';
-import { WithAccount, ActionParameters } from '../types/Actions';
+import {
+  WithAccount,
+  ActionParameters,
+  WithUpgradeExecutor,
+  PrepareTransactionRequestReturnTypeWithChainId,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { getRollupAddress } from '../getRollupAddress';
+import { validateParentChainPublicClient } from '../types/ParentChain';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 export type SetIsValidatorParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<
-    ActionParameters<
-      {
-        add: Address[];
-        remove: Address[];
-      },
-      'rollupAdminLogic',
-      Curried
+  WithUpgradeExecutor<
+    WithAccount<
+      ActionParameters<
+        {
+          add: Address[];
+          remove: Address[];
+        },
+        'rollupAdminLogic',
+        Curried
+      >
     >
   >
 >;
 
-export type SetIsValidatorReturnType = PrepareTransactionRequestReturnType;
-
-function rollupAdminLogicFunctionData({ add, remove }: SetIsValidatorParameters) {
-  const addState: boolean[] = new Array(add.length).fill(true);
-  const removeState: boolean[] = new Array(remove.length).fill(false);
-  return encodeFunctionData({
-    abi: rollupAdminLogic.abi,
-    functionName: 'setValidator',
-    args: [add.concat(remove), addState.concat(removeState)],
-  });
-}
+export type SetIsValidatorReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setValidators<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetIsValidatorParameters,
+  params: SetIsValidatorParameters,
 ): Promise<SetIsValidatorReturnType> {
-  const data = rollupAdminLogicFunctionData(args);
-  const rollupAdminLogicAddresss = await getRollupAddress(client, args);
-  return client.prepareTransactionRequest({
-    to: rollupAdminLogicAddresss,
-    value: BigInt(0),
+  const validatedPublicClient = validateParentChainPublicClient(client);
+  const rollupAdminLogicAddresss = await getRollupAddress(client, params);
+  const { account, upgradeExecutor, add: addressesToAdd, remove: addressesToRemove } = params;
+
+  const addState: boolean[] = new Array(addressesToAdd.length).fill(true);
+  const removeState: boolean[] = new Array(addressesToRemove.length).fill(false);
+
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: rollupAdminLogicAddresss,
+      upgradeExecutor,
+      args: [addressesToAdd.concat(addressesToRemove), addState.concat(removeState)],
+      abi: rollupAdminLogic.abi,
+      functionName: 'setValidator',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }
