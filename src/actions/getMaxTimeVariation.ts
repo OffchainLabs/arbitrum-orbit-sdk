@@ -17,7 +17,7 @@ export type GetMaxTimeVariationReturnType = {
 
 export async function getMaxTimeVariation<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: GetMaxTimeVariationParameters<false>,
+  args: GetMaxTimeVariationParameters,
 ): Promise<GetMaxTimeVariationReturnType> {
   const [delayBlocks, futureBlocks, delaySeconds, futureSeconds] = await client.readContract({
     abi: sequencerInbox.abi,
