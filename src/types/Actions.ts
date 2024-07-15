@@ -1,4 +1,4 @@
-import { Address } from 'viem';
+import { Address, PrepareTransactionRequestReturnType } from 'viem';
 import { Prettify } from './utils';
 
 /**
@@ -23,4 +23,12 @@ export type ActionParameters<Args, ContractName extends string, Curried extends 
 
 export type WithAccount<Args> = Args & {
   account: Address;
+};
+
+export type WithUpgradeExecutor<Args> = Args & {
+  upgradeExecutor: Address | false;
+};
+
+export type PrepareTransactionRequestReturnTypeWithChainId = PrepareTransactionRequestReturnType & {
+  chainId: number;
 };
