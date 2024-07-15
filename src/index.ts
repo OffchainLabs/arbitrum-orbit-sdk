@@ -108,6 +108,18 @@ import {
 } from './getBatchPosters';
 import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
 import { isAnyTrust } from './isAnyTrust';
+import {
+  createSafePrepareTransactionRequest,
+  CreateSafePrepareTransactionRequestParams,
+} from './createSafePrepareTransactionRequest';
+import {
+  createSafePrepareTransactionReceipt,
+  CreateSafeTransactionReceipt,
+} from './createSafePrepareTransactionReceipt';
+import {
+  setAnyTrustFastConfirmerPrepareTransactionRequest,
+  SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
+} from './setAnyTrustFastConfirmerPrepareTransactionRequest';
 
 export {
   arbOwnerPublicActions,
@@ -203,4 +215,11 @@ export {
   GetKeysetsReturnType,
   //
   isAnyTrust,
+  //
+  createSafePrepareTransactionRequest,
+  CreateSafePrepareTransactionRequestParams,
+  createSafePrepareTransactionReceipt,
+  CreateSafeTransactionReceipt,
+  setAnyTrustFastConfirmerPrepareTransactionRequest,
+  SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
 };
