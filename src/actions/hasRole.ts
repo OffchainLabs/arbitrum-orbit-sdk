@@ -1,18 +1,13 @@
 import { Address, Chain, PublicClient, ReadContractReturnType, Transport } from 'viem';
 import { upgradeExecutor } from '../contracts';
-import { ActionParameters } from '../types/Actions';
 import { UpgradeExecutorRole } from '../upgradeExecutorEncodeFunctionData';
 
-type Args = {
+type UpgradeExecutorABI = typeof upgradeExecutor.abi;
+export type HasRoleParameters = {
+  upgradeExecutor: Address;
   role: UpgradeExecutorRole;
   address: Address;
 };
-type UpgradeExecutorABI = typeof upgradeExecutor.abi;
-export type HasRoleParameters<Curried extends boolean = false> = ActionParameters<
-  Args,
-  'upgradeExecutor',
-  Curried
->;
 
 export type HasRoleReturnType = ReadContractReturnType<UpgradeExecutorABI, 'hasRole'>;
 
