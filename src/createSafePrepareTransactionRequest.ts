@@ -6,6 +6,7 @@ import {
   Transport,
   encodeFunctionData,
   TransactionRequest,
+  PrepareTransactionRequestParameters,
 } from 'viem';
 import {
   DEFAULT_SAFE_VERSION,
@@ -144,7 +145,6 @@ export async function createSafePrepareTransactionRequest<TChain extends Chain |
   }
 
   // prepare the transaction request
-  // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: safeProxyFactoryAddress,
@@ -158,7 +158,7 @@ export async function createSafePrepareTransactionRequest<TChain extends Chain |
       ],
     }),
     account,
-  });
+  } satisfies PrepareTransactionRequestParameters);
 
   return { ...request, chainId };
 }
