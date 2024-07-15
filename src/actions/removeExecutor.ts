@@ -1,50 +1,39 @@
-import {
-  Address,
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Address, Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { upgradeExecutor } from '../contracts';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import { PrepareTransactionRequestReturnTypeWithChainId, WithAccount } from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { UPGRADE_EXECUTOR_ROLE_EXECUTOR } from '../upgradeExecutorEncodeFunctionData';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
-export type RemoveExecutorParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<
-    ActionParameters<
-      {
-        address: Address;
-      },
-      'upgradeExecutor',
-      Curried
-    >
-  >
+export type RemoveExecutorParameters = Prettify<
+  WithAccount<{
+    upgradeExecutor: Address;
+    address: Address;
+  }>
 >;
 
-export type RemoveExecutorReturnType = PrepareTransactionRequestReturnType;
-
-function upgradeExecutorFunctionData({ address }: RemoveExecutorParameters) {
-  return encodeFunctionData({
-    abi: upgradeExecutor.abi,
-    functionName: 'revokeRole',
-    args: [UPGRADE_EXECUTOR_ROLE_EXECUTOR, address],
-  });
-}
+export type RemoveExecutorReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function removeExecutor<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: RemoveExecutorParameters,
+  params: RemoveExecutorParameters,
 ): Promise<RemoveExecutorReturnType> {
-  const data = upgradeExecutorFunctionData(args);
+  if (!client.chain) {
+    throw new Error("[removeExecutor] client doesn't have a chain property");
+  }
+  const { account, upgradeExecutor: upgradeExecutorAddress, address } = params;
 
-  return client.prepareTransactionRequest({
-    to: args.upgradeExecutor,
-    value: BigInt(0),
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: upgradeExecutorAddress,
+      upgradeExecutor: upgradeExecutorAddress,
+      args: [UPGRADE_EXECUTOR_ROLE_EXECUTOR, address],
+      abi: upgradeExecutor.abi,
+      functionName: 'revokeRole',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: client.chain.id };
 }
