@@ -1,49 +1,49 @@
-import {
-  Chain,
-  Hex,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Chain, Hex, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { sequencerInbox } from '../contracts';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import {
+  ActionParameters,
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { validateParentChainPublicClient } from '../types/ParentChain';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
 export type SetKeysetParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<
-    ActionParameters<
-      {
-        keyset: Hex;
-      },
-      'sequencerInbox',
-      Curried
+  WithUpgradeExecutor<
+    WithAccount<
+      ActionParameters<
+        {
+          keyset: Hex;
+        },
+        'sequencerInbox',
+        Curried
+      >
     >
   >
 >;
 
-export type SetKeysetReturnType = PrepareTransactionRequestReturnType;
-
-function sequencerInboxFunctionData({ keyset }: SetKeysetParameters) {
-  return encodeFunctionData({
-    abi: sequencerInbox.abi,
-    functionName: 'setValidKeyset',
-    args: [keyset],
-  });
-}
+export type SetKeysetReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 export async function setKeyset<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetKeysetParameters,
+  params: SetKeysetParameters,
 ): Promise<SetKeysetReturnType> {
-  const data = sequencerInboxFunctionData(args);
+  const validatedPublicClient = validateParentChainPublicClient(client);
+  const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
-  return client.prepareTransactionRequest({
-    to: args.sequencerInbox,
-    value: BigInt(0),
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: sequencerInboxAddress,
+      upgradeExecutor,
+      args: [args.keyset],
+      abi: sequencerInbox.abi,
+      functionName: 'setValidKeyset',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }

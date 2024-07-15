@@ -1,49 +1,45 @@
-import {
-  Address,
-  Chain,
-  PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
-  PublicClient,
-  Transport,
-  encodeFunctionData,
-} from 'viem';
+import { Address, Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { sequencerInbox } from '../contracts';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import {
+  ActionParameters,
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+  WithUpgradeExecutor,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
+import { validateParentChainPublicClient } from '../types/ParentChain';
 
 type Args = {
   batchPoster: Address;
 };
 
 export type SetIsBatchPosterParameters<Curried extends boolean = false> = Prettify<
-  WithAccount<ActionParameters<Args, 'sequencerInbox', Curried>>
+  WithUpgradeExecutor<WithAccount<ActionParameters<Args, 'sequencerInbox', Curried>>>
 >;
 
-export type SetIsBatchPosterReturnType = PrepareTransactionRequestReturnType;
-
-function sequencerInboxFunctionData({
-  batchPoster,
-  enable,
-}: SetIsBatchPosterParameters & { enable: boolean }) {
-  return encodeFunctionData({
-    abi: sequencerInbox.abi,
-    functionName: 'setIsBatchPoster',
-    args: [batchPoster, enable],
-  });
-}
+export type SetIsBatchPosterReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 async function setIsBatchPoster<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: SetIsBatchPosterParameters & { enable: boolean },
+  params: SetIsBatchPosterParameters & { enable: boolean },
 ): Promise<SetIsBatchPosterReturnType> {
-  const data = sequencerInboxFunctionData(args);
-  return client.prepareTransactionRequest({
-    to: args.sequencerInbox,
-    value: BigInt(0),
+  const validatedPublicClient = validateParentChainPublicClient(client);
+  const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
+
+  const request = await client.prepareTransactionRequest({
     chain: client.chain,
-    data,
-    account: args.account,
+    account,
+    ...withUpgradeExecutor({
+      to: sequencerInboxAddress,
+      upgradeExecutor,
+      args: [args.batchPoster, args.enable],
+      abi: sequencerInbox.abi,
+      functionName: 'setIsBatchPoster',
+    }),
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }
 
 export async function enableBatchPoster<TChain extends Chain | undefined>(
