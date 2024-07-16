@@ -1,15 +1,16 @@
 import { Address, PublicClient, WalletClient, getAddress, pad, parseAbi } from 'viem';
 
+import arbChildToParentRewardRouter from '@offchainlabs/fund-distribution-contracts/out/ArbChildToParentRewardRouter.sol/ArbChildToParentRewardRouter.json';
+
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
-import { childToParentRouter } from './contracts';
 
 /**
- * This type is for the params of the feeRouterDeployChildToParentRouter function
+ * This type is for the params of the feeRouterDeployChildToParentRewardRouter function
  */
-export type FeeRouterDeployChildToParentRouterParams = Prettify<
+export type FeeRouterDeployChildToParentRewardRouterParams = Prettify<
   WithTokenBridgeCreatorAddressOverride<{
     parentChainPublicClient: PublicClient;
     orbitChainWalletClient: WalletClient;
@@ -31,40 +32,40 @@ const oneAddress = getAddress(
 );
 
 /**
- * Deploys the ChildToParentRouter smart contract and initializes it with the provided configuration.
+ * Deploys the ArbChildToParentRewardRouter smart contract and initializes it with the provided configuration.
  *
  * If the router is intended to route the native asset, there's no need to include the rollup and parentChainTokenAddress parameters.
  *
  * References:
- * - ChildToParentRouter contract: https://github.com/OffchainLabs/fund-distribution-contracts/blob/main/src/FeeRouter/ChildToParentRewardRouter.sol
+ * - ArbChildToParentRewardRouter contract: https://github.com/OffchainLabs/fund-distribution-contracts/blob/main/src/FeeRouter/ArbChildToParentRewardRouter.sol
  *
  * Example: [Setup fee routing for the AEP](https://github.com/OffchainLabs/arbitrum-orbit-sdk/blob/main/examples/setup-aep-fee-router/index.ts)
  *
- * @param {FeeRouterDeployChildToParentRouterParams} feeRouterDeployChildToParentRouterParams {@link FeeRouterDeployChildToParentRouterParams}
- * @param {PublicClient} feeRouterDeployChildToParentRouterParams.parentChainPublicClient - The parent chain Viem public client
- * @param {WalletClient} feeRouterDeployChildToParentRouterParams.orbitChainWalletClient - The orbit chain Viem wallet client (this account will deploy the contract)
- * @param {Address} feeRouterDeployChildToParentRouterParams.parentChainTargetAddress - The address where funds will be sent in the parent chain
- * @param {bigint} feeRouterDeployChildToParentRouterParams.minDistributionInvervalSeconds - [Optional] The number of seconds that needs to pass before funds can be sent again (to prevent griefing)
- * @param {Address} feeRouterDeployChildToParentRouterParams.rollup - [Optional] If sending a token different than the native token of the Orbit chain, the Rollup contract address of the chain
- * @param {Address} feeRouterDeployChildToParentRouterParams.parentChainTokenAddress - [Optional] If sending a token different than the native token of the Orbit chain, address of the token in the parent chain
+ * @param {FeeRouterDeployChildToParentRewardRouterParams} feeRouterDeployChildToParentRewardRouterParams {@link FeeRouterDeployChildToParentRewardRouterParams}
+ * @param {PublicClient} feeRouterDeployChildToParentRewardRouterParams.parentChainPublicClient - The parent chain Viem public client
+ * @param {WalletClient} feeRouterDeployChildToParentRewardRouterParams.orbitChainWalletClient - The orbit chain Viem wallet client (this account will deploy the contract)
+ * @param {Address} feeRouterDeployChildToParentRewardRouterParams.parentChainTargetAddress - The address where funds will be sent in the parent chain
+ * @param {bigint} feeRouterDeployChildToParentRewardRouterParams.minDistributionInvervalSeconds - [Optional] The number of seconds that needs to pass before funds can be sent again (to prevent griefing)
+ * @param {Address} feeRouterDeployChildToParentRewardRouterParams.rollup - [Optional] If sending a token different than the native token of the Orbit chain, the Rollup contract address of the chain
+ * @param {Address} feeRouterDeployChildToParentRewardRouterParams.parentChainTokenAddress - [Optional] If sending a token different than the native token of the Orbit chain, address of the token in the parent chain
  *
  * @returns Promise<0x${string}> - The hash of the deployment transaction
  *
  * @example
- * const childToParentRouterDeploymentTransactionHash = await feeRouterDeployChildToParentRouter({
+ * const childToParentRewardRouterDeploymentTransactionHash = await feeRouterDeployChildToParentRewardRouter({
  *   parentChainPublicClient,
  *   orbitChainWalletClient,
  *   parentChainTargetAddress,
  * });
- * const childToParentRouterDeploymentTransactionReceipt =
+ * const childToParentRewardRouterDeploymentTransactionReceipt =
  *   await nitroTestnodeL2Client.waitForTransactionReceipt({
- *     hash: childToParentRouterDeploymentTransactionHash,
+ *     hash: childToParentRewardRouterDeploymentTransactionHash,
  *   });
- * const childToParentRouterAddress = getAddress(
- *   childToParentRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
+ * const childToParentRewardRouterAddress = getAddress(
+ *   childToParentRewardRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
  * );
  */
-export async function feeRouterDeployChildToParentRouter({
+export async function feeRouterDeployChildToParentRewardRouter({
   parentChainPublicClient,
   orbitChainWalletClient,
   parentChainTargetAddress,
@@ -72,7 +73,7 @@ export async function feeRouterDeployChildToParentRouter({
   rollup,
   parentChainTokenAddress,
   tokenBridgeCreatorAddressOverride,
-}: FeeRouterDeployChildToParentRouterParams) {
+}: FeeRouterDeployChildToParentRewardRouterParams) {
   validateParentChain(parentChainPublicClient);
 
   const constructorArguments = {
@@ -125,7 +126,7 @@ export async function feeRouterDeployChildToParentRouter({
   }
 
   const transactionHash = await orbitChainWalletClient.deployContract({
-    abi: childToParentRouter.abi,
+    abi: arbChildToParentRewardRouter.abi,
     account: orbitChainWalletClient.account!,
     chain: orbitChainWalletClient.chain,
     args: [
@@ -135,7 +136,7 @@ export async function feeRouterDeployChildToParentRouter({
       constructorArguments.orbitChainTokenAddress,
       constructorArguments.orbitChainGatewayRouter,
     ],
-    bytecode: childToParentRouter.bytecode,
+    bytecode: arbChildToParentRewardRouter.bytecode.object as `0x${string}`,
   });
 
   return transactionHash;

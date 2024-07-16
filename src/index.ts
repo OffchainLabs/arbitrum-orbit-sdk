@@ -94,9 +94,9 @@ import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './crea
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
 import {
-  feeRouterDeployChildToParentRouter,
-  FeeRouterDeployChildToParentRouterParams,
-} from './feeRouterDeployChildToParentRouter';
+  feeRouterDeployChildToParentRewardRouter,
+  FeeRouterDeployChildToParentRewardRouterParams,
+} from './feeRouterDeployChildToParentRewardRouter';
 import {
   feeRouterDeployRewardDistributor,
   FeeRouterDeployRewardDistributorParams,
@@ -206,8 +206,8 @@ export {
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
   //
-  feeRouterDeployChildToParentRouter,
-  FeeRouterDeployChildToParentRouterParams,
+  feeRouterDeployChildToParentRewardRouter,
+  FeeRouterDeployChildToParentRewardRouterParams,
   feeRouterDeployRewardDistributor,
   FeeRouterDeployRewardDistributorParams,
   //

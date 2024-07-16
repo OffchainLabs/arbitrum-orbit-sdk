@@ -13,7 +13,7 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
-import { feeRouterDeployChildToParentRouter } from './feeRouterDeployChildToParentRouter';
+import { feeRouterDeployChildToParentRewardRouter } from './feeRouterDeployChildToParentRewardRouter';
 import { feeRouterDeployRewardDistributor } from './feeRouterDeployRewardDistributor';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
@@ -37,27 +37,30 @@ const nitroTestnodeL2WalletClient = createWalletClient({
 });
 
 describe('Fee routing tests', () => {
-  it(`successfully deploys and configures the ChildToParentRouter`, async () => {
-    const childToParentRouterDeploymentTransactionHash = await feeRouterDeployChildToParentRouter({
-      parentChainPublicClient: nitroTestnodeL1Client,
-      orbitChainWalletClient: nitroTestnodeL2WalletClient,
-      parentChainTargetAddress: randomAccount.address,
-    });
-
-    const childToParentRouterDeploymentTransactionReceipt =
-      await nitroTestnodeL2Client.waitForTransactionReceipt({
-        hash: childToParentRouterDeploymentTransactionHash,
+  it(`successfully deploys and configures the ChildToParentRewardRouter`, async () => {
+    const childToParentRewardRouterDeploymentTransactionHash =
+      await feeRouterDeployChildToParentRewardRouter({
+        parentChainPublicClient: nitroTestnodeL1Client,
+        orbitChainWalletClient: nitroTestnodeL2WalletClient,
+        parentChainTargetAddress: randomAccount.address,
       });
 
-    expect(childToParentRouterDeploymentTransactionReceipt).to.have.property('contractAddress');
+    const childToParentRewardRouterDeploymentTransactionReceipt =
+      await nitroTestnodeL2Client.waitForTransactionReceipt({
+        hash: childToParentRewardRouterDeploymentTransactionHash,
+      });
 
-    const childToParentRouterAddress = getAddress(
-      childToParentRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
+    expect(childToParentRewardRouterDeploymentTransactionReceipt).to.have.property(
+      'contractAddress',
+    );
+
+    const childToParentRewardRouterAddress = getAddress(
+      childToParentRewardRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
     );
 
     // reading the parentChainTarget
     const parentChainTarget = await nitroTestnodeL2Client.readContract({
-      address: childToParentRouterAddress,
+      address: childToParentRewardRouterAddress,
       abi: parseAbi(['function parentChainTarget() view returns (address)']),
       functionName: 'parentChainTarget',
     });

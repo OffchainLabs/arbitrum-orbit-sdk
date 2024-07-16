@@ -1,6 +1,6 @@
 import { Address, WalletClient } from 'viem';
 
-import { rewardDistributor } from './contracts';
+import rewardDistributor from '@offchainlabs/fund-distribution-contracts/out/RewardDistributor.sol/RewardDistributor.json';
 
 /**
  * This type is for the recipients of the rewards
@@ -73,7 +73,7 @@ export async function feeRouterDeployRewardDistributor({
       recipients.map((recipient) => recipient.account),
       recipients.map((recipient) => recipient.weight),
     ],
-    bytecode: rewardDistributor.bytecode,
+    bytecode: rewardDistributor.bytecode.object as `0x${string}`,
   });
 
   return transactionHash;
