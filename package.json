@@ -12,21 +12,27 @@
     "generate": "wagmi generate",
     "generate:node-config-type": "yarn build && node ./src/dist/scripts/generateNodeConfigType.js",
     "postgenerate:node-config-type": "prettier --write ./src/types/NodeConfig.generated.ts",
-    "test:unit": "vitest unit.test",
-    "test:integration": "vitest integration.test",
+    "test:unit": "vitest --config vitest.unit.config.ts",
+    "test:integration": "vitest --config vitest.integration.config.ts",
     "postinstall": "patch-package",
     "prettier:check": "prettier --check '**/*.{ts,md,json,yml}'",
-    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'"
+    "prettier:format": "prettier --write '**/*.{ts,md,json,yml}'",
+    "audit:ci": "audit-ci --config ./audit-ci.jsonc"
   },
   "devDependencies": {
     "@offchainlabs/prettier-config": "0.2.1",
     "@wagmi/cli": "^1.5.2",
+    "audit-ci": "^7.0.1",
     "dotenv": "^16.3.1",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.8.3",
     "ts-morph": "^21.0.1",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "vitest": "^1.6.0"
+  },
+  "resolutions": {
+    "**/@wagmi/cli/viem/ws": "8.17.1",
+    "**/@ethersproject/providers/ws": "7.5.10"
   }
 }

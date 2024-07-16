@@ -11,5 +11,5 @@ export function getParentChainFromId(chainId: number): ParentChain {
   return extractChain({
     chains,
     id: chainId,
-  });
+  }) as ParentChain;
 }

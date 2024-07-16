@@ -109,6 +109,25 @@ import {
   SequencerInboxMaxTimeVariation,
 } from './getDefaultSequencerInboxMaxTimeVariation';
 import { getValidators, GetValidatorsParams, GetValidatorsReturnType } from './getValidators';
+import {
+  getBatchPosters,
+  GetBatchPostersParams,
+  GetBatchPostersReturnType,
+} from './getBatchPosters';
+import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
+import { isAnyTrust } from './isAnyTrust';
+import {
+  createSafePrepareTransactionRequest,
+  CreateSafePrepareTransactionRequestParams,
+} from './createSafePrepareTransactionRequest';
+import {
+  createSafePrepareTransactionReceipt,
+  CreateSafeTransactionReceipt,
+} from './createSafePrepareTransactionReceipt';
+import {
+  setAnyTrustFastConfirmerPrepareTransactionRequest,
+  SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
+} from './setAnyTrustFastConfirmerPrepareTransactionRequest';
 
 export {
   arbOwnerPublicActions,
@@ -199,4 +218,21 @@ export {
   getValidators,
   GetValidatorsParams,
   GetValidatorsReturnType,
+  //
+  getBatchPosters,
+  GetBatchPostersParams,
+  GetBatchPostersReturnType,
+  //
+  getKeysets,
+  GetKeysetsParams,
+  GetKeysetsReturnType,
+  //
+  isAnyTrust,
+  //
+  createSafePrepareTransactionRequest,
+  CreateSafePrepareTransactionRequestParams,
+  createSafePrepareTransactionReceipt,
+  CreateSafeTransactionReceipt,
+  setAnyTrustFastConfirmerPrepareTransactionRequest,
+  SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
 };
