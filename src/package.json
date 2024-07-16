@@ -53,7 +53,7 @@
   "dependencies": {
     "@arbitrum/sdk": "^4.0.0-alpha.4",
     "@arbitrum/token-bridge-contracts": "^1.2.1",
-    "@offchainlabs/fund-distribution-contracts": "^1.0.0-beta.0",
+    "@offchainlabs/fund-distribution-contracts": "^1.0.1",
     "@safe-global/protocol-kit": "^4.0.2",
     "ethers": "^5.7.2"
   }

@@ -14,7 +14,6 @@ import {
   createTokenBridgeFetchTokenBridgeContracts,
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
-  ParentChain,
 } from '@arbitrum/orbit-sdk';
 import {
   sanitizePrivateKey,
@@ -22,7 +21,6 @@ import {
   getParentChainFromId,
 } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
-import { ParentChainPublicClient } from '@arbitrum/orbit-sdk/types/ParentChain';
 config();
 
 // environent variables check

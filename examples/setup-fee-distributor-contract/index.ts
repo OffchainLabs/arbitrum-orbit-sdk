@@ -15,7 +15,6 @@ import {
 } from '@arbitrum/orbit-sdk';
 import { getParentChainFromId, sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
-import { ParentChainPublicClient } from '@arbitrum/orbit-sdk/dist/types/ParentChain';
 config();
 
 // environent variables check
