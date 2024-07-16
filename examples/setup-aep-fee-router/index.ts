@@ -14,12 +14,9 @@ import {
   createTokenBridgeFetchTokenBridgeContracts,
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
+  parentChainIsArbitrum,
 } from '@arbitrum/orbit-sdk';
-import {
-  sanitizePrivateKey,
-  getParentChainLayer,
-  getParentChainFromId,
-} from '@arbitrum/orbit-sdk/utils';
+import { sanitizePrivateKey, getParentChainFromId } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
 config();
 
@@ -76,10 +73,10 @@ const orbitChainWalletClient = createWalletClient({
 const parentChainTargetAddress = getAddress(process.env.PARENT_CHAIN_TARGET_ADDRESS);
 
 async function main() {
-  // Verify that this is an L2 orbit chain
-  if (getParentChainLayer(parentChainPublicClient.chain.id) !== 1) {
+  // Verify that this is an orbit chain settling to a non-Arbitrum chain
+  if (parentChainIsArbitrum(parentChainPublicClient.chain.id)) {
     throw new Error(
-      'This script is intended to be used only by L2 Orbit chains settling to Ethereum.',
+      'This script is intended to be used only by Orbit chains settling to non Arbitrum chains.',
     );
   }
 

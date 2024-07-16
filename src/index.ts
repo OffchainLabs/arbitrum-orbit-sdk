@@ -116,6 +116,7 @@ import {
 } from './getBatchPosters';
 import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
 import { isAnyTrust } from './isAnyTrust';
+import { parentChainIsArbitrum } from './parentChainIsArbitrum';
 import {
   createSafePrepareTransactionRequest,
   CreateSafePrepareTransactionRequestParams,
@@ -228,6 +229,7 @@ export {
   GetKeysetsReturnType,
   //
   isAnyTrust,
+  parentChainIsArbitrum,
   //
   createSafePrepareTransactionRequest,
   CreateSafePrepareTransactionRequestParams,
