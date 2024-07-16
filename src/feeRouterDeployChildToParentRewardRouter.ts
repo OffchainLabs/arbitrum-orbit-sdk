@@ -1,4 +1,13 @@
-import { Address, PublicClient, WalletClient, getAddress, pad, parseAbi } from 'viem';
+import {
+  Address,
+  Chain,
+  PublicClient,
+  Transport,
+  WalletClient,
+  getAddress,
+  pad,
+  parseAbi,
+} from 'viem';
 
 import arbChildToParentRewardRouter from '@offchainlabs/fund-distribution-contracts/out/ArbChildToParentRewardRouter.sol/ArbChildToParentRewardRouter.json';
 
@@ -10,16 +19,17 @@ import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridge
 /**
  * This type is for the params of the feeRouterDeployChildToParentRewardRouter function
  */
-export type FeeRouterDeployChildToParentRewardRouterParams = Prettify<
-  WithTokenBridgeCreatorAddressOverride<{
-    parentChainPublicClient: PublicClient;
-    orbitChainWalletClient: WalletClient;
-    parentChainTargetAddress: Address;
-    minDistributionInvervalSeconds?: bigint;
-    rollup?: Address;
-    parentChainTokenAddress?: Address;
-  }>
->;
+export type FeeRouterDeployChildToParentRewardRouterParams<TChain extends Chain | undefined> =
+  Prettify<
+    WithTokenBridgeCreatorAddressOverride<{
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      orbitChainWalletClient: WalletClient;
+      parentChainTargetAddress: Address;
+      minDistributionInvervalSeconds?: bigint;
+      rollup?: Address;
+      parentChainTokenAddress?: Address;
+    }>
+  >;
 
 // Default minimum distribution interval seconds
 const DEFAULT_MIN_DISTRIBUTION_INVERVAL_SECONDS = BigInt(60 * 60 * 24 * 7); // 1 week
@@ -65,7 +75,7 @@ const oneAddress = getAddress(
  *   childToParentRewardRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
  * );
  */
-export async function feeRouterDeployChildToParentRewardRouter({
+export async function feeRouterDeployChildToParentRewardRouter<TChain extends Chain | undefined>({
   parentChainPublicClient,
   orbitChainWalletClient,
   parentChainTargetAddress,
@@ -73,7 +83,7 @@ export async function feeRouterDeployChildToParentRewardRouter({
   rollup,
   parentChainTokenAddress,
   tokenBridgeCreatorAddressOverride,
-}: FeeRouterDeployChildToParentRewardRouterParams) {
+}: FeeRouterDeployChildToParentRewardRouterParams<TChain>) {
   validateParentChain(parentChainPublicClient);
 
   const constructorArguments = {

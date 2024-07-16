@@ -8,12 +8,13 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import {
-  feeRouterDeployChildToParentRouter,
+  feeRouterDeployChildToParentRewardRouter,
   feeRouterDeployRewardDistributor,
   createRollupFetchCoreContracts,
   createTokenBridgeFetchTokenBridgeContracts,
   arbOwnerPublicActions,
   arbGasInfoPublicActions,
+  ParentChain,
 } from '@arbitrum/orbit-sdk';
 import {
   sanitizePrivateKey,
@@ -46,7 +47,7 @@ const parentChain = getParentChainFromId(Number(process.env.PARENT_CHAIN_ID));
 const parentChainPublicClient = createPublicClient({
   chain: parentChain,
   transport: http(),
-}) as ParentChainPublicClient;
+});
 
 // define chain config for the orbit chain
 const orbitChain = defineChain({
@@ -127,11 +128,12 @@ async function main() {
   // (This contract will transfer the amounts received by the contract to a specific address in the parent chain)
   // --------------------------------------
   console.log('Deploying contract ChildToParentRouter...');
-  const childToParentRouterDeploymentTransactionHash = await feeRouterDeployChildToParentRouter({
-    parentChainPublicClient,
-    orbitChainWalletClient,
-    parentChainTargetAddress,
-  });
+  const childToParentRouterDeploymentTransactionHash =
+    await feeRouterDeployChildToParentRewardRouter({
+      parentChainPublicClient,
+      orbitChainWalletClient,
+      parentChainTargetAddress,
+    });
 
   const childToParentRouterDeploymentTransactionReceipt =
     await orbitChainPublicClient.waitForTransactionReceipt({
