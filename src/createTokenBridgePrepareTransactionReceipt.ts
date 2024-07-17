@@ -104,7 +104,7 @@ export function createTokenBridgePrepareTransactionReceipt<
         (messagesResults as unknown as [RedeemedRetryableTicket, RedeemedRetryableTicket])
           //
           .map((result) =>
-            ethersTransactionReceiptToViemTransactionReceipt(result.txReceipt),
+            ethersTransactionReceiptToViemTransactionReceipt(result.childTxReceipt),
           ) as WaitForRetryablesResult
       );
     },
