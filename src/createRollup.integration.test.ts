@@ -13,13 +13,13 @@ const parentChainPublicClient = createPublicClient({
 // test inputs
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 const l3TokenBridgeDeployer = testnodeAccounts.l3TokenBridgeDeployer;
-const batchPoster = testnodeAccounts.deployer.address;
-const validators: [Address] = [testnodeAccounts.deployer.address];
+const batchPosters = [testnodeAccounts.deployer.address];
+const validators = [testnodeAccounts.deployer.address];
 
 describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
     deployer: l3TokenBridgeDeployer,
-    batchPoster,
+    batchPosters,
     validators,
     nativeToken: zeroAddress,
     client: parentChainPublicClient,
@@ -29,7 +29,7 @@ describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
     // assert all inputs are correct
     const [arg] = createRollupInformation.transaction.getInputs();
     expect(arg.config).toEqual(createRollupConfig);
-    expect(arg.batchPoster).toEqual(batchPoster);
+    expect(arg.batchPosters).toEqual(batchPosters);
     expect(arg.validators).toEqual(validators);
     expect(arg.maxDataSize).toEqual(104_857n);
     expect(arg.nativeToken).toEqual(zeroAddress);
@@ -59,7 +59,7 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
 
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
     deployer: l3TokenBridgeDeployer,
-    batchPoster,
+    batchPosters,
     validators,
     nativeToken: customGasTokenAddress,
     client: parentChainPublicClient,
@@ -69,7 +69,7 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
     // assert all inputs are correct
     const [arg] = createRollupInformation.transaction.getInputs();
     expect(arg.config).toEqual(createRollupConfig);
-    expect(arg.batchPoster).toEqual(batchPoster);
+    expect(arg.batchPosters).toEqual(batchPosters);
     expect(arg.validators).toEqual(validators);
     expect(arg.maxDataSize).toEqual(104_857n);
     expect(arg.nativeToken).toEqual(customGasTokenAddress);

@@ -18,7 +18,7 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-it(`fails to prepare transaction request if "params.batchPoster" is set to the zero address`, async () => {
+it(`fails to prepare transaction request if "params.batchPosters" is set to an empty array`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -38,13 +38,42 @@ it(`fails to prepare transaction request if "params.batchPoster" is set to the z
           chainConfig,
         }),
         // set batch poster to the zero address
-        batchPoster: zeroAddress,
+        batchPosters: [],
         validators: [deployer.address],
       },
       account: deployer.address,
       publicClient,
     }),
-  ).rejects.toThrowError(`"params.batchPoster" can't be set to the zero address.`);
+  ).rejects.toThrowError(`"params.batchPosters" can't be empty or contain the zero address.`);
+});
+
+it(`fails to prepare transaction request if "params.batchPosters" includes the zero address`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address },
+  });
+
+  // prepare the transaction for deploying the core contracts
+  await expect(
+    createRollupPrepareTransactionRequest({
+      params: {
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
+          chainId: BigInt(chainId),
+          owner: deployer.address,
+          chainConfig,
+        }),
+        // set batch poster to the zero address
+        batchPosters: [zeroAddress],
+        validators: [deployer.address],
+      },
+      account: deployer.address,
+      publicClient,
+    }),
+  ).rejects.toThrowError(`"params.batchPosters" can't be empty or contain the zero address.`);
 });
 
 it(`fails to prepare transaction request if "params.validators" is set to an empty array`, async () => {
@@ -66,7 +95,7 @@ it(`fails to prepare transaction request if "params.validators" is set to an emp
           owner: deployer.address,
           chainConfig,
         }),
-        batchPoster: deployer.address,
+        batchPosters: [deployer.address],
         // set validators to an empty array
         validators: [],
       },
@@ -95,7 +124,7 @@ it(`fails to prepare transaction request if "params.validators" includes the zer
           owner: deployer.address,
           chainConfig,
         }),
-        batchPoster: deployer.address,
+        batchPosters: [deployer.address],
         // set validators to zero address
         validators: [zeroAddress],
       },
@@ -124,7 +153,7 @@ it(`fails to prepare transaction request if "params.nativeToken" is custom and c
           owner: deployer.address,
           chainConfig,
         }),
-        batchPoster: deployer.address,
+        batchPosters: [deployer.address],
         validators: [deployer.address],
         // set native token to anything custom
         nativeToken: deployer.address,
@@ -156,7 +185,7 @@ it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 
           owner: deployer.address,
           chainConfig,
         }),
-        batchPoster: deployer.address,
+        batchPosters: [deployer.address],
         validators: [deployer.address],
         // USDC on Arbitrum Sepolia has 6 decimals
         nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
@@ -186,7 +215,7 @@ it(`successfully prepares a transaction request with the default rollup creator 
         owner: deployer.address,
         chainConfig,
       }),
-      batchPoster: deployer.address,
+      batchPosters: [deployer.address],
       validators: [deployer.address],
     },
     account: deployer.address,
@@ -218,7 +247,7 @@ it(`successfully prepares a transaction request with a custom rollup creator and
         owner: deployer.address,
         chainConfig,
       }),
-      batchPoster: deployer.address,
+      batchPosters: [deployer.address],
       validators: [deployer.address],
     },
     account: deployer.address,
