@@ -8,12 +8,15 @@ import {
   getAbiItem,
   getFunctionSelector,
 } from 'viem';
-import { rollupCreator, upgradeExecutor } from './contracts';
+import { rollupCreator, rollupCreatorV1Dot2ABI, upgradeExecutor } from './contracts';
 import { safeL2ABI, sequencerInboxABI } from './abi';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
+
+const createRollupV1Dot2ABI = getAbiItem({ abi: rollupCreatorV1Dot2ABI, name: 'createRollup' });
+const createRollupV1Dot2FunctionSelector = getFunctionSelector(createRollupV1Dot2ABI);
 
 const setIsBatchPosterABI = getAbiItem({ abi: sequencerInboxABI, name: 'setIsBatchPoster' });
 const setIsBatchPosterFunctionSelector = getFunctionSelector(setIsBatchPosterABI);
@@ -30,7 +33,10 @@ const ownerFunctionCalledEventAbi = getAbiItem({
 });
 
 function getBatchPostersFromFunctionData<
-  TAbi extends (typeof createRollupABI)[] | (typeof setIsBatchPosterABI)[],
+  TAbi extends
+    | (typeof createRollupABI)[]
+    | (typeof createRollupV1Dot2ABI)[]
+    | (typeof setIsBatchPosterABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
@@ -138,9 +144,16 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
 
     switch (txSelectedFunction) {
       case createRollupFunctionSelector: {
-        // @ts-ignore todo
-        const [{ batchPoster }] = getBatchPostersFromFunctionData({
+        const [{ batchPosters }] = getBatchPostersFromFunctionData({
           abi: [createRollupABI],
+          data: tx.input,
+        });
+
+        return new Set([...acc, ...batchPosters]);
+      }
+      case createRollupV1Dot2FunctionSelector: {
+        const [{ batchPoster }] = getBatchPostersFromFunctionData({
+          abi: [createRollupV1Dot2ABI],
           data: tx.input,
         });
 

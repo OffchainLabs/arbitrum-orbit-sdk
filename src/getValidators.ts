@@ -8,12 +8,15 @@ import {
   getAbiItem,
   getFunctionSelector,
 } from 'viem';
-import { rollupCreator, upgradeExecutor } from './contracts';
+import { rollupCreator, rollupCreatorV1Dot2ABI, upgradeExecutor } from './contracts';
 import { rollupAdminLogicABI, safeL2ABI } from './abi';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
+
+const createRollupV1Dot2ABI = getAbiItem({ abi: rollupCreatorV1Dot2ABI, name: 'createRollup' });
+const createRollupV1Dot2FunctionSelector = getFunctionSelector(createRollupV1Dot2ABI);
 
 const setValidatorABI = getAbiItem({ abi: rollupAdminLogicABI, name: 'setValidator' });
 const setValidatorFunctionSelector = getFunctionSelector(setValidatorABI);
@@ -30,7 +33,10 @@ const ownerFunctionCalledEventAbi = getAbiItem({
 });
 
 function getValidatorsFromFunctionData<
-  TAbi extends (typeof createRollupABI)[] | (typeof setValidatorABI)[],
+  TAbi extends
+    | (typeof createRollupABI)[]
+    | (typeof createRollupV1Dot2ABI)[]
+    | (typeof setValidatorABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
@@ -134,6 +140,14 @@ export async function getValidators<TChain extends Chain | undefined>(
       case createRollupFunctionSelector: {
         const [{ validators }] = getValidatorsFromFunctionData({
           abi: [createRollupABI],
+          data: tx.input,
+        });
+
+        return new Set([...acc, ...validators]);
+      }
+      case createRollupV1Dot2FunctionSelector: {
+        const [{ validators }] = getValidatorsFromFunctionData({
+          abi: [createRollupV1Dot2ABI],
           data: tx.input,
         });
 
