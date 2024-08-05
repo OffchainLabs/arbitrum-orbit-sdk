@@ -16,6 +16,19 @@ it('should return true for AnyTrust chain', async () => {
   expect(isPlaynanceAnyTrust).toBeTruthy();
 });
 
+it('should return true for AnyTrust chain (RollupCreator v2.1)', async () => {
+  const client = createPublicClient({
+    chain: arbitrumSepolia,
+    transport: http(),
+  });
+  // https://sepolia.arbiscan.io/tx/0xc1d9513cee57252ab9a0987e3ac4bf23aca7f5c58478a29439ecb1ef815cd379
+  const isAnyTrustChain = await isAnyTrust({
+    publicClient: client,
+    rollup: '0x66Ef747DFDb01a0c0A3a2CB308216704E64B4A78',
+  });
+  expect(isAnyTrustChain).toBeTruthy();
+});
+
 it('should return false for non AnyTrust chain', async () => {
   const client = createPublicClient({
     chain: arbitrumSepolia,
