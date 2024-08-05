@@ -737,7 +737,7 @@ export const erc20ABI = [
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Base Sepolia Blockscout__](https://base-sepolia.blockscout.com/address/0x1E0921818df948c338380e722C8aE91Bb285763C)
- * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x06E341073b2749e0Bb9912461351f716DeCDa9b0)
+ * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0xd2ec8376b1df436fab18120e416d3f2bec61275b)
  * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xfbd0b034e6305788007f6e0123cc5eae701a5751)
  */
 export const rollupCreatorABI = [
@@ -822,12 +822,13 @@ export const rollupCreatorABI = [
               },
             ],
           },
-          { name: 'batchPoster', internalType: 'address', type: 'address' },
           { name: 'validators', internalType: 'address[]', type: 'address[]' },
           { name: 'maxDataSize', internalType: 'uint256', type: 'uint256' },
           { name: 'nativeToken', internalType: 'address', type: 'address' },
           { name: 'deployFactoriesToL2', internalType: 'bool', type: 'bool' },
           { name: 'maxFeePerGasForRetryables', internalType: 'uint256', type: 'uint256' },
+          { name: 'batchPosters', internalType: 'address[]', type: 'address[]' },
+          { name: 'batchPosterManager', internalType: 'address', type: 'address' },
         ],
       },
     ],
@@ -936,7 +937,7 @@ export const rollupCreatorABI = [
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Base Sepolia Blockscout__](https://base-sepolia.blockscout.com/address/0x1E0921818df948c338380e722C8aE91Bb285763C)
- * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x06E341073b2749e0Bb9912461351f716DeCDa9b0)
+ * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0xd2ec8376b1df436fab18120e416d3f2bec61275b)
  * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xfbd0b034e6305788007f6e0123cc5eae701a5751)
  */
 export const rollupCreatorAddress = {
@@ -948,7 +949,7 @@ export const rollupCreatorAddress = {
   42170: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
   84532: '0x1E0921818df948c338380e722C8aE91Bb285763C',
   412346: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
-  421614: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
+  421614: '0xd2Ec8376B1dF436fAb18120E416d3F2BeC61275b',
   11155111: '0xfBD0B034e6305788007f6e0123cc5EaE701a5751',
 } as const;
 
@@ -960,7 +961,7 @@ export const rollupCreatorAddress = {
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
  * - [__View Contract on Base Sepolia Blockscout__](https://base-sepolia.blockscout.com/address/0x1E0921818df948c338380e722C8aE91Bb285763C)
- * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x06E341073b2749e0Bb9912461351f716DeCDa9b0)
+ * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0xd2ec8376b1df436fab18120e416d3f2bec61275b)
  * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xfbd0b034e6305788007f6e0123cc5eae701a5751)
  */
 export const rollupCreatorConfig = {
