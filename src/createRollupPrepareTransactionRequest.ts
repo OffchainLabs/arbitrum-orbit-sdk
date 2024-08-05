@@ -46,8 +46,8 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
   const chainId = validateParentChain(publicClient);
 
-  if (params.batchPoster === zeroAddress) {
-    throw new Error(`"params.batchPoster" can't be set to the zero address.`);
+  if (params.batchPosters.length === 0 || params.batchPosters.includes(zeroAddress)) {
+    throw new Error(`"params.batchPosters" can't be empty or contain the zero address.`);
   }
 
   if (params.validators.length === 0 || params.validators.includes(zeroAddress)) {
@@ -73,7 +73,8 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   }
 
   const maxDataSize = createRollupGetMaxDataSize(chainId);
-  const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
+  const batchPosterManager = params.batchPosterManager ?? zeroAddress;
+  const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
