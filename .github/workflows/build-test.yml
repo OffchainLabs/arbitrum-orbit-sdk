@@ -13,31 +13,15 @@ env:
   ARBISCAN_API_KEY: ${{ secrets.ARBISCAN_API_KEY }}
 
 jobs:
-  install:
-    name: 'Install'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install node_modules
-        uses: OffchainLabs/actions/node-modules/install@main
-
   audit:
     name: 'Audit'
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Restore node_modules
-        uses: OffchainLabs/actions/node-modules/restore@main
+      - name: Install node_modules
+        uses: OffchainLabs/actions/node-modules/install@main
 
       - name: Run audit
         run: yarn audit:ci
@@ -45,13 +29,12 @@ jobs:
   check-formatting:
     name: 'Check Formatting'
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Restore node_modules
-        uses: OffchainLabs/actions/node-modules/restore@main
+      - name: Install node_modules
+        uses: OffchainLabs/actions/node-modules/install@main
 
       - name: Check formatting with Prettier
         run: yarn prettier:check
@@ -59,18 +42,12 @@ jobs:
   test-unit:
     name: Test (Unit)
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Restore node_modules
-        uses: OffchainLabs/actions/node-modules/restore@main
+      - name: Install node_modules
+        uses: OffchainLabs/actions/node-modules/install@main
 
       - name: Copy .env
         run: cp ./.env.example ./.env
@@ -84,18 +61,12 @@ jobs:
   test-integration:
     name: Test (Integration)
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Restore node_modules
-        uses: OffchainLabs/actions/node-modules/restore@main
+      - name: Install node_modules
+        uses: OffchainLabs/actions/node-modules/install@main
 
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@main
