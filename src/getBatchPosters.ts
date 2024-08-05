@@ -138,6 +138,7 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
 
     switch (txSelectedFunction) {
       case createRollupFunctionSelector: {
+        // @ts-ignore todo
         const [{ batchPoster }] = getBatchPostersFromFunctionData({
           abi: [createRollupABI],
           data: tx.input,
