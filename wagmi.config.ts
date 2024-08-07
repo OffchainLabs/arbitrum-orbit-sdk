@@ -104,20 +104,20 @@ type ContractConfig = {
 const contracts: ContractConfig[] = [
   {
     name: 'RollupCreator',
-    version: '1.1.0',
+    version: '2.1.0',
     address: {
       // mainnet L1
-      [mainnet.id]: '0x90d68b056c411015eae3ec0b98ad94e2c91419f1',
+      [mainnet.id]: '0x8c88430658a03497D13cDff7684D37b15aA2F3e1',
       // mainnet L2
-      [arbitrumOne.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
-      [arbitrumNova.id]: '0x9CAd81628aB7D8e239F1A5B497313341578c5F71',
-      [base.id]: '0x850F050C65B34966895AdA26a4D06923901916DB',
+      [arbitrumOne.id]: '0x79607f00e61E6d7C0E6330bd7E9c4AC320D50FC9',
+      [arbitrumNova.id]: '0x9B523BF5F77e8d90e0E9eb0924aEA6E40B081aE6',
+      [base.id]: '0x091b8FC0F48613b191f81009797ce55Cf97Af7C8',
       // testnet L1
-      [sepolia.id]: '0xfbd0b034e6305788007f6e0123cc5eae701a5751',
-      [holesky.id]: '0xB512078282F462Ba104231ad856464Ceb0a7747e',
+      [sepolia.id]: '0xfb774ea8a92ae528a596c8d90cbcf1bdbc4cee79',
+      [holesky.id]: '0x03c70F125Df471E4fd0515ca38504edFE6900F19',
       // testnet L2
-      [arbitrumSepolia.id]: '0xd2ec8376b1df436fab18120e416d3f2bec61275b',
-      [baseSepolia.id]: '0x1E0921818df948c338380e722C8aE91Bb285763C',
+      [arbitrumSepolia.id]: '0xd2Ec8376B1dF436fAb18120E416d3F2BeC61275b',
+      [baseSepolia.id]: '0x6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x596eabe0291d4cdafac7ef53d16c92bf6922b5e0',
       [nitroTestnodeL2.id]: '0x3BaF9f08bAD68869eEdEa90F2Cc546Bd80F1A651',
@@ -206,10 +206,10 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
 }
 
 export default async function () {
-  // console.log(`Checking if contracts match by comparing hashed JSON ABIs.\n`);
+  console.log(`Checking if contracts match by comparing hashed JSON ABIs.\n`);
 
   for (const contract of contracts) {
-    // await assertContractAbisMatch(contract);
+    await assertContractAbisMatch(contract);
     await sleep(); // sleep to avoid rate limiting
   }
 
