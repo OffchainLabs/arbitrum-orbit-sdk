@@ -63,7 +63,8 @@ export async function createTokenBridgeGetInputs<
     l2Provider,
   );
   const maxSubmissionCostForFactoryEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
-  const maxGasForFactoryEstimation = await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment();
+  const maxGasForFactoryEstimation =
+    (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
 
   //// run retryable estimate for deploying L2 contracts
   //// we do this estimate using L2 factory template on L1 because on L2 factory does not yet exist
@@ -105,7 +106,7 @@ export async function createTokenBridgeGetInputs<
           applyPercentIncrease({
             base:
               retryableGasOverrides.maxSubmissionCostForFactory.base ??
-              BigInt(maxSubmissionCostForFactoryEstimation.toNumber()),
+              BigInt(maxSubmissionCostForFactoryEstimation.toHexString()),
             percentIncrease: retryableGasOverrides.maxSubmissionCostForFactory.percentIncrease,
           }),
         )
@@ -117,7 +118,7 @@ export async function createTokenBridgeGetInputs<
           applyPercentIncrease({
             base:
               retryableGasOverrides.maxGasForFactory.base ??
-              BigInt(maxGasForFactoryEstimation.toNumber()),
+              BigInt(maxGasForFactoryEstimation.toHexString()),
             percentIncrease: retryableGasOverrides.maxGasForFactory.percentIncrease,
           }),
         )
@@ -129,7 +130,7 @@ export async function createTokenBridgeGetInputs<
           applyPercentIncrease({
             base:
               retryableGasOverrides.maxSubmissionCostForContracts.base ??
-              BigInt(maxSubmissionCostForContractsEstimation.toNumber()),
+              BigInt(maxSubmissionCostForContractsEstimation.toHexString()),
             percentIncrease: retryableGasOverrides.maxSubmissionCostForContracts.percentIncrease,
           }),
         )
@@ -141,7 +142,7 @@ export async function createTokenBridgeGetInputs<
           applyPercentIncrease({
             base:
               retryableGasOverrides.maxGasForContracts.base ??
-              BigInt(gasEstimateToDeployContracts.toNumber()),
+              BigInt(gasEstimateToDeployContracts.toHexString()),
             percentIncrease: retryableGasOverrides.maxGasForContracts.percentIncrease,
           }),
         )
