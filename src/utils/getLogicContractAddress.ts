@@ -13,5 +13,10 @@ export async function getLogicContractAddress<TChain extends Chain | undefined>(
     slot: '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc',
   });
 
-  return typeof value !== 'undefined' ? `0x${value.slice(26)}` : zeroAddress;
+  if (typeof value === 'undefined') {
+    return zeroAddress;
+  }
+
+  // strip zeros
+  return `0x${value.slice(26)}`;
 }
