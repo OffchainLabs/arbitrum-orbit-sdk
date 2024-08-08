@@ -9,8 +9,9 @@ import {
   getFunctionSelector,
 } from 'viem';
 import { rollupCreatorABI } from './contracts/RollupCreator';
+import { sequencerInboxABI } from './contracts/SequencerInbox';
 import { upgradeExecutor } from './contracts';
-import { safeL2ABI, sequencerInboxABI } from './abi';
+import { safeL2ABI } from './abi';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });

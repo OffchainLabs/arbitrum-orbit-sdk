@@ -9,7 +9,8 @@ import {
 } from 'viem';
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
-import { safeL2ABI, sequencerInboxABI } from './abi';
+import { safeL2ABI } from './abi';
+import { sequencerInboxABI } from './contracts/SequencerInbox';
 import { sequencerInboxPrepareFunctionData } from './sequencerInboxPrepareTransactionRequest';
 import { getBatchPosters } from './getBatchPosters';
 

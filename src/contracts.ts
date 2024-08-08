@@ -1,6 +1,6 @@
 import { parseAbi } from 'viem';
 
-import { sequencerInboxABI, rollupAdminLogicABI } from './abi';
+import { rollupAdminLogicABI } from './abi';
 
 export const upgradeExecutor = {
   abi: parseAbi([
@@ -10,10 +10,6 @@ export const upgradeExecutor = {
     'function grantRole(bytes32 role, address account)',
     'function revokeRole(bytes32 role, address account)',
   ]),
-};
-
-export const sequencerInbox = {
-  abi: sequencerInboxABI,
 };
 
 export const rollupAdminLogic = {
