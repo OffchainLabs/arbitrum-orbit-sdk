@@ -116,6 +116,7 @@ type ContractConfig = {
   name: string;
   version?: string;
   address: Record<ParentChainId, `0x${string}`> | `0x${string}`;
+  implementation?: Record<ParentChainId, `0x${string}`>;
 };
 
 const contracts: ContractConfig[] = [
@@ -236,7 +237,7 @@ export default async function () {
       });
 
       if (maybeLogicAddress !== zeroAddress) {
-        contract.address[arbitrumSepolia.id] = maybeLogicAddress;
+        contract.implementation = { [arbitrumSepolia.id]: maybeLogicAddress };
       }
     }
 

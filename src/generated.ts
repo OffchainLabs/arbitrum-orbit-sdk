@@ -980,7 +980,7 @@ export const rollupCreatorConfig = {
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14)
  * - [__View Contract on Base Sepolia Blockscout__](https://base-sepolia.blockscout.com/address/0xFC71d21a4FE10Cc0d34745ba9c713836f82f8DE3)
- * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x4d80b4fd42abd6934df7d9ba536e5cfe2fb7e730)
+ * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E)
  * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x7edb2dfBeEf9417e0454A80c51EE0C034e45a570)
  */
 export const tokenBridgeCreatorABI = [
@@ -1380,7 +1380,7 @@ export const tokenBridgeCreatorABI = [
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14)
  * - [__View Contract on Base Sepolia Blockscout__](https://base-sepolia.blockscout.com/address/0xFC71d21a4FE10Cc0d34745ba9c713836f82f8DE3)
- * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x4d80b4fd42abd6934df7d9ba536e5cfe2fb7e730)
+ * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E)
  * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x7edb2dfBeEf9417e0454A80c51EE0C034e45a570)
  */
 export const tokenBridgeCreatorAddress = {
@@ -1392,7 +1392,7 @@ export const tokenBridgeCreatorAddress = {
   42170: '0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14',
   84532: '0xFC71d21a4FE10Cc0d34745ba9c713836f82f8DE3',
   412346: '0x38F35Af53bF913c439eaB06A367e09D6eb253492',
-  421614: '0x4d80b4FD42ABD6934df7D9ba536e5cfE2fb7E730',
+  421614: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
   11155111: '0x7edb2dfBeEf9417e0454A80c51EE0C034e45a570',
 } as const;
 
@@ -1404,7 +1404,7 @@ export const tokenBridgeCreatorAddress = {
  * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x2f5624dc8800dfA0A82AC03509Ef8bb8E7Ac000e)
  * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x8B9D9490a68B1F16ac8A21DdAE5Fd7aB9d708c14)
  * - [__View Contract on Base Sepolia Blockscout__](https://base-sepolia.blockscout.com/address/0xFC71d21a4FE10Cc0d34745ba9c713836f82f8DE3)
- * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x4d80b4fd42abd6934df7d9ba536e5cfe2fb7e730)
+ * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E)
  * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x7edb2dfBeEf9417e0454A80c51EE0C034e45a570)
  */
 export const tokenBridgeCreatorConfig = {
