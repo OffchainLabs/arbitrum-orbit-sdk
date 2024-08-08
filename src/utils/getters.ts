@@ -1,7 +1,7 @@
 import { Client, Transport, Chain } from 'viem';
 
-import { rollupCreatorAddress } from '../contracts/RollupCreator/v1.1.0';
-import { tokenBridgeCreatorAddress } from '../contracts/TokenBridgeCreator/v1.2.0';
+import { rollupCreatorAddress } from '../contracts/RollupCreator';
+import { tokenBridgeCreatorAddress } from '../contracts/TokenBridgeCreator';
 import { validateParentChain } from '../types/ParentChain';
 
 export function getRollupCreatorAddress<TChain extends Chain | undefined>(

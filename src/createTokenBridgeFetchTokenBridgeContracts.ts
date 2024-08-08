@@ -1,6 +1,6 @@
 import { Address, PublicClient, Transport, Chain } from 'viem';
 
-import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator/v1.2.0';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';

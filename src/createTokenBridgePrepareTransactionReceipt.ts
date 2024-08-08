@@ -18,7 +18,7 @@ import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { viemTransactionReceiptToEthersTransactionReceipt } from './ethers-compat/viemTransactionReceiptToEthersTransactionReceipt';
 import { ethersTransactionReceiptToViemTransactionReceipt } from './ethers-compat/ethersTransactionReceiptToViemTransactionReceipt';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
-import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator/v1.2.0';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 
 function findOrbitTokenBridgeCreatedEventLog(txReceipt: TransactionReceipt) {

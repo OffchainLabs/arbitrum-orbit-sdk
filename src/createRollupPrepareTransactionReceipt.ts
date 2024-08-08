@@ -1,6 +1,6 @@
 import { TransactionReceipt, getAbiItem, getEventSelector, Log, decodeEventLog } from 'viem';
 
-import { rollupCreatorABI } from './contracts/RollupCreator/v1.1.0';
+import { rollupCreatorABI } from './contracts/RollupCreator';
 import { CoreContracts } from './types/CoreContracts';
 
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {

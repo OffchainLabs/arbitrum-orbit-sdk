@@ -1,6 +1,6 @@
 import { Transaction, decodeFunctionData } from 'viem';
 
-import { rollupCreatorABI } from './contracts/RollupCreator/v1.1.0';
+import { rollupCreatorABI } from './contracts/RollupCreator';
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 
 function createRollupDecodeFunctionData(data: `0x${string}`) {

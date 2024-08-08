@@ -3,7 +3,7 @@ import { Address, PublicClient, Transport, Chain, encodeFunctionData, zeroAddres
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
-import { rollupCreatorABI } from './contracts/RollupCreator/v1.1.0';
+import { rollupCreatorABI } from './contracts/RollupCreator';
 import { validateParentChain } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';

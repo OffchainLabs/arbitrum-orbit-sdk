@@ -8,7 +8,7 @@ import {
   getAbiItem,
   getFunctionSelector,
 } from 'viem';
-import { rollupCreatorABI } from './contracts/RollupCreator/v1.1.0';
+import { rollupCreatorABI } from './contracts/RollupCreator';
 import { upgradeExecutor } from './contracts';
 import { rollupAdminLogicABI, safeL2ABI } from './abi';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';

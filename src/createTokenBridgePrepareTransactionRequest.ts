@@ -1,6 +1,6 @@
 import { Address, PublicClient, Transport, Chain, encodeFunctionData } from 'viem';
 
-import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator/v1.2.0';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 import { validateParentChain } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';

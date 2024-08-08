@@ -6,7 +6,7 @@ import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
-import { rollupCreatorAddress } from './contracts/RollupCreator/v1.1.0';
+import { rollupCreatorAddress } from './contracts/RollupCreator';
 
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 
