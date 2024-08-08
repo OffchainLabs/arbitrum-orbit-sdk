@@ -1,5 +1,5 @@
 import { erc, etherscan } from '@wagmi/cli/plugins';
-import { hashMessage } from 'viem';
+import { hashMessage, createPublicClient, http, zeroAddress } from 'viem';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
@@ -16,6 +16,7 @@ import {
   nitroTestnodeL2,
   nitroTestnodeL3,
 } from './src/chains';
+import { getLogicContractAddress } from './src/utils/getLogicContractAddress';
 
 dotenv.config();
 
@@ -210,6 +211,19 @@ export default async function () {
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
+
+    if (typeof contract.address !== 'string') {
+      const maybeProxyAddress = contract.address[arbitrumSepolia.id];
+      const maybeLogicAddress = await getLogicContractAddress({
+        client: createPublicClient({ chain: arbitrumSepolia, transport: http() }),
+        address: maybeProxyAddress,
+      });
+
+      if (maybeLogicAddress !== zeroAddress) {
+        contract.address[arbitrumSepolia.id] = maybeLogicAddress;
+      }
+    }
+
     await sleep(); // sleep to avoid rate limiting
   }
 
