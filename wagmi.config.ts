@@ -1,3 +1,4 @@
+import { Config } from '@wagmi/cli';
 import { erc, etherscan } from '@wagmi/cli/plugins';
 import { hashMessage, createPublicClient, http, zeroAddress } from 'viem';
 import dotenv from 'dotenv';
@@ -241,30 +242,35 @@ async function updateContractWithImplementationIfProxy(contract: ContractConfig)
 }
 
 export default async function () {
-  console.log(`Checking if contracts match by comparing hashed JSON ABIs.\n`);
+  const configs: Config[] = [
+    {
+      out: 'src/contracts/ERC20.ts',
+      plugins: [erc({ 20: true, 721: false, 4626: false })],
+    },
+  ];
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
     await updateContractWithImplementationIfProxy(contract);
     await sleep(); // sleep to avoid rate limiting
+
+    const filePath =
+      typeof contract.version !== 'undefined'
+        ? `${contract.name}/v${contract.version}`
+        : contract.name;
+
+    configs.push({
+      out: `src/contracts/${filePath}.ts`,
+      plugins: [
+        etherscan({
+          chainId: arbitrumSepolia.id,
+          apiKey: arbiscanApiKey,
+          contracts: [contract],
+          cacheDuration: 0,
+        }),
+      ],
+    });
   }
 
-  console.log(`Done.\n`);
-
-  return {
-    out: 'src/generated.ts',
-    plugins: [
-      erc({
-        20: true,
-        721: false,
-        4626: false,
-      }),
-      etherscan({
-        chainId: arbitrumSepolia.id,
-        apiKey: arbiscanApiKey,
-        contracts,
-        cacheDuration: 0,
-      }),
-    ],
-  };
+  return configs;
 }

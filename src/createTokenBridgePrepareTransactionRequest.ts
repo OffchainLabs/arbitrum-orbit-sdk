@@ -1,6 +1,6 @@
 import { Address, PublicClient, Transport, Chain, encodeFunctionData } from 'viem';
 
-import { tokenBridgeCreator } from './contracts';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator/v1.2.0';
 import { validateParentChain } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
@@ -72,7 +72,7 @@ export async function createTokenBridgePrepareTransactionRequest<
     chain: parentChainPublicClient.chain,
     to: tokenBridgeCreatorAddress,
     data: encodeFunctionData({
-      abi: tokenBridgeCreator.abi,
+      abi: tokenBridgeCreatorABI,
       functionName: 'createTokenBridge',
       args: [inbox, params.rollupOwner, maxGasForContracts, gasPrice],
     }),

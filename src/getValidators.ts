@@ -8,11 +8,12 @@ import {
   getAbiItem,
   getFunctionSelector,
 } from 'viem';
-import { rollupCreator, upgradeExecutor } from './contracts';
+import { rollupCreatorABI } from './contracts/RollupCreator/v1.1.0';
+import { upgradeExecutor } from './contracts';
 import { rollupAdminLogicABI, safeL2ABI } from './abi';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
-const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
+const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
 
 const setValidatorABI = getAbiItem({ abi: rollupAdminLogicABI, name: 'setValidator' });

@@ -1,10 +1,10 @@
 import { TransactionReceipt, getAbiItem, getEventSelector, Log, decodeEventLog } from 'viem';
 
-import { rollupCreator } from './contracts';
+import { rollupCreatorABI } from './contracts/RollupCreator/v1.1.0';
 import { CoreContracts } from './types/CoreContracts';
 
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {
-  const abiItem = getAbiItem({ abi: rollupCreator.abi, name: 'RollupCreated' });
+  const abiItem = getAbiItem({ abi: rollupCreatorABI, name: 'RollupCreated' });
   const eventSelector = getEventSelector(abiItem);
   const log = txReceipt.logs.find((log) => log.topics[0] === eventSelector);
 
@@ -18,7 +18,7 @@ function findRollupCreatedEventLog(txReceipt: TransactionReceipt) {
 }
 
 function decodeRollupCreatedEventLog(log: Log<bigint, number>) {
-  const decodedEventLog = decodeEventLog({ ...log, abi: rollupCreator.abi });
+  const decodedEventLog = decodeEventLog({ ...log, abi: rollupCreatorABI });
 
   if (decodedEventLog.eventName !== 'RollupCreated') {
     throw new Error(`Expected "RollupCreated" event but found: ${decodedEventLog.eventName}`);

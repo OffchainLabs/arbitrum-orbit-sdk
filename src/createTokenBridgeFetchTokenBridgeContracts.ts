@@ -1,6 +1,6 @@
 import { Address, PublicClient, Transport, Chain } from 'viem';
 
-import { tokenBridgeCreator } from './contracts';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator/v1.2.0';
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
@@ -32,14 +32,14 @@ export async function createTokenBridgeFetchTokenBridgeContracts<TChain extends 
     parentChainWeth,
   ] = await parentChainPublicClient.readContract({
     address: tokenBridgeCreatorAddress,
-    abi: tokenBridgeCreator.abi,
+    abi: tokenBridgeCreatorABI,
     functionName: 'inboxToL1Deployment',
     args: [inbox],
   });
 
   const parentChainMulticall = await parentChainPublicClient.readContract({
     address: tokenBridgeCreatorAddress,
-    abi: tokenBridgeCreator.abi,
+    abi: tokenBridgeCreatorABI,
     functionName: 'l1Multicall',
   });
 
@@ -65,7 +65,7 @@ export async function createTokenBridgeFetchTokenBridgeContracts<TChain extends 
     orbitChainMulticall,
   ] = await parentChainPublicClient.readContract({
     address: tokenBridgeCreatorAddress,
-    abi: tokenBridgeCreator.abi,
+    abi: tokenBridgeCreatorABI,
     functionName: 'inboxToL2Deployment',
     args: [inbox],
   });

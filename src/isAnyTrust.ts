@@ -1,8 +1,8 @@
 import { Address, Chain, PublicClient, Transport, decodeFunctionData, getAbiItem } from 'viem';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
-import { rollupCreator } from './contracts';
+import { rollupCreatorABI } from './contracts/RollupCreator/v1.1.0';
 
-const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
+const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 export async function isAnyTrust<TChain extends Chain | undefined>({
   rollup,
   publicClient,
