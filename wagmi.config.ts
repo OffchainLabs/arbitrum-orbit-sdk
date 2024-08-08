@@ -1,5 +1,5 @@
 import { erc, etherscan } from '@wagmi/cli/plugins';
-import { hashMessage } from 'viem';
+import { hashMessage, createPublicClient, http, zeroAddress } from 'viem';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
@@ -15,7 +15,9 @@ import {
   nitroTestnodeL1,
   nitroTestnodeL2,
   nitroTestnodeL3,
+  chains,
 } from './src/chains';
+import { getImplementation } from './src/utils/getImplementation';
 
 dotenv.config();
 
@@ -82,6 +84,18 @@ const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
   const { url, apiKey } = blockExplorerApiUrls[chainId];
 
+  const client = createPublicClient({
+    chain: chains.find((chain) => chain.id === chainId),
+    transport: http(),
+  });
+
+  const implementation = await getImplementation({ client, address });
+
+  if (implementation !== zeroAddress) {
+    // replace proxy address with implementation address, so proper abis are compared
+    address = implementation;
+  }
+
   const responseJson = await (
     await fetch(
       `${url}?module=contract&action=getabi&format=raw&address=${address}&apikey=${apiKey}`,
@@ -99,6 +113,7 @@ type ContractConfig = {
   name: string;
   version?: string;
   address: Record<ParentChainId, `0x${string}`> | `0x${string}`;
+  implementation?: Record<ParentChainId, `0x${string}`>;
 };
 
 const contracts: ContractConfig[] = [
@@ -205,11 +220,32 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
   console.log(`- ${contract.name} ✔\n`);
 }
 
+async function updateContractWithImplementationIfProxy(contract: ContractConfig) {
+  // precompiles, do nothing
+  if (typeof contract.address === 'string') {
+    return;
+  }
+
+  const implementation = await getImplementation({
+    client: createPublicClient({ chain: arbitrumSepolia, transport: http() }),
+    address: contract.address[arbitrumSepolia.id],
+  });
+
+  // not a proxy, do nothing
+  if (implementation === zeroAddress) {
+    return;
+  }
+
+  // only add arbitrum sepolia implementation as that's the one we're generating from
+  contract.implementation = { [arbitrumSepolia.id]: implementation };
+}
+
 export default async function () {
   console.log(`Checking if contracts match by comparing hashed JSON ABIs.\n`);
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
+    await updateContractWithImplementationIfProxy(contract);
     await sleep(); // sleep to avoid rate limiting
   }
 
