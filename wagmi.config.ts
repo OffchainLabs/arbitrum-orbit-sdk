@@ -220,7 +220,7 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
   console.log(`- ${contract.name} ✔\n`);
 }
 
-async function updateContractWithImplementationAddressIfProxy(contract: ContractConfig) {
+async function updateContractWithImplementationIfProxy(contract: ContractConfig) {
   // precompiles, do nothing
   if (typeof contract.address === 'string') {
     return;
@@ -245,7 +245,7 @@ export default async function () {
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
-    await updateContractWithImplementationAddressIfProxy(contract);
+    await updateContractWithImplementationIfProxy(contract);
     await sleep(); // sleep to avoid rate limiting
   }
 
