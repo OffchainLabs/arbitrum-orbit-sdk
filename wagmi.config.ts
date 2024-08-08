@@ -21,13 +21,6 @@ import { getLogicContractAddress } from './src/utils/getLogicContractAddress';
 
 dotenv.config();
 
-function createParentClient(chainId: ParentChainId) {
-  return createPublicClient({
-    chain: chains.find((chain) => chain.id === chainId),
-    transport: http(),
-  });
-}
-
 function loadApiKey(key: string): string {
   const apiKey = process.env[key];
 
@@ -91,12 +84,16 @@ const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
   const { url, apiKey } = blockExplorerApiUrls[chainId];
 
-  const client = createParentClient(chainId);
-  const logicAddress = await getLogicContractAddress({ client, address });
+  const client = createPublicClient({
+    chain: chains.find((chain) => chain.id === chainId),
+    transport: http(),
+  });
 
-  if (logicAddress !== zeroAddress) {
-    // replace proxy address with logic address, so proper abis are compared
-    address = logicAddress;
+  const implementation = await getLogicContractAddress({ client, address });
+
+  if (implementation !== zeroAddress) {
+    // replace proxy address with implementation address, so proper abis are compared
+    address = implementation;
   }
 
   const responseJson = await (
@@ -223,24 +220,32 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
   console.log(`- ${contract.name} ✔\n`);
 }
 
+async function updateContractWithImplementationAddressIfProxy(contract: ContractConfig) {
+  // precompiles, do nothing
+  if (typeof contract.address === 'string') {
+    return;
+  }
+
+  const implementation = await getLogicContractAddress({
+    client: createPublicClient({ chain: arbitrumSepolia, transport: http() }),
+    address: contract.address[arbitrumSepolia.id],
+  });
+
+  // not a proxy, do nothing
+  if (implementation === zeroAddress) {
+    return;
+  }
+
+  // only add arbitrum sepolia implementation as that's the one we're generating from
+  contract.implementation = { [arbitrumSepolia.id]: implementation };
+}
+
 export default async function () {
   console.log(`Checking if contracts match by comparing hashed JSON ABIs.\n`);
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
-
-    if (typeof contract.address !== 'string') {
-      const maybeProxyAddress = contract.address[arbitrumSepolia.id];
-      const maybeLogicAddress = await getLogicContractAddress({
-        client: createPublicClient({ chain: arbitrumSepolia, transport: http() }),
-        address: maybeProxyAddress,
-      });
-
-      if (maybeLogicAddress !== zeroAddress) {
-        contract.implementation = { [arbitrumSepolia.id]: maybeLogicAddress };
-      }
-    }
-
+    await updateContractWithImplementationAddressIfProxy(contract);
     await sleep(); // sleep to avoid rate limiting
   }
 
