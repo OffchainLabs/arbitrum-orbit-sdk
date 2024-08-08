@@ -15,10 +15,18 @@ import {
   nitroTestnodeL1,
   nitroTestnodeL2,
   nitroTestnodeL3,
+  chains,
 } from './src/chains';
 import { getLogicContractAddress } from './src/utils/getLogicContractAddress';
 
 dotenv.config();
+
+function createParentClient(chainId: ParentChainId) {
+  return createPublicClient({
+    chain: chains.find((chain) => chain.id === chainId),
+    transport: http(),
+  });
+}
 
 function loadApiKey(key: string): string {
   const apiKey = process.env[key];
@@ -82,6 +90,14 @@ const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string 
 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
   const { url, apiKey } = blockExplorerApiUrls[chainId];
+
+  const client = createParentClient(chainId);
+  const logicAddress = await getLogicContractAddress({ client, address });
+
+  if (logicAddress !== zeroAddress) {
+    // replace proxy address with logic address, so proper abis are compared
+    address = logicAddress;
+  }
 
   const responseJson = await (
     await fetch(
