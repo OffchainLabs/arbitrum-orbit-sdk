@@ -37,7 +37,7 @@ describe('sequencerInboxReadContract', () => {
       sequencerInbox: l3SequencerInbox,
     });
 
-    expect(result.toLowerCase()).toEqual(l3Bridge);
+    expect(result.toLowerCase()).toEqual(l3Bridge.toLowerCase());
   });
 
   it('successfully fetches dasKeySetInfo', async () => {
@@ -102,7 +102,7 @@ describe('sequencerInboxReadContract', () => {
       sequencerInbox: l3SequencerInbox,
     });
 
-    expect(result.toLowerCase()).toEqual(l3Rollup);
+    expect(result.toLowerCase()).toEqual(l3Rollup.toLowerCase());
   });
 
   it('successfully call totalDelayedMessagesRead', async () => {
