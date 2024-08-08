@@ -17,7 +17,7 @@ import {
   nitroTestnodeL3,
   chains,
 } from './src/chains';
-import { getImplementationAddress } from './src/utils/getImplementationAddress';
+import { getImplementation } from './src/utils/getImplementation';
 
 dotenv.config();
 
@@ -89,7 +89,7 @@ export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
     transport: http(),
   });
 
-  const implementation = await getImplementationAddress({ client, address });
+  const implementation = await getImplementation({ client, address });
 
   if (implementation !== zeroAddress) {
     // replace proxy address with implementation address, so proper abis are compared
@@ -226,7 +226,7 @@ async function updateContractWithImplementationAddressIfProxy(contract: Contract
     return;
   }
 
-  const implementation = await getImplementationAddress({
+  const implementation = await getImplementation({
     client: createPublicClient({ chain: arbitrumSepolia, transport: http() }),
     address: contract.address[arbitrumSepolia.id],
   });

@@ -1,6 +1,6 @@
 import { Chain, Transport, PublicClient, Address, zeroAddress } from 'viem';
 
-export async function getImplementationAddress<TChain extends Chain | undefined>({
+export async function getImplementation<TChain extends Chain | undefined>({
   client,
   address,
 }: {

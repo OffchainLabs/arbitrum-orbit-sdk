@@ -2,7 +2,7 @@ import { it, expect } from 'vitest';
 import { createPublicClient, http, zeroAddress } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
-import { getImplementationAddress } from './getImplementationAddress';
+import { getImplementation } from './getImplementation';
 
 const arbitrumSepoliaPublicClient = createPublicClient({
   chain: arbitrumSepolia,
@@ -10,7 +10,7 @@ const arbitrumSepoliaPublicClient = createPublicClient({
 });
 
 it('fetches no implementation address for RollupCreator v1.1.0 on Arbitrum Sepolia', async () => {
-  const implementation = await getImplementationAddress({
+  const implementation = await getImplementation({
     client: arbitrumSepoliaPublicClient,
     address: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
   });
@@ -18,7 +18,7 @@ it('fetches no implementation address for RollupCreator v1.1.0 on Arbitrum Sepol
 });
 
 it('fetches implementation address for TokenBridgeCreator v1.2.0 on Arbitrum Sepolia', async () => {
-  const implementation = await getImplementationAddress({
+  const implementation = await getImplementation({
     client: arbitrumSepoliaPublicClient,
     address: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
   });
