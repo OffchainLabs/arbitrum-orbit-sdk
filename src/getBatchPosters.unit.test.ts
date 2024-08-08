@@ -9,7 +9,10 @@ import {
 } from 'viem';
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
-import { safeL2ABI, sequencerInboxABI } from './abi';
+
+import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
+import { sequencerInboxABI } from './contracts/SequencerInbox';
+
 import { sequencerInboxPrepareFunctionData } from './sequencerInboxPrepareTransactionRequest';
 import { getBatchPosters } from './getBatchPosters';
 
@@ -123,7 +126,7 @@ function upgradeExecutorSetBatchPosterHelper(args: [Address, boolean]) {
 function safeSetBatchPosterHelper(args: [Address, boolean]) {
   const bytes = upgradeExecutorSetBatchPosterHelper(args);
   return encodeFunctionData({
-    abi: safeL2ABI,
+    abi: gnosisSafeL2ABI,
     functionName: 'execTransaction',
     args: [
       rollupAddress,

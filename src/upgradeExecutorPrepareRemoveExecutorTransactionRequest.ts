@@ -6,7 +6,8 @@ import {
   encodeFunctionData,
   PrepareTransactionRequestReturnType,
 } from 'viem';
-import { upgradeExecutor } from './contracts';
+
+import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import {
   UPGRADE_EXECUTOR_ROLE_EXECUTOR,
   upgradeExecutorEncodeFunctionData,
@@ -59,7 +60,7 @@ export async function upgradeExecutorPrepareRemoveExecutorTransactionRequest<
   // 0. Verify that the account doesn't have the EXECUTOR role already
   const accountHasExecutorRole = await publicClient.readContract({
     address: upgradeExecutorAddress,
-    abi: upgradeExecutor.abi,
+    abi: upgradeExecutorABI,
     functionName: 'hasRole',
     args: [UPGRADE_EXECUTOR_ROLE_EXECUTOR, account],
   });
@@ -69,7 +70,7 @@ export async function upgradeExecutorPrepareRemoveExecutorTransactionRequest<
 
   // 1. Encode the calldata to be sent in the transaction (through the UpgradeExecutor)
   const revokeRoleCalldata = encodeFunctionData({
-    abi: upgradeExecutor.abi,
+    abi: upgradeExecutorABI,
     functionName: 'revokeRole',
     args: [
       UPGRADE_EXECUTOR_ROLE_EXECUTOR, // role

@@ -1,6 +1,7 @@
 import { Client, Transport, Chain } from 'viem';
 
-import { rollupCreator, tokenBridgeCreator } from '../contracts';
+import { rollupCreatorAddress } from '../contracts/RollupCreator';
+import { tokenBridgeCreatorAddress } from '../contracts/TokenBridgeCreator';
 import { validateParentChain } from '../types/ParentChain';
 
 export function getRollupCreatorAddress<TChain extends Chain | undefined>(
@@ -8,11 +9,11 @@ export function getRollupCreatorAddress<TChain extends Chain | undefined>(
 ) {
   const chainId = validateParentChain(client);
 
-  if (!rollupCreator.address[chainId]) {
+  if (!rollupCreatorAddress[chainId]) {
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  return rollupCreator.address[chainId];
+  return rollupCreatorAddress[chainId];
 }
 
 export function getTokenBridgeCreatorAddress<TChain extends Chain | undefined>(
@@ -20,11 +21,11 @@ export function getTokenBridgeCreatorAddress<TChain extends Chain | undefined>(
 ) {
   const chainId = validateParentChain(client);
 
-  if (!tokenBridgeCreator.address[chainId]) {
+  if (!tokenBridgeCreatorAddress[chainId]) {
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  return tokenBridgeCreator.address[chainId];
+  return tokenBridgeCreatorAddress[chainId];
 }
 
 export function getBlockExplorerUrl(chain: Chain) {
