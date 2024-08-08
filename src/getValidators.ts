@@ -11,7 +11,8 @@ import {
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
 import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
-import { rollupAdminLogicABI, safeL2ABI } from './abi';
+import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
+import { rollupAdminLogicABI } from './abi';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
@@ -23,7 +24,7 @@ const setValidatorFunctionSelector = getFunctionSelector(setValidatorABI);
 const executeCallABI = getAbiItem({ abi: upgradeExecutorABI, name: 'executeCall' });
 const upgradeExecutorExecuteCallFunctionSelector = getFunctionSelector(executeCallABI);
 
-const execTransactionABI = getAbiItem({ abi: safeL2ABI, name: 'execTransaction' });
+const execTransactionABI = getAbiItem({ abi: gnosisSafeL2ABI, name: 'execTransaction' });
 const safeL2FunctionSelector = getFunctionSelector(execTransactionABI);
 
 const ownerFunctionCalledEventAbi = getAbiItem({
