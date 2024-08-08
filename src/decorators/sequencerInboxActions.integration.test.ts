@@ -9,7 +9,7 @@ import {
   createRollupHelper,
 } from '../testHelpers';
 import { sequencerInboxActions } from './sequencerInboxActions';
-import { sequencerInboxABI } from '../abi/sequencerInboxABI';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 
 const { l3RollupOwner, l3TokenBridgeDeployer, deployer } = getNitroTestnodePrivateKeyAccounts();
 

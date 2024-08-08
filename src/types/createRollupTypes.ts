@@ -1,9 +1,9 @@
 import { Address, GetFunctionArgs } from 'viem';
 
-import { rollupCreator } from '../contracts';
+import { rollupCreatorABI } from '../contracts/RollupCreator';
 
 export type CreateRollupFunctionInputs = GetFunctionArgs<
-  typeof rollupCreator.abi,
+  typeof rollupCreatorABI,
   'createRollup'
 >['args'];
 

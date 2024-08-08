@@ -1,10 +1,10 @@
 import { Address, PublicClient, Transport, Chain, WalletClient, encodeFunctionData } from 'viem';
 
-import { erc20 } from '../contracts';
+import { erc20ABI } from '../contracts/ERC20';
 
 function approveEncodeFunctionData({ spender, amount }: { spender: Address; amount: bigint }) {
   return encodeFunctionData({
-    abi: erc20.abi,
+    abi: erc20ABI,
     functionName: 'approve',
     args: [spender, amount],
   });
@@ -59,7 +59,7 @@ export async function approve<TChain extends Chain | undefined>({
   // @ts-ignore (todo: fix viem type issue)
   const { request } = await publicClient.simulateContract({
     address: address,
-    abi: erc20.abi,
+    abi: erc20ABI,
     functionName: 'approve',
     args: [spender, amount],
     account,
@@ -84,7 +84,7 @@ export async function fetchAllowance<TChain extends Chain | undefined>({
 }: FetchAllowanceProps<TChain>) {
   return publicClient.readContract({
     address,
-    abi: erc20.abi,
+    abi: erc20ABI,
     functionName: 'allowance',
     args: [owner, spender],
   });
@@ -99,7 +99,7 @@ export function fetchDecimals<TChain extends Chain | undefined>({
 }) {
   return publicClient.readContract({
     address,
-    abi: erc20.abi,
+    abi: erc20ABI,
     functionName: 'decimals',
   });
 }

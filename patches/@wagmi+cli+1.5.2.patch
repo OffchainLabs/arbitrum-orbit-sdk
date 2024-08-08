@@ -19,9 +19,24 @@ index 04a78d1..1574961 100644
      97: string;
      128: string;
 diff --git a/node_modules/@wagmi/cli/dist/plugins/index.js b/node_modules/@wagmi/cli/dist/plugins/index.js
-index 8e23da2..4cc878a 100644
+index 8e23da2..7fa021f 100644
 --- a/node_modules/@wagmi/cli/dist/plugins/index.js
 +++ b/node_modules/@wagmi/cli/dist/plugins/index.js
+@@ -386,12 +386,12 @@ function blockExplorer({
+         throw new Error(parsed.data.result);
+       return parsed.data.result;
+     },
+-    request({ address }) {
++    request({ address, implementation }) {
+       if (!address)
+         throw new Error("address is required");
+       return {
+         url: `${baseUrl}?module=contract&action=getabi&address=${getAddress({
+-          address
++          address, implementation
+         })}${apiKey ? `&apikey=${apiKey}` : ""}`
+       };
+     }
 @@ -1381,12 +1381,15 @@ var apiUrls = {
    [1]: "https://api.etherscan.io/api",
    [5]: "https://api-goerli.etherscan.io/api",
@@ -38,3 +53,18 @@ index 8e23da2..4cc878a 100644
    [56]: "https://api.bscscan.com/api",
    [97]: "https://api-testnet.bscscan.com/api",
    [128]: "https://api.hecoinfo.com/api",
+@@ -1413,12 +1416,12 @@ function etherscan({
+     baseUrl: apiUrls[chainId],
+     cacheDuration,
+     contracts,
+-    getAddress({ address }) {
++    getAddress({ address, implementation = {} }) {
+       if (!address)
+         throw new Error("address is required");
+       if (typeof address === "string")
+         return address;
+-      const contractAddress = address[chainId];
++      const contractAddress = implementation[chainId] ?? address[chainId];
+       if (!contractAddress)
+         throw new Error(
+           `No address found for chainId "${chainId}". Make sure chainId "${chainId}" is set as an address.`

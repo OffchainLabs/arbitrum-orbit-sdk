@@ -9,8 +9,11 @@ import {
 } from 'viem';
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
+
+import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
+import { rollupABI } from './contracts/Rollup';
+
 import { getValidators } from './getValidators';
-import { rollupAdminLogicABI, safeL2ABI } from './abi';
 import { rollupAdminLogicPrepareFunctionData } from './rollupAdminLogicPrepareTransactionRequest';
 
 const client = createPublicClient({
@@ -104,7 +107,7 @@ const rollupAddress = '0xe0875cbd144fe66c015a95e5b2d2c15c3b612179';
 
 function setValidatorHelper(args: [Address[], boolean[]]) {
   return encodeFunctionData({
-    abi: rollupAdminLogicABI,
+    abi: rollupABI,
     functionName: 'setValidator',
     args,
   });
@@ -114,14 +117,14 @@ function upgradeExecutorSetValidatorHelper(args: [Address[], boolean[]]) {
     rollup: rollupAddress,
     functionName: 'setValidator',
     args,
-    abi: rollupAdminLogicABI,
+    abi: rollupABI,
     upgradeExecutor: upgradeExecutorAddress,
   }).data;
 }
 function safeSetValidatorHelper(args: [Address[], boolean[]]) {
   const bytes = upgradeExecutorSetValidatorHelper(args);
   return encodeFunctionData({
-    abi: safeL2ABI,
+    abi: gnosisSafeL2ABI,
     functionName: 'execTransaction',
     args: [
       rollupAddress,

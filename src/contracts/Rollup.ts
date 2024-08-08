@@ -1,6 +1,6 @@
 // from @arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory
 // needs to be copied into this codebase because it is not cast to const in arbitrum sdk
-export const rollupAdminLogicABI = [
+export const rollupABI = [
   {
     anonymous: false,
     inputs: [

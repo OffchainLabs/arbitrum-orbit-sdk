@@ -1,7 +1,7 @@
 {
   "name": "@arbitrum/orbit-sdk",
   "description": "TypeScript SDK for building Arbitrum Orbit chains",
-  "version": "0.17.1",
+  "version": "0.17.2",
   "main": "./dist/index.js",
   "files": [
     "./dist"
@@ -14,10 +14,6 @@
     "./chains": {
       "types": "./dist/chains.d.ts",
       "default": "./dist/chains.js"
-    },
-    "./contracts": {
-      "types": "./dist/contracts.d.ts",
-      "default": "./dist/contracts.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
@@ -32,9 +28,6 @@
     "*": {
       "chains": [
         "./dist/chains.d.ts"
-      ],
-      "contracts": [
-        "./dist/contracts.d.ts"
       ],
       "utils": [
         "./dist/utils/index.d.ts"

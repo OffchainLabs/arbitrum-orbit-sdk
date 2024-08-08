@@ -70,6 +70,15 @@
     // Uncontrolled resource consumption in braces
     // eslint and hardhat dependency, only used in dev
     // from: hardhat>braces & eslint>braces
-    "GHSA-grv7-fg5c-xmjg"
+    "GHSA-grv7-fg5c-xmjg",
+    // elliptic
+    // waiting for it to release a fix but low severity so we can ignore it
+    // from: @ethersproject/signing-key>elliptic
+    // https://github.com/advisories/GHSA-49q7-c7j4-3p7m
+    "GHSA-49q7-c7j4-3p7m",
+    // https://github.com/advisories/GHSA-977x-g7h5-7qgw
+    "GHSA-977x-g7h5-7qgw",
+    // https://github.com/advisories/GHSA-f7q4-pwc6-w24p
+    "GHSA-f7q4-pwc6-w24p"
   ]
 }

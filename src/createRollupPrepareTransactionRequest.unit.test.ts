@@ -6,7 +6,7 @@ import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
-import { rollupCreator } from './contracts';
+import { rollupCreatorAddress } from './contracts/RollupCreator';
 
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 
@@ -225,7 +225,7 @@ it(`successfully prepares a transaction request with the default rollup creator 
 
   expect(txRequest.account).toEqual(deployer.address);
   expect(txRequest.from).toEqual(deployer.address);
-  expect(txRequest.to).toEqual(rollupCreator.address[arbitrumSepolia.id]);
+  expect(txRequest.to).toEqual(rollupCreatorAddress[arbitrumSepolia.id]);
   expect(txRequest.chainId).toEqual(arbitrumSepolia.id);
   expect(txRequest.gas).toEqual(1_000n);
 });

@@ -1,9 +1,11 @@
 import { Address, Chain, PublicClient, Transport, decodeFunctionData, getAbiItem } from 'viem';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
-import { rollupCreator, rollupCreatorV1Dot2ABI } from './contracts';
 
-const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
-const createRollupV1Dot2ABI = getAbiItem({ abi: rollupCreatorV1Dot2ABI, name: 'createRollup' });
+import { rollupCreatorABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1.0';
+
+const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
+const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
 
 function parseConfig(config: { chainConfig: string }): boolean {
   return JSON.parse(config.chainConfig).arbitrum.DataAvailabilityCommittee;
@@ -35,11 +37,11 @@ export async function isAnyTrust<TChain extends Chain | undefined>({
     });
     return parseConfig(config);
   } catch (error) {
-    // try parsing for RollupCreator v1.2
+    // try parsing for RollupCreator v1.1
     const {
       args: [{ config }],
     } = decodeFunctionData({
-      abi: [createRollupV1Dot2ABI],
+      abi: [createRollupV1Dot1ABI],
       data: transaction.input,
     });
     return parseConfig(config);
