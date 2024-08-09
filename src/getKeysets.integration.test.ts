@@ -94,13 +94,12 @@ const keyset =
 const keysetHash = '0xf8bb9a67839d1767e79afe52d21e97a04ee0bf5f816d5b52c10df60cccb7f822';
 
 async function createAnytrustRollup() {
-  const deployerAddress = deployer.address;
-  const batchPoster = deployer.address;
-  const validators: [Address] = [deployerAddress];
+  const batchPosters = [deployer.address];
+  const validators = [deployer.address];
 
   return createRollupHelper({
     deployer: l3TokenBridgeDeployer,
-    batchPoster,
+    batchPosters,
     validators,
     nativeToken: zeroAddress,
     client,

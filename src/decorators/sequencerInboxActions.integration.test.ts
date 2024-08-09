@@ -37,7 +37,7 @@ describe('sequencerInboxReadContract', () => {
       sequencerInbox: l3SequencerInbox,
     });
 
-    expect(result.toLowerCase()).toEqual(l3Bridge);
+    expect(result.toLowerCase()).toEqual(l3Bridge.toLowerCase());
   });
 
   it('successfully fetches dasKeySetInfo', async () => {
@@ -102,7 +102,7 @@ describe('sequencerInboxReadContract', () => {
       sequencerInbox: l3SequencerInbox,
     });
 
-    expect(result.toLowerCase()).toEqual(l3Rollup);
+    expect(result.toLowerCase()).toEqual(l3Rollup.toLowerCase());
   });
 
   it('successfully call totalDelayedMessagesRead', async () => {
@@ -118,13 +118,12 @@ describe('sequencerInboxReadContract', () => {
 describe('sequencerInboxPrepareTransactionRequest', () => {
   it('successfully call setValidKeyset', async () => {
     // Keyset needs to be set on anytrust chain
-    const deployerAddress = deployer.address;
-    const batchPoster = deployer.address;
-    const validators: [Address] = [deployerAddress];
+    const batchPosters = [deployer.address];
+    const validators = [deployer.address];
 
     const { createRollupInformation } = await createRollupHelper({
       deployer: l3TokenBridgeDeployer,
-      batchPoster,
+      batchPosters,
       validators,
       nativeToken: zeroAddress,
       client,
