@@ -1,5 +1,5 @@
 // https://sepolia.arbiscan.io/address/0x3e5c63644e683549055b9be8653de26e0b4cd36e#code
-export const safeL2ABI = [
+export const gnosisSafeL2ABI = [
   {
     anonymous: false,
     inputs: [

@@ -18,11 +18,11 @@ import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { viemTransactionReceiptToEthersTransactionReceipt } from './ethers-compat/viemTransactionReceiptToEthersTransactionReceipt';
 import { ethersTransactionReceiptToViemTransactionReceipt } from './ethers-compat/ethersTransactionReceiptToViemTransactionReceipt';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
-import { tokenBridgeCreator } from './contracts';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 
 function findOrbitTokenBridgeCreatedEventLog(txReceipt: TransactionReceipt) {
-  const abiItem = getAbiItem({ abi: tokenBridgeCreator.abi, name: 'OrbitTokenBridgeCreated' });
+  const abiItem = getAbiItem({ abi: tokenBridgeCreatorABI, name: 'OrbitTokenBridgeCreated' });
   const eventSelector = getEventSelector(abiItem);
   const log = txReceipt.logs.find((log) => log.topics[0] === eventSelector);
 
@@ -36,7 +36,7 @@ function findOrbitTokenBridgeCreatedEventLog(txReceipt: TransactionReceipt) {
 }
 
 function decodeOrbitTokenBridgeCreatedEventLog(log: Log<bigint, number>) {
-  const decodedEventLog = decodeEventLog({ ...log, abi: tokenBridgeCreator.abi });
+  const decodedEventLog = decodeEventLog({ ...log, abi: tokenBridgeCreatorABI });
 
   if (decodedEventLog.eventName !== 'OrbitTokenBridgeCreated') {
     throw new Error(

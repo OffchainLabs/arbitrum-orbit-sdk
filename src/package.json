@@ -15,10 +15,6 @@
       "types": "./dist/chains.d.ts",
       "default": "./dist/chains.js"
     },
-    "./contracts": {
-      "types": "./dist/contracts.d.ts",
-      "default": "./dist/contracts.js"
-    },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
@@ -32,9 +28,6 @@
     "*": {
       "chains": [
         "./dist/chains.d.ts"
-      ],
-      "contracts": [
-        "./dist/contracts.d.ts"
       ],
       "utils": [
         "./dist/utils/index.d.ts"
