@@ -10,7 +10,7 @@ import {
 } from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
-import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1.0';
+import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 import { sequencerInboxABI } from './contracts/SequencerInbox';
 import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';

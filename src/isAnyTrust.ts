@@ -2,7 +2,7 @@ import { Address, Chain, PublicClient, Transport, decodeFunctionData, getAbiItem
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
-import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1.0';
+import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
