@@ -93,6 +93,14 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
+import {
+  feeRouterDeployChildToParentRewardRouter,
+  FeeRouterDeployChildToParentRewardRouterParams,
+} from './feeRouterDeployChildToParentRewardRouter';
+import {
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
+} from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
@@ -108,6 +116,7 @@ import {
 } from './getBatchPosters';
 import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
 import { isAnyTrust } from './isAnyTrust';
+import { parentChainIsArbitrum } from './parentChainIsArbitrum';
 import {
   createSafePrepareTransactionRequest,
   CreateSafePrepareTransactionRequestParams,
@@ -204,6 +213,11 @@ export {
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
   //
+  feeRouterDeployChildToParentRewardRouter,
+  FeeRouterDeployChildToParentRewardRouterParams,
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
+  //
   getDefaultConfirmPeriodBlocks,
   getDefaultSequencerInboxMaxTimeVariation,
   SequencerInboxMaxTimeVariation,
@@ -221,6 +235,7 @@ export {
   GetKeysetsReturnType,
   //
   isAnyTrust,
+  parentChainIsArbitrum,
   //
   createSafePrepareTransactionRequest,
   CreateSafePrepareTransactionRequestParams,

@@ -7,7 +7,7 @@ import {
   Transport,
 } from 'viem';
 
-import { sequencerInbox } from './contracts';
+import { sequencerInboxABI } from './contracts/SequencerInbox';
 import {
   SequencerInboxAbi,
   SequencerInboxFunctionName,
@@ -33,7 +33,7 @@ export function sequencerInboxReadContract<
   // @ts-ignore (todo: fix viem type issue)
   return client.readContract({
     address: params.sequencerInbox,
-    abi: sequencerInbox.abi,
+    abi: sequencerInboxABI,
     functionName: params.functionName,
     args: params.args,
   });
