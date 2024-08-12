@@ -17,10 +17,10 @@ it('fetches no implementation address for RollupCreator v1.1.0 on Arbitrum Sepol
   expect(implementation).toEqual(zeroAddress);
 });
 
-it('fetches implementation address for TokenBridgeCreator v1.2.0 on Arbitrum Sepolia', async () => {
+it('fetches implementation address for TokenBridgeCreator v1.2.2 on Arbitrum Sepolia', async () => {
   const implementation = await getImplementation({
     client: arbitrumSepoliaPublicClient,
     address: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
   });
-  expect(implementation).toEqual('0x4d80b4fd42abd6934df7d9ba536e5cfe2fb7e730');
+  expect(implementation).toEqual('0x6b6e01852716f2d7dab6b8729bb50e67be68bf04');
 });
