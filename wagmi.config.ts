@@ -120,7 +120,7 @@ type ContractConfig = {
 const contracts: ContractConfig[] = [
   {
     name: 'RollupCreator',
-    version: '1.1.0',
+    version: '1.1',
     address: {
       // mainnet L1
       [mainnet.id]: '0x90d68b056c411015eae3ec0b98ad94e2c91419f1',
@@ -141,7 +141,7 @@ const contracts: ContractConfig[] = [
   },
   {
     name: 'TokenBridgeCreator',
-    version: '1.2.0',
+    version: '1.2',
     address: {
       // mainnet L1
       [mainnet.id]: '0x60D9A46F24D5a35b95A78Dd3E793e55D94EE0660',
