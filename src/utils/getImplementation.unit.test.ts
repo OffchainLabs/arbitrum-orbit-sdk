@@ -9,7 +9,7 @@ const arbitrumSepoliaPublicClient = createPublicClient({
   transport: http(),
 });
 
-it('fetches no implementation address for RollupCreator v1.1 on Arbitrum Sepolia', async () => {
+it('fetches no implementation address for RollupCreator v1.1.0 on Arbitrum Sepolia', async () => {
   const implementation = await getImplementation({
     client: arbitrumSepoliaPublicClient,
     address: '0x06E341073b2749e0Bb9912461351f716DeCDa9b0',
