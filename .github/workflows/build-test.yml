@@ -71,7 +71,7 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@feat-simplify
         with:
-          nitro-testnode-ref: 8cb6b84e31909157d431e7e4af9fb83799443e00
+          nitro-testnode-ref: executor-owner
           args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
 
       - name: Copy .env
