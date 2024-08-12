@@ -141,7 +141,7 @@ const contracts: ContractConfig[] = [
   },
   {
     name: 'RollupCreator',
-    version: '2.1.0',
+    version: '2.1',
     address: {
       // mainnet L1
       [mainnet.id]: '0x8c88430658a03497D13cDff7684D37b15aA2F3e1',
