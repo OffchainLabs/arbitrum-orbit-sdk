@@ -66,11 +66,11 @@ export type GetWasmModuleRoot<TConsensusVersion extends ConsensusVersion> = Extr
 export function getWasmModuleRoot<TConsensusVersion extends ConsensusVersion>(
   consensusVersion: TConsensusVersion,
 ): GetWasmModuleRoot<TConsensusVersion> {
-  const wasmModuleRoot = consensusReleases.find(
-    (release) => release.version === consensusVersion,
-  )!.wasmModuleRoot;
+  const wasmModuleRoot = consensusReleases
+    //
+    .find((release) => release.version === consensusVersion)!.wasmModuleRoot;
 
-  return wasmModuleRoot;
+  return wasmModuleRoot as GetWasmModuleRoot<TConsensusVersion>;
 }
 
 export function isKnownWasmModuleRoot(wasmModuleRoot: Hex): wasmModuleRoot is WasmModuleRoot {
