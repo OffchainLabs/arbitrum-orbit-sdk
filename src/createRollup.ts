@@ -144,7 +144,7 @@ export type CreateRollupResults = {
  * } = await createRollup({
  *   params: {
  *     config: createRollupConfig,
- *     batchPoster,
+ *     batchPosters,
  *     validators,
  *  },
  *  account: deployer,
