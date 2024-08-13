@@ -1,9 +1,4 @@
 import {
-  createRollupPrepareConfig,
-  CreateRollupPrepareConfigParams,
-  CreateRollupPrepareConfigResult,
-} from './createRollupPrepareConfig';
-import {
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
@@ -147,10 +142,6 @@ export {
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
   CreateRollupParams,
-  //
-  createRollupPrepareConfig,
-  CreateRollupPrepareConfigParams,
-  CreateRollupPrepareConfigResult,
   //
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
