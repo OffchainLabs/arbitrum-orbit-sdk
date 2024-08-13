@@ -69,16 +69,10 @@ jobs:
         uses: OffchainLabs/actions/node-modules/install@main
 
       - name: Set up the local node
-        uses: OffchainLabs/actions/run-nitro-test-node@main
+        uses: OffchainLabs/actions/run-nitro-test-node@feat-simplify
         with:
-          nitro-testnode-ref: 1647de2c5f75ee0fbe5986e3f20d35bc75191ea6 # https://github.com/OffchainLabs/nitro-testnode/pull/42
-          # Use simple mode
-          no-simple: false
-          # RollupCreator on L1 is deployed by default
-          # RollupCreator on L2 is deployed with --l3node
-          l3-node: true
-          # L3 node with custom fee token when using --l3-fee-token
-          args: --l3-fee-token
+          nitro-testnode-ref: executor-owner
+          args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
 
       - name: Copy .env
         run: cp ./.env.example ./.env

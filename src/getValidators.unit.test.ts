@@ -21,6 +21,11 @@ const client = createPublicClient({
   transport: http(),
 });
 
+const arbitrumSepoliaClient = createPublicClient({
+  chain: arbitrumSepolia,
+  transport: http(),
+});
+
 function mockLog(transactionHash: string) {
   return {
     address: '0x193e2887031c148ab54f5e856ea51ae521661200',
@@ -146,6 +151,24 @@ it('getValidators return all validators (Xai)', async () => {
     rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336',
   });
   expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0x5b0b49e0259289fc89949a55a5ad35a8939440a55065d29b14e5e7ef7494efff
+it('getValidators returns validators for a chain created with RollupCreator v1.1', async () => {
+  const { isAccurate, validators } = await getValidators(arbitrumSepoliaClient, {
+    rollup: '0x1644590Fd2223264ea8Cda8927B038CcCFE0Da76',
+  });
+  expect(validators).toEqual(['0x8E842599F71ABD661737bb3108a53E5b1787c791']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0xfd638529dec24963075ee8fcd9df0d319c21190a9e3f3cb5e91d7da353666b06
+it('getValidators returns validators for a chain created with RollupCreator v2.1', async () => {
+  const { isAccurate, validators } = await getValidators(arbitrumSepoliaClient, {
+    rollup: '0x16A95119425638cAaD6d302D75B270ecDBf37649',
+  });
+  expect(validators).toEqual(['0xbD7621A2bB0e4B768F1e1756dC500e2c44f02649']);
   expect(isAccurate).toBeTruthy();
 });
 
