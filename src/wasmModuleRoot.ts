@@ -51,7 +51,7 @@ const consensusReleases = [
     version: 31,
     wasmModuleRoot: '0x260f5fa5c3176a856893642e149cf128b5a8de9f828afec8d11184415dd8dc69',
   },
-] as const satisfies ConsensusRelease[];
+] as const satisfies readonly ConsensusRelease[];
 
 type ConsensusReleases = typeof consensusReleases;
 
