@@ -140,6 +140,27 @@ const contracts: ContractConfig[] = [
     },
   },
   {
+    name: 'RollupCreator',
+    version: '2.1',
+    address: {
+      // mainnet L1
+      [mainnet.id]: '0x8c88430658a03497D13cDff7684D37b15aA2F3e1',
+      // mainnet L2
+      [arbitrumOne.id]: '0x79607f00e61E6d7C0E6330bd7E9c4AC320D50FC9',
+      [arbitrumNova.id]: '0x9B523BF5F77e8d90e0E9eb0924aEA6E40B081aE6',
+      [base.id]: '0x091b8FC0F48613b191f81009797ce55Cf97Af7C8',
+      // testnet L1
+      [sepolia.id]: '0xfb774ea8a92ae528a596c8d90cbcf1bdbc4cee79',
+      [holesky.id]: '0x03c70F125Df471E4fd0515ca38504edFE6900F19',
+      // testnet L2
+      [arbitrumSepolia.id]: '0xd2Ec8376B1dF436fAb18120E416d3F2BeC61275b',
+      [baseSepolia.id]: '0x6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502',
+      // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
+      [nitroTestnodeL1.id]: '0x82a3c114b40ecf1fc34745400a1b9b9115c33d31',
+      [nitroTestnodeL2.id]: '0x4287839696d650a0cf93b98351e85199102335d0',
+    },
+  },
+  {
     name: 'TokenBridgeCreator',
     version: '1.2',
     address: {
@@ -156,8 +177,8 @@ const contracts: ContractConfig[] = [
       [arbitrumSepolia.id]: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
       [baseSepolia.id]: '0xFC71d21a4FE10Cc0d34745ba9c713836f82f8DE3',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
-      [nitroTestnodeL1.id]: '0x54B4D4e578E10178a6cA602bdb6df0F213296Af4',
-      [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',
+      [nitroTestnodeL1.id]: '0x4Af567288e68caD4aA93A272fe6139Ca53859C70',
+      [nitroTestnodeL2.id]: '0x38F35Af53bF913c439eaB06A367e09D6eb253492',
     },
   },
   {
@@ -189,7 +210,7 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
     return;
   }
 
-  console.log(`- ${contract.name}`);
+  console.log(`- ${contract.name}${contract.version ? ` v${contract.version}` : ''}`);
 
   const abiHashes = await Promise.all(
     Object.entries(contract.address)
@@ -218,7 +239,7 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
     throw new Error(`- ${contract.name}`);
   }
 
-  console.log(`- ${contract.name} ✔\n`);
+  console.log(`- ${contract.name}${contract.version ? ` v${contract.version}` : ''} ✔\n`);
 }
 
 async function updateContractWithImplementationIfProxy(contract: ContractConfig) {
@@ -265,6 +286,7 @@ export default async function () {
         etherscan({
           chainId: arbitrumSepolia.id,
           apiKey: arbiscanApiKey,
+          // todo: fix viem type issue
           contracts: [contract],
           cacheDuration: 0,
         }),

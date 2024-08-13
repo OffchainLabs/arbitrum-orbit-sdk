@@ -66,7 +66,7 @@ async function main() {
     await createRollup({
       params: {
         config: createRollupConfig,
-        batchPoster,
+        batchPosters: [batchPoster],
         validators: [validator],
       },
       account: deployer,
