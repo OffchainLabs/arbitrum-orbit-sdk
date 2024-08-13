@@ -124,6 +124,13 @@ import {
   setAnyTrustFastConfirmerPrepareTransactionRequest,
   SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
 } from './setAnyTrustFastConfirmerPrepareTransactionRequest';
+import {
+  ConsensusVersion,
+  WasmModuleRoot,
+  GetWasmModuleRoot,
+  getWasmModuleRoot,
+  isKnownWasmModuleRoot,
+} from './wasmModuleRoot';
 
 export {
   arbOwnerPublicActions,
@@ -228,4 +235,10 @@ export {
   CreateSafeTransactionReceipt,
   setAnyTrustFastConfirmerPrepareTransactionRequest,
   SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
+  //
+  ConsensusVersion,
+  WasmModuleRoot,
+  GetWasmModuleRoot,
+  getWasmModuleRoot,
+  isKnownWasmModuleRoot,
 };
