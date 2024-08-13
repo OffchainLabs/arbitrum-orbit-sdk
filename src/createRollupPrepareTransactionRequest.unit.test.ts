@@ -37,7 +37,6 @@ it(`fails to prepare transaction request if "params.batchPosters" is set to an e
           owner: deployer.address,
           chainConfig,
         }),
-        // set batch poster to the zero address
         batchPosters: [],
         validators: [deployer.address],
       },
@@ -66,8 +65,8 @@ it(`fails to prepare transaction request if "params.batchPosters" includes the z
           owner: deployer.address,
           chainConfig,
         }),
-        // set batch poster to the zero address
-        batchPosters: [zeroAddress],
+        // set batch posters array to include zero address
+        batchPosters: [zeroAddress, deployer.address],
         validators: [deployer.address],
       },
       account: deployer.address,
