@@ -69,7 +69,7 @@ async function main() {
         owner: deployer.address,
         chainConfig,
       }),
-      batchPoster,
+      batchPosters: [batchPoster],
       validators: [validator],
     },
     account: deployer.address,

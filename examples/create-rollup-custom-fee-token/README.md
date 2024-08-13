@@ -23,7 +23,7 @@ const createRollupConfig = createRollupPrepareDeploymentParamsConfig(parentChain
 await createRollup({
   params: {
     config: createRollupConfig,
-    batchPoster,
+    batchPosters: [batchPoster],
     validators: [validator],
     nativeToken,
   },
