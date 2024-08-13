@@ -286,6 +286,7 @@ export default async function () {
         etherscan({
           chainId: arbitrumSepolia.id,
           apiKey: arbiscanApiKey,
+          // todo: fix viem type issue
           contracts: [contract],
           cacheDuration: 0,
         }),
