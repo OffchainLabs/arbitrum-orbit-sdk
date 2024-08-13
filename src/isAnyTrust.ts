@@ -27,23 +27,33 @@ export async function isAnyTrust<TChain extends Chain | undefined>({
     hash: createRollupTransactionHash,
   });
 
-  try {
-    // try parsing for RollupCreator v2.1
-    const {
-      args: [{ config }],
-    } = decodeFunctionData({
-      abi: [createRollupABI],
-      data: transaction.input,
-    });
-    return parseConfig(config);
-  } catch (error) {
-    // try parsing for RollupCreator v1.1
-    const {
-      args: [{ config }],
-    } = decodeFunctionData({
-      abi: [createRollupV1Dot1ABI],
-      data: transaction.input,
-    });
-    return parseConfig(config);
+  let result: boolean | null = null;
+  // try parsing from multiple RollupCreator versions
+  [
+    // v2.1
+    createRollupABI,
+    // v1.1
+    createRollupV1Dot1ABI,
+  ].forEach((abi) => {
+    try {
+      const {
+        args: [{ config }],
+      } = decodeFunctionData({
+        abi: [abi],
+        data: transaction.input,
+      });
+
+      result = parseConfig(config);
+    } catch (error) {
+      // do nothing
+    }
+  });
+
+  if (result === null) {
+    throw new Error(
+      `[isAnyTrust] failed to decode input data for transaction ${createRollupTransactionHash}`,
+    );
   }
+
+  return result;
 }
