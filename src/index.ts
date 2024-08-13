@@ -134,6 +134,7 @@ import {
   WasmModuleRoot,
   GetWasmModuleRoot,
   getWasmModuleRoot,
+  isKnownWasmModuleRoot,
 } from './wasmModuleRoot';
 
 export {
@@ -248,4 +249,5 @@ export {
   WasmModuleRoot,
   GetWasmModuleRoot,
   getWasmModuleRoot,
+  isKnownWasmModuleRoot,
 };

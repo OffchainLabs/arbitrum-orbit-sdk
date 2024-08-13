@@ -72,3 +72,11 @@ export function getWasmModuleRoot<TConsensusVersion extends ConsensusVersion>(
 
   return wasmModuleRoot;
 }
+
+export function isKnownWasmModuleRoot(wasmModuleRoot: Hex): wasmModuleRoot is WasmModuleRoot {
+  return (
+    (consensusReleases.map((release) => release.wasmModuleRoot) as Hex[])
+      //
+      .includes(wasmModuleRoot)
+  );
+}
