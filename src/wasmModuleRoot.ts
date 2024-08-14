@@ -68,7 +68,7 @@ export function getConsensusReleaseByVersion<TConsensusVersion extends Consensus
 ): GetConsensusReleaseByVersion<TConsensusVersion> {
   const consensusRelease = consensusReleases
     //
-    .find((release) => release.version === consensusVersion)!;
+    .find((release) => release.version === consensusVersion);
 
   return consensusRelease as GetConsensusReleaseByVersion<TConsensusVersion>;
 }
@@ -83,7 +83,7 @@ export function getConsensusReleaseByWasmModuleRoot<TWasmModuleRoot extends Wasm
 ): GetConsensusReleaseByWasmModuleRoot<TWasmModuleRoot> {
   const consensusRelease = consensusReleases
     //
-    .find((release) => release.wasmModuleRoot === wasmModuleRoot)!;
+    .find((release) => release.wasmModuleRoot === wasmModuleRoot);
 
   return consensusRelease as GetConsensusReleaseByWasmModuleRoot<TWasmModuleRoot>;
 }
