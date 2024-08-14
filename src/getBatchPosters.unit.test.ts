@@ -21,6 +21,11 @@ const client = createPublicClient({
   transport: http(),
 });
 
+const arbitrumSepoliaClient = createPublicClient({
+  chain: arbitrumSepolia,
+  transport: http(),
+});
+
 function mockLog(transactionHash: string) {
   return {
     address: '0x193e2887031c148ab54f5e856ea51ae521661200',
@@ -149,6 +154,26 @@ it('getBatchPosters returns all batch posters (Xai)', async () => {
     sequencerInbox: '0x995a9d3ca121D48d21087eDE20bc8acb2398c8B1',
   });
   expect(batchPosters).toEqual(['0x7F68dba68E72a250004812fe04F1123Fca89aBa9']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0x5b0b49e0259289fc89949a55a5ad35a8939440a55065d29b14e5e7ef7494efff
+it('getBatchPosters returns batch posters for a chain created with RollupCreator v1.1', async () => {
+  const { isAccurate, batchPosters } = await getBatchPosters(arbitrumSepoliaClient, {
+    rollup: '0x1644590Fd2223264ea8Cda8927B038CcCFE0Da76',
+    sequencerInbox: '0x96bA492C55Af83dfC88D52A1e584e4061716e9e8',
+  });
+  expect(batchPosters).toEqual(['0x3C3A5b44FAB0e2025160a765348c21C08e41d1Af']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0xfd638529dec24963075ee8fcd9df0d319c21190a9e3f3cb5e91d7da353666b06
+it('getBatchPosters returns batch posters for a chain created with RollupCreator v2.1', async () => {
+  const { isAccurate, batchPosters } = await getBatchPosters(arbitrumSepoliaClient, {
+    rollup: '0x16A95119425638cAaD6d302D75B270ecDBf37649',
+    sequencerInbox: '0xbE20C632d1DaD19285575580Aaa60C9B1207d531',
+  });
+  expect(batchPosters).toEqual(['0x551B0B7DA75530544aF467183E626778412491Da']);
   expect(isAccurate).toBeTruthy();
 });
 

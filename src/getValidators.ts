@@ -10,6 +10,7 @@ import {
 } from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
 import { rollupABI } from './contracts/Rollup';
@@ -18,6 +19,9 @@ import { createRollupFetchTransactionHash } from './createRollupFetchTransaction
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
+
+const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
+const createRollupV1Dot1FunctionSelector = getFunctionSelector(createRollupV1Dot1ABI);
 
 const setValidatorABI = getAbiItem({ abi: rollupABI, name: 'setValidator' });
 const setValidatorFunctionSelector = getFunctionSelector(setValidatorABI);
@@ -31,7 +35,10 @@ const safeL2FunctionSelector = getFunctionSelector(execTransactionABI);
 const ownerFunctionCalledEventAbi = getAbiItem({ abi: rollupABI, name: 'OwnerFunctionCalled' });
 
 function getValidatorsFromFunctionData<
-  TAbi extends (typeof createRollupABI)[] | (typeof setValidatorABI)[],
+  TAbi extends
+    | (typeof createRollupABI)[]
+    | (typeof createRollupV1Dot1ABI)[]
+    | (typeof setValidatorABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
@@ -135,6 +142,14 @@ export async function getValidators<TChain extends Chain | undefined>(
       case createRollupFunctionSelector: {
         const [{ validators }] = getValidatorsFromFunctionData({
           abi: [createRollupABI],
+          data: tx.input,
+        });
+
+        return new Set([...acc, ...validators]);
+      }
+      case createRollupV1Dot1FunctionSelector: {
+        const [{ validators }] = getValidatorsFromFunctionData({
+          abi: [createRollupV1Dot1ABI],
           data: tx.input,
         });
 
