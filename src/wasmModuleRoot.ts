@@ -80,3 +80,18 @@ export function isKnownWasmModuleRoot(wasmModuleRoot: Hex): wasmModuleRoot is Wa
       .includes(wasmModuleRoot)
   );
 }
+
+export type GetConsensusVersion<TWasmModuleRoot extends WasmModuleRoot> = Extract<
+  ConsensusReleases[number],
+  { wasmModuleRoot: TWasmModuleRoot }
+>['version'];
+
+export function getConsensusVersion<TWasmModuleRoot extends WasmModuleRoot>(
+  wasmModuleRoot: TWasmModuleRoot,
+): GetConsensusVersion<TWasmModuleRoot> {
+  const consensusVersion = consensusReleases
+    //
+    .find((release) => release.wasmModuleRoot === wasmModuleRoot)!.version;
+
+  return consensusVersion as GetConsensusVersion<TWasmModuleRoot>;
+}
