@@ -130,6 +130,8 @@ import {
   GetWasmModuleRoot,
   getWasmModuleRoot,
   isKnownWasmModuleRoot,
+  GetConsensusVersion,
+  getConsensusVersion,
 } from './wasmModuleRoot';
 
 export {
@@ -241,4 +243,6 @@ export {
   GetWasmModuleRoot,
   getWasmModuleRoot,
   isKnownWasmModuleRoot,
+  GetConsensusVersion,
+  getConsensusVersion,
 };
