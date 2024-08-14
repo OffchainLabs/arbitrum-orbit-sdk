@@ -126,12 +126,12 @@ import {
 } from './setAnyTrustFastConfirmerPrepareTransactionRequest';
 import {
   ConsensusVersion,
+  getConsensusReleaseByVersion,
+  GetConsensusReleaseByVersion,
   WasmModuleRoot,
-  GetWasmModuleRoot,
-  getWasmModuleRoot,
   isKnownWasmModuleRoot,
-  GetConsensusVersion,
-  getConsensusVersion,
+  getConsensusReleaseByWasmModuleRoot,
+  GetConsensusReleaseByWasmModuleRoot,
 } from './wasmModuleRoot';
 
 export {
@@ -239,10 +239,10 @@ export {
   SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
   //
   ConsensusVersion,
+  getConsensusReleaseByVersion,
+  GetConsensusReleaseByVersion,
   WasmModuleRoot,
-  GetWasmModuleRoot,
-  getWasmModuleRoot,
   isKnownWasmModuleRoot,
-  GetConsensusVersion,
-  getConsensusVersion,
+  getConsensusReleaseByWasmModuleRoot,
+  GetConsensusReleaseByWasmModuleRoot,
 };
