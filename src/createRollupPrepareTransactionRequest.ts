@@ -85,7 +85,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   if (isKnownWasmModuleRoot(wasmModuleRoot)) {
     const consensusRelease = getConsensusReleaseByWasmModuleRoot(wasmModuleRoot);
 
-    if (arbOSVersion > consensusRelease.maxSupportedArbOSVersion) {
+    if (arbOSVersion > consensusRelease.maxArbOSVersion) {
       throw new Error(
         `Consensus v${consensusRelease.version} does not support ArbOS ${arbOSVersion}. Please update your "wasmModuleRoot" to that of a Consensus version compatible with ArbOS ${arbOSVersion}.`,
       );
