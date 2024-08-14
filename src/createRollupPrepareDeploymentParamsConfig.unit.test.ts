@@ -16,7 +16,7 @@ function getOverrides({ owner, chainId }: { owner: Address; chainId: bigint }) {
       chainId: Number(chainId),
       arbitrum: {
         InitialChainOwner: owner,
-        InitialArbOSVersion: 30,
+        InitialArbOSVersion: 20,
         DataAvailabilityCommittee: true,
       },
     }),
