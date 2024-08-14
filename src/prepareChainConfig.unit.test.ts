@@ -20,12 +20,9 @@ it('creates chain config with custom params', () => {
   const params: PrepareChainConfigParams = {
     chainId,
     arbitrum: {
-      EnableArbOS: false,
-      AllowDebugPrecompiles: true,
-      DataAvailabilityCommittee: true,
-      InitialArbOSVersion: 20,
       InitialChainOwner: vitalik,
-      GenesisBlockNum: 1,
+      InitialArbOSVersion: 20,
+      DataAvailabilityCommittee: true,
       MaxCodeSize: 40 * 1024,
       MaxInitCodeSize: 80 * 1024,
     },

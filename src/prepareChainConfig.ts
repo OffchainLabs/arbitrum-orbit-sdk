@@ -1,4 +1,4 @@
-import { Prettify, RequireSome } from './types/utils';
+import { ExcludeSome, Prettify, RequireSome } from './types/utils';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 
 export const defaults = {
@@ -38,7 +38,12 @@ export type PrepareChainConfigParams = Prettify<
 >;
 
 export type PrepareChainConfigArbitrumParams = RequireSome<
-  ChainConfigArbitrumParams,
+  // exclude some fields that shouldn't be changed
+  ExcludeSome<
+    ChainConfigArbitrumParams,
+    'EnableArbOS' | 'GenesisBlockNum' | 'AllowDebugPrecompiles'
+  >,
+  // make InitialChainOwner required
   'InitialChainOwner'
 >;
 

@@ -3,10 +3,10 @@
 exports[`creates chain config with custom params 1`] = `
 {
   "arbitrum": {
-    "AllowDebugPrecompiles": true,
+    "AllowDebugPrecompiles": false,
     "DataAvailabilityCommittee": true,
-    "EnableArbOS": false,
-    "GenesisBlockNum": 1,
+    "EnableArbOS": true,
+    "GenesisBlockNum": 0,
     "InitialArbOSVersion": 20,
     "InitialChainOwner": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
     "MaxCodeSize": 40960,
