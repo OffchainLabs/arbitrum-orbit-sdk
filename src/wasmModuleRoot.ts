@@ -1,6 +1,6 @@
 import { Hex } from 'viem';
 
-export type ConsensusRelease = {
+type ConsensusRelease = {
   version: number;
   wasmModuleRoot: Hex;
 };
@@ -58,19 +58,34 @@ type ConsensusReleases = typeof consensusReleases;
 export type ConsensusVersion = ConsensusReleases[number]['version'];
 export type WasmModuleRoot = ConsensusReleases[number]['wasmModuleRoot'];
 
-export type GetWasmModuleRoot<TConsensusVersion extends ConsensusVersion> = Extract<
+export type GetConsensusReleaseByVersion<TConsensusVersion extends ConsensusVersion> = Extract<
   ConsensusReleases[number],
   { version: TConsensusVersion }
->['wasmModuleRoot'];
+>;
 
-export function getWasmModuleRoot<TConsensusVersion extends ConsensusVersion>(
+export function getConsensusReleaseByVersion<TConsensusVersion extends ConsensusVersion>(
   consensusVersion: TConsensusVersion,
-): GetWasmModuleRoot<TConsensusVersion> {
-  const wasmModuleRoot = consensusReleases
+): GetConsensusReleaseByVersion<TConsensusVersion> {
+  const consensusRelease = consensusReleases
     //
-    .find((release) => release.version === consensusVersion)!.wasmModuleRoot;
+    .find((release) => release.version === consensusVersion)!;
 
-  return wasmModuleRoot as GetWasmModuleRoot<TConsensusVersion>;
+  return consensusRelease as GetConsensusReleaseByVersion<TConsensusVersion>;
+}
+
+export type GetConsensusReleaseByWasmModuleRoot<TWasmModuleRoot extends WasmModuleRoot> = Extract<
+  ConsensusReleases[number],
+  { wasmModuleRoot: TWasmModuleRoot }
+>;
+
+export function getConsensusReleaseByWasmModuleRoot<TWasmModuleRoot extends WasmModuleRoot>(
+  wasmModuleRoot: TWasmModuleRoot,
+): GetConsensusReleaseByWasmModuleRoot<TWasmModuleRoot> {
+  const consensusRelease = consensusReleases
+    //
+    .find((release) => release.wasmModuleRoot === wasmModuleRoot)!;
+
+  return consensusRelease as GetConsensusReleaseByWasmModuleRoot<TWasmModuleRoot>;
 }
 
 export function isKnownWasmModuleRoot(wasmModuleRoot: Hex): wasmModuleRoot is WasmModuleRoot {
@@ -79,19 +94,4 @@ export function isKnownWasmModuleRoot(wasmModuleRoot: Hex): wasmModuleRoot is Wa
       //
       .includes(wasmModuleRoot)
   );
-}
-
-export type GetConsensusVersion<TWasmModuleRoot extends WasmModuleRoot> = Extract<
-  ConsensusReleases[number],
-  { wasmModuleRoot: TWasmModuleRoot }
->['version'];
-
-export function getConsensusVersion<TWasmModuleRoot extends WasmModuleRoot>(
-  wasmModuleRoot: TWasmModuleRoot,
-): GetConsensusVersion<TWasmModuleRoot> {
-  const consensusVersion = consensusReleases
-    //
-    .find((release) => release.wasmModuleRoot === wasmModuleRoot)!.version;
-
-  return consensusVersion as GetConsensusVersion<TWasmModuleRoot>;
 }
