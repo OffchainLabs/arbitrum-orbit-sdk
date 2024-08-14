@@ -1,3 +1,4 @@
+import { Prettify, RequireSome } from './types/utils';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 
 export const defaults = {
@@ -30,17 +31,21 @@ export const defaults = {
   },
 };
 
-export type PrepareChainConfigParams = Pick<ChainConfig, 'chainId'> &
-  Partial<Omit<ChainConfig, 'chainId' | 'arbitrum'>> & {
-    arbitrum: Pick<ChainConfigArbitrumParams, 'InitialChainOwner'> &
-      Partial<Omit<ChainConfigArbitrumParams, 'InitialChainOwner'>>;
-  };
+export type PrepareChainConfigParams = Prettify<
+  Pick<ChainConfig, 'chainId'> & {
+    arbitrum: PrepareChainConfigArbitrumParams;
+  }
+>;
+
+export type PrepareChainConfigArbitrumParams = RequireSome<
+  ChainConfigArbitrumParams,
+  'InitialChainOwner'
+>;
 
 export function prepareChainConfig(params: PrepareChainConfigParams): ChainConfig {
   return {
     ...defaults,
-    ...params,
-    clique: { ...defaults.clique, ...params.clique },
+    chainId: params.chainId,
     arbitrum: { ...defaults.arbitrum, ...params.arbitrum },
   };
 }
