@@ -163,12 +163,17 @@ it('getValidators returns validators for a chain created with RollupCreator v1.1
   expect(isAccurate).toBeTruthy();
 });
 
-// https://sepolia.arbiscan.io/tx/0xfd638529dec24963075ee8fcd9df0d319c21190a9e3f3cb5e91d7da353666b06
+// https://sepolia.arbiscan.io/tx/0x77db43157182a69ce0e6d2a0564d2dabb43b306d48ea7b4d877160d6a1c9b66d
 it('getValidators returns validators for a chain created with RollupCreator v2.1', async () => {
   const { isAccurate, validators } = await getValidators(arbitrumSepoliaClient, {
-    rollup: '0x16A95119425638cAaD6d302D75B270ecDBf37649',
+    rollup: '0x66d0e72952f4f69aF9D33C1B7C31Fa9aCDbCAF63',
   });
-  expect(validators).toEqual(['0xbD7621A2bB0e4B768F1e1756dC500e2c44f02649']);
+  expect(validators).toEqual([
+    '0xDBb2c9923b5DE18B151bC55Ed571EDcd1fC7EeB9',
+    '0x84B2EFFDd54aA5dce861440Ae9B9D320b043a64c',
+    '0x39B4Ce32E557225a401917a701ac4d267648635a',
+    '0xe2D0cC872647B1A129B942BbFC980B31E8e94Df2',
+  ]);
   expect(isAccurate).toBeTruthy();
 });
 
