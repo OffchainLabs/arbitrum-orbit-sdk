@@ -3,7 +3,11 @@ import {
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
 } from './createRollupPrepareDeploymentParamsConfig';
-import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
+import {
+  prepareChainConfig,
+  PrepareChainConfigParams,
+  PrepareChainConfigArbitrumParams,
+} from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
@@ -151,6 +155,8 @@ export {
   //
   prepareChainConfig,
   PrepareChainConfigParams,
+  PrepareChainConfigArbitrumParams,
+  //
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
