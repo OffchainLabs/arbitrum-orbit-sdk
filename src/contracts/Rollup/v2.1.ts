@@ -179,6 +179,13 @@ export const rollupABI = [
   },
   {
     inputs: [],
+    name: 'anyTrustFastConfirmer',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'baseStake',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
@@ -614,6 +621,13 @@ export const rollupABI = [
     name: 'sequencerInbox',
     outputs: [{ internalType: 'contract ISequencerInbox', name: '', type: 'address' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_anyTrustFastConfirmer', type: 'address' }],
+    name: 'setAnyTrustFastConfirmer',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
