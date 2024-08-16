@@ -38,6 +38,9 @@
       ],
       "constants": [
         "./dist/constants.d.ts"
+      ],
+      "contracts/*": [
+        "./dist/contracts/*.d.ts"
       ]
     }
   },
