@@ -24,8 +24,8 @@
       "default": "./dist/constants.js"
     },
     "./contracts/*": {
-      "types": "./dist/contracts/*.d.ts",
-      "default": "./dist/contracts/*.js"
+      "types": "./dist/contracts/*",
+      "default": "./dist/contracts/*"
     }
   },
   "typesVersions": {
@@ -40,7 +40,7 @@
         "./dist/constants.d.ts"
       ],
       "contracts/*": [
-        "./dist/contracts/*.d.ts"
+        "./dist/contracts/*"
       ]
     }
   },
