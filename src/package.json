@@ -23,7 +23,10 @@
       "types": "./dist/constants.d.ts",
       "default": "./dist/constants.js"
     },
-    "./contracts/*": "./dist/contracts/*"
+    "./contracts/*": {
+      "types": "./dist/contracts/*.d.ts",
+      "default": "./dist/contracts/*.js"
+    }
   },
   "typesVersions": {
     "*": {
