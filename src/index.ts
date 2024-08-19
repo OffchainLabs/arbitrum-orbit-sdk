@@ -137,7 +137,7 @@ import {
   getConsensusReleaseByWasmModuleRoot,
   GetConsensusReleaseByWasmModuleRoot,
 } from './wasmModuleRoot';
-import { getMaxTimeVariation, isBatchPoster, isValidKeysetHash } from './actions';
+export * from './actions';
 
 export {
   arbOwnerPublicActions,
@@ -252,8 +252,4 @@ export {
   isKnownWasmModuleRoot,
   getConsensusReleaseByWasmModuleRoot,
   GetConsensusReleaseByWasmModuleRoot,
-  //
-  getMaxTimeVariation,
-  isBatchPoster,
-  isValidKeysetHash,
 };
