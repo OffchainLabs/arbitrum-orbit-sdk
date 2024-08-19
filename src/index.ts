@@ -137,6 +137,7 @@ import {
   getConsensusReleaseByWasmModuleRoot,
   GetConsensusReleaseByWasmModuleRoot,
 } from './wasmModuleRoot';
+export * from './actions';
 
 export {
   arbOwnerPublicActions,
