@@ -11,7 +11,7 @@ import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import { ActionParameters, WithAccount } from '../types/Actions';
 import { Prettify } from '../types/utils';
 
-export type InvalidateKeysetHashParameters<Curried extends boolean = false> = Prettify<
+export type PrepareInvalidateKeysetHashParameters<Curried extends boolean = false> = Prettify<
   WithAccount<
     ActionParameters<
       {
@@ -23,9 +23,9 @@ export type InvalidateKeysetHashParameters<Curried extends boolean = false> = Pr
   >
 >;
 
-export type InvalidateKeysetHashReturnType = PrepareTransactionRequestReturnType;
+export type PrepareInvalidateKeysetHashReturnType = PrepareTransactionRequestReturnType;
 
-function sequencerInboxFunctionData({ keysetHash }: InvalidateKeysetHashParameters) {
+function sequencerInboxFunctionData({ keysetHash }: PrepareInvalidateKeysetHashParameters) {
   return encodeFunctionData({
     abi: sequencerInboxABI,
     functionName: 'invalidateKeysetHash',
@@ -33,10 +33,10 @@ function sequencerInboxFunctionData({ keysetHash }: InvalidateKeysetHashParamete
   });
 }
 
-export async function invalidateKeysetHash<TChain extends Chain | undefined>(
+export async function prepareInvalidateKeysetHash<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: InvalidateKeysetHashParameters,
-): Promise<InvalidateKeysetHashReturnType> {
+  args: PrepareInvalidateKeysetHashParameters,
+): Promise<PrepareInvalidateKeysetHashReturnType> {
   const data = sequencerInboxFunctionData(args);
 
   return client.prepareTransactionRequest({

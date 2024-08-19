@@ -16,16 +16,16 @@ type Args = {
   delaySeconds: bigint;
   futureSeconds: bigint;
 };
-export type SetMaxTimeVariationParameters<Curried extends boolean = false> = Prettify<
+export type PrepareSetMaxTimeVariationParameters<Curried extends boolean = false> = Prettify<
   WithUpgradeExecutor<WithAccount<ActionParameters<Args, 'sequencerInbox', Curried>>>
 >;
 
-export type SetMaxTimeVariationReturnType = PrepareTransactionRequestReturnTypeWithChainId;
+export type PrepareSetMaxTimeVariationReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
-export async function setMaxTimeVariation<TChain extends Chain | undefined>(
+export async function prepareSetMaxTimeVariation<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: SetMaxTimeVariationParameters,
-): Promise<SetMaxTimeVariationReturnType> {
+  params: PrepareSetMaxTimeVariationParameters,
+): Promise<PrepareSetMaxTimeVariationReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
   const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
