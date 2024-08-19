@@ -2,14 +2,18 @@ import {
   Chain,
   Hex,
   PrepareTransactionRequestParameters,
-  PrepareTransactionRequestReturnType,
   PublicClient,
   Transport,
   encodeFunctionData,
 } from 'viem';
 import { sequencerInboxABI } from '../contracts/SequencerInbox';
-import { ActionParameters, WithAccount } from '../types/Actions';
+import {
+  ActionParameters,
+  PrepareTransactionRequestReturnTypeWithChainId,
+  WithAccount,
+} from '../types/Actions';
 import { Prettify } from '../types/utils';
+import { validateParentChainPublicClient } from '../types/ParentChain';
 
 export type BuildInvalidateKeysetHashParameters<Curried extends boolean = false> = Prettify<
   WithAccount<
@@ -23,7 +27,7 @@ export type BuildInvalidateKeysetHashParameters<Curried extends boolean = false>
   >
 >;
 
-export type BuildInvalidateKeysetHashReturnType = PrepareTransactionRequestReturnType;
+export type BuildInvalidateKeysetHashReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
 function sequencerInboxFunctionData({ keysetHash }: BuildInvalidateKeysetHashParameters) {
   return encodeFunctionData({
@@ -37,13 +41,16 @@ export async function buildInvalidateKeysetHash<TChain extends Chain | undefined
   client: PublicClient<Transport, TChain>,
   args: BuildInvalidateKeysetHashParameters,
 ): Promise<BuildInvalidateKeysetHashReturnType> {
+  const validatedPublicClient = validateParentChainPublicClient(client);
   const data = sequencerInboxFunctionData(args);
 
-  return client.prepareTransactionRequest({
+  const request = await client.prepareTransactionRequest({
     to: args.sequencerInbox,
     value: BigInt(0),
     chain: client.chain,
     data,
     account: args.account,
   } satisfies PrepareTransactionRequestParameters);
+
+  return { ...request, chainId: validatedPublicClient.chain.id };
 }
