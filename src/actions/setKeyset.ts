@@ -1,5 +1,5 @@
 import { Chain, Hex, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
-import { sequencerInbox } from '../contracts';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import {
   ActionParameters,
   PrepareTransactionRequestReturnTypeWithChainId,
@@ -40,7 +40,7 @@ export async function setKeyset<TChain extends Chain | undefined>(
       to: sequencerInboxAddress,
       upgradeExecutor,
       args: [args.keyset],
-      abi: sequencerInbox.abi,
+      abi: sequencerInboxABI,
       functionName: 'setValidKeyset',
     }),
   } satisfies PrepareTransactionRequestParameters);

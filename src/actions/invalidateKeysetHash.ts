@@ -7,7 +7,7 @@ import {
   Transport,
   encodeFunctionData,
 } from 'viem';
-import { sequencerInbox } from '../contracts';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import { ActionParameters, WithAccount } from '../types/Actions';
 import { Prettify } from '../types/utils';
 
@@ -27,7 +27,7 @@ export type InvalidateKeysetHashReturnType = PrepareTransactionRequestReturnType
 
 function sequencerInboxFunctionData({ keysetHash }: InvalidateKeysetHashParameters) {
   return encodeFunctionData({
-    abi: sequencerInbox.abi,
+    abi: sequencerInboxABI,
     functionName: 'invalidateKeysetHash',
     args: [keysetHash],
   });

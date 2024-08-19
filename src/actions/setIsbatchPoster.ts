@@ -1,5 +1,5 @@
 import { Address, Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
-import { sequencerInbox } from '../contracts';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import {
   ActionParameters,
   PrepareTransactionRequestReturnTypeWithChainId,
@@ -34,7 +34,7 @@ async function setIsBatchPoster<TChain extends Chain | undefined>(
       to: sequencerInboxAddress,
       upgradeExecutor,
       args: [args.batchPoster, args.enable],
-      abi: sequencerInbox.abi,
+      abi: sequencerInboxABI,
       functionName: 'setIsBatchPoster',
     }),
   } satisfies PrepareTransactionRequestParameters);

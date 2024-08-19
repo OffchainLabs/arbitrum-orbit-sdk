@@ -1,5 +1,5 @@
 import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
-import { sequencerInbox } from '../contracts';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import {
   ActionParameters,
   PrepareTransactionRequestReturnTypeWithChainId,
@@ -36,7 +36,7 @@ export async function setMaxTimeVariation<TChain extends Chain | undefined>(
       to: sequencerInboxAddress,
       upgradeExecutor,
       args: [args],
-      abi: sequencerInbox.abi,
+      abi: sequencerInboxABI,
       functionName: 'setMaxTimeVariation',
     }),
   } satisfies PrepareTransactionRequestParameters);
