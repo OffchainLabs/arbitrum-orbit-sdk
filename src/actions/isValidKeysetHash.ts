@@ -1,11 +1,10 @@
 import { Chain, Hex, PublicClient, ReadContractReturnType, Transport } from 'viem';
-import { sequencerInbox } from '../contracts';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import { ActionParameters } from '../types/Actions';
 
 type Args = {
   keysetHash: Hex;
 };
-type SequencerInboxABI = typeof sequencerInbox.abi;
 
 export type IsValidKeysetHashParameters<Curried extends boolean = false> = ActionParameters<
   Args,
@@ -14,7 +13,7 @@ export type IsValidKeysetHashParameters<Curried extends boolean = false> = Actio
 >;
 
 export type IsValidKeysetHashReturnType = ReadContractReturnType<
-  SequencerInboxABI,
+  typeof sequencerInboxABI,
   'isValidKeysetHash'
 >;
 
@@ -23,7 +22,7 @@ export async function isValidKeysetHash<TChain extends Chain | undefined>(
   args: IsValidKeysetHashParameters,
 ): Promise<IsValidKeysetHashReturnType> {
   return client.readContract({
-    abi: sequencerInbox.abi,
+    abi: sequencerInboxABI,
     functionName: 'isValidKeysetHash',
     address: args.sequencerInbox,
     args: [args.keysetHash],

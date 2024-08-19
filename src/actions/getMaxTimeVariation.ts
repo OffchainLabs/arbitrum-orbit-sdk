@@ -1,5 +1,5 @@
 import { Chain, PublicClient, Transport } from 'viem';
-import { sequencerInbox } from '../contracts';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import { ActionParameters } from '../types/Actions';
 
 export type GetMaxTimeVariationParameters<Curried extends boolean = false> = ActionParameters<
@@ -20,7 +20,7 @@ export async function getMaxTimeVariation<TChain extends Chain | undefined>(
   args: GetMaxTimeVariationParameters,
 ): Promise<GetMaxTimeVariationReturnType> {
   const [delayBlocks, futureBlocks, delaySeconds, futureSeconds] = await client.readContract({
-    abi: sequencerInbox.abi,
+    abi: sequencerInboxABI,
     functionName: 'maxTimeVariation',
     address: args.sequencerInbox,
   });
