@@ -14,16 +14,16 @@ type Args = {
   batchPoster: Address;
 };
 
-export type PrepareSetIsBatchPosterParameters<Curried extends boolean = false> = Prettify<
+export type BuildSetIsBatchPosterParameters<Curried extends boolean = false> = Prettify<
   WithUpgradeExecutor<WithAccount<ActionParameters<Args, 'sequencerInbox', Curried>>>
 >;
 
-export type PrepareSetIsBatchPosterReturnType = PrepareTransactionRequestReturnTypeWithChainId;
+export type BuildSetIsBatchPosterReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
-async function prepareSetIsBatchPoster<TChain extends Chain | undefined>(
+async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: PrepareSetIsBatchPosterParameters & { enable: boolean },
-): Promise<PrepareSetIsBatchPosterReturnType> {
+  params: BuildSetIsBatchPosterParameters & { enable: boolean },
+): Promise<BuildSetIsBatchPosterReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
   const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
@@ -42,21 +42,21 @@ async function prepareSetIsBatchPoster<TChain extends Chain | undefined>(
   return { ...request, chainId: validatedPublicClient.chain.id };
 }
 
-export async function prepareEnableBatchPoster<TChain extends Chain | undefined>(
+export async function buildEnableBatchPoster<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: PrepareSetIsBatchPosterParameters,
-): Promise<PrepareSetIsBatchPosterReturnType> {
-  return prepareSetIsBatchPoster(client, {
+  args: BuildSetIsBatchPosterParameters,
+): Promise<BuildSetIsBatchPosterReturnType> {
+  return buildSetIsBatchPoster(client, {
     ...args,
     enable: true,
   });
 }
 
-export async function prepareDisableBatchPoster<TChain extends Chain | undefined>(
+export async function buildDisableBatchPoster<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: PrepareSetIsBatchPosterParameters,
-): Promise<PrepareSetIsBatchPosterReturnType> {
-  return prepareSetIsBatchPoster(client, {
+  args: BuildSetIsBatchPosterParameters,
+): Promise<BuildSetIsBatchPosterReturnType> {
+  return buildSetIsBatchPoster(client, {
     ...args,
     enable: false,
   });

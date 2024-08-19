@@ -1,4 +1,4 @@
-import { Chain, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
+import { Chain, Hex, PrepareTransactionRequestParameters, PublicClient, Transport } from 'viem';
 import { sequencerInboxABI } from '../contracts/SequencerInbox';
 import {
   ActionParameters,
@@ -7,25 +7,29 @@ import {
   WithUpgradeExecutor,
 } from '../types/Actions';
 import { Prettify } from '../types/utils';
-import { withUpgradeExecutor } from '../withUpgradeExecutor';
 import { validateParentChainPublicClient } from '../types/ParentChain';
+import { withUpgradeExecutor } from '../withUpgradeExecutor';
 
-type Args = {
-  delayBlocks: bigint;
-  futureBlocks: bigint;
-  delaySeconds: bigint;
-  futureSeconds: bigint;
-};
-export type PrepareSetMaxTimeVariationParameters<Curried extends boolean = false> = Prettify<
-  WithUpgradeExecutor<WithAccount<ActionParameters<Args, 'sequencerInbox', Curried>>>
+export type BuildSetKeysetParameters<Curried extends boolean = false> = Prettify<
+  WithUpgradeExecutor<
+    WithAccount<
+      ActionParameters<
+        {
+          keyset: Hex;
+        },
+        'sequencerInbox',
+        Curried
+      >
+    >
+  >
 >;
 
-export type PrepareSetMaxTimeVariationReturnType = PrepareTransactionRequestReturnTypeWithChainId;
+export type BuildSetKeysetReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
-export async function prepareSetMaxTimeVariation<TChain extends Chain | undefined>(
+export async function buildSetKeyset<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: PrepareSetMaxTimeVariationParameters,
-): Promise<PrepareSetMaxTimeVariationReturnType> {
+  params: BuildSetKeysetParameters,
+): Promise<BuildSetKeysetReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
   const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
@@ -35,9 +39,9 @@ export async function prepareSetMaxTimeVariation<TChain extends Chain | undefine
     ...withUpgradeExecutor({
       to: sequencerInboxAddress,
       upgradeExecutor,
-      args: [args],
+      args: [args.keyset],
       abi: sequencerInboxABI,
-      functionName: 'setMaxTimeVariation',
+      functionName: 'setValidKeyset',
     }),
   } satisfies PrepareTransactionRequestParameters);
 
