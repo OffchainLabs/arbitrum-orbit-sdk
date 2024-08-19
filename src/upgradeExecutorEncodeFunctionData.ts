@@ -1,5 +1,6 @@
 import { encodeFunctionData, EncodeFunctionDataParameters, keccak256, toHex } from 'viem';
-import { upgradeExecutor } from './contracts';
+
+import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import { GetFunctionName, Prettify } from './types/utils';
 
 // Roles
@@ -17,7 +18,7 @@ export type UpgradeExecutorRole =
   | typeof UPGRADE_EXECUTOR_ROLE_EXECUTOR;
 
 // Types for upgradeExecutorEncodeFunctionData
-export type UpgradeExecutorAbi = typeof upgradeExecutor.abi;
+export type UpgradeExecutorAbi = typeof upgradeExecutorABI;
 export type UpgradeExecutorFunctionName = GetFunctionName<UpgradeExecutorAbi>;
 export type UpgradeExecutorEncodeFunctionDataParameters<
   TFunctionName extends UpgradeExecutorFunctionName,
@@ -29,7 +30,7 @@ export function upgradeExecutorEncodeFunctionData<
 >({ functionName, args }: UpgradeExecutorEncodeFunctionDataParameters<TFunctionName>) {
   // @ts-ignore (todo: fix viem type issue)
   return encodeFunctionData({
-    abi: upgradeExecutor.abi,
+    abi: upgradeExecutorABI,
     functionName,
     args,
   });

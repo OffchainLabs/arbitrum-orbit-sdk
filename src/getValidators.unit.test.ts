@@ -9,12 +9,20 @@ import {
 } from 'viem';
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
+
+import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
+import { rollupABI } from './contracts/Rollup';
+
 import { getValidators } from './getValidators';
-import { rollupAdminLogicABI, safeL2ABI } from './abi';
 import { rollupAdminLogicPrepareFunctionData } from './rollupAdminLogicPrepareTransactionRequest';
 
 const client = createPublicClient({
   chain: arbitrum,
+  transport: http(),
+});
+
+const arbitrumSepoliaClient = createPublicClient({
+  chain: arbitrumSepolia,
   transport: http(),
 });
 
@@ -104,7 +112,7 @@ const rollupAddress = '0xe0875cbd144fe66c015a95e5b2d2c15c3b612179';
 
 function setValidatorHelper(args: [Address[], boolean[]]) {
   return encodeFunctionData({
-    abi: rollupAdminLogicABI,
+    abi: rollupABI,
     functionName: 'setValidator',
     args,
   });
@@ -114,14 +122,14 @@ function upgradeExecutorSetValidatorHelper(args: [Address[], boolean[]]) {
     rollup: rollupAddress,
     functionName: 'setValidator',
     args,
-    abi: rollupAdminLogicABI,
+    abi: rollupABI,
     upgradeExecutor: upgradeExecutorAddress,
   }).data;
 }
 function safeSetValidatorHelper(args: [Address[], boolean[]]) {
   const bytes = upgradeExecutorSetValidatorHelper(args);
   return encodeFunctionData({
-    abi: safeL2ABI,
+    abi: gnosisSafeL2ABI,
     functionName: 'execTransaction',
     args: [
       rollupAddress,
@@ -143,6 +151,29 @@ it('getValidators return all validators (Xai)', async () => {
     rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336',
   });
   expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0x5b0b49e0259289fc89949a55a5ad35a8939440a55065d29b14e5e7ef7494efff
+it('getValidators returns validators for a chain created with RollupCreator v1.1', async () => {
+  const { isAccurate, validators } = await getValidators(arbitrumSepoliaClient, {
+    rollup: '0x1644590Fd2223264ea8Cda8927B038CcCFE0Da76',
+  });
+  expect(validators).toEqual(['0x8E842599F71ABD661737bb3108a53E5b1787c791']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0x77db43157182a69ce0e6d2a0564d2dabb43b306d48ea7b4d877160d6a1c9b66d
+it('getValidators returns validators for a chain created with RollupCreator v2.1', async () => {
+  const { isAccurate, validators } = await getValidators(arbitrumSepoliaClient, {
+    rollup: '0x66d0e72952f4f69aF9D33C1B7C31Fa9aCDbCAF63',
+  });
+  expect(validators).toEqual([
+    '0xDBb2c9923b5DE18B151bC55Ed571EDcd1fC7EeB9',
+    '0x84B2EFFDd54aA5dce861440Ae9B9D320b043a64c',
+    '0x39B4Ce32E557225a401917a701ac4d267648635a',
+    '0xe2D0cC872647B1A129B942BbFC980B31E8e94Df2',
+  ]);
   expect(isAccurate).toBeTruthy();
 });
 

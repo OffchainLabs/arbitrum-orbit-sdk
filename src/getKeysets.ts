@@ -1,5 +1,6 @@
 import { Address, Chain, Hex, PublicClient, Transport, getAbiItem } from 'viem';
-import { sequencerInboxABI } from './abi';
+
+import { sequencerInboxABI } from './contracts/SequencerInbox';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 const SetValidKeysetEventAbi = getAbiItem({ abi: sequencerInboxABI, name: 'SetValidKeyset' });

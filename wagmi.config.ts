@@ -1,5 +1,6 @@
+import { Config } from '@wagmi/cli';
 import { erc, etherscan } from '@wagmi/cli/plugins';
-import { hashMessage } from 'viem';
+import { hashMessage, createPublicClient, http, zeroAddress } from 'viem';
 import dotenv from 'dotenv';
 
 import { ParentChainId } from './src';
@@ -15,7 +16,9 @@ import {
   nitroTestnodeL1,
   nitroTestnodeL2,
   nitroTestnodeL3,
+  chains,
 } from './src/chains';
+import { getImplementation } from './src/utils/getImplementation';
 
 dotenv.config();
 
@@ -82,6 +85,18 @@ const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
   const { url, apiKey } = blockExplorerApiUrls[chainId];
 
+  const client = createPublicClient({
+    chain: chains.find((chain) => chain.id === chainId),
+    transport: http(),
+  });
+
+  const implementation = await getImplementation({ client, address });
+
+  if (implementation !== zeroAddress) {
+    // replace proxy address with implementation address, so proper abis are compared
+    address = implementation;
+  }
+
   const responseJson = await (
     await fetch(
       `${url}?module=contract&action=getabi&format=raw&address=${address}&apikey=${apiKey}`,
@@ -99,12 +114,13 @@ type ContractConfig = {
   name: string;
   version?: string;
   address: Record<ParentChainId, `0x${string}`> | `0x${string}`;
+  implementation?: Record<ParentChainId, `0x${string}`>;
 };
 
 const contracts: ContractConfig[] = [
   {
     name: 'RollupCreator',
-    version: '1.1.0',
+    version: '1.1',
     address: {
       // mainnet L1
       [mainnet.id]: '0x90d68b056c411015eae3ec0b98ad94e2c91419f1',
@@ -124,8 +140,29 @@ const contracts: ContractConfig[] = [
     },
   },
   {
+    name: 'RollupCreator',
+    version: '2.1',
+    address: {
+      // mainnet L1
+      [mainnet.id]: '0x8c88430658a03497D13cDff7684D37b15aA2F3e1',
+      // mainnet L2
+      [arbitrumOne.id]: '0x79607f00e61E6d7C0E6330bd7E9c4AC320D50FC9',
+      [arbitrumNova.id]: '0x9B523BF5F77e8d90e0E9eb0924aEA6E40B081aE6',
+      [base.id]: '0x091b8FC0F48613b191f81009797ce55Cf97Af7C8',
+      // testnet L1
+      [sepolia.id]: '0xfb774ea8a92ae528a596c8d90cbcf1bdbc4cee79',
+      [holesky.id]: '0x03c70F125Df471E4fd0515ca38504edFE6900F19',
+      // testnet L2
+      [arbitrumSepolia.id]: '0xd2Ec8376B1dF436fAb18120E416d3F2BeC61275b',
+      [baseSepolia.id]: '0x6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502',
+      // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
+      [nitroTestnodeL1.id]: '0x82a3c114b40ecf1fc34745400a1b9b9115c33d31',
+      [nitroTestnodeL2.id]: '0x4287839696d650a0cf93b98351e85199102335d0',
+    },
+  },
+  {
     name: 'TokenBridgeCreator',
-    version: '1.2.0',
+    version: '1.2',
     address: {
       // mainnet L1
       [mainnet.id]: '0x60D9A46F24D5a35b95A78Dd3E793e55D94EE0660',
@@ -140,8 +177,8 @@ const contracts: ContractConfig[] = [
       [arbitrumSepolia.id]: '0x56C486D3786fA26cc61473C499A36Eb9CC1FbD8E',
       [baseSepolia.id]: '0xFC71d21a4FE10Cc0d34745ba9c713836f82f8DE3',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
-      [nitroTestnodeL1.id]: '0x54B4D4e578E10178a6cA602bdb6df0F213296Af4',
-      [nitroTestnodeL2.id]: '0x38f35af53bf913c439eab06a367e09d6eb253492',
+      [nitroTestnodeL1.id]: '0x4Af567288e68caD4aA93A272fe6139Ca53859C70',
+      [nitroTestnodeL2.id]: '0x38F35Af53bF913c439eaB06A367e09D6eb253492',
     },
   },
   {
@@ -173,7 +210,7 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
     return;
   }
 
-  console.log(`- ${contract.name}`);
+  console.log(`- ${contract.name}${contract.version ? ` v${contract.version}` : ''}`);
 
   const abiHashes = await Promise.all(
     Object.entries(contract.address)
@@ -202,33 +239,60 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
     throw new Error(`- ${contract.name}`);
   }
 
-  console.log(`- ${contract.name} ✔\n`);
+  console.log(`- ${contract.name}${contract.version ? ` v${contract.version}` : ''} ✔\n`);
+}
+
+async function updateContractWithImplementationIfProxy(contract: ContractConfig) {
+  // precompiles, do nothing
+  if (typeof contract.address === 'string') {
+    return;
+  }
+
+  const implementation = await getImplementation({
+    client: createPublicClient({ chain: arbitrumSepolia, transport: http() }),
+    address: contract.address[arbitrumSepolia.id],
+  });
+
+  // not a proxy, do nothing
+  if (implementation === zeroAddress) {
+    return;
+  }
+
+  // only add arbitrum sepolia implementation as that's the one we're generating from
+  contract.implementation = { [arbitrumSepolia.id]: implementation };
 }
 
 export default async function () {
-  console.log(`Checking if contracts match by comparing hashed JSON ABIs.\n`);
+  const configs: Config[] = [
+    {
+      out: 'src/contracts/ERC20.ts',
+      plugins: [erc({ 20: true, 721: false, 4626: false })],
+    },
+  ];
 
   for (const contract of contracts) {
     await assertContractAbisMatch(contract);
+    await updateContractWithImplementationIfProxy(contract);
     await sleep(); // sleep to avoid rate limiting
+
+    const filePath =
+      typeof contract.version !== 'undefined'
+        ? `${contract.name}/v${contract.version}`
+        : contract.name;
+
+    configs.push({
+      out: `src/contracts/${filePath}.ts`,
+      plugins: [
+        etherscan({
+          chainId: arbitrumSepolia.id,
+          apiKey: arbiscanApiKey,
+          // todo: fix viem type issue
+          contracts: [contract],
+          cacheDuration: 0,
+        }),
+      ],
+    });
   }
 
-  console.log(`Done.\n`);
-
-  return {
-    out: 'src/generated.ts',
-    plugins: [
-      erc({
-        20: true,
-        721: false,
-        4626: false,
-      }),
-      etherscan({
-        chainId: arbitrumSepolia.id,
-        apiKey: arbiscanApiKey,
-        contracts,
-        cacheDuration: 0,
-      }),
-    ],
-  };
+  return configs;
 }

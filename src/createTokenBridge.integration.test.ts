@@ -15,7 +15,7 @@ import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgeP
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 import { CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
-import { erc20 } from './contracts';
+import { erc20ABI } from './contracts/ERC20';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { createTokenBridge } from './createTokenBridge';
@@ -216,7 +216,7 @@ describe('createTokenBridge utils function', () => {
       chain: nitroTestnodeL2Client.chain,
       to: testnodeInformation.l3NativeToken,
       data: encodeFunctionData({
-        abi: erc20.abi,
+        abi: erc20ABI,
         functionName: 'transfer',
         args: [l3RollupOwner.address, parseEther('500')],
       }),
@@ -382,7 +382,7 @@ describe('createTokenBridge', () => {
       chain: nitroTestnodeL2Client.chain,
       to: testnodeInformation.l3NativeToken,
       data: encodeFunctionData({
-        abi: erc20.abi,
+        abi: erc20ABI,
         functionName: 'transfer',
         args: [l3RollupOwner.address, parseEther('500')],
       }),

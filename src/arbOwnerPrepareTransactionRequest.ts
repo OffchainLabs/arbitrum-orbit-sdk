@@ -7,11 +7,11 @@ import {
   Transport,
 } from 'viem';
 
-import { arbOwner } from './contracts';
+import { arbOwnerABI, arbOwnerAddress } from './contracts/ArbOwner';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { GetFunctionName } from './types/utils';
 
-type ArbOwnerAbi = typeof arbOwner.abi;
+type ArbOwnerAbi = typeof arbOwnerABI;
 export type ArbOwnerPrepareTransactionRequestFunctionName = GetFunctionName<ArbOwnerAbi>;
 export type ArbOwnerEncodeFunctionDataParameters<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
@@ -40,7 +40,7 @@ function arbOwnerPrepareFunctionData<
 
   if (!upgradeExecutor) {
     return {
-      to: arbOwner.address,
+      to: arbOwnerAddress,
       data: arbOwnerEncodeFunctionData(
         params as ArbOwnerEncodeFunctionDataParameters<TFunctionName>,
       ),
@@ -53,7 +53,7 @@ function arbOwnerPrepareFunctionData<
     data: upgradeExecutorEncodeFunctionData({
       functionName: 'executeCall',
       args: [
-        arbOwner.address, // target
+        arbOwnerAddress, // target
         arbOwnerEncodeFunctionData(params as ArbOwnerEncodeFunctionDataParameters<TFunctionName>), // targetCallData
       ],
     }),
@@ -81,7 +81,7 @@ export async function arbOwnerPrepareTransactionRequest<
   // params is extending ArbOwnerPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = arbOwnerPrepareFunctionData({
     ...params,
-    abi: arbOwner.abi,
+    abi: arbOwnerABI,
   } as unknown as ArbOwnerPrepareFunctionDataParameters<TFunctionName>);
 
   // @ts-ignore (todo: fix viem type issue)

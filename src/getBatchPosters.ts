@@ -8,20 +8,28 @@ import {
   getAbiItem,
   getFunctionSelector,
 } from 'viem';
-import { rollupCreator, upgradeExecutor } from './contracts';
-import { safeL2ABI, sequencerInboxABI } from './abi';
+
+import { rollupCreatorABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
+import { sequencerInboxABI } from './contracts/SequencerInbox';
+import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
+import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
+
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
-const createRollupABI = getAbiItem({ abi: rollupCreator.abi, name: 'createRollup' });
+const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
+
+const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
+const createRollupV1Dot1FunctionSelector = getFunctionSelector(createRollupV1Dot1ABI);
 
 const setIsBatchPosterABI = getAbiItem({ abi: sequencerInboxABI, name: 'setIsBatchPoster' });
 const setIsBatchPosterFunctionSelector = getFunctionSelector(setIsBatchPosterABI);
 
-const executeCallABI = getAbiItem({ abi: upgradeExecutor.abi, name: 'executeCall' });
+const executeCallABI = getAbiItem({ abi: upgradeExecutorABI, name: 'executeCall' });
 const upgradeExecutorExecuteCallFunctionSelector = getFunctionSelector(executeCallABI);
 
-const execTransactionABI = getAbiItem({ abi: safeL2ABI, name: 'execTransaction' });
+const execTransactionABI = getAbiItem({ abi: gnosisSafeL2ABI, name: 'execTransaction' });
 const safeL2FunctionSelector = getFunctionSelector(execTransactionABI);
 
 const ownerFunctionCalledEventAbi = getAbiItem({
@@ -30,7 +38,10 @@ const ownerFunctionCalledEventAbi = getAbiItem({
 });
 
 function getBatchPostersFromFunctionData<
-  TAbi extends (typeof createRollupABI)[] | (typeof setIsBatchPosterABI)[],
+  TAbi extends
+    | (typeof createRollupABI)[]
+    | (typeof createRollupV1Dot1ABI)[]
+    | (typeof setIsBatchPosterABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
@@ -138,8 +149,16 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
 
     switch (txSelectedFunction) {
       case createRollupFunctionSelector: {
-        const [{ batchPoster }] = getBatchPostersFromFunctionData({
+        const [{ batchPosters }] = getBatchPostersFromFunctionData({
           abi: [createRollupABI],
+          data: tx.input,
+        });
+
+        return new Set([...acc, ...batchPosters]);
+      }
+      case createRollupV1Dot1FunctionSelector: {
+        const [{ batchPoster }] = getBatchPostersFromFunctionData({
+          abi: [createRollupV1Dot1ABI],
           data: tx.input,
         });
 

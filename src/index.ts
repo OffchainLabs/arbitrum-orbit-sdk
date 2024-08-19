@@ -1,14 +1,13 @@
 import {
-  createRollupPrepareConfig,
-  CreateRollupPrepareConfigParams,
-  CreateRollupPrepareConfigResult,
-} from './createRollupPrepareConfig';
-import {
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
 } from './createRollupPrepareDeploymentParamsConfig';
-import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
+import {
+  prepareChainConfig,
+  PrepareChainConfigParams,
+  PrepareChainConfigArbitrumParams,
+} from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
@@ -93,6 +92,14 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
+import {
+  feeRouterDeployChildToParentRewardRouter,
+  FeeRouterDeployChildToParentRewardRouterParams,
+} from './feeRouterDeployChildToParentRewardRouter';
+import {
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
+} from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
@@ -108,6 +115,7 @@ import {
 } from './getBatchPosters';
 import { getKeysets, GetKeysetsParams, GetKeysetsReturnType } from './getKeysets';
 import { isAnyTrust } from './isAnyTrust';
+import { parentChainIsArbitrum } from './parentChainIsArbitrum';
 import {
   createSafePrepareTransactionRequest,
   CreateSafePrepareTransactionRequestParams,
@@ -120,6 +128,15 @@ import {
   setAnyTrustFastConfirmerPrepareTransactionRequest,
   SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
 } from './setAnyTrustFastConfirmerPrepareTransactionRequest';
+import {
+  ConsensusVersion,
+  getConsensusReleaseByVersion,
+  GetConsensusReleaseByVersion,
+  WasmModuleRoot,
+  isKnownWasmModuleRoot,
+  getConsensusReleaseByWasmModuleRoot,
+  GetConsensusReleaseByWasmModuleRoot,
+} from './wasmModuleRoot';
 
 export {
   arbOwnerPublicActions,
@@ -132,16 +149,14 @@ export {
   CreateRollupFunctionInputs,
   CreateRollupParams,
   //
-  createRollupPrepareConfig,
-  CreateRollupPrepareConfigParams,
-  CreateRollupPrepareConfigResult,
-  //
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
   //
   prepareChainConfig,
   PrepareChainConfigParams,
+  PrepareChainConfigArbitrumParams,
+  //
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
@@ -198,6 +213,11 @@ export {
   createTokenBridgePrepareSetWethGatewayTransactionRequest,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
   //
+  feeRouterDeployChildToParentRewardRouter,
+  FeeRouterDeployChildToParentRewardRouterParams,
+  feeRouterDeployRewardDistributor,
+  FeeRouterDeployRewardDistributorParams,
+  //
   getDefaultConfirmPeriodBlocks,
   getDefaultSequencerInboxMaxTimeVariation,
   SequencerInboxMaxTimeVariation,
@@ -215,6 +235,7 @@ export {
   GetKeysetsReturnType,
   //
   isAnyTrust,
+  parentChainIsArbitrum,
   //
   createSafePrepareTransactionRequest,
   CreateSafePrepareTransactionRequestParams,
@@ -222,4 +243,12 @@ export {
   CreateSafeTransactionReceipt,
   setAnyTrustFastConfirmerPrepareTransactionRequest,
   SetAnyTrustFastConfirmerPrepareTransactionRequestParams,
+  //
+  ConsensusVersion,
+  getConsensusReleaseByVersion,
+  GetConsensusReleaseByVersion,
+  WasmModuleRoot,
+  isKnownWasmModuleRoot,
+  getConsensusReleaseByWasmModuleRoot,
+  GetConsensusReleaseByWasmModuleRoot,
 };

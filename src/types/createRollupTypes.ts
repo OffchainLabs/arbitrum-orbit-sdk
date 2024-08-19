@@ -1,13 +1,13 @@
 import { Address, GetFunctionArgs } from 'viem';
 
-import { rollupCreator } from '../contracts';
+import { rollupCreatorABI } from '../contracts/RollupCreator';
 
 export type CreateRollupFunctionInputs = GetFunctionArgs<
-  typeof rollupCreator.abi,
+  typeof rollupCreatorABI,
   'createRollup'
 >['args'];
 
-type RequiredKeys = 'config' | 'batchPoster' | 'validators';
+type RequiredKeys = 'config' | 'batchPosters' | 'validators';
 
 export type CreateRollupParams = Pick<CreateRollupFunctionInputs[0], RequiredKeys> &
   Partial<Omit<CreateRollupFunctionInputs[0], RequiredKeys>>;
