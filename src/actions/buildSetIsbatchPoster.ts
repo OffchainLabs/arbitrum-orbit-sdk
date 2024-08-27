@@ -7,7 +7,7 @@ import {
   WithUpgradeExecutor,
 } from '../types/Actions';
 import { Prettify } from '../types/utils';
-import { withUpgradeExecutor } from '../withUpgradeExecutor';
+import { prepareUpgradeExecutorCallParameters } from '../prepareUpgradeExecutorCallParameters';
 import { validateParentChainPublicClient } from '../types/ParentChain';
 
 type Args = {
@@ -30,7 +30,7 @@ async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
     account,
-    ...withUpgradeExecutor({
+    ...prepareUpgradeExecutorCallParameters({
       to: sequencerInboxAddress,
       upgradeExecutor,
       args: [args.batchPoster, args.enable],

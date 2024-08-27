@@ -8,7 +8,7 @@ import {
 } from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { validateParentChainPublicClient } from '../types/ParentChain';
-import { withUpgradeExecutor } from '../withUpgradeExecutor';
+import { prepareUpgradeExecutorCallParameters } from '../prepareUpgradeExecutorCallParameters';
 
 export type BuildInvalidateKeysetHashParameters<Curried extends boolean = false> = Prettify<
   WithUpgradeExecutor<
@@ -36,7 +36,7 @@ export async function buildInvalidateKeysetHash<TChain extends Chain | undefined
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
     account,
-    ...withUpgradeExecutor({
+    ...prepareUpgradeExecutorCallParameters({
       to: sequencerInboxAddress,
       upgradeExecutor,
       args: [args.keysetHash],
