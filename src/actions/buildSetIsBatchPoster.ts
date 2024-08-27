@@ -20,7 +20,7 @@ export type BuildSetIsBatchPosterParameters<Curried extends boolean = false> = P
 
 export type BuildSetIsBatchPosterReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
-async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
+export async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
   params: BuildSetIsBatchPosterParameters & { enable: boolean },
 ): Promise<BuildSetIsBatchPosterReturnType> {
