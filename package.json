@@ -33,6 +33,7 @@
   },
   "resolutions": {
     "**/@wagmi/cli/viem/ws": "8.17.1",
-    "**/@ethersproject/providers/ws": "7.5.10"
+    "**/@ethersproject/providers/ws": "7.5.10",
+    "**/elliptic": "6.5.7"
   }
 }

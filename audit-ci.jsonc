@@ -65,30 +65,6 @@
     // from: @arbitrum/token-bridge-contracts>@openzeppelin/contracts-upgradeable
     // from: @arbitrum/nitro-contracts>@openzeppelin/contracts
     // from: @arbitrum/token-bridge-contracts>@openzeppelin/contracts
-    "GHSA-9vx6-7xxf-x967",
-    // https://github.com/advisories/GHSA-grv7-fg5c-xmjg
-    // Uncontrolled resource consumption in braces
-    // eslint and hardhat dependency, only used in dev
-    // from: hardhat>braces & eslint>braces
-    "GHSA-grv7-fg5c-xmjg",
-    // elliptic
-    // waiting for it to release a fix but low severity so we can ignore it
-    // from: @ethersproject/signing-key>elliptic
-    // https://github.com/advisories/GHSA-49q7-c7j4-3p7m
-    "GHSA-49q7-c7j4-3p7m",
-    // https://github.com/advisories/GHSA-977x-g7h5-7qgw
-    "GHSA-977x-g7h5-7qgw",
-    // https://github.com/advisories/GHSA-f7q4-pwc6-w24p
-    "GHSA-f7q4-pwc6-w24p",
-    // https://github.com/advisories/GHSA-952p-6rrq-rcjv
-    //
-    // micromatch is vulnerable to Regular Expression Denial of Service
-    //
-    // from: @arbitrum/orbit-sdk>@arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>find-yarn-workspace-root>micromatch
-    // from: @wagmi/cli>globby>fast-glob>micromatch
-    // from: patch-package>find-yarn-workspace-root>micromatc
-    //
-    // all the packages listed above are used only during development
-    "GHSA-952p-6rrq-rcjv"
+    "GHSA-9vx6-7xxf-x967"
   ]
 }
