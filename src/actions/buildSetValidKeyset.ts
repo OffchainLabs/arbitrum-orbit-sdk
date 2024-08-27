@@ -10,7 +10,7 @@ import { Prettify } from '../types/utils';
 import { validateParentChainPublicClient } from '../types/ParentChain';
 import { prepareUpgradeExecutorCallParameters } from '../prepareUpgradeExecutorCallParameters';
 
-export type BuildSetKeysetParameters<Curried extends boolean = false> = Prettify<
+export type BuildSetValidKeysetParameters<Curried extends boolean = false> = Prettify<
   WithUpgradeExecutor<
     WithAccount<
       ActionParameters<
@@ -24,12 +24,12 @@ export type BuildSetKeysetParameters<Curried extends boolean = false> = Prettify
   >
 >;
 
-export type BuildSetKeysetReturnType = PrepareTransactionRequestReturnTypeWithChainId;
+export type BuildSetValidKeysetReturnType = PrepareTransactionRequestReturnTypeWithChainId;
 
-export async function buildSetKeyset<TChain extends Chain | undefined>(
+export async function buildSetValidKeyset<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: BuildSetKeysetParameters,
-): Promise<BuildSetKeysetReturnType> {
+  params: BuildSetValidKeysetParameters,
+): Promise<BuildSetValidKeysetReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
   const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
