@@ -7,12 +7,13 @@ import {
   Chain,
 } from 'viem';
 
-import { rollupAdminLogicABI } from './abi/rollupAdminLogicABI';
+import { rollupABI } from './contracts/Rollup';
+
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { GetFunctionName } from './types/utils';
 import { validateParentChainPublicClient } from './types/ParentChain';
 
-export type RollupAdminLogicAbi = typeof rollupAdminLogicABI;
+export type RollupAdminLogicAbi = typeof rollupABI;
 export type RollupAdminLogicFunctionName = GetFunctionName<RollupAdminLogicAbi>;
 
 type RollupAdminLogicEncodeFunctionDataParameters<
@@ -87,7 +88,7 @@ export async function rollupAdminLogicPrepareTransactionRequest<
   // params is extending RollupAdminLogicPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = rollupAdminLogicPrepareFunctionData({
     ...params,
-    abi: rollupAdminLogicABI,
+    abi: rollupABI,
   } as unknown as RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>);
 
   // @ts-ignore (todo: fix viem type issue)

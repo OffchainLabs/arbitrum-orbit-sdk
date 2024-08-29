@@ -9,12 +9,20 @@ import {
 } from 'viem';
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
-import { safeL2ABI, sequencerInboxABI } from './abi';
+
+import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
+import { sequencerInboxABI } from './contracts/SequencerInbox';
+
 import { sequencerInboxPrepareFunctionData } from './sequencerInboxPrepareTransactionRequest';
 import { getBatchPosters } from './getBatchPosters';
 
 const client = createPublicClient({
   chain: arbitrum,
+  transport: http(),
+});
+
+const arbitrumSepoliaClient = createPublicClient({
+  chain: arbitrumSepolia,
   transport: http(),
 });
 
@@ -123,7 +131,7 @@ function upgradeExecutorSetBatchPosterHelper(args: [Address, boolean]) {
 function safeSetBatchPosterHelper(args: [Address, boolean]) {
   const bytes = upgradeExecutorSetBatchPosterHelper(args);
   return encodeFunctionData({
-    abi: safeL2ABI,
+    abi: gnosisSafeL2ABI,
     functionName: 'execTransaction',
     args: [
       rollupAddress,
@@ -146,6 +154,35 @@ it('getBatchPosters returns all batch posters (Xai)', async () => {
     sequencerInbox: '0x995a9d3ca121D48d21087eDE20bc8acb2398c8B1',
   });
   expect(batchPosters).toEqual(['0x7F68dba68E72a250004812fe04F1123Fca89aBa9']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0x5b0b49e0259289fc89949a55a5ad35a8939440a55065d29b14e5e7ef7494efff
+it('getBatchPosters returns batch posters for a chain created with RollupCreator v1.1', async () => {
+  const { isAccurate, batchPosters } = await getBatchPosters(arbitrumSepoliaClient, {
+    rollup: '0x1644590Fd2223264ea8Cda8927B038CcCFE0Da76',
+    sequencerInbox: '0x96bA492C55Af83dfC88D52A1e584e4061716e9e8',
+  });
+  expect(batchPosters).toEqual(['0x3C3A5b44FAB0e2025160a765348c21C08e41d1Af']);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.arbiscan.io/tx/0x77db43157182a69ce0e6d2a0564d2dabb43b306d48ea7b4d877160d6a1c9b66d
+it('getBatchPosters returns batch posters for a chain created with RollupCreator v2.1', async () => {
+  const { isAccurate, batchPosters } = await getBatchPosters(arbitrumSepoliaClient, {
+    rollup: '0x66d0e72952f4f69aF9D33C1B7C31Fa9aCDbCAF63',
+    sequencerInbox: '0x43528b8Be52e8D084F147d167487f361553463b5',
+  });
+  expect(batchPosters).toEqual([
+    '0x9464aD09CE0d157Efc6c7EefE577C5AA6dEc804D',
+    '0xC02386B2D10a37e71145B6A7f5569e1db4604213',
+    '0x6C4483f6DCEDb5a758b28D28E11F805bdACFE245',
+    '0xf89836dc33f58394fB34B3e690D3829A65C74286',
+    '0xd1d25Aeb44E99B35E2d5E7Db961c73ec94f92a24',
+    '0xDc4ECA04032b9178020Ff0c6154A7e87309a429f',
+    '0xe122F9838A4C8e6834F24D1b9dCa92eb52a8E17e',
+    '0xB280Fd59090f3D95588d94BACD22b336dE2278e0',
+  ]);
   expect(isAccurate).toBeTruthy();
 });
 

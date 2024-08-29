@@ -139,14 +139,14 @@ export function getInformationFromTestnode(): TestnodeInformation {
 
 export async function createRollupHelper({
   deployer,
-  batchPoster,
+  batchPosters,
   validators,
   nativeToken = zeroAddress,
   client,
 }: {
   deployer: PrivateKeyAccountWithPrivateKey;
-  batchPoster: Address;
-  validators: [Address];
+  batchPosters: Address[];
+  validators: Address[];
   nativeToken: Address;
   client: PublicClient;
 }) {
@@ -167,7 +167,7 @@ export async function createRollupHelper({
   const createRollupInformation = await createRollup({
     params: {
       config: createRollupConfig,
-      batchPoster,
+      batchPosters,
       validators,
       nativeToken,
     },

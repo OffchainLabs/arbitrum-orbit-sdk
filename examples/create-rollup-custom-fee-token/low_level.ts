@@ -110,7 +110,7 @@ async function main() {
         owner: deployer.address,
         chainConfig,
       }),
-      batchPoster,
+      batchPosters: [batchPoster],
       validators: [validator],
       nativeToken,
     },
