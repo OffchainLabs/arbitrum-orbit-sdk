@@ -52,3 +52,22 @@ You need to set the following environment variables in an .env file:
    ```bash
    yarn dev
    ```
+
+
+
+## Multisig ownership
+Beware: At least one of the signers needs to be an EOA account so that it can propose transactions through this script.
+
+1. Build this example: rm -rf dist/ && tsc --outDir dist && ls dist
+2. OWNER_1_ADDRESS_PRIVATE_KEY= PARENT_CHAIN_ID= SAFE_ADDRESS= FC_VALIDATORS='["0x1234567890123456789012345678901234567890"]' node ./dist/1-create_multisig.js
+This step will create a new Safe on the parent chain and add fast confirmation validators as owners.
+
+If you want to use this script then you need to make sure the owner of the Rollup has been transfered to a Multisig.
+
+3.  OWNER_1_ADDRESS_PRIVATE_KEY= PARENT_CHAIN_ID= SAFE_ADDRESS= FC_VALIDATORS_SAFE_ADDRESS= FC_VALIDATORS='["0x1234567890123456789012345678901234567890"]' ROLLUP_ADDRESS= RPC= node ./dist/2-add_validators.js
+the validators list is expanded with the Safe created with step 1 (1-create_multisig). That's why you need to provide FC_VALIDATORS_SAFE_ADDRESS. 
+
+4. OWNER_1_ADDRESS_PRIVATE_KEY= PARENT_CHAIN_ID= SAFE_ADDRESS= FC_VALIDATORS_SAFE_ADDRESS= ROLLUP_ADDRESS= RPC= node ./dist/3-set-any-trust-fast-confirmer.js
+We also add this Safe as `fast confirmer`.
+
+5. OWNER_1_ADDRESS_PRIVATE_KEY= PARENT_CHAIN_ID= SAFE_ADDRESS= MINIMUM_ASSERTION_PERIOD=1 ROLLUP_ADDRESS= RPC= node ./dist/4-configure-minimum-assertion-period.js
