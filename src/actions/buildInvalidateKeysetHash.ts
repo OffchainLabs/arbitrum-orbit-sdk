@@ -41,7 +41,7 @@ export async function buildInvalidateKeysetHash<TChain extends Chain | undefined
       upgradeExecutor,
       args: [args.keysetHash],
       abi: sequencerInboxABI,
-      functionName: 'setValidKeyset',
+      functionName: 'invalidateKeysetHash',
     }),
   } satisfies PrepareTransactionRequestParameters);
 
