@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`max time variation management > getMaxTimeVariation successfully fetches max time variation 1`] = `
+{
+  "delayBlocks": 5760n,
+  "delaySeconds": 86400n,
+  "futureBlocks": 12n,
+  "futureSeconds": 3600n,
+}
+`;
