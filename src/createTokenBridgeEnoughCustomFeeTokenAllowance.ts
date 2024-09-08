@@ -5,7 +5,7 @@ import { createTokenBridgeDefaultRetryablesFees } from './constants';
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
-import { getTokenBridgeCreatorAddress } from './utils/getters';
+import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
 
 export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
   Prettify<

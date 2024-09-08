@@ -12,7 +12,7 @@ import {
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
-import { getTokenBridgeCreatorAddress } from './utils/getters';
+import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
 
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
