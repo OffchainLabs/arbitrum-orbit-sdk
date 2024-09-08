@@ -1,6 +1,9 @@
 import { extractChain } from 'viem';
+
 import { ParentChain, isValidParentChainId } from '../types/ParentChain';
+
 import { chains } from '../chains';
+import { customChains } from '../customChains';
 
 export function getParentChainFromId(chainId: number): ParentChain {
   // Just throws if the chainId is not valid
@@ -9,7 +12,7 @@ export function getParentChainFromId(chainId: number): ParentChain {
   }
 
   return extractChain({
-    chains,
+    chains: [...chains, ...customChains],
     id: chainId,
   }) as ParentChain;
 }
