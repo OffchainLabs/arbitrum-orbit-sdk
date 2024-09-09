@@ -16,7 +16,13 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
-import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
+import {
+  RollupCreatorVersion,
+  RollupCreatorLatestVersion,
+  RollupCreatorABI,
+  CreateRollupFunctionInputs,
+  CreateRollupParams,
+} from './types/createRollupTypes';
 import {
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
@@ -149,6 +155,10 @@ export {
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
   CreateRollupParams,
+  //
+  RollupCreatorVersion,
+  RollupCreatorLatestVersion,
+  RollupCreatorABI,
   //
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
