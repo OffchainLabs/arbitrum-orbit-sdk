@@ -8,7 +8,7 @@ import {
 } from './createRollupPrepareTransactionReceipt';
 import { createRollupEnoughCustomFeeTokenAllowance } from './createRollupEnoughCustomFeeTokenAllowance';
 import { createRollupPrepareCustomFeeTokenApprovalTransactionRequest } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
-import { getBlockExplorerUrl } from './utils/getters';
+import { getBlockExplorerUrl } from './utils/getBlockExplorerUrl';
 import {
   CreateRollupTransaction,
   createRollupPrepareTransaction,

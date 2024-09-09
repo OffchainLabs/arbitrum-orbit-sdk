@@ -8,7 +8,7 @@ import { validateParentChain } from './types/ParentChain';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
-import { getRollupCreatorAddress } from './utils/getters';
+import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 

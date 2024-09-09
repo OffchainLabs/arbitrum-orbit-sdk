@@ -33,10 +33,7 @@ import {
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { TransactionRequestGasOverrides } from './utils/gasOverrides';
-
-function getBlockExplorerUrl(chain: Chain | undefined) {
-  return chain?.blockExplorers?.default.url;
-}
+import { getBlockExplorerUrl } from './utils/getBlockExplorerUrl';
 
 export type CreateTokenBridgeParams<
   TParentChain extends Chain | undefined,

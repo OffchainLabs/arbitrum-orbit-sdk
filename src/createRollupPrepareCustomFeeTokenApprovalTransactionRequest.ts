@@ -2,7 +2,7 @@ import { Address, PublicClient, Transport, Chain } from 'viem';
 
 import { approvePrepareTransactionRequest } from './utils/erc20';
 import { validateParentChain } from './types/ParentChain';
-import { getRollupCreatorAddress } from './utils/getters';
+import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { createRollupDefaultRetryablesFees } from './constants';
 
 import { Prettify } from './types/utils';
