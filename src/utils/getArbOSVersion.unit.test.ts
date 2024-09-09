@@ -1,21 +1,23 @@
 import { it, expect } from 'vitest';
+import { createPublicClient, http } from 'viem';
+import { arbitrum as arbitrumOne, sepolia } from 'viem/chains';
 
 import { getArbOSVersion } from './getArbOSVersion';
-import { createPublicClient, http } from 'viem';
-import { arbitrum, sepolia } from 'viem/chains';
 
-it('Returns the ArbOS version for arbitrum chain', async () => {
-  const arbProvider = createPublicClient({
-    chain: arbitrum,
+it('returns the ArbOS version of Arbitrum One', async () => {
+  const arbitrumOneClient = createPublicClient({
+    chain: arbitrumOne,
     transport: http(),
   });
-  expect(await getArbOSVersion(arbProvider)).toBe(20);
+
+  expect(await getArbOSVersion(arbitrumOneClient)).toBe(31);
 });
 
-it('Throws if the provider is not an Arbitrum provider', async () => {
-  const sepoliaProvider = createPublicClient({
+it('throws if the chain is not an Arbitrum chain', async () => {
+  const sepoliaClient = createPublicClient({
     chain: sepolia,
     transport: http(),
   });
-  await expect(getArbOSVersion(sepoliaProvider)).rejects.toThrowError();
+
+  await expect(getArbOSVersion(sepoliaClient)).rejects.toThrowError();
 });
