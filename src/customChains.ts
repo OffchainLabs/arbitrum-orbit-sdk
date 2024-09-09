@@ -1,11 +1,15 @@
-import { Chain } from 'viem';
+import { Address, Chain, ChainContract } from 'viem';
 
-type LooksLikeChain = {
-  id: number;
+export type CustomParentChain = Chain & {
+  contracts: {
+    rollupCreator: ChainContract;
+    tokenBridgeCreator: ChainContract;
+  };
 };
 
 export const customChains: Chain[] = [];
 
-export function registerCustomParentChain(chain: LooksLikeChain) {
-  customChains.push(chain as Chain);
+export function registerCustomParentChain(chain: CustomParentChain) {
+  // todo: don't duplicate
+  customChains.push(chain);
 }
