@@ -18,6 +18,7 @@ import {
 export type CreateRollupFetchTransactionHashParams<TChain extends Chain | undefined> = {
   rollup: Address;
   publicClient: PublicClient<Transport, TChain>;
+  fromBlock?: bigint;
 };
 
 const RollupInitializedEventAbi: AbiEvent = {
@@ -61,6 +62,7 @@ const earliestRollupCreatorDeploymentBlockNumber = {
 export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
   rollup,
   publicClient,
+  fromBlock: fromBlockOverride,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
   const chainId = validateParentChain(publicClient);
 
@@ -73,7 +75,7 @@ export async function createRollupFetchTransactionHash<TChain extends Chain | un
   const rollupInitializedEvents = await publicClient.getLogs({
     address: rollup,
     event: RollupInitializedEventAbi,
-    fromBlock,
+    fromBlock: fromBlockOverride ?? fromBlock,
     toBlock: 'latest',
   });
 
