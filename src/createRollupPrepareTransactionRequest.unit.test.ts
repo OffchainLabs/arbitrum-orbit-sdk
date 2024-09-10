@@ -9,6 +9,8 @@ import { createRollupPrepareTransactionRequest } from './createRollupPrepareTran
 import { rollupCreatorAddress } from './contracts/RollupCreator';
 
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
+import { CustomParentChain, registerCustomParentChain } from './customChains';
+import { createCustomChain } from './customChainsTestHelpers';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 const deployer = testnodeAccounts.deployer;
@@ -197,6 +199,49 @@ it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 
   );
 });
 
+it(`fails to prepare transaction request if "params.maxDataSize" is not provided for a custom parent chain`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
+  });
+
+  const chain: CustomParentChain = {
+    ...createCustomChain({ id: 123 }),
+    contracts: {
+      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
+      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
+    },
+  };
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  // prepare the transaction for deploying the core contracts
+  await expect(
+    createRollupPrepareTransactionRequest({
+      params: {
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
+          chainId: BigInt(chainId),
+          owner: deployer.address,
+          chainConfig,
+        }),
+        batchPosters: [deployer.address],
+        validators: [deployer.address],
+      },
+      account: deployer.address,
+      publicClient,
+    }),
+  ).rejects.toThrowError(`"params.maxDataSize" must be provided when using a custom parent chain.`);
+});
+
 it(`successfully prepares a transaction request with the default rollup creator and a gas limit override`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
@@ -260,4 +305,52 @@ it(`successfully prepares a transaction request with a custom rollup creator and
   expect(txRequest.to).toEqual('0x31421C442c422BD16aef6ae44D3b11F404eeaBd9');
   expect(txRequest.chainId).toEqual(arbitrumSepolia.id);
   expect(txRequest.gas).toEqual(1_200n);
+});
+
+it(`successfully prepares a transaction request with a custom parent chain`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
+  });
+
+  const chain: CustomParentChain = {
+    ...createCustomChain({ id: 123 }),
+    contracts: {
+      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
+      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
+    },
+  };
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+  });
+
+  registerCustomParentChain(chain);
+
+  const txRequest = await createRollupPrepareTransactionRequest({
+    params: {
+      config: createRollupPrepareDeploymentParamsConfig(publicClient, {
+        chainId: BigInt(chainId),
+        owner: deployer.address,
+        chainConfig,
+      }),
+      batchPosters: [deployer.address],
+      validators: [deployer.address],
+      maxDataSize: 123_456n,
+    },
+    account: deployer.address,
+    publicClient,
+    gasOverrides: { gasLimit: { base: 1_000n } },
+  });
+
+  expect(txRequest.account).toEqual(deployer.address);
+  expect(txRequest.from).toEqual(deployer.address);
+  expect(txRequest.to).toEqual('0x1000000000000000000000000000000000000000');
+  expect(txRequest.chainId).toEqual(123);
+  expect(txRequest.gas).toEqual(1_000n);
 });

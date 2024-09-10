@@ -18,6 +18,7 @@ import {
   CreateRollupParams,
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
+import { isCustomParentChain } from './customChains';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -72,7 +73,11 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  const maxDataSize = createRollupGetMaxDataSize(chainId);
+  if (isCustomParentChain(publicClient) && typeof params.maxDataSize === 'undefined') {
+    throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
+  }
+
+  const maxDataSize = createRollupGetMaxDataSize(chainId) ?? 1;
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
 
