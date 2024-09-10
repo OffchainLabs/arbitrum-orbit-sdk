@@ -77,7 +77,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
   }
 
-  const maxDataSize = createRollupGetMaxDataSize(chainId) ?? 1;
+  const maxDataSize = params.maxDataSize ?? createRollupGetMaxDataSize(chainId);
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
 
