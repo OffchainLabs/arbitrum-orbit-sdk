@@ -301,16 +301,15 @@ async function main() {
 
   // Batch poster configuration
   const timeDelay = getTimeDelayFromNumberOfBlocks(parentChain.id, minimumAssertionPeriod);
-  console.log('Your batch poster has to run at least nitro v3.1.1');
+  console.log('Your batch poster has to run at least nitro v3.1.2');
   console.log('Add the following parameter:');
   console.log(`--node.batch-poster.max-delay=${timeDelay}`);
   console.log('');
 
   // Validator configuration
-  console.log('Your validators have to run at least nitro v3.1.1');
+  console.log('Your validators have to run at least nitro v3.1.2');
   console.log('Add the following parameters:');
   console.log(`--node.staker.enable-fast-confirmation=true`);
-  console.log(`--node.staker.fast-confirm-safe-address=${safeAddress}`);
   console.log(`--node.staker.make-assertion-interval=${timeDelay}`);
   console.log('');
 
