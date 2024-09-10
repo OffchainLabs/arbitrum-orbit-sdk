@@ -9,7 +9,9 @@ export function getRollupCreatorAddress<TChain extends Chain | undefined>(
   const chainId = validateParentChain(client);
 
   // check if it's a custom parent chain
+  // @ts-ignore todo: fix(spsjvc)
   if (client.chain?.contracts?.rollupCreator?.address) {
+    // @ts-ignore todo: fix(spsjvc)
     return client.chain?.contracts?.rollupCreator?.address;
   }
 
