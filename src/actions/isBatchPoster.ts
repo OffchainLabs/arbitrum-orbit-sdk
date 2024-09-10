@@ -18,12 +18,12 @@ export type IsBatchPosterReturnType = ReadContractReturnType<
 
 export async function isBatchPoster<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: IsBatchPosterParameters,
+  { sequencerInbox, params }: IsBatchPosterParameters,
 ): Promise<IsBatchPosterReturnType> {
   return client.readContract({
     abi: sequencerInboxABI,
     functionName: 'isBatchPoster',
-    address: args.sequencerInbox,
-    args: [args.batchPoster],
+    address: sequencerInbox,
+    args: [params.batchPoster],
   });
 }

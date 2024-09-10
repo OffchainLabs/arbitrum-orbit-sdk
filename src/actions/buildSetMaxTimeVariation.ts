@@ -24,10 +24,14 @@ export type BuildSetMaxTimeVariationReturnType = PrepareTransactionRequestReturn
 
 export async function buildSetMaxTimeVariation<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: BuildSetMaxTimeVariationParameters,
+  {
+    account,
+    upgradeExecutor,
+    sequencerInbox: sequencerInboxAddress,
+    params,
+  }: BuildSetMaxTimeVariationParameters,
 ): Promise<BuildSetMaxTimeVariationReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
-  const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
@@ -35,7 +39,7 @@ export async function buildSetMaxTimeVariation<TChain extends Chain | undefined>
     ...prepareUpgradeExecutorCallParameters({
       to: sequencerInboxAddress,
       upgradeExecutor,
-      args: [args],
+      args: [params],
       abi: sequencerInboxABI,
       functionName: 'setMaxTimeVariation',
     }),
