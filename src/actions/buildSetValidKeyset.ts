@@ -28,10 +28,14 @@ export type BuildSetValidKeysetReturnType = PrepareTransactionRequestReturnTypeW
 
 export async function buildSetValidKeyset<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: BuildSetValidKeysetParameters,
+  {
+    account,
+    upgradeExecutor,
+    sequencerInbox: sequencerInboxAddress,
+    params,
+  }: BuildSetValidKeysetParameters,
 ): Promise<BuildSetValidKeysetReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
-  const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
@@ -39,7 +43,7 @@ export async function buildSetValidKeyset<TChain extends Chain | undefined>(
     ...prepareUpgradeExecutorCallParameters({
       to: sequencerInboxAddress,
       upgradeExecutor,
-      args: [args.keyset],
+      args: [params.keyset],
       abi: sequencerInboxABI,
       functionName: 'setValidKeyset',
     }),

@@ -22,10 +22,14 @@ export type BuildSetIsBatchPosterReturnType = PrepareTransactionRequestReturnTyp
 
 export async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: BuildSetIsBatchPosterParameters & { enable: boolean },
+  {
+    account,
+    upgradeExecutor,
+    sequencerInbox: sequencerInboxAddress,
+    params,
+  }: BuildSetIsBatchPosterParameters & { params: { enable: boolean } },
 ): Promise<BuildSetIsBatchPosterReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
-  const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
@@ -33,7 +37,7 @@ export async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
     ...prepareUpgradeExecutorCallParameters({
       to: sequencerInboxAddress,
       upgradeExecutor,
-      args: [args.batchPoster, args.enable],
+      args: [params.batchPoster, params.enable],
       abi: sequencerInboxABI,
       functionName: 'setIsBatchPoster',
     }),
@@ -48,7 +52,10 @@ export async function buildEnableBatchPoster<TChain extends Chain | undefined>(
 ): Promise<BuildSetIsBatchPosterReturnType> {
   return buildSetIsBatchPoster(client, {
     ...args,
-    enable: true,
+    params: {
+      ...args.params,
+      enable: true,
+    },
   });
 }
 
@@ -58,6 +65,9 @@ export async function buildDisableBatchPoster<TChain extends Chain | undefined>(
 ): Promise<BuildSetIsBatchPosterReturnType> {
   return buildSetIsBatchPoster(client, {
     ...args,
-    enable: false,
+    params: {
+      ...args.params,
+      enable: false,
+    },
   });
 }
