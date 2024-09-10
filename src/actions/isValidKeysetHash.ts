@@ -19,12 +19,12 @@ export type IsValidKeysetHashReturnType = ReadContractReturnType<
 
 export async function isValidKeysetHash<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  args: IsValidKeysetHashParameters,
+  { sequencerInbox, params }: IsValidKeysetHashParameters,
 ): Promise<IsValidKeysetHashReturnType> {
   return client.readContract({
     abi: sequencerInboxABI,
     functionName: 'isValidKeysetHash',
-    address: args.sequencerInbox,
-    args: [args.keysetHash],
+    address: sequencerInbox,
+    args: [params.keysetHash],
   });
 }

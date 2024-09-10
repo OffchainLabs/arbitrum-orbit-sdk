@@ -28,10 +28,14 @@ export type BuildInvalidateKeysetHashReturnType = PrepareTransactionRequestRetur
 
 export async function buildInvalidateKeysetHash<TChain extends Chain | undefined>(
   client: PublicClient<Transport, TChain>,
-  params: BuildInvalidateKeysetHashParameters,
+  {
+    account,
+    upgradeExecutor,
+    sequencerInbox: sequencerInboxAddress,
+    params,
+  }: BuildInvalidateKeysetHashParameters,
 ): Promise<BuildInvalidateKeysetHashReturnType> {
   const validatedPublicClient = validateParentChainPublicClient(client);
-  const { account, upgradeExecutor, sequencerInbox: sequencerInboxAddress, ...args } = params;
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
@@ -39,7 +43,7 @@ export async function buildInvalidateKeysetHash<TChain extends Chain | undefined
     ...prepareUpgradeExecutorCallParameters({
       to: sequencerInboxAddress,
       upgradeExecutor,
-      args: [args.keysetHash],
+      args: [params.keysetHash],
       abi: sequencerInboxABI,
       functionName: 'invalidateKeysetHash',
     }),
