@@ -11,6 +11,7 @@ import { prepareChainConfig } from './prepareChainConfig';
 import { defaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerInboxMaxTimeVariation';
+import { isCustomParentChain } from './customChains';
 
 export type CreateRollupPrepareDeploymentParamsConfigResult =
   CreateRollupFunctionInputs[0]['config'];
@@ -68,6 +69,18 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
   { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
 ): CreateRollupPrepareDeploymentParamsConfigResult {
   const parentChainId = validateParentChain(client);
+
+  if (isCustomParentChain(client) && typeof params.confirmPeriodBlocks === 'undefined') {
+    throw new Error(
+      `"params.confirmPeriodBlocks" must be provided when using a custom parent chain.`,
+    );
+  }
+
+  if (isCustomParentChain(client) && typeof params.sequencerInboxMaxTimeVariation === 'undefined') {
+    throw new Error(
+      `"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.`,
+    );
+  }
 
   const defaultsBasedOnParentChain = {
     confirmPeriodBlocks: getDefaultConfirmPeriodBlocks(parentChainId),

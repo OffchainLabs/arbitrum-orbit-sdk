@@ -4,6 +4,8 @@ import { Address, createPublicClient, http } from 'viem';
 import { arbitrumOne, arbitrumSepolia, base, baseSepolia } from './chains';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
+import { CustomParentChain, registerCustomParentChain } from './customChains';
+import { createCustomChain } from './customChainsTestHelpers';
 
 const chainId = 69_420n;
 const vitalik: `0x${string}` = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
@@ -114,6 +116,88 @@ it('creates config for a chain on top of base sepolia with defaults', () => {
     createRollupPrepareDeploymentParamsConfig(baseSepoliaClient, {
       owner: vitalik,
       chainId,
+    }),
+  ).toMatchSnapshot();
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "confirmPeriodBlocks" is not provided', () => {
+  const chain: CustomParentChain = {
+    ...createCustomChain({ id: 123 }),
+    contracts: {
+      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
+      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
+    },
+  };
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+    }),
+  ).toThrowError('"params.confirmPeriodBlocks" must be provided when using a custom parent chain');
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "sequencerInboxMaxTimeVariation" is not provided', () => {
+  const chain: CustomParentChain = {
+    ...createCustomChain({ id: 123 }),
+    contracts: {
+      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
+      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
+    },
+  };
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+    }),
+  ).toThrowError(
+    '"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.',
+  );
+});
+
+it('creates a config for a chain on top of a custom parent chain', () => {
+  const chain: CustomParentChain = {
+    ...createCustomChain({ id: 123 }),
+    contracts: {
+      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
+      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
+    },
+  };
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+      sequencerInboxMaxTimeVariation: {
+        delayBlocks: 2n,
+        futureBlocks: 3n,
+        delaySeconds: 4n,
+        futureSeconds: 5n,
+      },
     }),
   ).toMatchSnapshot();
 });
