@@ -29,8 +29,8 @@ if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CH
   );
 }
 
-async function wait(ms: number): Promise<void>{
-  return new Promise(res => setTimeout(res, ms))
+async function wait(ms: number): Promise<void> {
+  return new Promise((res) => setTimeout(res, ms));
 }
 
 function getBlockExplorerUrl(chain: Chain) {
@@ -72,12 +72,25 @@ async function main() {
   const newValidators = [process.env.NEW_VALIDATOR_ADDRESS as Address];
   const newValidatorStatus = [true];
 
-  // get the validator list before executing
-  console.log('Fetching current validator address list in the parent chain...');
-  const beforeValidatorList = await getValidators(parentChainPublicClient, {
-    rollup: coreContracts.rollup,
+  // check the status of this address in validator list before executing
+  const beforeStatus = await parentChainPublicClient.rollupAdminLogicReadContract({
+    functionName: 'isValidator',
+    args: [newValidators[0]],
   });
-  console.log(`Before executing, the validator list is ${beforeValidatorList.validators}`);
+  console.log(
+    `Before executing, the address ${newValidators[0]} status in validator list is ${beforeStatus}`,
+  );
+
+  /*
+   You can also use the following code to check validator status, it will return a list 
+   of whitelist validator.
+
+   console.log('Fetching current validator address list in the parent chain...');
+   const beforeValidatorList = await getValidators(parentChainPublicClient, {
+    rollup: coreContracts.rollup,
+   });
+   console.log(`Before executing, the validator list is ${beforeValidatorList.validators}`);
+  */
 
   // prepare set validator transaction request
   const setValidatorTransactionRequest =
@@ -107,15 +120,16 @@ async function main() {
     }`,
   );
 
-  // Wait 8 seconds to avoid 429 error
-  await wait(8000);
-
-  // get the validator list before executing
-  console.log('Fetching current validator address list in the parent chain...');
-  const afterValidatorList = await getValidators(parentChainPublicClient, {
+  // Check the status of this address in validator list before executing
+  const afterStatus = await parentChainPublicClient.rollupAdminLogicReadContract({
+    functionName: 'isValidator',
+    args: [newValidators[0]],
     rollup: coreContracts.rollup,
   });
-  console.log(`After executing, the validator list is ${afterValidatorList.validators}`);
+
+  console.log(
+    `After executing, the address ${newValidators[0]} status in validator list is ${afterStatus}`,
+  );
 }
 
 main();
