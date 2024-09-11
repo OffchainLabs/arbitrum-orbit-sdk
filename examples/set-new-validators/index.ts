@@ -4,8 +4,9 @@ import { arbitrumSepolia } from 'viem/chains';
 import {
   createRollupFetchTransactionHash,
   createRollupPrepareTransactionReceipt,
-  getValidators,
   rollupAdminLogicPublicActions,
+  // Uncomment it when you want to use getValidators() to get validator status
+  // getValidators, 
 } from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
@@ -79,7 +80,7 @@ async function main() {
 
   /*
    You can also use the following code to check validator status, it will return a list 
-   of whitelist validator.
+   of whitelist validators.
 
    console.log('Fetching current validator address list in the parent chain...');
    const beforeValidatorList = await getValidators(parentChainPublicClient, {
