@@ -29,6 +29,10 @@ if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CH
   );
 }
 
+async function wait(ms: number): Promise<void>{
+  return new Promise(res => setTimeout(res, ms))
+}
+
 function getBlockExplorerUrl(chain: Chain) {
   return chain.blockExplorers?.default.url;
 }
@@ -102,6 +106,9 @@ async function main() {
       setValidatorTransactionReceipt.transactionHash
     }`,
   );
+
+  // Wait 3 seconds to avoid 429 error
+  await wait(3000);
 
   // get the validator list before executing
   console.log('Fetching current validator address list in the parent chain...');
