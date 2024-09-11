@@ -107,8 +107,8 @@ async function main() {
     }`,
   );
 
-  // Wait 3 seconds to avoid 429 error
-  await wait(3000);
+  // Wait 8 seconds to avoid 429 error
+  await wait(8000);
 
   // get the validator list before executing
   console.log('Fetching current validator address list in the parent chain...');
