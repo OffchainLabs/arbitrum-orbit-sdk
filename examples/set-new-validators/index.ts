@@ -29,10 +29,6 @@ if (typeof process.env.PARENT_CHAIN_RPC === 'undefined' || process.env.PARENT_CH
   );
 }
 
-async function wait(ms: number): Promise<void> {
-  return new Promise((res) => setTimeout(res, ms));
-}
-
 function getBlockExplorerUrl(chain: Chain) {
   return chain.blockExplorers?.default.url;
 }
