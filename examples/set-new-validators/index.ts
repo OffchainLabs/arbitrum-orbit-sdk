@@ -70,12 +70,9 @@ async function main() {
 
   // get the validator list before executing
   console.log('Fetching current validator address list in the parent chain...');
-  const beforeValidatorList = await getValidators(
-      parentChainPublicClient, 
-      {
-        rollup: coreContracts.rollup
-      }
-    );
+  const beforeValidatorList = await getValidators(parentChainPublicClient, {
+    rollup: coreContracts.rollup,
+  });
   console.log(`Before executing, the validator list is ${beforeValidatorList.validators}`);
 
   // prepare set validator transaction request
@@ -108,12 +105,9 @@ async function main() {
 
   // get the validator list before executing
   console.log('Fetching current validator address list in the parent chain...');
-  const afterValidatorList = await getValidators(
-      parentChainPublicClient, 
-      {
-        rollup: coreContracts.rollup
-      }
-    );
+  const afterValidatorList = await getValidators(parentChainPublicClient, {
+    rollup: coreContracts.rollup,
+  });
   console.log(`After executing, the validator list is ${afterValidatorList.validators}`);
 }
 
