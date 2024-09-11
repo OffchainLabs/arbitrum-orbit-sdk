@@ -4,6 +4,7 @@ import { arbitrumSepolia } from 'viem/chains';
 import {
   createRollupFetchTransactionHash,
   createRollupPrepareTransactionReceipt,
+  getValidators,
   rollupAdminLogicPublicActions,
 } from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
@@ -67,14 +68,15 @@ async function main() {
   const newValidators = [process.env.NEW_VALIDATOR_ADDRESS as Address];
   const newValidatorStatus = [true];
 
-  // check the status of this address in validator list before executing
-  const beforeStatus = await parentChainPublicClient.rollupAdminLogicReadContract({
-    functionName: 'isValidator',
-    args: [newValidators[0]],
-  });
-  console.log(
-    `Before executing, the address ${newValidators[0]} status in validator list is ${beforeStatus}`,
-  );
+  // get the validator list before executing
+  console.log('Fetching current validator address list in the parent chain...');
+  const beforeValidatorList = await getValidators(
+      parentChainPublicClient, 
+      {
+        rollup: coreContracts.rollup
+      }
+    );
+  console.log(`Before executing, the validator list is ${beforeValidatorList.validators}`);
 
   // prepare set validator transaction request
   const setValidatorTransactionRequest =
@@ -104,16 +106,15 @@ async function main() {
     }`,
   );
 
-  // Check the status of this address in validator list before executing
-  const afterStatus = await parentChainPublicClient.rollupAdminLogicReadContract({
-    functionName: 'isValidator',
-    args: [newValidators[0]],
-    rollup: coreContracts.rollup,
-  });
-
-  console.log(
-    `After executing, the address ${newValidators[0]} status in validator list is ${afterStatus}`,
-  );
+  // get the validator list before executing
+  console.log('Fetching current validator address list in the parent chain...');
+  const afterValidatorList = await getValidators(
+      parentChainPublicClient, 
+      {
+        rollup: coreContracts.rollup
+      }
+    );
+  console.log(`After executing, the validator list is ${afterValidatorList.validators}`);
 }
 
 main();
