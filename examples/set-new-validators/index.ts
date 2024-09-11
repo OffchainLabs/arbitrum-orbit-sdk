@@ -6,7 +6,7 @@ import {
   createRollupPrepareTransactionReceipt,
   rollupAdminLogicPublicActions,
   // Uncomment it when you want to use getValidators() to get validator status
-  // getValidators, 
+  // getValidators,
 } from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
