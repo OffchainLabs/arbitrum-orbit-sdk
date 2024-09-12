@@ -237,6 +237,19 @@ export async function createTokenBridge<
     }`,
   );
 
+  const { orbitChainContracts } = await txReceipt.getTokenBridgeContracts({
+    // @ts-ignore (todo: fix viem type issue)
+    parentChainPublicClient,
+  });
+
+  // If router exists already, contracts were deployed alreade, we can skip waiting for retryables
+  if (orbitChainContracts.router) {
+    const code = await orbitChainPublicClient.getBytecode({ address: orbitChainContracts.router });
+    if (code) {
+      throw new Error('Token bridge was already deployed');
+    }
+  }
+
   // wait for retryables to execute
   console.log(`Waiting for retryable tickets to execute on the Orbit chain...`);
   const orbitChainRetryableReceipts = await txReceipt.waitForRetryables({

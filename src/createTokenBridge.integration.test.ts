@@ -436,4 +436,50 @@ describe('createTokenBridge', () => {
     checkTokenBridgeContracts(tokenBridgeContracts);
     checkWethGateways(tokenBridgeContracts, { customFeeToken: true });
   });
+
+  it('should throw when createTokenBridge is called multiple time', async () => {
+    const testnodeInformation = getInformationFromTestnode();
+
+    const tokenBridgeCreator = await deployTokenBridgeCreator({
+      publicClient: nitroTestnodeL1Client,
+    });
+
+    const cfg = {
+      rollupOwner: l2RollupOwner.address,
+      rollupAddress: testnodeInformation.rollup,
+      account: l2RollupOwner,
+      parentChainPublicClient: nitroTestnodeL1Client,
+      orbitChainPublicClient: nitroTestnodeL2Client,
+      tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      gasOverrides: {
+        gasLimit: {
+          base: 6_000_000n,
+        },
+      },
+      retryableGasOverrides: {
+        maxGasForFactory: {
+          base: 20_000_000n,
+        },
+        maxGasForContracts: {
+          base: 20_000_000n,
+        },
+        maxSubmissionCostForFactory: {
+          base: 4_000_000_000_000n,
+        },
+        maxSubmissionCostForContracts: {
+          base: 4_000_000_000_000n,
+        },
+      },
+      setWethGatewayGasOverrides: {
+        gasLimit: {
+          base: 100_000n,
+        },
+      },
+    };
+    const { tokenBridgeContracts } = await createTokenBridge(cfg);
+    await expect(createTokenBridge(cfg)).rejects.toThrow();
+
+    checkTokenBridgeContracts(tokenBridgeContracts);
+    checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
+  });
 });
