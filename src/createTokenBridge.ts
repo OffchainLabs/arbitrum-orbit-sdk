@@ -43,7 +43,7 @@ import { rollupABI } from './contracts/Rollup';
  * This function allows us to assert that token bridge wasn't deployed.
  *
  * @param {String} assertTokenBridgeDoesntExistParams.parentChainPublicClient - The parent chain Viem Public Client
- * @param {String} assertTokenBridgeDoesntExistParams.parentChainPublicClient - The orbit chain Viem Public Client
+ * @param {String} assertTokenBridgeDoesntExistParams.orbitChainPublicClient - The orbit chain Viem Public Client
  * @param {String=} assertTokenBridgeDoesntExistParams.tokenBridgeCreatorAddress - The TokenBridgeCreator address.
  * Default to getTokenBridgeCreatorAddress(parentChainPublicClient) if not provided
  * @param {String} assertTokenBridgeDoesntExistParams.rollupAddress - The address of the rollup on the parent chain
