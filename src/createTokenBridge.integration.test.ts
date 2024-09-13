@@ -437,7 +437,7 @@ describe('createTokenBridge', () => {
     checkWethGateways(tokenBridgeContracts, { customFeeToken: true });
   });
 
-  it('should throw when createTokenBridge is called multiple time', async () => {
+  it('should throw when createTokenBridge is called multiple times', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
     const tokenBridgeCreator = await deployTokenBridgeCreator({
