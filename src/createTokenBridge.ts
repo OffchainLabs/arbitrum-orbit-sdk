@@ -6,6 +6,7 @@ import {
   Transport,
   Transaction,
   TransactionReceipt,
+  parseAbi,
 } from 'viem';
 import {
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
@@ -34,6 +35,43 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { TransactionRequestGasOverrides } from './utils/gasOverrides';
 import { getBlockExplorerUrl } from './utils/getBlockExplorerUrl';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
+import { getTokenBridgeCreatorAddress } from './utils';
+
+async function assertTokenBridgeDoesntExist<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>({
+  parentChainPublicClient,
+  orbitChainPublicClient,
+  tokenBridgeCreatorAddress,
+  rollupAddress,
+}: {
+  parentChainPublicClient: PublicClient<Transport, TParentChain>;
+  orbitChainPublicClient: PublicClient<Transport, TOrbitChain>;
+  tokenBridgeCreatorAddress: Address;
+  rollupAddress: Address;
+}) {
+  const inbox = await parentChainPublicClient.readContract({
+    address: rollupAddress,
+    abi: parseAbi(['function inbox() view returns (address)']),
+    functionName: 'inbox',
+  });
+
+  const [router] = await parentChainPublicClient.readContract({
+    address: tokenBridgeCreatorAddress,
+    abi: tokenBridgeCreatorABI,
+    functionName: 'inboxToL2Deployment',
+    args: [inbox],
+  });
+
+  if (router) {
+    const code = await orbitChainPublicClient.getBytecode({ address: router });
+    if (code) {
+      throw new Error('Token bridge was already deployed');
+    }
+  }
+}
 
 export type CreateTokenBridgeParams<
   TParentChain extends Chain | undefined,
@@ -171,6 +209,14 @@ export async function createTokenBridge<
 }: CreateTokenBridgeParams<TParentChain, TOrbitChain>): Promise<
   CreateTokenBridgeResults<TParentChain, TOrbitChain>
 > {
+  await assertTokenBridgeDoesntExist({
+    parentChainPublicClient,
+    orbitChainPublicClient,
+    tokenBridgeCreatorAddress:
+      tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient),
+    rollupAddress,
+  });
+
   const isCustomFeeTokenBridge = isCustomFeeTokenAddress(nativeTokenAddress);
   if (isCustomFeeTokenBridge) {
     // set the custom fee token
@@ -236,19 +282,6 @@ export async function createTokenBridge<
       txReceipt.transactionHash
     }`,
   );
-
-  const { orbitChainContracts } = await txReceipt.getTokenBridgeContracts({
-    // @ts-ignore (todo: fix viem type issue)
-    parentChainPublicClient,
-  });
-
-  // If router exists already, contracts were deployed alreade, we can skip waiting for retryables
-  if (orbitChainContracts.router) {
-    const code = await orbitChainPublicClient.getBytecode({ address: orbitChainContracts.router });
-    if (code) {
-      throw new Error('Token bridge was already deployed');
-    }
-  }
 
   // wait for retryables to execute
   console.log(`Waiting for retryable tickets to execute on the Orbit chain...`);
