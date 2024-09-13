@@ -6,7 +6,6 @@ import {
   Transport,
   Transaction,
   TransactionReceipt,
-  parseAbi,
 } from 'viem';
 import {
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
@@ -37,7 +36,20 @@ import { TransactionRequestGasOverrides } from './utils/gasOverrides';
 import { getBlockExplorerUrl } from './utils/getBlockExplorerUrl';
 import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 import { getTokenBridgeCreatorAddress } from './utils';
+import { rollupABI } from './contracts/Rollup';
 
+/**
+ * If token bridge was already deployed, `createTokenBridge` will fail when waiting for retryables.
+ * This function allows us to assert that token bridge wasn't deployed.
+ *
+ * @param {String} assertTokenBridgeDoesntExistParams.parentChainPublicClient - The parent chain Viem Public Client
+ * @param {String} assertTokenBridgeDoesntExistParams.parentChainPublicClient - The orbit chain Viem Public Client
+ * @param {String=} assertTokenBridgeDoesntExistParams.tokenBridgeCreatorAddress - The TokenBridgeCreator address.
+ * Default to getTokenBridgeCreatorAddress(parentChainPublicClient) if not provided
+ * @param {String} assertTokenBridgeDoesntExistParams.rollupAddress - The address of the rollup on the parent chain
+ *
+ * @throws if token bridge was already deployed, it throws an error
+ */
 export async function assertTokenBridgeDoesntExist<
   TParentChain extends Chain | undefined,
   TOrbitChain extends Chain | undefined,
@@ -54,7 +66,7 @@ export async function assertTokenBridgeDoesntExist<
 }) {
   const inbox = await parentChainPublicClient.readContract({
     address: rollupAddress,
-    abi: parseAbi(['function inbox() view returns (address)']),
+    abi: rollupABI,
     functionName: 'inbox',
   });
 
@@ -212,8 +224,7 @@ export async function createTokenBridge<
   await assertTokenBridgeDoesntExist({
     parentChainPublicClient,
     orbitChainPublicClient,
-    tokenBridgeCreatorAddress:
-      tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient),
+    tokenBridgeCreatorAddress: tokenBridgeCreatorAddressOverride,
     rollupAddress,
   });
 
