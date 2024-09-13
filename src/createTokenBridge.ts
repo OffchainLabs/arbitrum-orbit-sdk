@@ -38,7 +38,7 @@ import { getBlockExplorerUrl } from './utils/getBlockExplorerUrl';
 import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 import { getTokenBridgeCreatorAddress } from './utils';
 
-async function assertTokenBridgeDoesntExist<
+export async function assertTokenBridgeDoesntExist<
   TParentChain extends Chain | undefined,
   TOrbitChain extends Chain | undefined,
 >({
