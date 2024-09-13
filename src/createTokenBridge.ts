@@ -49,7 +49,7 @@ export async function assertTokenBridgeDoesntExist<
 }: {
   parentChainPublicClient: PublicClient<Transport, TParentChain>;
   orbitChainPublicClient: PublicClient<Transport, TOrbitChain>;
-  tokenBridgeCreatorAddress: Address;
+  tokenBridgeCreatorAddress?: Address;
   rollupAddress: Address;
 }) {
   const inbox = await parentChainPublicClient.readContract({
@@ -59,7 +59,7 @@ export async function assertTokenBridgeDoesntExist<
   });
 
   const [router] = await parentChainPublicClient.readContract({
-    address: tokenBridgeCreatorAddress,
+    address: tokenBridgeCreatorAddress ?? getTokenBridgeCreatorAddress(parentChainPublicClient),
     abi: tokenBridgeCreatorABI,
     functionName: 'inboxToL2Deployment',
     args: [inbox],
