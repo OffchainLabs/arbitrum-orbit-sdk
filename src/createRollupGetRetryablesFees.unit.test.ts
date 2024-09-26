@@ -10,21 +10,21 @@ const arbitrumSepoliaClient = createPublicClient({
 });
 
 it('successfully fetches retryable fees for an eth-based chain', async () => {
-  const x = await createRollupGetRetryablesFees({
+  const fees = await createRollupGetRetryablesFees({
     publicClient: arbitrumSepoliaClient,
     nativeToken: false,
     maxFeePerGasForRetryables: parseGwei('0.1'),
   });
 
-  expect(x).toBeTypeOf('bigint');
+  expect(fees).toBeTypeOf('bigint');
 });
 
 it('successfully fetches retryable fees for a custom gas token chain', async () => {
-  const x = await createRollupGetRetryablesFees({
+  const fees = await createRollupGetRetryablesFees({
     publicClient: arbitrumSepoliaClient,
     nativeToken: true,
     maxFeePerGasForRetryables: parseGwei('0.1'),
   });
 
-  expect(x).toBeTypeOf('bigint');
+  expect(fees).toBeTypeOf('bigint');
 });
