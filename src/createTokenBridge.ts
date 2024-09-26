@@ -80,7 +80,7 @@ export async function assertTokenBridgeDoesntExist<
   if (router) {
     const code = await orbitChainPublicClient.getBytecode({ address: router });
     if (code) {
-      throw new Error('Token bridge was already deployed');
+      throw new Error(`Token bridge contracts for Rollup ${rollupAddress} are already deployed`);
     }
   }
 }
