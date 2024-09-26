@@ -65,6 +65,21 @@
     // from: @arbitrum/token-bridge-contracts>@openzeppelin/contracts-upgradeable
     // from: @arbitrum/nitro-contracts>@openzeppelin/contracts
     // from: @arbitrum/token-bridge-contracts>@openzeppelin/contracts
-    "GHSA-9vx6-7xxf-x967"
+    "GHSA-9vx6-7xxf-x967",
+    // https://github.com/advisories/GHSA-64vr-g452-qvp3
+    // Vite DOM Clobbering gadget found in vite bundled scripts that leads to XSS
+    // vite is not used in production
+    // from: vitest > vite
+    "GHSA-64vr-g452-qvp3",
+    // https://github.com/advisories/GHSA-9cwx-2883-4wfx
+    // server.fs.deny bypassed when using ?import&raw
+    // vite is not used in production
+    // from: vitest > vite
+    "GHSA-9cwx-2883-4wfx",
+    // https://github.com/advisories/GHSA-gcx4-mw62-g8wm
+    // DOM Clobbering Gadget found in rollup bundled scripts that leads to XSS
+    // vite is not used in production
+    // from: vitest > vite
+    "GHSA-gcx4-mw62-g8wm"
   ]
 }
