@@ -5,7 +5,7 @@ import { approvePrepareTransactionRequest } from './utils/erc20';
 import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
-import { getTokenBridgeCreatorAddress } from './utils/getters';
+import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
 
 export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,

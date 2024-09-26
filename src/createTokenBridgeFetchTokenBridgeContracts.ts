@@ -5,7 +5,7 @@ import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
-import { getTokenBridgeCreatorAddress } from './utils/getters';
+import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
 
 export type CreateTokenBridgeFetchTokenBridgeContractsParams<TChain extends Chain | undefined> =
   Prettify<

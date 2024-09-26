@@ -3,7 +3,11 @@ import {
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
 } from './createRollupPrepareDeploymentParamsConfig';
-import { prepareChainConfig, PrepareChainConfigParams } from './prepareChainConfig';
+import {
+  prepareChainConfig,
+  PrepareChainConfigParams,
+  PrepareChainConfigArbitrumParams,
+} from './prepareChainConfig';
 import {
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
@@ -12,7 +16,13 @@ import {
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,
   CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams,
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
-import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
+import {
+  RollupCreatorVersion,
+  RollupCreatorLatestVersion,
+  RollupCreatorABI,
+  CreateRollupFunctionInputs,
+  CreateRollupParams,
+} from './types/createRollupTypes';
 import {
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
@@ -133,6 +143,7 @@ import {
   getConsensusReleaseByWasmModuleRoot,
   GetConsensusReleaseByWasmModuleRoot,
 } from './wasmModuleRoot';
+export * from './actions';
 
 export {
   arbOwnerPublicActions,
@@ -145,12 +156,18 @@ export {
   CreateRollupFunctionInputs,
   CreateRollupParams,
   //
+  RollupCreatorVersion,
+  RollupCreatorLatestVersion,
+  RollupCreatorABI,
+  //
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
   //
   prepareChainConfig,
   PrepareChainConfigParams,
+  PrepareChainConfigArbitrumParams,
+  //
   createRollupEnoughCustomFeeTokenAllowance,
   CreateRollupEnoughCustomFeeTokenAllowanceParams,
   createRollupPrepareCustomFeeTokenApprovalTransactionRequest,

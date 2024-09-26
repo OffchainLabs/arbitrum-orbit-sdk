@@ -4,7 +4,8 @@ import { getParentChainLayer } from './getParentChainLayer';
 import { sanitizePrivateKey } from './sanitizePrivateKey';
 import { getArbOSVersion } from './getArbOSVersion';
 import { getClientVersion } from './getClientVersion';
-import { getRollupCreatorAddress, getTokenBridgeCreatorAddress } from './getters';
+import { getRollupCreatorAddress } from './getRollupCreatorAddress';
+import { getTokenBridgeCreatorAddress } from './getTokenBridgeCreatorAddress';
 
 export {
   generateChainId,

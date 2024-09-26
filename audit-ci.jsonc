@@ -66,19 +66,20 @@
     // from: @arbitrum/nitro-contracts>@openzeppelin/contracts
     // from: @arbitrum/token-bridge-contracts>@openzeppelin/contracts
     "GHSA-9vx6-7xxf-x967",
-    // https://github.com/advisories/GHSA-grv7-fg5c-xmjg
-    // Uncontrolled resource consumption in braces
-    // eslint and hardhat dependency, only used in dev
-    // from: hardhat>braces & eslint>braces
-    "GHSA-grv7-fg5c-xmjg",
-    // elliptic
-    // waiting for it to release a fix but low severity so we can ignore it
-    // from: @ethersproject/signing-key>elliptic
-    // https://github.com/advisories/GHSA-49q7-c7j4-3p7m
-    "GHSA-49q7-c7j4-3p7m",
-    // https://github.com/advisories/GHSA-977x-g7h5-7qgw
-    "GHSA-977x-g7h5-7qgw",
-    // https://github.com/advisories/GHSA-f7q4-pwc6-w24p
-    "GHSA-f7q4-pwc6-w24p"
+    // https://github.com/advisories/GHSA-64vr-g452-qvp3
+    // Vite DOM Clobbering gadget found in vite bundled scripts that leads to XSS
+    // vite is not used in production
+    // from: vitest > vite
+    "GHSA-64vr-g452-qvp3",
+    // https://github.com/advisories/GHSA-9cwx-2883-4wfx
+    // server.fs.deny bypassed when using ?import&raw
+    // vite is not used in production
+    // from: vitest > vite
+    "GHSA-9cwx-2883-4wfx",
+    // https://github.com/advisories/GHSA-gcx4-mw62-g8wm
+    // DOM Clobbering Gadget found in rollup bundled scripts that leads to XSS
+    // vite is not used in production
+    // from: vitest > vite
+    "GHSA-gcx4-mw62-g8wm"
   ]
 }

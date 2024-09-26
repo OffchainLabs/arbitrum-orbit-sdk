@@ -167,13 +167,22 @@ it('getBatchPosters returns batch posters for a chain created with RollupCreator
   expect(isAccurate).toBeTruthy();
 });
 
-// https://sepolia.arbiscan.io/tx/0xfd638529dec24963075ee8fcd9df0d319c21190a9e3f3cb5e91d7da353666b06
+// https://sepolia.arbiscan.io/tx/0x77db43157182a69ce0e6d2a0564d2dabb43b306d48ea7b4d877160d6a1c9b66d
 it('getBatchPosters returns batch posters for a chain created with RollupCreator v2.1', async () => {
   const { isAccurate, batchPosters } = await getBatchPosters(arbitrumSepoliaClient, {
-    rollup: '0x16A95119425638cAaD6d302D75B270ecDBf37649',
-    sequencerInbox: '0xbE20C632d1DaD19285575580Aaa60C9B1207d531',
+    rollup: '0x66d0e72952f4f69aF9D33C1B7C31Fa9aCDbCAF63',
+    sequencerInbox: '0x43528b8Be52e8D084F147d167487f361553463b5',
   });
-  expect(batchPosters).toEqual(['0x551B0B7DA75530544aF467183E626778412491Da']);
+  expect(batchPosters).toEqual([
+    '0x9464aD09CE0d157Efc6c7EefE577C5AA6dEc804D',
+    '0xC02386B2D10a37e71145B6A7f5569e1db4604213',
+    '0x6C4483f6DCEDb5a758b28D28E11F805bdACFE245',
+    '0xf89836dc33f58394fB34B3e690D3829A65C74286',
+    '0xd1d25Aeb44E99B35E2d5E7Db961c73ec94f92a24',
+    '0xDc4ECA04032b9178020Ff0c6154A7e87309a429f',
+    '0xe122F9838A4C8e6834F24D1b9dCa92eb52a8E17e',
+    '0xB280Fd59090f3D95588d94BACD22b336dE2278e0',
+  ]);
   expect(isAccurate).toBeTruthy();
 });
 
