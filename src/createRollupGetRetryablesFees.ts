@@ -1,4 +1,4 @@
-import { PublicClient, Address } from 'viem';
+import { Chain, PublicClient, Transport, Address } from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
@@ -47,14 +47,14 @@ const bridgeCreatorABI = [
   },
 ] as const;
 
-type Params = {
+export type CreateRollupGetRetryablesFeesParams = {
   nativeToken?: Address;
   maxFeePerGasForRetryables?: bigint;
 };
 
-export async function createRollupGetRetryablesFees(
-  publicClient: PublicClient,
-  { nativeToken, maxFeePerGasForRetryables }: Params,
+export async function createRollupGetRetryablesFees<TChain extends Chain | undefined>(
+  publicClient: PublicClient<Transport, TChain>,
+  { nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
 ): Promise<bigint> {
   const [deployHelperAddress, bridgeCreatorAddress] = await Promise.all([
     publicClient.readContract({
