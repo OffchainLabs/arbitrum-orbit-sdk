@@ -3,6 +3,7 @@ import { PublicClient, Address } from 'viem';
 import { rollupCreatorABI } from './contracts/RollupCreator';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { defaults as createRollupDefaults } from './createRollupDefaults';
 
 const deployHelperABI = [
   {
@@ -48,7 +49,7 @@ const bridgeCreatorABI = [
 
 type Params = {
   nativeToken?: Address;
-  maxFeePerGasForRetryables: bigint;
+  maxFeePerGasForRetryables?: bigint;
 };
 
 export async function createRollupGetRetryablesFees(
@@ -92,6 +93,9 @@ export async function createRollupGetRetryablesFees(
     abi: deployHelperABI,
     address: deployHelperAddress,
     functionName: 'getDeploymentTotalCost',
-    args: [templateInbox, maxFeePerGasForRetryables],
+    args: [
+      templateInbox,
+      maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables,
+    ],
   });
 }
