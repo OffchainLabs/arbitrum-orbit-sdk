@@ -192,7 +192,37 @@ it(`fails to prepare transaction request if ArbOS version 30 is selected`, async
       publicClient,
     }),
   ).rejects.toThrowError(
-    `ArbOS 30 is not supported. Please set the ArbOS version to 31 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
+    `ArbOS 30 is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
+  );
+});
+
+it(`fails to prepare transaction request if ArbOS version 31 is selected`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, InitialArbOSVersion: 31 },
+  });
+
+  // prepare the transaction for deploying the core contracts
+  await expect(
+    createRollupPrepareTransactionRequest({
+      params: {
+        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
+          chainId: BigInt(chainId),
+          owner: deployer.address,
+          chainConfig,
+        }),
+        batchPosters: [deployer.address],
+        validators: [deployer.address],
+      },
+      account: deployer.address,
+      publicClient,
+    }),
+  ).rejects.toThrowError(
+    `ArbOS 31 is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
   );
 });
 
@@ -203,7 +233,7 @@ it(`fails to prepare transaction request if ArbOS version is incompatible with C
   // create the chain config
   const chainConfig = prepareChainConfig({
     chainId,
-    arbitrum: { InitialChainOwner: deployer.address, InitialArbOSVersion: 31 },
+    arbitrum: { InitialChainOwner: deployer.address, InitialArbOSVersion: 32 },
   });
 
   // prepare the transaction for deploying the core contracts
@@ -223,7 +253,7 @@ it(`fails to prepare transaction request if ArbOS version is incompatible with C
       publicClient,
     }),
   ).rejects.toThrowError(
-    `Consensus v20 does not support ArbOS 31. Please update your "wasmModuleRoot" to that of a Consensus version compatible with ArbOS 31.`,
+    `Consensus v20 does not support ArbOS 32. Please update your "wasmModuleRoot" to that of a Consensus version compatible with ArbOS 32.`,
   );
 });
 
