@@ -40,7 +40,7 @@ import { rollupABI } from './contracts/Rollup';
 
 /**
  * If token bridge was already deployed, `createTokenBridge` will fail when waiting for retryables.
- * This function allows us to assert that token bridge wasn't deployed.
+ * This function returns true if token bridge was deployed previously.
  *
  * @param {String} assertTokenBridgeDoesntExistParams.parentChainPublicClient - The parent chain Viem Public Client
  * @param {String} assertTokenBridgeDoesntExistParams.orbitChainPublicClient - The orbit chain Viem Public Client
@@ -48,9 +48,9 @@ import { rollupABI } from './contracts/Rollup';
  * Default to getTokenBridgeCreatorAddress(parentChainPublicClient) if not provided
  * @param {String} assertTokenBridgeDoesntExistParams.rollupAddress - The address of the rollup on the parent chain
  *
- * @throws if token bridge was already deployed, it throws an error
+ * @returns true if token bridge was already deployed
  */
-export async function assertTokenBridgeDoesntExist<
+export async function isTokenBridgeDeployed<
   TParentChain extends Chain | undefined,
   TOrbitChain extends Chain | undefined,
 >({
@@ -80,9 +80,11 @@ export async function assertTokenBridgeDoesntExist<
   if (router) {
     const code = await orbitChainPublicClient.getBytecode({ address: router });
     if (code) {
-      throw new Error(`Token bridge contracts for Rollup ${rollupAddress} are already deployed`);
+      return true;
     }
   }
+
+  return false;
 }
 
 export type CreateTokenBridgeParams<
@@ -221,12 +223,16 @@ export async function createTokenBridge<
 }: CreateTokenBridgeParams<TParentChain, TOrbitChain>): Promise<
   CreateTokenBridgeResults<TParentChain, TOrbitChain>
 > {
-  await assertTokenBridgeDoesntExist({
+  const isTokenBridgeAlreadyDeployed = await isTokenBridgeDeployed({
     parentChainPublicClient,
     orbitChainPublicClient,
     tokenBridgeCreatorAddress: tokenBridgeCreatorAddressOverride,
     rollupAddress,
   });
+
+  if (isTokenBridgeAlreadyDeployed) {
+    throw new Error(`Token bridge contracts for Rollup ${rollupAddress} are already deployed`);
+  }
 
   const isCustomFeeTokenBridge = isCustomFeeTokenAddress(nativeTokenAddress);
   if (isCustomFeeTokenBridge) {

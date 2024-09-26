@@ -80,7 +80,7 @@ import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
   createTokenBridge,
-  assertTokenBridgeDoesntExist,
+  isTokenBridgeDeployed,
 } from './createTokenBridge';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
@@ -211,7 +211,7 @@ export {
   prepareKeyset,
   utils,
   //
-  assertTokenBridgeDoesntExist,
+  isTokenBridgeDeployed,
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
   createTokenBridge,

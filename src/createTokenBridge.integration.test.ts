@@ -477,7 +477,9 @@ describe('createTokenBridge', () => {
       },
     };
     const { tokenBridgeContracts } = await createTokenBridge(cfg);
-    await expect(createTokenBridge(cfg)).rejects.toThrow();
+    await expect(createTokenBridge(cfg)).rejects.toThrowError(
+      `Token bridge contracts for Rollup ${testnodeInformation.rollup} are already deployed`,
+    );
 
     checkTokenBridgeContracts(tokenBridgeContracts);
     checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
