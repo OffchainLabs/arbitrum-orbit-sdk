@@ -76,9 +76,9 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   const arbOSVersion = chainConfig.arbitrum.InitialArbOSVersion;
   const wasmModuleRoot = params.config.wasmModuleRoot;
 
-  if (arbOSVersion === 30) {
+  if (arbOSVersion === 30 || arbOSVersion === 31) {
     throw new Error(
-      `ArbOS 30 is not supported. Please set the ArbOS version to 31 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
+      `ArbOS ${arbOSVersion} is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
     );
   }
 
