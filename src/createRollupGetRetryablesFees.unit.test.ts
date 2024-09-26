@@ -10,9 +10,7 @@ const arbitrumSepoliaClient = createPublicClient({
 });
 
 it('successfully fetches retryable fees for an eth-based chain', async () => {
-  const fees = await createRollupGetRetryablesFees({
-    publicClient: arbitrumSepoliaClient,
-    nativeToken: false,
+  const fees = await createRollupGetRetryablesFees(arbitrumSepoliaClient, {
     maxFeePerGasForRetryables: parseGwei('0.1'),
   });
 
@@ -20,9 +18,8 @@ it('successfully fetches retryable fees for an eth-based chain', async () => {
 });
 
 it('successfully fetches retryable fees for a custom gas token chain', async () => {
-  const fees = await createRollupGetRetryablesFees({
-    publicClient: arbitrumSepoliaClient,
-    nativeToken: true,
+  const fees = await createRollupGetRetryablesFees(arbitrumSepoliaClient, {
+    nativeToken: '0xaf88d065e77c8cc2239327c5edb3a432268e5831',
     maxFeePerGasForRetryables: parseGwei('0.1'),
   });
 

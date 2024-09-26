@@ -1,7 +1,8 @@
-import { PublicClient } from 'viem';
+import { PublicClient, Address } from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
-import { getRollupCreatorAddress } from './utils';
+import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
+import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 
 const deployHelperABI = [
   {
@@ -46,14 +47,14 @@ const bridgeCreatorABI = [
 ] as const;
 
 type Params = {
-  publicClient: PublicClient;
+  nativeToken?: Address;
   maxFeePerGasForRetryables: bigint;
-  nativeToken: boolean;
 };
 
-export async function createRollupGetRetryablesFees(params: Params): Promise<bigint> {
-  const { publicClient } = params;
-
+export async function createRollupGetRetryablesFees(
+  publicClient: PublicClient,
+  { nativeToken, maxFeePerGasForRetryables }: Params,
+): Promise<bigint> {
   const [deployHelperAddress, bridgeCreatorAddress] = await Promise.all([
     publicClient.readContract({
       abi: rollupCreatorABI,
@@ -83,12 +84,14 @@ export async function createRollupGetRetryablesFees(params: Params): Promise<big
   const [, , ethTemplateInbox] = ethBasedTemplates;
   const [, , erc20TemplateInbox] = erc20BasedTemplates;
 
-  const templateInbox = params.nativeToken ? erc20TemplateInbox : ethTemplateInbox;
+  const templateInbox = isCustomFeeTokenAddress(nativeToken)
+    ? erc20TemplateInbox
+    : ethTemplateInbox;
 
   return await publicClient.readContract({
     abi: deployHelperABI,
     address: deployHelperAddress,
     functionName: 'getDeploymentTotalCost',
-    args: [templateInbox, params.maxFeePerGasForRetryables],
+    args: [templateInbox, maxFeePerGasForRetryables],
   });
 }
