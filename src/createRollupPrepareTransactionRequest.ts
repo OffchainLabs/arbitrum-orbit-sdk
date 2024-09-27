@@ -33,6 +33,7 @@ export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | u
     WithRollupCreatorAddressOverride<{
       params: CreateRollupParams;
       account: Address;
+      value?: bigint;
       publicClient: PublicClient<Transport, TChain>;
       gasOverrides?: TransactionRequestGasOverrides;
     }>
@@ -41,6 +42,7 @@ export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | u
 export async function createRollupPrepareTransactionRequest<TChain extends Chain | undefined>({
   params,
   account,
+  value,
   publicClient,
   gasOverrides,
   rollupCreatorAddressOverride,
@@ -101,7 +103,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
-    value: createRollupGetCallValue(paramsWithDefaults),
+    value: value ?? createRollupGetCallValue(paramsWithDefaults),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
     // we'll set the actual value in the code below
