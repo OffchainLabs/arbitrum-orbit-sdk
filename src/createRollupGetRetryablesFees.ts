@@ -129,7 +129,7 @@ export async function createRollupGetRetryablesFeesWithDefaults<TChain extends C
     });
   } catch (error) {
     console.error(
-      '[createRollupGetRetryablesFeesWithDefaults] failed to fetch retryables fees, falling back to defaults.',
+      `[createRollupGetRetryablesFeesWithDefaults] Failed to fetch retryables fees, falling back to defaults.\n\n${error}`,
     );
     return createRollupDefaultRetryablesFees;
   }
