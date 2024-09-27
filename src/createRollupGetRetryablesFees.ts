@@ -100,6 +100,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const maxFeePerGas = maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables;
 
   const baseFee = await publicClient.getGasPrice();
+  // increase base fee by 20% in case of a spike
   const baseFeeWithBuffer = applyPercentIncrease({ base: baseFee, percentIncrease: 20n });
 
   const { data: result } = await publicClient.call({
