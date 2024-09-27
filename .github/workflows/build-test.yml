@@ -65,6 +65,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
       - name: Install node_modules
         uses: OffchainLabs/actions/node-modules/install@main
 
