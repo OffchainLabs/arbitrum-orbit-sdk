@@ -58,13 +58,14 @@ const bridgeCreatorABI = [
 ] as const;
 
 export type CreateRollupGetRetryablesFeesParams = {
+  account: Address;
   nativeToken?: Address;
   maxFeePerGasForRetryables?: bigint;
 };
 
 export async function createRollupGetRetryablesFees<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
+  { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
 ): Promise<bigint> {
   const [deployHelperAddress, bridgeCreatorAddress] = await Promise.all([
     publicClient.readContract({
@@ -102,6 +103,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const baseFeeWithBuffer = applyPercentIncrease({ base: baseFee, percentIncrease: 20n });
 
   const { data: result } = await publicClient.call({
+    account,
     data: encodeFunctionData({
       abi: deployHelperABI,
       functionName: 'getDeploymentTotalCost',
@@ -120,10 +122,11 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
 
 export async function createRollupGetRetryablesFeesWithDefaults<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
+  { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
 ): Promise<bigint> {
   try {
     return await createRollupGetRetryablesFees(publicClient, {
+      account,
       nativeToken,
       maxFeePerGasForRetryables,
     });

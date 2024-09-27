@@ -39,6 +39,7 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
     amount:
       amount ??
       (await createRollupGetRetryablesFeesWithDefaults(publicClient, {
+        account,
         nativeToken,
         maxFeePerGasForRetryables,
       })),

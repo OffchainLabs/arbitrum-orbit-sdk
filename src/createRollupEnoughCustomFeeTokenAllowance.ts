@@ -32,6 +32,7 @@ export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends C
   });
 
   const fees = await createRollupGetRetryablesFeesWithDefaults(publicClient, {
+    account,
     nativeToken,
     maxFeePerGasForRetryables,
   });

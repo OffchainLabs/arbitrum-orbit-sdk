@@ -1,4 +1,4 @@
-import { Chain, PublicClient, Transport } from 'viem';
+import { Chain, PublicClient, Transport, Address } from 'viem';
 
 import { CreateRollupParams } from './types/createRollupTypes';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
@@ -7,7 +7,7 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 
 export async function createRollupGetCallValue<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  params: CreateRollupParams,
+  params: CreateRollupParams & { account: Address },
 ): Promise<bigint> {
   // when not deploying deterministic factories to L2, no callvalue is necessary, as no retryable tickets will be created
   if (!params.deployFactoriesToL2) {
