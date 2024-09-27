@@ -27,14 +27,16 @@ const client = createPublicClient({
   transport: http(),
 });
 
+let l3UpgradeExecutorAddress: Address = '0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b';
+
 describe('chain owner management', () => {
   it('buildAdd/RemoveChainOwner successfully add and remove chain owner', async () => {
     const randomAddress = privateKeyToAccount(generatePrivateKey()).address;
-    expect(await getAllChainOwners(client)).toEqual([l3RollupOwner.address]);
+    expect(await getAllChainOwners(client)).toEqual([l3UpgradeExecutorAddress]);
     expect(await isChainOwner(client, { address: randomAddress })).toBeFalsy();
 
     const addTransactionRequest = await buildAddChainOwner(client, {
-      upgradeExecutor: false,
+      upgradeExecutor: l3UpgradeExecutorAddress,
       account: l3RollupOwner.address,
       params: {
         newOwner: randomAddress,
@@ -46,10 +48,10 @@ describe('chain owner management', () => {
     await client.waitForTransactionReceipt({ hash: addTxHash });
 
     expect(await isChainOwner(client, { address: randomAddress })).toBeTruthy();
-    expect(await getAllChainOwners(client)).toEqual([l3RollupOwner.address, randomAddress]);
+    expect(await getAllChainOwners(client)).toEqual([l3UpgradeExecutorAddress, randomAddress]);
 
     const removeTransactionRequest = await buildRemoveChainOwner(client, {
-      upgradeExecutor: false,
+      upgradeExecutor: l3UpgradeExecutorAddress,
       account: l3RollupOwner.address,
       params: {
         owner: randomAddress,
@@ -60,7 +62,7 @@ describe('chain owner management', () => {
     });
     await client.waitForTransactionReceipt({ hash: removeTxHash });
 
-    expect(await getAllChainOwners(client)).toEqual([l3RollupOwner.address]);
+    expect(await getAllChainOwners(client)).toEqual([l3UpgradeExecutorAddress]);
     expect(await isChainOwner(client, { address: randomAddress })).toBeFalsy();
   });
 });
@@ -81,7 +83,7 @@ describe('Fee management', () => {
   it('buildSetMaxTxGasLimit successfully set max gas limit for transaction', async () => {
     async function changeMaxTxGasLimit(limit: bigint) {
       const transactionRequest = await buildSetMaxTxGasLimit(client, {
-        upgradeExecutor: false,
+        upgradeExecutor: l3UpgradeExecutorAddress,
         account: l3RollupOwner.address,
         params: {
           limit,
@@ -92,24 +94,19 @@ describe('Fee management', () => {
       });
       await client.waitForTransactionReceipt({ hash: txHash });
     }
-    // const { maxTxGasLimit } = await getGasAccountingParams(client);
-    // expect(maxTxGasLimit).toEqual(32000000n)
+    expect((await getGasAccountingParams(client)).maxTxGasLimit).toEqual(32_000_000n);
 
     await changeMaxTxGasLimit(64_000_000n);
-
-    // const { maxTxGasLimit } = await getGasAccountingParams(client);
-    // expect(maxTxGasLimit).toEqual(64000000n)
+    expect((await getGasAccountingParams(client)).maxTxGasLimit).toEqual(64_000_000n);
 
     await changeMaxTxGasLimit(32_000_000n);
-
-    // const { maxTxGasLimit } = await getGasAccountingParams(client);
-    // expect(maxTxGasLimit).toEqual(32000000n)
+    expect((await getGasAccountingParams(client)).maxTxGasLimit).toEqual(32_000_000n);
   });
 
   it('buildSetSpeedLimit successfully speed limit', async () => {
     async function changeSpeedLimit(limit: bigint) {
       const transactionRequest = await buildSetSpeedLimit(client, {
-        upgradeExecutor: false,
+        upgradeExecutor: l3UpgradeExecutorAddress,
         account: l3RollupOwner.address,
         params: {
           limit,
@@ -132,7 +129,7 @@ describe('Fee management', () => {
   it('buildSetParentPricePerUnit successfully set parent price per unit', async () => {
     async function changeParentPricePerUnit(pricePerUnit: bigint) {
       const transactionRequest = await buildSetParentPricePerUnit(client, {
-        upgradeExecutor: false,
+        upgradeExecutor: l3UpgradeExecutorAddress,
         account: l3RollupOwner.address,
         params: {
           pricePerUnit,
@@ -156,7 +153,7 @@ describe('Fee management', () => {
   it('buildSetParentPricingRewardRate successfully set parent pricing reward rate', async () => {
     async function changeParentPriceRewardRate(weiPerUnit: bigint) {
       const transactionRequest = await buildSetParentPricingRewardRate(client, {
-        upgradeExecutor: false,
+        upgradeExecutor: l3UpgradeExecutorAddress,
         account: l3RollupOwner.address,
         params: {
           weiPerUnit,
@@ -180,7 +177,7 @@ describe('Fee management', () => {
   it('buildSetParentPricingRewardRecipient successfully set parent pricing reward recipient', async () => {
     async function changeParentPriceRewardRecipient(recipient: Address) {
       const transactionRequest = await buildSetParentPricingRewardRecipient(client, {
-        upgradeExecutor: false,
+        upgradeExecutor: l3UpgradeExecutorAddress,
         account: l3RollupOwner.address,
         params: {
           recipient,
