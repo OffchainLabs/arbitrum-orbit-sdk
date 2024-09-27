@@ -5,7 +5,7 @@ import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
-import { createRollupGetRetryablesFeesWithFallback } from './createRollupGetRetryablesFees';
+import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
   Prettify<
@@ -31,7 +31,7 @@ export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends C
     publicClient,
   });
 
-  const fees = await createRollupGetRetryablesFeesWithFallback(publicClient, {
+  const fees = await createRollupGetRetryablesFeesWithDefaults(publicClient, {
     nativeToken,
     maxFeePerGasForRetryables,
   });

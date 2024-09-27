@@ -6,7 +6,7 @@ import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
-import { createRollupGetRetryablesFeesWithFallback } from './createRollupGetRetryablesFees';
+import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,
@@ -38,7 +38,7 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
     spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
     amount:
       amount ??
-      (await createRollupGetRetryablesFeesWithFallback(publicClient, {
+      (await createRollupGetRetryablesFeesWithDefaults(publicClient, {
         nativeToken,
         maxFeePerGasForRetryables,
       })),

@@ -1,7 +1,7 @@
 import { Chain, PublicClient, Transport } from 'viem';
 
 import { CreateRollupParams } from './types/createRollupTypes';
-import { createRollupGetRetryablesFeesWithFallback } from './createRollupGetRetryablesFees';
+import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
 
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 
@@ -19,5 +19,5 @@ export async function createRollupGetCallValue<TChain extends Chain | undefined>
     return BigInt(0);
   }
 
-  return await createRollupGetRetryablesFeesWithFallback(publicClient, params);
+  return await createRollupGetRetryablesFeesWithDefaults(publicClient, params);
 }

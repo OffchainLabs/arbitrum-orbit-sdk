@@ -118,7 +118,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   });
 }
 
-export async function createRollupGetRetryablesFeesWithFallback<TChain extends Chain | undefined>(
+export async function createRollupGetRetryablesFeesWithDefaults<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   { nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
 ): Promise<bigint> {
@@ -129,7 +129,7 @@ export async function createRollupGetRetryablesFeesWithFallback<TChain extends C
     });
   } catch (error) {
     console.error(
-      '[createRollupGetRetryablesFeesWithFallback] failed to fetch retryables fees, falling back to defaults.',
+      '[createRollupGetRetryablesFeesWithDefaults] failed to fetch retryables fees, falling back to defaults.',
     );
     return createRollupDefaultRetryablesFees;
   }
