@@ -1,17 +1,16 @@
 import { it, expect } from 'vitest';
 import { createPublicClient, http, parseGwei } from 'viem';
-import { arbitrumSepolia, sepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 
 import { createRollupGetRetryablesFees } from './createRollupGetRetryablesFees';
 
-const arbitrumSepoliaClient = createPublicClient({
+const sepoliaClient = createPublicClient({
   chain: sepolia,
-  transport: http('https://ethereum-sepolia-rpc.publicnode.com'),
+  transport: http(),
 });
 
 it('successfully fetches retryable fees for an eth-based chain', async () => {
-  const fees = await createRollupGetRetryablesFees(arbitrumSepoliaClient, {
-    account: '0x41C966f99De0cA6F6531fbcAc9Db7eaBDF119744',
+  const fees = await createRollupGetRetryablesFees(sepoliaClient, {
     maxFeePerGasForRetryables: parseGwei('0.1'),
   });
 
@@ -19,8 +18,7 @@ it('successfully fetches retryable fees for an eth-based chain', async () => {
 });
 
 it('successfully fetches retryable fees for a custom gas token chain', async () => {
-  const fees = await createRollupGetRetryablesFees(arbitrumSepoliaClient, {
-    account: '0x41C966f99De0cA6F6531fbcAc9Db7eaBDF119744',
+  const fees = await createRollupGetRetryablesFees(sepoliaClient, {
     nativeToken: '0xaf88d065e77c8cc2239327c5edb3a432268e5831',
     maxFeePerGasForRetryables: parseGwei('0.1'),
   });

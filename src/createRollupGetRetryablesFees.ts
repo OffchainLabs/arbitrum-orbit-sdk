@@ -4,7 +4,6 @@ import {
   Transport,
   Address,
   encodeFunctionData,
-  zeroAddress,
   decodeFunctionResult,
 } from 'viem';
 
@@ -12,6 +11,7 @@ import { rollupCreatorABI } from './contracts/RollupCreator';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { defaults as createRollupDefaults } from './createRollupDefaults';
+import { applyPercentIncrease } from './utils/gasOverrides';
 
 const deployHelperABI = [
   {
@@ -56,14 +56,13 @@ const bridgeCreatorABI = [
 ] as const;
 
 export type CreateRollupGetRetryablesFeesParams = {
-  account: Address;
   nativeToken?: Address;
   maxFeePerGasForRetryables?: bigint;
 };
 
 export async function createRollupGetRetryablesFees<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
+  { nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
 ): Promise<bigint> {
   const [deployHelperAddress, bridgeCreatorAddress] = await Promise.all([
     publicClient.readContract({
@@ -97,25 +96,23 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const inbox = isCustomFeeTokenAddress(nativeToken) ? erc20TemplateInbox : ethTemplateInbox;
   const maxFeePerGas = maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables;
 
+  const baseFee = await publicClient.getGasPrice();
+  const baseFeeWithBuffer = applyPercentIncrease({ base: baseFee, percentIncrease: 20n });
+
   const { data: result } = await publicClient.call({
-    account,
     data: encodeFunctionData({
       abi: deployHelperABI,
       functionName: 'getDeploymentTotalCost',
       args: [inbox, maxFeePerGas],
     }),
     to: deployHelperAddress,
-    maxFeePerGas,
-    // todo: fix
+    maxFeePerGas: baseFeeWithBuffer,
+    // todo:fix
   } as any);
 
-  const x = decodeFunctionResult({
+  return decodeFunctionResult({
     abi: deployHelperABI,
     functionName: 'getDeploymentTotalCost',
     data: result!,
   });
-
-  console.log({ x });
-
-  return x;
 }
