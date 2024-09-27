@@ -3,33 +3,10 @@ import { Address, PublicClient, Transport, Chain } from 'viem';
 import { approvePrepareTransactionRequest } from './utils/erc20';
 import { validateParentChain } from './types/ParentChain';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
-import { createRollupDefaultRetryablesFees } from './constants';
 
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
-import { createRollupGetRetryablesFees } from './createRollupGetRetryablesFees';
-
-async function getFees<TChain extends Chain | undefined>({
-  publicClient,
-  nativeToken,
-  maxFeePerGasForRetryables,
-}: {
-  publicClient: PublicClient<Transport, TChain>;
-  nativeToken: Address;
-  maxFeePerGasForRetryables?: bigint;
-}): Promise<bigint> {
-  try {
-    return await createRollupGetRetryablesFees(publicClient, {
-      nativeToken,
-      maxFeePerGasForRetryables,
-    });
-  } catch (error) {
-    console.error(
-      '[createRollupPrepareCustomFeeTokenApprovalTransactionRequest] failed to fetch retryables fees, using defaults.',
-    );
-    return createRollupDefaultRetryablesFees;
-  }
-}
+import { createRollupGetRetryablesFeesWithFallback } from './createRollupGetRetryablesFees';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,
@@ -59,7 +36,12 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
     address: nativeToken,
     owner: account,
     spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    amount: amount ?? (await getFees({ publicClient, nativeToken, maxFeePerGasForRetryables })),
+    amount:
+      amount ??
+      (await createRollupGetRetryablesFeesWithFallback(publicClient, {
+        nativeToken,
+        maxFeePerGasForRetryables,
+      })),
     publicClient,
   });
 

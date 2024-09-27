@@ -2,15 +2,16 @@ import { Address, PublicClient, Transport, Chain } from 'viem';
 
 import { fetchAllowance } from './utils/erc20';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
-import { createRollupDefaultRetryablesFees } from './constants';
 
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
+import { createRollupGetRetryablesFeesWithFallback } from './createRollupGetRetryablesFees';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
   Prettify<
     WithRollupCreatorAddressOverride<{
       nativeToken: Address;
+      maxFeePerGasForRetryables?: bigint;
       account: Address;
       publicClient: PublicClient<Transport, TChain>;
     }>
@@ -18,6 +19,7 @@ export type CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain extends Chain
 
 export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends Chain | undefined>({
   nativeToken,
+  maxFeePerGasForRetryables,
   account,
   publicClient,
   rollupCreatorAddressOverride,
@@ -29,5 +31,10 @@ export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends C
     publicClient,
   });
 
-  return allowance >= createRollupDefaultRetryablesFees;
+  const fees = await createRollupGetRetryablesFeesWithFallback(publicClient, {
+    nativeToken,
+    maxFeePerGasForRetryables,
+  });
+
+  return allowance >= fees;
 }

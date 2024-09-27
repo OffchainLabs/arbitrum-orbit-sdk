@@ -1,8 +1,7 @@
 import { Chain, PublicClient, Transport } from 'viem';
 
 import { CreateRollupParams } from './types/createRollupTypes';
-import { createRollupDefaultRetryablesFees } from './constants';
-import { createRollupGetRetryablesFees } from './createRollupGetRetryablesFees';
+import { createRollupGetRetryablesFeesWithFallback } from './createRollupGetRetryablesFees';
 
 import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 
@@ -20,10 +19,5 @@ export async function createRollupGetCallValue<TChain extends Chain | undefined>
     return BigInt(0);
   }
 
-  try {
-    return await createRollupGetRetryablesFees(publicClient, params);
-  } catch (error) {
-    console.error('[createRollupGetCallValue] failed to fetch retryables fees, using defaults.');
-    return createRollupDefaultRetryablesFees;
-  }
+  return await createRollupGetRetryablesFeesWithFallback(publicClient, params);
 }
