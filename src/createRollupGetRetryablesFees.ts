@@ -1,4 +1,12 @@
-import { Chain, PublicClient, Transport, Address } from 'viem';
+import {
+  Chain,
+  PublicClient,
+  Transport,
+  Address,
+  encodeFunctionData,
+  zeroAddress,
+  decodeFunctionResult,
+} from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
@@ -48,13 +56,14 @@ const bridgeCreatorABI = [
 ] as const;
 
 export type CreateRollupGetRetryablesFeesParams = {
+  account: Address;
   nativeToken?: Address;
   maxFeePerGasForRetryables?: bigint;
 };
 
 export async function createRollupGetRetryablesFees<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
+  { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
 ): Promise<bigint> {
   const [deployHelperAddress, bridgeCreatorAddress] = await Promise.all([
     publicClient.readContract({
@@ -85,17 +94,28 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const [, , ethTemplateInbox] = ethBasedTemplates;
   const [, , erc20TemplateInbox] = erc20BasedTemplates;
 
-  const templateInbox = isCustomFeeTokenAddress(nativeToken)
-    ? erc20TemplateInbox
-    : ethTemplateInbox;
+  const inbox = isCustomFeeTokenAddress(nativeToken) ? erc20TemplateInbox : ethTemplateInbox;
+  const maxFeePerGas = maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables;
 
-  return await publicClient.readContract({
+  const { data: result } = await publicClient.call({
+    account,
+    data: encodeFunctionData({
+      abi: deployHelperABI,
+      functionName: 'getDeploymentTotalCost',
+      args: [inbox, maxFeePerGas],
+    }),
+    to: deployHelperAddress,
+    maxFeePerGas,
+    // todo: fix
+  } as any);
+
+  const x = decodeFunctionResult({
     abi: deployHelperABI,
-    address: deployHelperAddress,
     functionName: 'getDeploymentTotalCost',
-    args: [
-      templateInbox,
-      maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables,
-    ],
+    data: result!,
   });
+
+  console.log({ x });
+
+  return x;
 }
