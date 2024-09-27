@@ -7,6 +7,29 @@ import { createRollupDefaultRetryablesFees } from './constants';
 
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
+import { createRollupGetRetryablesFees } from './createRollupGetRetryablesFees';
+
+async function getFees<TChain extends Chain | undefined>({
+  publicClient,
+  nativeToken,
+  maxFeePerGasForRetryables,
+}: {
+  publicClient: PublicClient<Transport, TChain>;
+  nativeToken: Address;
+  maxFeePerGasForRetryables?: bigint;
+}): Promise<bigint> {
+  try {
+    return await createRollupGetRetryablesFees(publicClient, {
+      nativeToken,
+      maxFeePerGasForRetryables,
+    });
+  } catch (error) {
+    console.error(
+      '[createRollupPrepareCustomFeeTokenApprovalTransactionRequest] failed to fetch retryables fees, using defaults.',
+    );
+    return createRollupDefaultRetryablesFees;
+  }
+}
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,
@@ -14,6 +37,7 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   WithRollupCreatorAddressOverride<{
     amount?: bigint;
     nativeToken: Address;
+    maxFeePerGasForRetryables?: bigint;
     account: Address;
     publicClient: PublicClient<Transport, TChain>;
   }>
@@ -22,8 +46,9 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest<
   TChain extends Chain | undefined,
 >({
-  amount = createRollupDefaultRetryablesFees,
+  amount,
   nativeToken,
+  maxFeePerGasForRetryables,
   account,
   publicClient,
   rollupCreatorAddressOverride,
@@ -34,7 +59,7 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
     address: nativeToken,
     owner: account,
     spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    amount,
+    amount: amount ?? (await getFees({ publicClient, nativeToken, maxFeePerGasForRetryables })),
     publicClient,
   });
 
