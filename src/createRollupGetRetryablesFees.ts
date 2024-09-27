@@ -3,6 +3,7 @@ import {
   PublicClient,
   Transport,
   Address,
+  CallParameters,
   encodeFunctionData,
   decodeFunctionResult,
 } from 'viem';
@@ -107,8 +108,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
     }),
     to: deployHelperAddress,
     maxFeePerGas: baseFeeWithBuffer,
-    // todo:fix
-  } as any);
+  } as unknown as CallParameters<TChain>);
 
   return decodeFunctionResult({
     abi: deployHelperABI,
