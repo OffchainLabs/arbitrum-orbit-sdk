@@ -16,6 +16,7 @@ it('successfully fetches retryable fees for an eth-based chain', async () => {
   });
 
   expect(fees).toBeTypeOf('bigint');
+  expect(fees).toBeGreaterThanOrEqual(124708400000000000n);
 });
 
 it('successfully fetches retryable fees for a custom gas token chain', async () => {
@@ -26,4 +27,5 @@ it('successfully fetches retryable fees for a custom gas token chain', async () 
   });
 
   expect(fees).toBeTypeOf('bigint');
+  expect(fees).toEqual(124708400000000000n);
 });
