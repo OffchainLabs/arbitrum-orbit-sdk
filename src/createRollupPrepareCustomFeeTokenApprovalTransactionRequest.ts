@@ -43,8 +43,7 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
     address: nativeToken,
     owner: account,
     spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    // approve 20% more than the necessary retryables fees, so there's enough in case of a gas price spike
-    amount: amount ?? applyPercentIncrease({ base: fees, percentIncrease: 20n }),
+    amount: amount ?? fees,
     publicClient,
   });
 
