@@ -19,5 +19,5 @@ export async function createRollupGetCallValue<TChain extends Chain | undefined>
     return BigInt(0);
   }
 
-  return await createRollupGetRetryablesFeesWithDefaults(publicClient, params);
+  return createRollupGetRetryablesFeesWithDefaults(publicClient, params);
 }
