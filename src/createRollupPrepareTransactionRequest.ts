@@ -19,6 +19,7 @@ import {
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
 import { isCustomParentChain } from './customChains';
+import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -33,6 +34,7 @@ export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | u
     WithRollupCreatorAddressOverride<{
       params: CreateRollupParams;
       account: Address;
+      value?: bigint;
       publicClient: PublicClient<Transport, TChain>;
       gasOverrides?: TransactionRequestGasOverrides;
     }>
@@ -41,6 +43,7 @@ export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | u
 export async function createRollupPrepareTransactionRequest<TChain extends Chain | undefined>({
   params,
   account,
+  value,
   publicClient,
   gasOverrides,
   rollupCreatorAddressOverride,
@@ -77,16 +80,36 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
   }
 
+  const arbOSVersion = chainConfig.arbitrum.InitialArbOSVersion;
+  const wasmModuleRoot = params.config.wasmModuleRoot;
+
+  if (arbOSVersion === 30 || arbOSVersion === 31) {
+    throw new Error(
+      `ArbOS ${arbOSVersion} is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
+    );
+  }
+
+  if (isKnownWasmModuleRoot(wasmModuleRoot)) {
+    const consensusRelease = getConsensusReleaseByWasmModuleRoot(wasmModuleRoot);
+
+    if (arbOSVersion > consensusRelease.maxArbOSVersion) {
+      throw new Error(
+        `Consensus v${consensusRelease.version} does not support ArbOS ${arbOSVersion}. Please update your "wasmModuleRoot" to that of a Consensus version compatible with ArbOS ${arbOSVersion}.`,
+      );
+    }
+  }
+
   const maxDataSize = params.maxDataSize ?? createRollupGetMaxDataSize(chainId);
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
+  const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
-    value: createRollupGetCallValue(paramsWithDefaults),
+    value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
     // we'll set the actual value in the code below

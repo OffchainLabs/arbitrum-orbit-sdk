@@ -5,6 +5,8 @@ import {
   createRollupFetchTransactionHash,
   createRollupPrepareTransactionReceipt,
   rollupAdminLogicPublicActions,
+  // Uncomment it when you want to use getValidators() to get validator status
+  // getValidators,
 } from '@arbitrum/orbit-sdk';
 import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
@@ -75,6 +77,17 @@ async function main() {
   console.log(
     `Before executing, the address ${newValidators[0]} status in validator list is ${beforeStatus}`,
   );
+
+  /*
+   You can also use the following code to check validator status, it will return a list 
+   of whitelist validators.
+
+   console.log('Fetching current validator address list in the parent chain...');
+   const beforeValidatorList = await getValidators(parentChainPublicClient, {
+    rollup: coreContracts.rollup,
+   });
+   console.log(`Before executing, the validator list is ${beforeValidatorList.validators}`);
+  */
 
   // prepare set validator transaction request
   const setValidatorTransactionRequest =
