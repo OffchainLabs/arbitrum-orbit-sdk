@@ -75,6 +75,12 @@ async function main() {
     parentChainPublicClient,
     orbitChainPublicClient,
     account: rollupOwner.address,
+    retryableGasOverrides: {
+      maxSubmissionCostForFactory: { percentIncrease: 100n },
+      maxGasForFactory: { percentIncrease: 100n },
+      maxSubmissionCostForContracts: { percentIncrease: 100n },
+      maxGasForContracts: { percentIncrease: 100n },
+    },
   });
 
   // sign and send the transaction
