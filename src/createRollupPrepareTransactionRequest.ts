@@ -18,6 +18,7 @@ import {
   CreateRollupParams,
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
+import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -70,6 +71,25 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     if ((await fetchDecimals({ address: params.nativeToken, publicClient })) !== 18) {
       throw new Error(
         `"params.nativeToken" can only be configured with a token that uses 18 decimals.`,
+      );
+    }
+  }
+
+  const arbOSVersion = chainConfig.arbitrum.InitialArbOSVersion;
+  const wasmModuleRoot = params.config.wasmModuleRoot;
+
+  if (arbOSVersion === 30 || arbOSVersion === 31) {
+    throw new Error(
+      `ArbOS ${arbOSVersion} is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
+    );
+  }
+
+  if (isKnownWasmModuleRoot(wasmModuleRoot)) {
+    const consensusRelease = getConsensusReleaseByWasmModuleRoot(wasmModuleRoot);
+
+    if (arbOSVersion > consensusRelease.maxArbOSVersion) {
+      throw new Error(
+        `Consensus v${consensusRelease.version} does not support ArbOS ${arbOSVersion}. Please update your "wasmModuleRoot" to that of a Consensus version compatible with ArbOS ${arbOSVersion}.`,
       );
     }
   }
