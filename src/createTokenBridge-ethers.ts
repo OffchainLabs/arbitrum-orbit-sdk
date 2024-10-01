@@ -232,7 +232,7 @@ async function getEstimateForDeployingContracts(
     ethers.utils.hexDataLength(calldata),
   );
 
-  const gasEstimateToDeployContracts = await l2FactoryTemplate.estimateGas.deployL2Contracts(
+  const maxGas = await l2FactoryTemplate.estimateGas.deployL2Contracts(
     l2Code,
     ethers.Wallet.createRandom().address,
     ethers.Wallet.createRandom().address,
@@ -246,7 +246,7 @@ async function getEstimateForDeployingContracts(
 
   return {
     maxSubmissionCost,
-    maxGas: gasEstimateToDeployContracts,
+    maxGas: maxGas.mul(2),
   };
 }
 
