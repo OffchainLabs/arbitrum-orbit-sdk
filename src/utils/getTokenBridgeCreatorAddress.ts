@@ -1,4 +1,4 @@
-import { Client, Transport, Chain } from 'viem';
+import { Client, Transport, Chain, ChainContract } from 'viem';
 
 import { tokenBridgeCreatorAddress } from '../contracts/TokenBridgeCreator';
 import { validateParentChain } from '../types/ParentChain';
@@ -6,14 +6,16 @@ import { validateParentChain } from '../types/ParentChain';
 export function getTokenBridgeCreatorAddress<TChain extends Chain | undefined>(
   client: Client<Transport, TChain>,
 ) {
-  const chainId = validateParentChain(client);
+  const customParentChainTokenBridgeCreator = client.chain?.contracts?.tokenBridgeCreator as
+    | ChainContract
+    | undefined;
 
-  // check if it's a custom parent chain
-  // @ts-ignore todo: fix(spsjvc)
-  if (client.chain?.contracts?.tokenBridgeCreator?.address) {
-    // @ts-ignore todo: fix(spsjvc)
-    return client.chain?.contracts?.tokenBridgeCreator?.address;
+  // check if it's a custom parent chain with the factory address provided
+  if (customParentChainTokenBridgeCreator?.address) {
+    return customParentChainTokenBridgeCreator?.address;
   }
+
+  const chainId = validateParentChain(client);
 
   if (!tokenBridgeCreatorAddress[chainId]) {
     throw new Error(`Parent chain not supported: ${chainId}`);
