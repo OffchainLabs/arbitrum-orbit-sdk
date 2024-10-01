@@ -27,7 +27,7 @@ const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBr
 export type CreateTokenBridgeGetInputsResult = {
   inbox: Address;
   maxGasForContracts: bigint;
-  gasPrice: bigint;
+  maxGasPrice: bigint;
   retryableFee: bigint;
 };
 
@@ -52,9 +52,6 @@ export async function createTokenBridgeGetInputs<
     L1AtomicTokenBridgeCreator.abi,
   );
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
-
-  //// gasPrice
-  const gasPrice = await l2Provider.getGasPrice();
 
   //// run retryable estimate for deploying L2 factory
   const deployFactoryGasParams = await getEstimateForDeployingFactory(
@@ -150,8 +147,8 @@ export async function createTokenBridgeGetInputs<
 
   const maxGasPrice =
     retryableGasOverrides && retryableGasOverrides.maxGasPrice
-      ? retryableGasOverrides.maxGasPrice
-      : gasPrice;
+      ? BigNumber.from(retryableGasOverrides.maxGasPrice)
+      : await l2Provider.getGasPrice();
 
   let retryableFee = maxSubmissionCostForFactory
     .add(maxSubmissionCostForContracts)
@@ -164,7 +161,7 @@ export async function createTokenBridgeGetInputs<
   return {
     inbox: inbox as Address,
     maxGasForContracts: maxGasForContracts.toBigInt(),
-    gasPrice: gasPrice.toBigInt(),
+    maxGasPrice: maxGasPrice.toBigInt(),
     retryableFee: retryableFee.toBigInt(),
   };
 }

@@ -53,7 +53,7 @@ export async function createTokenBridgePrepareTransactionRequest<
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
-  const { inbox, maxGasForContracts, gasPrice, retryableFee } = await createTokenBridgeGetInputs(
+  const { inbox, maxGasForContracts, maxGasPrice, retryableFee } = await createTokenBridgeGetInputs(
     account,
     parentChainPublicClient,
     orbitChainPublicClient,
@@ -74,7 +74,7 @@ export async function createTokenBridgePrepareTransactionRequest<
     data: encodeFunctionData({
       abi: tokenBridgeCreatorABI,
       functionName: 'createTokenBridge',
-      args: [inbox, params.rollupOwner, maxGasForContracts, gasPrice],
+      args: [inbox, params.rollupOwner, maxGasForContracts, maxGasPrice],
     }),
     value: chainUsesCustomFee ? 0n : retryableFee,
     account: account,
