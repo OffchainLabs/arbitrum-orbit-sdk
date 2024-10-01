@@ -13,6 +13,7 @@ import {
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
+import { isTokenBridgeDeployed } from './createTokenBridge';
 
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
@@ -49,6 +50,17 @@ export async function createTokenBridgePrepareTransactionRequest<
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareTransactionRequestParams<TParentChain, TOrbitChain>) {
   const chainId = validateParentChain(parentChainPublicClient);
+
+  const isTokenBridgeAlreadyDeployed = await isTokenBridgeDeployed({
+    parentChainPublicClient,
+    orbitChainPublicClient,
+    tokenBridgeCreatorAddress: tokenBridgeCreatorAddressOverride,
+    rollupAddress: params.rollup,
+  });
+
+  if (isTokenBridgeAlreadyDeployed) {
+    throw new Error(`Token bridge contracts for Rollup ${params.rollup} are already deployed`);
+  }
 
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
