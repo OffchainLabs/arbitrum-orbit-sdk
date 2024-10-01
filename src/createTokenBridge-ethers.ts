@@ -47,12 +47,6 @@ export async function createTokenBridgeGetInputs<
 
   await registerNewNetwork(l1Provider, l2Provider, rollupAddress);
 
-  const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
-    l1TokenBridgeCreatorAddress,
-    L1AtomicTokenBridgeCreator.abi,
-  );
-  const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
-
   //// run retryable estimate for deploying L2 factory
   const {
     maxSubmissionCost: maxSubmissionCostForFactoryEstimation,
@@ -64,38 +58,13 @@ export async function createTokenBridgeGetInputs<
     l2Provider,
   );
 
-  //// run retryable estimate for deploying L2 contracts
-  //// we do this estimate using L2 factory template on L1 because on L2 factory does not yet exist
-  const l2FactoryTemplate = L2AtomicTokenBridgeFactory__factory.attach(
-    await l1TokenBridgeCreator.l2TokenBridgeFactoryTemplate(),
-  ).connect(l1Provider);
-  const l2Code = {
-    router: await l1Provider.getCode(await l1TokenBridgeCreator.l2RouterTemplate()),
-    standardGateway: await l1Provider.getCode(
-      await l1TokenBridgeCreator.l2StandardGatewayTemplate(),
-    ),
-    customGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2CustomGatewayTemplate()),
-    wethGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethGatewayTemplate()),
-    aeWeth: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethTemplate()),
-    upgradeExecutor: await l1Provider.getCode(
-      (
-        await l1TokenBridgeCreator.l1Templates()
-      ).upgradeExecutor,
-    ),
-    multicall: await l1Provider.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
-  };
-  const gasEstimateToDeployContracts = await l2FactoryTemplate.estimateGas.deployL2Contracts(
-    l2Code,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-  );
   const maxSubmissionCostForContractsEstimation = maxSubmissionCostForFactoryEstimation.mul(2);
+  const { maxGas: maxGasForContractsEstimation } = await getEstimateForDeployingContracts(
+    l1DeployerAddress,
+    l1TokenBridgeCreatorAddress,
+    l1Provider,
+    l2Provider,
+  );
 
   //// apply gas overrides
   const maxSubmissionCostForFactory =
@@ -140,11 +109,11 @@ export async function createTokenBridgeGetInputs<
           applyPercentIncrease({
             base:
               retryableGasOverrides.maxGasForContracts.base ??
-              BigInt(gasEstimateToDeployContracts.toHexString()),
+              BigInt(maxGasForContractsEstimation.toHexString()),
             percentIncrease: retryableGasOverrides.maxGasForContracts.percentIncrease,
           }),
         )
-      : gasEstimateToDeployContracts;
+      : maxGasForContractsEstimation;
 
   const maxGasPrice =
     retryableGasOverrides && retryableGasOverrides.maxGasPrice
@@ -206,6 +175,55 @@ const getEstimateForDeployingFactory = async (
     maxGas: gasLimitForL2FactoryDeployment,
   };
 };
+
+async function getEstimateForDeployingContracts(
+  l1DeployerAddress: string,
+  l1TokenBridgeCreatorAddress: string,
+  l1Provider: ethers.providers.Provider,
+  l2Provider: ethers.providers.Provider,
+): Promise<{
+  maxGas: BigNumber;
+}> {
+  const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
+    l1TokenBridgeCreatorAddress,
+    L1AtomicTokenBridgeCreator.abi,
+  );
+  const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
+
+  const l2FactoryTemplate = L2AtomicTokenBridgeFactory__factory.attach(
+    await l1TokenBridgeCreator.l2TokenBridgeFactoryTemplate(),
+  ).connect(l1Provider);
+  const l2Code = {
+    router: await l1Provider.getCode(await l1TokenBridgeCreator.l2RouterTemplate()),
+    standardGateway: await l1Provider.getCode(
+      await l1TokenBridgeCreator.l2StandardGatewayTemplate(),
+    ),
+    customGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2CustomGatewayTemplate()),
+    wethGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethGatewayTemplate()),
+    aeWeth: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethTemplate()),
+    upgradeExecutor: await l1Provider.getCode(
+      (
+        await l1TokenBridgeCreator.l1Templates()
+      ).upgradeExecutor,
+    ),
+    multicall: await l1Provider.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
+  };
+  const gasEstimateToDeployContracts = await l2FactoryTemplate.estimateGas.deployL2Contracts(
+    l2Code,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+  );
+
+  return {
+    maxGas: gasEstimateToDeployContracts,
+  };
+}
 
 export async function getEstimateForSettingGateway<
   TParentChain extends Chain | undefined,
