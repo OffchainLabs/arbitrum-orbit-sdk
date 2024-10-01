@@ -13,7 +13,7 @@ import {
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
-import { isTokenBridgeDeployed } from './createTokenBridge';
+import { isTokenBridgeDeployed } from './isTokenBridgeDeployed';
 
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
@@ -54,8 +54,8 @@ export async function createTokenBridgePrepareTransactionRequest<
   const isTokenBridgeAlreadyDeployed = await isTokenBridgeDeployed({
     parentChainPublicClient,
     orbitChainPublicClient,
-    tokenBridgeCreatorAddress: tokenBridgeCreatorAddressOverride,
-    rollupAddress: params.rollup,
+    rollup: params.rollup,
+    tokenBridgeCreatorAddressOverride,
   });
 
   if (isTokenBridgeAlreadyDeployed) {
