@@ -54,14 +54,15 @@ export async function createTokenBridgeGetInputs<
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
 
   //// run retryable estimate for deploying L2 factory
-  const deployFactoryGasParams = await getEstimateForDeployingFactory(
+  const {
+    maxSubmissionCost: maxSubmissionCostForFactoryEstimation,
+    maxGas: maxGasForFactoryEstimation,
+  } = await getEstimateForDeployingFactory(
     l1DeployerAddress,
+    l1TokenBridgeCreatorAddress,
     l1Provider,
     l2Provider,
   );
-  const maxSubmissionCostForFactoryEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
-  const maxGasForFactoryEstimation =
-    (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
 
   //// run retryable estimate for deploying L2 contracts
   //// we do this estimate using L2 factory template on L1 because on L2 factory does not yet exist
@@ -94,7 +95,7 @@ export async function createTokenBridgeGetInputs<
     ethers.Wallet.createRandom().address,
     ethers.Wallet.createRandom().address,
   );
-  const maxSubmissionCostForContractsEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
+  const maxSubmissionCostForContractsEstimation = maxSubmissionCostForFactoryEstimation.mul(2);
 
   //// apply gas overrides
   const maxSubmissionCostForFactory =
@@ -168,13 +169,23 @@ export async function createTokenBridgeGetInputs<
 
 const getEstimateForDeployingFactory = async (
   l1DeployerAddress: string,
+  l1TokenBridgeCreatorAddress: string,
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,
-) => {
+): Promise<{
+  maxSubmissionCost: BigNumber;
+  maxGas: BigNumber;
+}> => {
+  const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
+    l1TokenBridgeCreatorAddress,
+    L1AtomicTokenBridgeCreator.abi,
+  );
+  const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
+
   //// run retryable estimate for deploying L2 factory
   const l1ToL2MsgGasEstimate = new ParentToChildMessageGasEstimator(l2Provider);
 
-  const deployFactoryGasParams = await l1ToL2MsgGasEstimate.estimateAll(
+  const { maxSubmissionCost } = await l1ToL2MsgGasEstimate.estimateAll(
     {
       from: ethers.Wallet.createRandom().address,
       to: ethers.constants.AddressZero,
@@ -187,7 +198,13 @@ const getEstimateForDeployingFactory = async (
     l1Provider,
   );
 
-  return deployFactoryGasParams;
+  const gasLimitForL2FactoryDeployment =
+    (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
+
+  return {
+    maxSubmissionCost: maxSubmissionCost.mul(2),
+    maxGas: gasLimitForL2FactoryDeployment,
+  };
 };
 
 export async function getEstimateForSettingGateway<
