@@ -169,12 +169,13 @@ const getEstimateForDeployingFactory = async (
     l1Provider,
   );
 
-  const gasLimitForL2FactoryDeployment =
-    (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
+  const maxGas = (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
 
   return {
-    maxSubmissionCost: maxSubmissionCost.mul(2),
-    maxGas: gasLimitForL2FactoryDeployment,
+    // there's already a 300% increase buffer in the SDK
+    // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/message/ParentToChildMessageGasEstimator.ts#L27
+    maxSubmissionCost,
+    maxGas: maxGas.mul(2),
   };
 };
 
@@ -245,6 +246,8 @@ async function getEstimateForDeployingContracts(
   );
 
   return {
+    // there's already a 300% increase buffer in the SDK
+    // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/message/ParentToChildMessageGasEstimator.ts#L27
     maxSubmissionCost,
     maxGas: maxGas.mul(2),
   };
