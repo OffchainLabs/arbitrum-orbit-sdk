@@ -175,7 +175,7 @@ const getEstimateForDeployingFactory = async (
     // there's already a 300% increase buffer in the SDK
     // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/message/ParentToChildMessageGasEstimator.ts#L27
     maxSubmissionCost,
-    maxGas: maxGas.mul(2),
+    maxGas,
   };
 };
 
