@@ -58,8 +58,10 @@ export async function createTokenBridgeGetInputs<
     l2Provider,
   );
 
-  const maxSubmissionCostForContractsEstimation = maxSubmissionCostForFactoryEstimation.mul(2);
-  const { maxGas: maxGasForContractsEstimation } = await getEstimateForDeployingContracts(
+  const {
+    maxSubmissionCost: maxSubmissionCostForContractsEstimation,
+    maxGas: maxGasForContractsEstimation,
+  } = await getEstimateForDeployingContracts(
     l1DeployerAddress,
     l1TokenBridgeCreatorAddress,
     l1Provider,
@@ -167,12 +169,13 @@ const getEstimateForDeployingFactory = async (
     l1Provider,
   );
 
-  const gasLimitForL2FactoryDeployment =
-    (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
+  const maxGas = (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
 
   return {
-    maxSubmissionCost: maxSubmissionCost.mul(2),
-    maxGas: gasLimitForL2FactoryDeployment,
+    // there's already a 300% increase buffer in the SDK
+    // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/message/ParentToChildMessageGasEstimator.ts#L27
+    maxSubmissionCost,
+    maxGas,
   };
 };
 
@@ -182,6 +185,7 @@ async function getEstimateForDeployingContracts(
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,
 ): Promise<{
+  maxSubmissionCost: BigNumber;
   maxGas: BigNumber;
 }> {
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
@@ -208,7 +212,28 @@ async function getEstimateForDeployingContracts(
     ),
     multicall: await l1Provider.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
   };
-  const gasEstimateToDeployContracts = await l2FactoryTemplate.estimateGas.deployL2Contracts(
+
+  const l1ToL2MsgGasEstimate = new ParentToChildMessageGasEstimator(l2Provider);
+
+  const calldata = l2FactoryTemplate.interface.encodeFunctionData('deployL2Contracts', [
+    l2Code,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+  ]);
+
+  const maxSubmissionCost = await l1ToL2MsgGasEstimate.estimateSubmissionFee(
+    l1Provider,
+    await l1Provider.getGasPrice(),
+    ethers.utils.hexDataLength(calldata),
+  );
+
+  const maxGas = await l2FactoryTemplate.estimateGas.deployL2Contracts(
     l2Code,
     ethers.Wallet.createRandom().address,
     ethers.Wallet.createRandom().address,
@@ -221,7 +246,10 @@ async function getEstimateForDeployingContracts(
   );
 
   return {
-    maxGas: gasEstimateToDeployContracts,
+    // there's already a 300% increase buffer in the SDK
+    // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/message/ParentToChildMessageGasEstimator.ts#L27
+    maxSubmissionCost,
+    maxGas: maxGas.mul(2),
   };
 }
 
