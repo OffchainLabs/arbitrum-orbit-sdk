@@ -80,8 +80,8 @@ import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
   createTokenBridge,
-  isTokenBridgeDeployed,
 } from './createTokenBridge';
+import { isTokenBridgeDeployed } from './isTokenBridgeDeployed';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
