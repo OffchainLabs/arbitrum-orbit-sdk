@@ -116,6 +116,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
       args: [inbox, maxFeePerGas],
     }),
     to: deployHelperAddress,
+    gas: 30_000n,
     maxFeePerGas: baseFeeWithBuffer,
   } as unknown as CallParameters<TChain>);
 
