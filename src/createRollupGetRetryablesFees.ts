@@ -101,12 +101,11 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const inbox = isCustomGasToken ? erc20TemplateInbox : ethTemplateInbox;
   const maxFeePerGas = maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables;
 
-  const baseFee = await publicClient.getGasPrice();
   const baseFeeWithBuffer = applyPercentIncrease({
-    base: baseFee,
+    base: await publicClient.getGasPrice(),
     // for custom gas token chains, retryable fees don't scale with parent base fee, so there's no need for any buffer
-    // for eth chains, add 20% buffer in case of a spike
-    percentIncrease: isCustomGasToken ? undefined : 20n,
+    // for eth chains, add 30% buffer in case of a spike
+    percentIncrease: isCustomGasToken ? undefined : 30n,
   });
 
   const { data: result } = await publicClient.call({
