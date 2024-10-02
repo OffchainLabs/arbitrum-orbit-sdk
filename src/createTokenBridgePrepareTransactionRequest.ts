@@ -13,6 +13,7 @@ import {
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
+import { isTokenBridgeDeployed } from './isTokenBridgeDeployed';
 
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
@@ -50,10 +51,21 @@ export async function createTokenBridgePrepareTransactionRequest<
 }: CreateTokenBridgePrepareTransactionRequestParams<TParentChain, TOrbitChain>) {
   const chainId = validateParentChain(parentChainPublicClient);
 
+  const isTokenBridgeAlreadyDeployed = await isTokenBridgeDeployed({
+    parentChainPublicClient,
+    orbitChainPublicClient,
+    rollup: params.rollup,
+    tokenBridgeCreatorAddressOverride,
+  });
+
+  if (isTokenBridgeAlreadyDeployed) {
+    throw new Error(`Token bridge contracts for Rollup ${params.rollup} are already deployed`);
+  }
+
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
-  const { inbox, maxGasForContracts, gasPrice, retryableFee } = await createTokenBridgeGetInputs(
+  const { inbox, maxGasForContracts, maxGasPrice, retryableFee } = await createTokenBridgeGetInputs(
     account,
     parentChainPublicClient,
     orbitChainPublicClient,
@@ -74,7 +86,7 @@ export async function createTokenBridgePrepareTransactionRequest<
     data: encodeFunctionData({
       abi: tokenBridgeCreatorABI,
       functionName: 'createTokenBridge',
-      args: [inbox, params.rollupOwner, maxGasForContracts, gasPrice],
+      args: [inbox, params.rollupOwner, maxGasForContracts, maxGasPrice],
     }),
     value: chainUsesCustomFee ? 0n : retryableFee,
     account: account,
