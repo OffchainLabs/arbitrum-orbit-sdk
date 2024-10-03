@@ -1,3 +1,4 @@
+import { ExcludeSome, Prettify, RequireSome } from './types/utils';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 
 export const defaults = {
@@ -23,24 +24,33 @@ export const defaults = {
     EnableArbOS: true,
     AllowDebugPrecompiles: false,
     DataAvailabilityCommittee: false,
-    InitialArbOSVersion: 11,
+    InitialArbOSVersion: 32,
     GenesisBlockNum: 0,
     MaxCodeSize: 24_576,
     MaxInitCodeSize: 49_152,
   },
 };
 
-export type PrepareChainConfigParams = Pick<ChainConfig, 'chainId'> &
-  Partial<Omit<ChainConfig, 'chainId' | 'arbitrum'>> & {
-    arbitrum: Pick<ChainConfigArbitrumParams, 'InitialChainOwner'> &
-      Partial<Omit<ChainConfigArbitrumParams, 'InitialChainOwner'>>;
-  };
+export type PrepareChainConfigParams = Prettify<
+  Pick<ChainConfig, 'chainId'> & {
+    arbitrum: PrepareChainConfigArbitrumParams;
+  }
+>;
+
+export type PrepareChainConfigArbitrumParams = RequireSome<
+  // exclude some fields that shouldn't be changed
+  ExcludeSome<
+    ChainConfigArbitrumParams,
+    'EnableArbOS' | 'GenesisBlockNum' | 'AllowDebugPrecompiles'
+  >,
+  // make InitialChainOwner required
+  'InitialChainOwner'
+>;
 
 export function prepareChainConfig(params: PrepareChainConfigParams): ChainConfig {
   return {
     ...defaults,
-    ...params,
-    clique: { ...defaults.clique, ...params.clique },
+    chainId: params.chainId,
     arbitrum: { ...defaults.arbitrum, ...params.arbitrum },
   };
 }

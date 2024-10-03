@@ -1,45 +1,51 @@
-import { PublicClient, TransactionReceipt } from 'viem';
-import { L1ToL2MessageStatus, L1TransactionReceipt } from '@arbitrum/sdk';
-import { TransactionReceipt as EthersTransactionReceipt } from '@ethersproject/abstract-provider';
+import { PublicClient, Transport, Chain, TransactionReceipt } from 'viem';
+import {
+  ParentToChildMessageStatus,
+  ParentToChildMessageWaitForStatusResult,
+  ParentTransactionReceipt,
+} from '@arbitrum/sdk';
 
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 import { viemTransactionReceiptToEthersTransactionReceipt } from './ethers-compat/viemTransactionReceiptToEthersTransactionReceipt';
 import { ethersTransactionReceiptToViemTransactionReceipt } from './ethers-compat/ethersTransactionReceiptToViemTransactionReceipt';
 
-type RedeemedRetryableTicket = {
-  status: L1ToL2MessageStatus.REDEEMED;
-  l2TxReceipt: EthersTransactionReceipt;
-};
+type RedeemedRetryableTicket = Extract<
+  ParentToChildMessageWaitForStatusResult,
+  { status: ParentToChildMessageStatus.REDEEMED }
+>;
 
-export type WaitForRetryablesParameters = {
-  orbitPublicClient: PublicClient;
+export type WaitForRetryablesParameters<TChain extends Chain | undefined> = {
+  orbitPublicClient: PublicClient<Transport, TChain>;
 };
 
 export type WaitForRetryablesResult = [TransactionReceipt];
 
-export type CreateTokenBridgeSetWethGatewayTransactionReceipt = TransactionReceipt & {
-  waitForRetryables(params: WaitForRetryablesParameters): Promise<WaitForRetryablesResult>;
-};
+export type CreateTokenBridgeSetWethGatewayTransactionReceipt<TChain extends Chain | undefined> =
+  TransactionReceipt & {
+    waitForRetryables(
+      params: WaitForRetryablesParameters<TChain>,
+    ): Promise<WaitForRetryablesResult>;
+  };
 
-export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
-  txReceipt: TransactionReceipt,
-): CreateTokenBridgeSetWethGatewayTransactionReceipt {
+export function createTokenBridgePrepareSetWethGatewayTransactionReceipt<
+  TChain extends Chain | undefined,
+>(txReceipt: TransactionReceipt): CreateTokenBridgeSetWethGatewayTransactionReceipt<TChain> {
   return {
     ...txReceipt,
     waitForRetryables: async function ({
       orbitPublicClient,
-    }: WaitForRetryablesParameters): Promise<WaitForRetryablesResult> {
+    }: WaitForRetryablesParameters<TChain>): Promise<WaitForRetryablesResult> {
       const ethersTxReceipt = viemTransactionReceiptToEthersTransactionReceipt(txReceipt);
-      const parentChainTxReceipt = new L1TransactionReceipt(ethersTxReceipt);
+      const parentChainTxReceipt = new ParentTransactionReceipt(ethersTxReceipt);
       const orbitProvider = publicClientToProvider(orbitPublicClient);
-      const messages = await parentChainTxReceipt.getL1ToL2Messages(orbitProvider);
+      const messages = await parentChainTxReceipt.getParentToChildMessages(orbitProvider);
       const messagesResults = await Promise.all(messages.map((message) => message.waitForStatus()));
 
       if (messagesResults.length !== 1) {
         throw Error(`Unexpected number of retryable tickets: ${messagesResults.length}`);
       }
 
-      if (messagesResults[0].status !== L1ToL2MessageStatus.REDEEMED) {
+      if (messagesResults[0].status !== ParentToChildMessageStatus.REDEEMED) {
         throw Error(`Unexpected status for retryable ticket: ${messages[0].retryableCreationId}`);
       }
 
@@ -48,7 +54,7 @@ export function createTokenBridgePrepareSetWethGatewayTransactionReceipt(
         (messagesResults as unknown as [RedeemedRetryableTicket])
           //
           .map((result) =>
-            ethersTransactionReceiptToViemTransactionReceipt(result.l2TxReceipt),
+            ethersTransactionReceiptToViemTransactionReceipt(result.childTxReceipt),
           ) as WaitForRetryablesResult
       );
     },

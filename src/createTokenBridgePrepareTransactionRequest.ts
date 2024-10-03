@@ -1,6 +1,6 @@
-import { Address, PublicClient, encodeFunctionData } from 'viem';
+import { Address, PublicClient, Transport, Chain, encodeFunctionData } from 'viem';
 
-import { tokenBridgeCreator } from './contracts';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 import { validateParentChain } from './types/ParentChain';
 import { createTokenBridgeGetInputs } from './createTokenBridge-ethers';
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
@@ -12,7 +12,8 @@ import {
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
-import { getTokenBridgeCreatorAddress } from './utils/getters';
+import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
+import { isTokenBridgeDeployed } from './isTokenBridgeDeployed';
 
 export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCostForFactory?: GasOverrideOptions;
@@ -22,18 +23,24 @@ export type TransactionRequestRetryableGasOverrides = {
   maxGasPrice?: bigint;
 };
 
-export type CreateTokenBridgePrepareTransactionRequestParams = Prettify<
+export type CreateTokenBridgePrepareTransactionRequestParams<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+> = Prettify<
   WithTokenBridgeCreatorAddressOverride<{
     params: { rollup: Address; rollupOwner: Address };
-    parentChainPublicClient: PublicClient;
-    orbitChainPublicClient: PublicClient;
+    parentChainPublicClient: PublicClient<Transport, TParentChain>;
+    orbitChainPublicClient: PublicClient<Transport, TOrbitChain>;
     account: Address;
     gasOverrides?: TransactionRequestGasOverrides;
     retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
   }>
 >;
 
-export async function createTokenBridgePrepareTransactionRequest({
+export async function createTokenBridgePrepareTransactionRequest<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>({
   params,
   parentChainPublicClient,
   orbitChainPublicClient,
@@ -41,13 +48,24 @@ export async function createTokenBridgePrepareTransactionRequest({
   gasOverrides,
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
-}: CreateTokenBridgePrepareTransactionRequestParams) {
+}: CreateTokenBridgePrepareTransactionRequestParams<TParentChain, TOrbitChain>) {
   const chainId = validateParentChain(parentChainPublicClient);
+
+  const isTokenBridgeAlreadyDeployed = await isTokenBridgeDeployed({
+    parentChainPublicClient,
+    orbitChainPublicClient,
+    rollup: params.rollup,
+    tokenBridgeCreatorAddressOverride,
+  });
+
+  if (isTokenBridgeAlreadyDeployed) {
+    throw new Error(`Token bridge contracts for Rollup ${params.rollup} are already deployed`);
+  }
 
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
-  const { inbox, maxGasForContracts, gasPrice, retryableFee } = await createTokenBridgeGetInputs(
+  const { inbox, maxGasForContracts, maxGasPrice, retryableFee } = await createTokenBridgeGetInputs(
     account,
     parentChainPublicClient,
     orbitChainPublicClient,
@@ -61,13 +79,14 @@ export async function createTokenBridgePrepareTransactionRequest({
     parentChainPublicClient,
   });
 
+  // @ts-ignore (todo: fix viem type issue)
   const request = await parentChainPublicClient.prepareTransactionRequest({
     chain: parentChainPublicClient.chain,
     to: tokenBridgeCreatorAddress,
     data: encodeFunctionData({
-      abi: tokenBridgeCreator.abi,
+      abi: tokenBridgeCreatorABI,
       functionName: 'createTokenBridge',
-      args: [inbox, params.rollupOwner, maxGasForContracts, gasPrice],
+      args: [inbox, params.rollupOwner, maxGasForContracts, maxGasPrice],
     }),
     value: chainUsesCustomFee ? 0n : retryableFee,
     account: account,

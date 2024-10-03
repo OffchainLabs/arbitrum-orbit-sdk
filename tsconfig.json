@@ -18,6 +18,10 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+
+    // Show all keys in type without hiding in "... more ..."
+    // Enabling this option cause typescript performance
+    "noErrorTruncation": false
   }
 }

@@ -1,7 +1,7 @@
-import { Address, PublicClient, encodeFunctionData, parseAbi } from 'viem';
+import { Address, PublicClient, Transport, Chain, encodeFunctionData, parseAbi } from 'viem';
 
 import { isCustomFeeTokenChain } from './utils/isCustomFeeTokenChain';
-import { upgradeExecutorEncodeFunctionData } from './upgradeExecutor';
+import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { createRollupFetchCoreContracts } from './createRollupFetchCoreContracts';
 import { getEstimateForSettingGateway } from './createTokenBridge-ethers';
@@ -9,6 +9,8 @@ import { GasOverrideOptions, applyPercentIncrease } from './utils/gasOverrides';
 import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
+import { registerNewNetwork } from './utils/registerNewNetwork';
+import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
 export type TransactionRequestRetryableGasOverrides = {
   gasLimit?: GasOverrideOptions;
@@ -16,11 +18,14 @@ export type TransactionRequestRetryableGasOverrides = {
   maxSubmissionCost?: GasOverrideOptions;
 };
 
-export type CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams = Prettify<
+export type CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+> = Prettify<
   WithTokenBridgeCreatorAddressOverride<{
     rollup: Address;
-    parentChainPublicClient: PublicClient;
-    orbitChainPublicClient: PublicClient;
+    parentChainPublicClient: PublicClient<Transport, TParentChain>;
+    orbitChainPublicClient: PublicClient<Transport, TOrbitChain>;
     account: Address;
     retryableGasOverrides?: TransactionRequestRetryableGasOverrides;
   }>
@@ -87,15 +92,25 @@ const parentChainGatewayRouterAbi = [
   },
 ];
 
-export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
+export async function createTokenBridgePrepareSetWethGatewayTransactionRequest<
+  TParentChain extends Chain | undefined,
+  TOrbitChain extends Chain | undefined,
+>({
   rollup,
   parentChainPublicClient,
   orbitChainPublicClient,
   account,
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
-}: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams) {
+}: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams<TParentChain, TOrbitChain>) {
   const chainId = validateParentChain(parentChainPublicClient);
+
+  // Ensure that networks are registered
+  await registerNewNetwork(
+    publicClientToProvider(parentChainPublicClient),
+    publicClientToProvider(orbitChainPublicClient),
+    rollup,
+  );
 
   // check for custom fee token chain
   if (
@@ -202,6 +217,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest({
   });
 
   // prepare the transaction request with a call to the upgrade executor
+  // @ts-ignore (todo: fix viem type issue)
   const request = await parentChainPublicClient.prepareTransactionRequest({
     chain: parentChainPublicClient.chain,
     to: rollupCoreContracts.upgradeExecutor,
