@@ -1,4 +1,4 @@
-import { Chain, Transport, BlockNumber, BlockTag, Hex, PublicClient, createPublicClient, http } from 'viem';
+import { BlockNumber, BlockTag, Hex, PublicClient, createPublicClient, http } from 'viem';
 import { defineChainInformation, getChainInfoFromChainId } from '../lib/utils';
 import { Abi, AbiEventItem } from './types';
 
