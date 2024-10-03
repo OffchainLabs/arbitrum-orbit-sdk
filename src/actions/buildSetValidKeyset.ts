@@ -7,7 +7,7 @@ import {
   WithUpgradeExecutor,
 } from '../types/Actions';
 import { Prettify } from '../types/utils';
-import { validateParentChainPublicClient } from '../types/ParentChain';
+import { validateParentChain } from '../types/ParentChain';
 import { prepareUpgradeExecutorCallParameters } from '../prepareUpgradeExecutorCallParameters';
 
 export type BuildSetValidKeysetParameters<Curried extends boolean = false> = Prettify<
@@ -35,7 +35,7 @@ export async function buildSetValidKeyset<TChain extends Chain | undefined>(
     params,
   }: BuildSetValidKeysetParameters,
 ): Promise<BuildSetValidKeysetReturnType> {
-  const validatedPublicClient = validateParentChainPublicClient(client);
+  const chainId = validateParentChain(client);
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
@@ -49,5 +49,5 @@ export async function buildSetValidKeyset<TChain extends Chain | undefined>(
     }),
   } satisfies PrepareTransactionRequestParameters);
 
-  return { ...request, chainId: validatedPublicClient.chain.id };
+  return { ...request, chainId };
 }

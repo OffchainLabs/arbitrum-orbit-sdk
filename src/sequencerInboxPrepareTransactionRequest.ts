@@ -10,7 +10,7 @@ import {
 import { sequencerInboxABI } from './contracts/SequencerInbox';
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { GetFunctionName } from './types/utils';
-import { validateParentChainPublicClient } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 
 export type SequencerInboxAbi = typeof sequencerInboxABI;
 export type SequencerInboxFunctionName = GetFunctionName<SequencerInboxAbi>;
@@ -80,7 +80,7 @@ export async function sequencerInboxPrepareTransactionRequest<
   client: PublicClient<TTransport, TChain>,
   params: SequencerInboxPrepareTransactionRequestParameters<TFunctionName>,
 ) {
-  const validatedPublicClient = validateParentChainPublicClient(client);
+  const chainId = validateParentChain(client);
 
   // params is extending SequencerInboxPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = sequencerInboxPrepareFunctionData({
@@ -97,5 +97,5 @@ export async function sequencerInboxPrepareTransactionRequest<
     account: params.account,
   });
 
-  return { ...request, chainId: validatedPublicClient.chain.id };
+  return { ...request, chainId };
 }
