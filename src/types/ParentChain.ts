@@ -6,9 +6,7 @@ import { chains, nitroTestnodeL3 } from '../chains';
 export type ParentChain = Exclude<(typeof chains)[number], { id: typeof nitroTestnodeL3.id }>;
 export type ParentChainId = ParentChain['id'];
 
-export function isValidParentChainId(
-  parentChainId: number | undefined,
-): parentChainId is ParentChainId {
+function isValidParentChainId(parentChainId: number | undefined): parentChainId is ParentChainId {
   const ids = chains
     // exclude nitro-testnode L3 from the list of parent chains
     .filter((chain) => chain.id !== nitroTestnodeL3.id)

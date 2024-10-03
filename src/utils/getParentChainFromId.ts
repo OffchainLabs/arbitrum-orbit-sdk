@@ -1,15 +1,13 @@
 import { extractChain } from 'viem';
-import { ParentChain, isValidParentChainId } from '../types/ParentChain';
+
 import { chains } from '../chains';
+import { ParentChain, validateParentChain } from '../types/ParentChain';
 
 export function getParentChainFromId(chainId: number): ParentChain {
-  // Just throws if the chainId is not valid
-  if (!isValidParentChainId(chainId)) {
-    throw new Error(`Parent chain not supported: ${chainId}`);
-  }
+  const parentChainId = validateParentChain(chainId);
 
   return extractChain({
     chains,
-    id: chainId,
+    id: parentChainId,
   }) as ParentChain;
 }
