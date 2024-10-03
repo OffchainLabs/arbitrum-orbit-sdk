@@ -1,4 +1,4 @@
-import { BlockNumber, BlockTag, Hex, PublicClient, createPublicClient, http } from 'viem';
+import { Chain, Transport, BlockNumber, BlockTag, Hex, PublicClient, createPublicClient, http } from 'viem';
 import { defineChainInformation, getChainInfoFromChainId } from '../lib/utils';
 import { Abi, AbiEventItem } from './types';
 
@@ -19,7 +19,7 @@ export class OrbitHandler {
     this.parentChainPublicClient = createPublicClient({
       chain: parentChainInformation,
       transport: http(parentChainRpc),
-    });
+    }) as PublicClient;
 
     // Create orbit chain client
     if (orbitChainId && orbitChainRpc) {

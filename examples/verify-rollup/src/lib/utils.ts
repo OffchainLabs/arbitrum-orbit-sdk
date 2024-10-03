@@ -42,20 +42,24 @@ import {
 import {
   mainnet,
   sepolia,
+  holesky,
   arbitrum,
   arbitrumNova,
-  arbitrumGoerli,
   arbitrumSepolia,
+  base,
+  baseSepolia,
 } from 'viem/chains';
 
 // Supported Viem chains
 const supportedChains = {
   mainnet,
   sepolia,
+  holesky,
   arbitrum,
   arbitrumNova,
-  arbitrumGoerli,
   arbitrumSepolia,
+  base,
+  baseSepolia,
 };
 
 // Block range to search for recent events (24 hours)
@@ -195,7 +199,13 @@ export const getBlockToSearchEventsFrom = (
   toBlock: bigint,
   useCustomRpc?: boolean,
 ) => {
-  const isArbitrumChain = ![mainnet.id as number, sepolia.id as number].includes(chainId);
+  const isArbitrumChain = ![
+    mainnet.id as number,
+    sepolia.id as number,
+    holesky.id as number,
+    base.id as number,
+    baseSepolia.id as number,
+  ].includes(chainId);
   let blockLimit = blockCountToSearchRecentEventsOnArb;
 
   if (!isArbitrumChain) {
