@@ -33,19 +33,19 @@ it(`successfully returns address for a registered custom parent chain`, () => {
   const tokenBridgeCreator = '0x2000000000000000000000000000000000000000';
 
   const chain: CustomParentChain = {
-    ...createCustomChain({ id: 123 }),
+    ...createCustomChain({ id: 123_456 }),
     contracts: {
       rollupCreator: { address: rollupCreator },
       tokenBridgeCreator: { address: tokenBridgeCreator },
     },
   };
 
+  registerCustomParentChain(chain);
+
   const client = createPublicClient({
     chain,
     transport: http(),
   });
-
-  registerCustomParentChain(chain);
 
   expect(getTokenBridgeCreatorAddress(client)).toEqual(tokenBridgeCreator);
 });
