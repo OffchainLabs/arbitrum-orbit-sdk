@@ -11,7 +11,7 @@ import { rollupABI } from './contracts/Rollup';
 
 import { upgradeExecutorEncodeFunctionData } from './upgradeExecutorEncodeFunctionData';
 import { GetFunctionName } from './types/utils';
-import { validateParentChainPublicClient } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 
 export type RollupAdminLogicAbi = typeof rollupABI;
 export type RollupAdminLogicFunctionName = GetFunctionName<RollupAdminLogicAbi>;
@@ -83,7 +83,7 @@ export async function rollupAdminLogicPrepareTransactionRequest<
   client: PublicClient<TTransport, TChain>,
   params: RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>,
 ) {
-  const validatedPublicClient = validateParentChainPublicClient(client);
+  const chainId = validateParentChain(client);
 
   // params is extending RollupAdminLogicPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = rollupAdminLogicPrepareFunctionData({
@@ -100,5 +100,5 @@ export async function rollupAdminLogicPrepareTransactionRequest<
     account: params.account,
   });
 
-  return { ...request, chainId: validatedPublicClient.chain.id };
+  return { ...request, chainId };
 }
