@@ -109,7 +109,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
     percentIncrease: isCustomGasToken ? undefined : 30n,
   });
 
-  const callParams = {
+  const callParams: CallParameters = {
     account,
     data: encodeFunctionData({
       abi: deployHelperABI,
@@ -120,7 +120,9 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
     maxFeePerGas: baseFeeWithBuffer,
   };
 
-  // calculate gas necessary for the call, otherwise it's inflated and the call will fail
+  // calculate the gas necessary for the call, otherwise it's inflated and the call will fail
+  //
+  // https://github.com/wevm/viem/discussions/862#discussioncomment-6398745
   const gasWithBuffer = applyPercentIncrease({
     base: await publicClient.estimateGas(callParams as unknown as EstimateGasParameters<TChain>),
     percentIncrease: 30n,
@@ -129,7 +131,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const { data: result } = await publicClient.call({
     ...callParams,
     gas: gasWithBuffer,
-  } as unknown as CallParameters<TChain>);
+  });
 
   return decodeFunctionResult({
     abi: deployHelperABI,
