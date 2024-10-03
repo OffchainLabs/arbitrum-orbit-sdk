@@ -4,6 +4,7 @@ import { arbitrumSepolia } from 'viem/chains';
 
 import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
+import { createRollupDefaultRetryablesFees } from './constants';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import { rollupCreatorAddress } from './contracts/RollupCreator';
@@ -361,6 +362,7 @@ it(`successfully prepares a transaction request with the default rollup creator 
       batchPosters: [deployer.address],
       validators: [deployer.address],
     },
+    value: createRollupDefaultRetryablesFees,
     account: deployer.address,
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n } },
@@ -394,6 +396,7 @@ it(`successfully prepares a transaction request with a custom rollup creator and
       validators: [deployer.address],
     },
     account: deployer.address,
+    value: createRollupDefaultRetryablesFees,
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n, percentIncrease: 20n } },
     rollupCreatorAddressOverride: '0x31421C442c422BD16aef6ae44D3b11F404eeaBd9',
