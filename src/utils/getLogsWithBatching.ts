@@ -12,7 +12,7 @@ export async function getLogsWithBatching<
   {
     fromBlock = 0n,
     ...getLogsParameters
-  }: Omit<GetLogsParameters<TAbiEvent>, 'toBlock' | 'blockHash'> & {
+  }: Omit<GetLogsParameters<TAbiEvent>, 'blockHash'> & {
     fromBlock?: bigint;
   },
   param?: { stopWhenFound: true },
@@ -25,7 +25,7 @@ export async function getLogsWithBatching<
   {
     fromBlock = 0n,
     ...getLogsParameters
-  }: Omit<GetLogsParameters<undefined, TAbiEvent[]>, 'toBlock' | 'blockHash'> & {
+  }: Omit<GetLogsParameters<undefined, TAbiEvent[]>, 'blockHash'> & {
     fromBlock?: bigint;
   },
   param?: { stopWhenFound: true },
@@ -38,7 +38,7 @@ export async function getLogsWithBatching<
   {
     fromBlock = 0n,
     ...getLogsParameters
-  }: Omit<GetLogsParameters<TAbiEvent, TAbiEvent[]>, 'toBlock' | 'blockHash'> & {
+  }: Omit<GetLogsParameters<TAbiEvent, TAbiEvent[]>, 'blockHash'> & {
     fromBlock?: bigint;
   },
   param?: { stopWhenFound: true },
@@ -47,34 +47,42 @@ export async function getLogsWithBatching<
   const latestBlockNumber = await publicClient.getBlockNumber();
   const { chainId } = validateParentChain(publicClient);
   if (!fromBlock && chainId) {
-    const earliestBlock = getEarliestRollupCreatorDeploymentBlockNumber(chainId);
-    lowerLimit = earliestBlock === 'latest' ? latestBlockNumber : earliestBlock;
+    lowerLimit = getEarliestRollupCreatorDeploymentBlockNumber(chainId);
   }
 
-  const allEvents = [];
-
-  // Fetch logs 9999 blocks at a time to avoid rate limiting
-  // We're fetching from most recent block to oldest one
-  let cursor = latestBlockNumber;
-  while (cursor >= lowerLimit) {
-    const rangeEnd = cursor;
-    const rangeStart = cursor - 9_999n > lowerLimit ? cursor - 9_998n : lowerLimit;
-    const events = await publicClient.getLogs({
-      ...(getLogsParameters.event
-        ? { event: getLogsParameters.event, args: getLogsParameters.args }
-        : { events: getLogsParameters.events }),
-      address: getLogsParameters.address,
-      fromBlock: rangeStart,
-      toBlock: rangeEnd,
+  try {
+    const { event, args, events, ...rest } = getLogsParameters;
+    return await publicClient.getLogs({
+      ...(event ? { event, args } : { events }),
+      ...rest,
+      fromBlock,
     });
+  } catch (e) {
+    const allEvents = [];
 
-    allEvents.push(events);
-    if (param?.stopWhenFound && events.length > 0) {
-      return events;
+    // Fetch logs 9999 blocks at a time to avoid rate limiting
+    // We're fetching from most recent block to oldest one
+    let cursor = latestBlockNumber;
+    while (cursor >= lowerLimit) {
+      const rangeEnd = cursor;
+      const rangeStart = cursor - 9_999n > lowerLimit ? cursor - 9_998n : lowerLimit;
+      const events = await publicClient.getLogs({
+        ...(getLogsParameters.event
+          ? { event: getLogsParameters.event, args: getLogsParameters.args }
+          : { events: getLogsParameters.events }),
+        address: getLogsParameters.address,
+        fromBlock: rangeStart,
+        toBlock: rangeEnd,
+      });
+
+      allEvents.push(events);
+      if (param?.stopWhenFound && events.length > 0) {
+        return events;
+      }
+
+      cursor = rangeStart - 1n;
     }
 
-    cursor = rangeStart - 1n;
+    return allEvents.flatMap((events) => events);
   }
-
-  return allEvents.flatMap((events) => events);
 }

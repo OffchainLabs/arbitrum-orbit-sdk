@@ -8,7 +8,6 @@ import { getEarliestRollupCreatorDeploymentBlockNumber } from './utils/getEarlie
 export type CreateRollupFetchTransactionHashParams<TChain extends Chain | undefined> = {
   rollup: Address;
   publicClient: PublicClient<Transport, TChain>;
-  batching?: boolean;
 };
 
 const RollupInitializedEventAbi: AbiEvent = {
@@ -34,28 +33,16 @@ const RollupInitializedEventAbi: AbiEvent = {
 export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
   rollup,
   publicClient,
-  batching = false,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
+  const { chainId } = validateParentChain(publicClient);
+
   // Find the RollupInitialized event from that Rollup contract
-  let rollupInitializedEvents: GetLogsReturnType;
-  if (batching) {
-    rollupInitializedEvents = await getLogsWithBatching(
-      publicClient,
-      {
-        address: rollup,
-        event: RollupInitializedEventAbi,
-      },
-      { stopWhenFound: true },
-    );
-  } else {
-    const { chainId } = validateParentChain(publicClient);
-    rollupInitializedEvents = await publicClient.getLogs({
-      address: rollup,
-      event: RollupInitializedEventAbi,
-      fromBlock: getEarliestRollupCreatorDeploymentBlockNumber(chainId),
-      toBlock: 'latest',
-    });
-  }
+  const rollupInitializedEvents = await getLogsWithBatching(publicClient, {
+    address: rollup,
+    event: RollupInitializedEventAbi,
+    fromBlock: getEarliestRollupCreatorDeploymentBlockNumber(chainId),
+    toBlock: 'latest',
+  });
 
   if (rollupInitializedEvents.length !== 1) {
     throw new Error(

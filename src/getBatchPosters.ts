@@ -1,7 +1,6 @@
 import {
   Address,
   Chain,
-  GetLogsReturnType,
   Hex,
   PublicClient,
   Transport,
@@ -72,8 +71,6 @@ export type GetBatchPostersParams = {
   rollup: Address;
   /** Address of the sequencerInbox we're getting logs from */
   sequencerInbox: Address;
-  /** Batch the logs query to avoid RPC limiting */
-  batching?: boolean;
 };
 export type GetBatchPostersReturnType = {
   /**
@@ -111,7 +108,7 @@ export type GetBatchPostersReturnType = {
  */
 export async function getBatchPosters<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { rollup, sequencerInbox, batching = false }: GetBatchPostersParams,
+  { rollup, sequencerInbox }: GetBatchPostersParams,
 ): Promise<GetBatchPostersReturnType> {
   let blockNumber: bigint;
   let createRollupTransactionHash: Address | null = null;
@@ -119,7 +116,6 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
     createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
       publicClient,
-      batching,
     });
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: createRollupTransactionHash,
@@ -129,23 +125,13 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
     blockNumber = 0n;
   }
 
-  let sequencerInboxEvents: GetLogsReturnType<typeof ownerFunctionCalledEventAbi>;
-  if (batching) {
-    sequencerInboxEvents = await getLogsWithBatching(publicClient, {
-      address: sequencerInbox,
-      event: ownerFunctionCalledEventAbi,
-      args: { id: 1n },
-      fromBlock: blockNumber,
-    });
-  } else {
-    sequencerInboxEvents = await publicClient.getLogs({
-      address: sequencerInbox,
-      event: ownerFunctionCalledEventAbi,
-      args: { id: 1n },
-      fromBlock: blockNumber,
-      toBlock: 'latest',
-    });
-  }
+  const sequencerInboxEvents = await getLogsWithBatching(publicClient, {
+    address: sequencerInbox,
+    event: ownerFunctionCalledEventAbi,
+    args: { id: 1n },
+    fromBlock: blockNumber,
+    toBlock: 'latest',
+  });
 
   const events = createRollupTransactionHash
     ? [{ transactionHash: createRollupTransactionHash }, ...sequencerInboxEvents]

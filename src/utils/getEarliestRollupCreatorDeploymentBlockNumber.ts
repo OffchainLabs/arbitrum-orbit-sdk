@@ -37,5 +37,5 @@ export function getEarliestRollupCreatorDeploymentBlockNumber(chainId: ParentCha
     }
   }
 
-  return 'latest';
+  return 0n;
 }
