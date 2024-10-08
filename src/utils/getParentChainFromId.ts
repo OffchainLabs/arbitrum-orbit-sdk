@@ -5,7 +5,7 @@ import { chains } from '../chains';
 import { customChains } from '../customChains';
 
 export function getParentChainFromId(chainId: number): ParentChain {
-  const parentChainId = validateParentChain(chainId);
+  const { chainId: parentChainId } = validateParentChain(chainId);
 
   return extractChain({
     chains: [...chains, ...customChains],

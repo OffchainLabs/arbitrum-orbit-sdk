@@ -15,7 +15,7 @@ export function getRollupCreatorAddress<TChain extends Chain | undefined>(
     return customParentChainRollupCreator.address;
   }
 
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   if (!rollupCreatorAddress[chainId]) {
     throw new Error(`Parent chain not supported: ${chainId}`);

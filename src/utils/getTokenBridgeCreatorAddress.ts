@@ -15,7 +15,7 @@ export function getTokenBridgeCreatorAddress<TChain extends Chain | undefined>(
     return customParentChainTokenBridgeCreator?.address;
   }
 
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   if (!tokenBridgeCreatorAddress[chainId]) {
     throw new Error(`Parent chain not supported: ${chainId}`);

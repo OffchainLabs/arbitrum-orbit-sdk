@@ -103,7 +103,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest<
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams<TParentChain, TOrbitChain>) {
-  const chainId = validateParentChain(parentChainPublicClient);
+  const { chainId } = validateParentChain(parentChainPublicClient);
 
   // Ensure that networks are registered
   await registerNewNetwork(

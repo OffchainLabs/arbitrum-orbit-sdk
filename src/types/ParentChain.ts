@@ -17,12 +17,12 @@ function isValidParentChainId(parentChainId: number | undefined): parentChainId 
 
 export function validateParentChain<TChain extends Chain | undefined>(
   chainIdOrClient: number | Client<Transport, TChain>,
-): ParentChainId {
+): { chainId: ParentChainId } {
   const chainId = typeof chainIdOrClient === 'number' ? chainIdOrClient : chainIdOrClient.chain?.id;
 
   if (!isValidParentChainId(chainId)) {
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  return chainId;
+  return { chainId };
 }

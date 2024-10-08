@@ -60,13 +60,15 @@ export function prepareNodeConfig({
     throw new Error(`"parentChainBeaconRpcUrl" is required for L2 Orbit chains.`);
   }
 
+  const { chainId: parentChainIdValidated } = validateParentChain(parentChainId);
+
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
         {
           'chain-id': chainConfig.chainId,
           'parent-chain-id': parentChainId,
-          'parent-chain-is-arbitrum': parentChainIsArbitrum(validateParentChain(parentChainId)),
+          'parent-chain-is-arbitrum': parentChainIsArbitrum(parentChainIdValidated),
           'chain-name': chainName,
           'chain-config': chainConfig,
           'rollup': {

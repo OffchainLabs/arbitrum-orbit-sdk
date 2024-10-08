@@ -83,7 +83,7 @@ export async function rollupAdminLogicPrepareTransactionRequest<
   client: PublicClient<TTransport, TChain>,
   params: RollupAdminLogicPrepareTransactionRequestParameters<TFunctionName>,
 ) {
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   // params is extending RollupAdminLogicPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = rollupAdminLogicPrepareFunctionData({

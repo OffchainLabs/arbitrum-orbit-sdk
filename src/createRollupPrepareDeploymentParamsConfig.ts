@@ -68,7 +68,7 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
   client: Client<Transport, TChain>,
   { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
 ): CreateRollupPrepareDeploymentParamsConfigResult {
-  const parentChainId = validateParentChain(client);
+  const { chainId: parentChainId } = validateParentChain(client);
 
   if (isCustomParentChain(client) && typeof params.confirmPeriodBlocks === 'undefined') {
     throw new Error(
