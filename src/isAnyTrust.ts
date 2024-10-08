@@ -14,16 +14,13 @@ function parseConfig(config: { chainConfig: string }): boolean {
 export async function isAnyTrust<TChain extends Chain | undefined>({
   rollup,
   publicClient,
-  batching = false,
 }: {
   rollup: Address;
   publicClient: PublicClient<Transport, TChain>;
-  batching?: boolean;
 }) {
   const createRollupTransactionHash = await createRollupFetchTransactionHash({
     rollup,
     publicClient,
-    batching,
   });
 
   const transaction = await publicClient.getTransaction({
