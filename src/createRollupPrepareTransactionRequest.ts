@@ -18,7 +18,6 @@ import {
   CreateRollupParams,
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
-import { isCustomParentChain } from './customChains';
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
