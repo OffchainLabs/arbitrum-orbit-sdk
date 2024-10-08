@@ -1,4 +1,4 @@
-import { Address, Chain, GetLogsReturnType, Hex, PublicClient, Transport, getAbiItem } from 'viem';
+import { Address, Chain, Hex, PublicClient, Transport, getAbiItem } from 'viem';
 
 import { sequencerInboxABI } from './contracts/SequencerInbox';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
@@ -10,8 +10,6 @@ const InvalidateKeysetEventAbi = getAbiItem({ abi: sequencerInboxABI, name: 'Inv
 export type GetKeysetsParams = {
   /** Address of the sequencerInbox we're getting logs from */
   sequencerInbox: Address;
-  /** Batch the logs query to avoid RPC limiting */
-  batching?: boolean;
 };
 export type GetKeysetsReturnType = {
   /** Map of keyset hash to keyset bytes
@@ -37,7 +35,7 @@ export type GetKeysetsReturnType = {
  */
 export async function getKeysets<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { sequencerInbox, batching = false }: GetKeysetsParams,
+  { sequencerInbox }: GetKeysetsParams,
 ): Promise<GetKeysetsReturnType> {
   let blockNumber: bigint;
   let createRollupTransactionHash: Address | null = null;
@@ -50,7 +48,6 @@ export async function getKeysets<TChain extends Chain | undefined>(
     createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
       publicClient,
-      batching,
     });
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: createRollupTransactionHash,
@@ -61,24 +58,12 @@ export async function getKeysets<TChain extends Chain | undefined>(
     blockNumber = 0n;
   }
 
-  let events: GetLogsReturnType<
-    undefined,
-    [typeof SetValidKeysetEventAbi, typeof InvalidateKeysetEventAbi]
-  >;
-  if (batching) {
-    events = await getLogsWithBatching(publicClient, {
-      address: sequencerInbox,
-      events: [SetValidKeysetEventAbi, InvalidateKeysetEventAbi],
-      fromBlock: blockNumber,
-    });
-  } else {
-    events = await publicClient.getLogs({
-      address: sequencerInbox,
-      events: [SetValidKeysetEventAbi, InvalidateKeysetEventAbi],
-      fromBlock: blockNumber,
-      toBlock: 'latest',
-    });
-  }
+  const events = await getLogsWithBatching(publicClient, {
+    address: sequencerInbox,
+    events: [SetValidKeysetEventAbi, InvalidateKeysetEventAbi],
+    fromBlock: blockNumber,
+    toBlock: 'latest',
+  });
 
   const keysets = events.reduce((acc, event) => {
     switch (event.eventName) {

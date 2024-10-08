@@ -1,7 +1,6 @@
 import {
   Address,
   Chain,
-  GetLogsReturnType,
   Hex,
   PublicClient,
   Transport,
@@ -70,8 +69,6 @@ function updateAccumulator(acc: Set<Address>, input: Hex) {
 export type GetValidatorsParams = {
   /** Address of the rollup we're getting list of validators from */
   rollup: Address;
-  /** Batch the logs query to avoid RPC limiting */
-  batching?: boolean;
 };
 export type GetValidatorsReturnType = {
   /**
@@ -106,14 +103,13 @@ export type GetValidatorsReturnType = {
  */
 export async function getValidators<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { rollup, batching = false }: GetValidatorsParams,
+  { rollup }: GetValidatorsParams,
 ): Promise<GetValidatorsReturnType> {
   let blockNumber: bigint;
   try {
     const createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
       publicClient,
-      batching,
     });
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: createRollupTransactionHash,
@@ -123,23 +119,13 @@ export async function getValidators<TChain extends Chain | undefined>(
     blockNumber = 0n;
   }
 
-  let events: GetLogsReturnType<typeof ownerFunctionCalledEventAbi>;
-  if (batching) {
-    events = await getLogsWithBatching(publicClient, {
-      address: rollup,
-      event: ownerFunctionCalledEventAbi,
-      args: { id: 6n },
-      fromBlock: blockNumber,
-    });
-  } else {
-    events = await publicClient.getLogs({
-      address: rollup,
-      event: ownerFunctionCalledEventAbi,
-      args: { id: 6n },
-      fromBlock: blockNumber,
-      toBlock: 'latest',
-    });
-  }
+  const events = await getLogsWithBatching(publicClient, {
+    address: rollup,
+    event: ownerFunctionCalledEventAbi,
+    args: { id: 6n },
+    fromBlock: blockNumber,
+    toBlock: 'latest',
+  });
 
   const txs = await Promise.all(
     events.map((event) =>
