@@ -48,7 +48,8 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   gasOverrides,
   rollupCreatorAddressOverride,
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
-  const { chainId } = validateParentChain(publicClient);
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } =
+    validateParentChain(publicClient);
 
   if (params.batchPosters.length === 0 || params.batchPosters.includes(zeroAddress)) {
     throw new Error(`"params.batchPosters" can't be empty or contain the zero address.`);
@@ -76,7 +77,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  if (isCustomParentChain(publicClient) && typeof params.maxDataSize === 'undefined') {
+  if (parentChainIsCustom && typeof params.maxDataSize === 'undefined') {
     throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
   }
 
@@ -99,7 +100,10 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  const maxDataSize = params.maxDataSize ?? createRollupGetMaxDataSize(chainId);
+  const maxDataSize = parentChainIsCustom
+    ? // ok to use non-null assertion here because we already checked above
+      params.maxDataSize!
+    : params.maxDataSize ?? createRollupGetMaxDataSize(parentChainId);
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
@@ -125,5 +129,5 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     });
   }
 
-  return { ...request, chainId };
+  return { ...request, chainId: parentChainId };
 }

@@ -94,9 +94,9 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     sequencerInboxMaxTimeVariation: SequencerInboxMaxTimeVariation;
   } = parentChainIsCustom
     ? {
-        // ok to use non-null assertion here because we already checked for undefined
+        // ok to use non-null assertion here because we already checked above
         confirmPeriodBlocks: confirmPeriodBlocks!,
-        // ok to use non-null assertion here because we already checked for undefined
+        // ok to use non-null assertion here because we already checked above
         sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation!,
       }
     : {
