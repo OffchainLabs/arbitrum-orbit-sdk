@@ -7,7 +7,7 @@ import { customChains } from '../customChains';
 export type ParentChain = Exclude<(typeof chains)[number], { id: typeof nitroTestnodeL3.id }>;
 export type ParentChainId = ParentChain['id'];
 
-function isCustomParentChain(chainId: number) {
+function isCustom(chainId: number) {
   return customChains.map((chain) => chain.id).includes(chainId);
 }
 
@@ -42,10 +42,9 @@ export function validateParentChain<
   : { chainId: ParentChainId; isCustom: false } {
   const chainId = typeof chainIdOrClient === 'number' ? chainIdOrClient : chainIdOrClient.chain?.id;
 
-  if (!isValidParentChainId(chainId)) {
+  if (!isValidParentChainId(chainId, options)) {
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  // @ts-ignore
-  return { chainId };
+  return { chainId, isCustom: isCustom(chainId) } as any;
 }
