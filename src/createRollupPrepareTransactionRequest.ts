@@ -47,7 +47,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   gasOverrides,
   rollupCreatorAddressOverride,
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
-  const chainId = validateParentChain(publicClient);
+  const { chainId } = validateParentChain(publicClient);
 
   if (params.batchPosters.length === 0 || params.batchPosters.includes(zeroAddress)) {
     throw new Error(`"params.batchPosters" can't be empty or contain the zero address.`);

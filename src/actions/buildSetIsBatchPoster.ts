@@ -29,7 +29,7 @@ export async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
     params,
   }: BuildSetIsBatchPosterParameters & { params: { enable: boolean } },
 ): Promise<BuildSetIsBatchPosterReturnType> {
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,

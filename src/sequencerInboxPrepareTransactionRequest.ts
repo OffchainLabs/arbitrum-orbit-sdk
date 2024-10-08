@@ -80,7 +80,7 @@ export async function sequencerInboxPrepareTransactionRequest<
   client: PublicClient<TTransport, TChain>,
   params: SequencerInboxPrepareTransactionRequestParameters<TFunctionName>,
 ) {
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   // params is extending SequencerInboxPrepareFunctionDataParameters, it's safe to cast
   const { to, data, value } = sequencerInboxPrepareFunctionData({

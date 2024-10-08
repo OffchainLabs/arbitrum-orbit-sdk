@@ -13,7 +13,7 @@ export type SequencerInboxMaxTimeVariation = {
 export function getDefaultSequencerInboxMaxTimeVariation<TChain extends Chain | undefined>(
   parentChainIdOrClient: ParentChainId | Client<Transport, TChain>,
 ): SequencerInboxMaxTimeVariation {
-  const parentChainId = validateParentChain(parentChainIdOrClient);
+  const { chainId: parentChainId } = validateParentChain(parentChainIdOrClient);
 
   const delaySeconds = 60 * 60 * 24 * 4; // 4 days;
   const futureSeconds = 60 * 60; // 1 hour;

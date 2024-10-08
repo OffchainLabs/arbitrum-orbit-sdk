@@ -31,7 +31,7 @@ export async function buildSetMaxTimeVariation<TChain extends Chain | undefined>
     params,
   }: BuildSetMaxTimeVariationParameters,
 ): Promise<BuildSetMaxTimeVariationReturnType> {
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,

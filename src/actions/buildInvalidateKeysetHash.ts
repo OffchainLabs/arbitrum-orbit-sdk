@@ -35,7 +35,7 @@ export async function buildInvalidateKeysetHash<TChain extends Chain | undefined
     params,
   }: BuildInvalidateKeysetHashParameters,
 ): Promise<BuildInvalidateKeysetHashReturnType> {
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
