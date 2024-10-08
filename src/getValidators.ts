@@ -1,6 +1,7 @@
 import {
   Address,
   Chain,
+  GetLogsReturnType,
   Hex,
   PublicClient,
   Transport,
@@ -16,6 +17,7 @@ import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
 import { rollupABI } from './contracts/Rollup';
 
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
+import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
@@ -68,6 +70,8 @@ function updateAccumulator(acc: Set<Address>, input: Hex) {
 export type GetValidatorsParams = {
   /** Address of the rollup we're getting list of validators from */
   rollup: Address;
+  /** Batch the logs query to avoid RPC limiting */
+  batching?: boolean;
 };
 export type GetValidatorsReturnType = {
   /**
@@ -102,29 +106,40 @@ export type GetValidatorsReturnType = {
  */
 export async function getValidators<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { rollup }: GetValidatorsParams,
+  { rollup, batching = false }: GetValidatorsParams,
 ): Promise<GetValidatorsReturnType> {
-  let blockNumber: bigint | 'earliest';
+  let blockNumber: bigint;
   try {
     const createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
       publicClient,
+      batching,
     });
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: createRollupTransactionHash,
     });
     blockNumber = receipt.blockNumber;
   } catch (e) {
-    blockNumber = 'earliest';
+    blockNumber = 0n;
   }
 
-  const events = await publicClient.getLogs({
-    address: rollup,
-    event: ownerFunctionCalledEventAbi,
-    args: { id: 6n },
-    fromBlock: blockNumber,
-    toBlock: 'latest',
-  });
+  let events: GetLogsReturnType<typeof ownerFunctionCalledEventAbi>;
+  if (batching) {
+    events = await getLogsWithBatching(publicClient, {
+      address: rollup,
+      event: ownerFunctionCalledEventAbi,
+      args: { id: 6n },
+      fromBlock: blockNumber,
+    });
+  } else {
+    events = await publicClient.getLogs({
+      address: rollup,
+      event: ownerFunctionCalledEventAbi,
+      args: { id: 6n },
+      fromBlock: blockNumber,
+      toBlock: 'latest',
+    });
+  }
 
   const txs = await Promise.all(
     events.map((event) =>

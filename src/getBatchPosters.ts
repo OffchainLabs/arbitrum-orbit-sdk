@@ -1,6 +1,7 @@
 import {
   Address,
   Chain,
+  GetLogsReturnType,
   Hex,
   PublicClient,
   Transport,
@@ -16,6 +17,7 @@ import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
 
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
+import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
@@ -70,6 +72,8 @@ export type GetBatchPostersParams = {
   rollup: Address;
   /** Address of the sequencerInbox we're getting logs from */
   sequencerInbox: Address;
+  /** Batch the logs query to avoid RPC limiting */
+  batching?: boolean;
 };
 export type GetBatchPostersReturnType = {
   /**
@@ -107,30 +111,41 @@ export type GetBatchPostersReturnType = {
  */
 export async function getBatchPosters<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  { rollup, sequencerInbox }: GetBatchPostersParams,
+  { rollup, sequencerInbox, batching = false }: GetBatchPostersParams,
 ): Promise<GetBatchPostersReturnType> {
-  let blockNumber: bigint | 'earliest';
+  let blockNumber: bigint;
   let createRollupTransactionHash: Address | null = null;
   try {
     createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
       publicClient,
+      batching,
     });
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: createRollupTransactionHash,
     });
     blockNumber = receipt.blockNumber;
   } catch (e) {
-    blockNumber = 'earliest';
+    blockNumber = 0n;
   }
 
-  const sequencerInboxEvents = await publicClient.getLogs({
-    address: sequencerInbox,
-    event: ownerFunctionCalledEventAbi,
-    args: { id: 1n },
-    fromBlock: blockNumber,
-    toBlock: 'latest',
-  });
+  let sequencerInboxEvents: GetLogsReturnType<typeof ownerFunctionCalledEventAbi>;
+  if (batching) {
+    sequencerInboxEvents = await getLogsWithBatching(publicClient, {
+      address: sequencerInbox,
+      event: ownerFunctionCalledEventAbi,
+      args: { id: 1n },
+      fromBlock: blockNumber,
+    });
+  } else {
+    sequencerInboxEvents = await publicClient.getLogs({
+      address: sequencerInbox,
+      event: ownerFunctionCalledEventAbi,
+      args: { id: 1n },
+      fromBlock: blockNumber,
+      toBlock: 'latest',
+    });
+  }
 
   const events = createRollupTransactionHash
     ? [{ transactionHash: createRollupTransactionHash }, ...sequencerInboxEvents]

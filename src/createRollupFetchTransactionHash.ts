@@ -1,23 +1,14 @@
-import { Address, PublicClient, Transport, Chain } from 'viem';
+import { Address, PublicClient, Transport, Chain, GetLogsReturnType } from 'viem';
 import { AbiEvent } from 'abitype';
 
+import { getLogsWithBatching } from './utils/getLogsWithBatching';
 import { validateParentChain } from './types/ParentChain';
-import {
-  mainnet,
-  arbitrumOne,
-  arbitrumNova,
-  base,
-  sepolia,
-  holesky,
-  arbitrumSepolia,
-  baseSepolia,
-  nitroTestnodeL1,
-  nitroTestnodeL2,
-} from './chains';
+import { getEarliestRollupCreatorDeploymentBlockNumber } from './utils/getEarliestRollupCreatorDeploymentBlockNumber';
 
 export type CreateRollupFetchTransactionHashParams<TChain extends Chain | undefined> = {
   rollup: Address;
   publicClient: PublicClient<Transport, TChain>;
+  batching?: boolean;
 };
 
 const RollupInitializedEventAbi: AbiEvent = {
@@ -40,42 +31,31 @@ const RollupInitializedEventAbi: AbiEvent = {
   type: 'event',
 };
 
-const earliestRollupCreatorDeploymentBlockNumber = {
-  // mainnet L1
-  [mainnet.id]: 18736164n,
-  // mainnet L2
-  [arbitrumOne.id]: 150599584n,
-  [arbitrumNova.id]: 47798739n,
-  [base.id]: 12978604n,
-  // testnet L1
-  [sepolia.id]: 4741823n,
-  [holesky.id]: 1118493n,
-  // testnet L2
-  [arbitrumSepolia.id]: 654628n,
-  [baseSepolia.id]: 10606961n,
-  // local nitro-testnode
-  [nitroTestnodeL1.id]: 0n,
-  [nitroTestnodeL2.id]: 0n,
-};
-
 export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
   rollup,
   publicClient,
+  batching = false,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
-  const { chainId } = validateParentChain(publicClient);
-
-  const fromBlock =
-    chainId in earliestRollupCreatorDeploymentBlockNumber
-      ? earliestRollupCreatorDeploymentBlockNumber[chainId]
-      : 'earliest';
-
   // Find the RollupInitialized event from that Rollup contract
-  const rollupInitializedEvents = await publicClient.getLogs({
-    address: rollup,
-    event: RollupInitializedEventAbi,
-    fromBlock,
-    toBlock: 'latest',
-  });
+  let rollupInitializedEvents: GetLogsReturnType;
+  if (batching) {
+    rollupInitializedEvents = await getLogsWithBatching(
+      publicClient,
+      {
+        address: rollup,
+        event: RollupInitializedEventAbi,
+      },
+      { stopWhenFound: true },
+    );
+  } else {
+    const { chainId } = validateParentChain(publicClient);
+    rollupInitializedEvents = await publicClient.getLogs({
+      address: rollup,
+      event: RollupInitializedEventAbi,
+      fromBlock: getEarliestRollupCreatorDeploymentBlockNumber(chainId),
+      toBlock: 'latest',
+    });
+  }
 
   if (rollupInitializedEvents.length !== 1) {
     throw new Error(
