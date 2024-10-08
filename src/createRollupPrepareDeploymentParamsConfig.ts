@@ -67,11 +67,11 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
   client: Client<Transport, TChain>,
   { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
 ): CreateRollupPrepareDeploymentParamsConfigResult {
-  const { chainId } = validateParentChain(client);
+  const { chainId: parentChainId } = validateParentChain(client);
 
   const defaultsBasedOnParentChain = {
-    confirmPeriodBlocks: getDefaultConfirmPeriodBlocks(chainId),
-    sequencerInboxMaxTimeVariation: getDefaultSequencerInboxMaxTimeVariation(chainId),
+    confirmPeriodBlocks: getDefaultConfirmPeriodBlocks(parentChainId),
+    sequencerInboxMaxTimeVariation: getDefaultSequencerInboxMaxTimeVariation(parentChainId),
   };
 
   return {
