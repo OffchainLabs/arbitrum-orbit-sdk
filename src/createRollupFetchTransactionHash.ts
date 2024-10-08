@@ -29,7 +29,7 @@ const RollupInitializedEventAbi: AbiEvent = {
   type: 'event',
 };
 
-export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
+export async function createRollupFetchTransactionHash<TChain extends Chain>({
   rollup,
   publicClient,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
