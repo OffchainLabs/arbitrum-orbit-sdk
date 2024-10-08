@@ -7,7 +7,7 @@ import { base, baseSepolia } from './chains';
 export function getDefaultConfirmPeriodBlocks<TChain extends Chain | undefined>(
   parentChainIdOrClient: ParentChainId | Client<Transport, TChain>,
 ): bigint {
-  const { chainId: parentChainId } = validateParentChain(parentChainIdOrClient);
+  const { chainId: parentChainId } = validateParentChain(parentChainIdOrClient, { custom: false });
 
   const isMainnet = parentChainIsMainnet(parentChainId);
   const confirmPeriodBlocks = isMainnet ? 45_818n : 150n;

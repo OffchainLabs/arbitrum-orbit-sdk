@@ -10,8 +10,10 @@ import { prepareChainConfig } from './prepareChainConfig';
 
 import { defaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
-import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerInboxMaxTimeVariation';
-import { isCustomParentChain } from './customChains';
+import {
+  SequencerInboxMaxTimeVariation,
+  getDefaultSequencerInboxMaxTimeVariation,
+} from './getDefaultSequencerInboxMaxTimeVariation';
 
 export type CreateRollupPrepareDeploymentParamsConfigResult =
   CreateRollupFunctionInputs[0]['config'];
@@ -66,30 +68,45 @@ export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
  */
 export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain | undefined>(
   client: Client<Transport, TChain>,
-  { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
+  {
+    chainConfig,
+    confirmPeriodBlocks,
+    sequencerInboxMaxTimeVariation,
+    ...params
+  }: CreateRollupPrepareDeploymentParamsConfigParams,
 ): CreateRollupPrepareDeploymentParamsConfigResult {
-  const { chainId: parentChainId } = validateParentChain(client);
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } = validateParentChain(client);
 
-  if (isCustomParentChain(client) && typeof params.confirmPeriodBlocks === 'undefined') {
+  if (parentChainIsCustom && typeof confirmPeriodBlocks === 'undefined') {
     throw new Error(
       `"params.confirmPeriodBlocks" must be provided when using a custom parent chain.`,
     );
   }
 
-  if (isCustomParentChain(client) && typeof params.sequencerInboxMaxTimeVariation === 'undefined') {
+  if (parentChainIsCustom && typeof sequencerInboxMaxTimeVariation === 'undefined') {
     throw new Error(
       `"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.`,
     );
   }
 
-  const defaultsBasedOnParentChain = {
-    confirmPeriodBlocks: getDefaultConfirmPeriodBlocks(parentChainId),
-    sequencerInboxMaxTimeVariation: getDefaultSequencerInboxMaxTimeVariation(parentChainId),
-  };
+  const paramsByParentBlockTime: {
+    confirmPeriodBlocks: bigint;
+    sequencerInboxMaxTimeVariation: SequencerInboxMaxTimeVariation;
+  } = parentChainIsCustom
+    ? {
+        // ok to use non-null assertion here because we already checked for undefined
+        confirmPeriodBlocks: confirmPeriodBlocks!,
+        // ok to use non-null assertion here because we already checked for undefined
+        sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation!,
+      }
+    : {
+        confirmPeriodBlocks: getDefaultConfirmPeriodBlocks(parentChainId),
+        sequencerInboxMaxTimeVariation: getDefaultSequencerInboxMaxTimeVariation(parentChainId),
+      };
 
   return {
     ...defaults,
-    ...defaultsBasedOnParentChain,
+    ...paramsByParentBlockTime,
     ...params,
     chainConfig: JSON.stringify(
       chainConfig ??
