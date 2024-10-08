@@ -11,40 +11,24 @@ function isCustom(chainId: number) {
   return customChains.map((chain) => chain.id).includes(chainId);
 }
 
-function isValidParentChainId<TCustom extends boolean = true>(
-  parentChainId: number | undefined,
-  options?: { custom?: TCustom },
-): parentChainId is TCustom extends true ? number : ParentChainId {
-  const defaultIds = chains
+function isValidParentChainId(parentChainId: number | undefined): parentChainId is number {
+  const ids = [...chains, ...customChains]
     // exclude nitro-testnode L3 from the list of parent chains
     .filter((chain) => chain.id !== nitroTestnodeL3.id)
     .map((chain) => chain.id) as Number[];
-
-  // default to allowing custom parent chains
-  const custom = options?.custom ?? true;
-  const customIds = customChains.map((chain) => chain.id);
-
-  if (!custom) {
-    return defaultIds.includes(Number(parentChainId));
-  }
-
-  return [...defaultIds, ...customIds].includes(Number(parentChainId));
+  return ids.includes(Number(parentChainId));
 }
 
-export function validateParentChain<
-  TChain extends Chain | undefined,
-  TCustom extends boolean = true,
->(
+export function validateParentChain<TChain extends Chain | undefined>(
   chainIdOrClient: number | Client<Transport, TChain>,
-  options?: { custom?: TCustom },
-): TCustom extends true
-  ? { chainId: number; isCustom: true } | { chainId: ParentChainId; isCustom: false }
-  : { chainId: ParentChainId; isCustom: false } {
+): { chainId: number; isCustom: true } | { chainId: ParentChainId; isCustom: false } {
   const chainId = typeof chainIdOrClient === 'number' ? chainIdOrClient : chainIdOrClient.chain?.id;
 
-  if (!isValidParentChainId(chainId, options)) {
+  if (!isValidParentChainId(chainId)) {
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  return { chainId, isCustom: isCustom(chainId) } as any;
+  return { chainId, isCustom: isCustom(chainId) } as
+    | { chainId: number; isCustom: true }
+    | { chainId: ParentChainId; isCustom: false };
 }
