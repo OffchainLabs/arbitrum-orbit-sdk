@@ -1,4 +1,4 @@
-import { Address, Client, PublicClient, zeroAddress } from 'viem';
+import { Address, PublicClient, defineChain, zeroAddress } from 'viem';
 import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
 import { config } from 'dotenv';
 import { execSync } from 'node:child_process';
@@ -81,6 +81,7 @@ type TestnodeInformation = {
   rollup: Address;
   sequencerInbox: Address;
   l3SequencerInbox: Address;
+  upgradeExecutor: Address;
   l3Bridge: Address;
   batchPoster: Address;
   l3BatchPoster: Address;
@@ -120,6 +121,7 @@ export function getInformationFromTestnode(): TestnodeInformation {
         rollup: deploymentJson['rollup'],
         sequencerInbox: deploymentJson['sequencer-inbox'],
         batchPoster: sequencerConfig.node['batch-poster']['parent-chain-wallet'].account,
+        upgradeExecutor: deploymentJson['upgrade-executor'],
         l3Bridge: l3DeploymentJson['bridge'],
         l3Rollup: l3DeploymentJson['rollup'],
         l3SequencerInbox: l3DeploymentJson['sequencer-inbox'],
@@ -179,3 +181,19 @@ export async function createRollupHelper({
     createRollupInformation,
   };
 }
+
+export const xai = defineChain({
+  id: 660279,
+  network: 'Xai Mainnet',
+  name: 'Xai Mainnet',
+  nativeCurrency: { name: 'Xai', symbol: 'XAI', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://xai-chain.net/rpc'],
+    },
+    public: {
+      http: ['https://xai-chain.net/rpc'],
+    },
+  },
+  testnet: false,
+});

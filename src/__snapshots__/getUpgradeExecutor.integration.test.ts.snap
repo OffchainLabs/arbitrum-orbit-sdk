@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`successfully get upgrade executor > from child chain 1`] = `"0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b"`;
