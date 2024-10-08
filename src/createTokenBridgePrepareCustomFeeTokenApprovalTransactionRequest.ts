@@ -28,7 +28,7 @@ export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionR
   publicClient,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<TChain>) {
-  const chainId = validateParentChain(publicClient);
+  const { chainId } = validateParentChain(publicClient);
 
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,

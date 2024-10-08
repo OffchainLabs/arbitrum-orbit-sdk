@@ -62,7 +62,7 @@ export async function createRollupFetchTransactionHash<TChain extends Chain | un
   rollup,
   publicClient,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
-  const chainId = validateParentChain(publicClient);
+  const { chainId } = validateParentChain(publicClient);
 
   const fromBlock =
     chainId in earliestRollupCreatorDeploymentBlockNumber

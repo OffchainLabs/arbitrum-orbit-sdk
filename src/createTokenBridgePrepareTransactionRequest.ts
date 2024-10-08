@@ -49,7 +49,7 @@ export async function createTokenBridgePrepareTransactionRequest<
   retryableGasOverrides,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareTransactionRequestParams<TParentChain, TOrbitChain>) {
-  const chainId = validateParentChain(parentChainPublicClient);
+  const { chainId } = validateParentChain(parentChainPublicClient);
 
   const isTokenBridgeAlreadyDeployed = await isTokenBridgeDeployed({
     parentChainPublicClient,

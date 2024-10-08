@@ -6,7 +6,7 @@ import { validateParentChain } from '../types/ParentChain';
 export function getTokenBridgeCreatorAddress<TChain extends Chain | undefined>(
   client: Client<Transport, TChain>,
 ) {
-  const chainId = validateParentChain(client);
+  const { chainId } = validateParentChain(client);
 
   if (!tokenBridgeCreatorAddress[chainId]) {
     throw new Error(`Parent chain not supported: ${chainId}`);
