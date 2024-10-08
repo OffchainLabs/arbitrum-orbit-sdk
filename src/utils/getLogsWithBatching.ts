@@ -45,7 +45,7 @@ export async function getLogsWithBatching<
 ) {
   let lowerLimit = fromBlock;
   const latestBlockNumber = await publicClient.getBlockNumber();
-  const chainId = validateParentChain(publicClient);
+  const { chainId } = validateParentChain(publicClient);
   if (!fromBlock && chainId) {
     const earliestBlock = getEarliestRollupCreatorDeploymentBlockNumber(chainId);
     lowerLimit = earliestBlock === 'latest' ? latestBlockNumber : earliestBlock;
