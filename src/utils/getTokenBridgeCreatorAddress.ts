@@ -6,20 +6,21 @@ import { validateParentChain } from '../types/ParentChain';
 export function getTokenBridgeCreatorAddress<TChain extends Chain | undefined>(
   client: Client<Transport, TChain>,
 ) {
-  const customParentChainTokenBridgeCreator = client.chain?.contracts?.tokenBridgeCreator as
-    | ChainContract
-    | undefined;
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } = validateParentChain(client);
 
-  // check if it's a custom parent chain with the factory address provided
-  if (customParentChainTokenBridgeCreator?.address) {
+  if (parentChainIsCustom) {
+    const customParentChainTokenBridgeCreator = client.chain?.contracts?.tokenBridgeCreator as
+      | ChainContract
+      | undefined;
+
+    // check if it's a custom parent chain with the factory address provided
+
+    if (!customParentChainTokenBridgeCreator?.address) {
+      throw new Error('invalid token bridge creator address provided');
+    }
+
     return customParentChainTokenBridgeCreator?.address;
   }
 
-  const { chainId } = validateParentChain(client);
-
-  if (!tokenBridgeCreatorAddress[chainId]) {
-    throw new Error(`Parent chain not supported: ${chainId}`);
-  }
-
-  return tokenBridgeCreatorAddress[chainId];
+  return tokenBridgeCreatorAddress[parentChainId];
 }
