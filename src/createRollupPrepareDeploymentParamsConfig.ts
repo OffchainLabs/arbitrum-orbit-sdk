@@ -100,8 +100,9 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
         sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation!,
       }
     : {
-        confirmPeriodBlocks: getDefaultConfirmPeriodBlocks(parentChainId),
-        sequencerInboxMaxTimeVariation: getDefaultSequencerInboxMaxTimeVariation(parentChainId),
+        confirmPeriodBlocks: confirmPeriodBlocks ?? getDefaultConfirmPeriodBlocks(parentChainId),
+        sequencerInboxMaxTimeVariation:
+          sequencerInboxMaxTimeVariation ?? getDefaultSequencerInboxMaxTimeVariation(parentChainId),
       };
 
   return {
