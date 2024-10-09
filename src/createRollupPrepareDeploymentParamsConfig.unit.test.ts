@@ -11,7 +11,7 @@ import {
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 
-import { testHelper_createCustomParentChain } from './customChainsTestHelpers';
+import { testHelper_createCustomParentChain } from './testHelpers';
 
 const chainId = 69_420n;
 const vitalik: `0x${string}` = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';

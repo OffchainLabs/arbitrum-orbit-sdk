@@ -9,9 +9,11 @@ import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepare
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import { rollupCreatorAddress } from './contracts/RollupCreator';
 
-import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
+import {
+  getNitroTestnodePrivateKeyAccounts,
+  testHelper_createCustomParentChain,
+} from './testHelpers';
 import { registerCustomParentChain } from './chains';
-import { testHelper_createCustomParentChain } from './customChainsTestHelpers';
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();

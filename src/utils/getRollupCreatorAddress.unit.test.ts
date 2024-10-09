@@ -5,7 +5,7 @@ import { sepolia } from 'viem/chains';
 import { getRollupCreatorAddress } from './getRollupCreatorAddress';
 import { registerCustomParentChain } from '../chains';
 
-import { testHelper_createCustomParentChain } from '../customChainsTestHelpers';
+import { testHelper_createCustomParentChain } from '../testHelpers';
 
 it(`successfully returns address for Sepolia`, () => {
   const client = createPublicClient({

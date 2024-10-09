@@ -4,7 +4,7 @@ import { validateParentChain } from './types/ParentChain';
 import { arbitrumOne, registerCustomParentChain } from './chains';
 import { generateChainId } from './utils';
 
-import { testHelper_createCustomParentChain } from './customChainsTestHelpers';
+import { testHelper_createCustomParentChain } from './testHelpers';
 
 it(`sucessfully validates arbitrum one`, () => {
   const result = validateParentChain(arbitrumOne.id);
