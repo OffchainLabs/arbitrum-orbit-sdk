@@ -16,6 +16,7 @@ import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
 import { rollupABI } from './contracts/Rollup';
 
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
+import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
@@ -100,11 +101,11 @@ export type GetValidatorsReturnType = {
  *   // Validators list is not guaranteed to be accurate
  * }
  */
-export async function getValidators<TChain extends Chain | undefined>(
+export async function getValidators<TChain extends Chain>(
   publicClient: PublicClient<Transport, TChain>,
   { rollup }: GetValidatorsParams,
 ): Promise<GetValidatorsReturnType> {
-  let blockNumber: bigint | 'earliest';
+  let blockNumber: bigint;
   try {
     const createRollupTransactionHash = await createRollupFetchTransactionHash({
       rollup,
@@ -115,15 +116,14 @@ export async function getValidators<TChain extends Chain | undefined>(
     });
     blockNumber = receipt.blockNumber;
   } catch (e) {
-    blockNumber = 'earliest';
+    blockNumber = 0n;
   }
 
-  const events = await publicClient.getLogs({
+  const events = await getLogsWithBatching(publicClient, {
     address: rollup,
     event: ownerFunctionCalledEventAbi,
     args: { id: 6n },
     fromBlock: blockNumber,
-    toBlock: 'latest',
   });
 
   const txs = await Promise.all(
