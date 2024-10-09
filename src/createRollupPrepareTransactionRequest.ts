@@ -76,8 +76,16 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  if (parentChainIsCustom && typeof params.maxDataSize === 'undefined') {
-    throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
+  let maxDataSize: bigint;
+
+  if (parentChainIsCustom) {
+    if (typeof params.maxDataSize === 'undefined') {
+      throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
+    }
+
+    maxDataSize = params.maxDataSize;
+  } else {
+    maxDataSize = params.maxDataSize ?? createRollupGetMaxDataSize(parentChainId);
   }
 
   const arbOSVersion = chainConfig.arbitrum.InitialArbOSVersion;
@@ -99,10 +107,6 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  const maxDataSize = parentChainIsCustom
-    ? // ok to use non-null assertion here because we already checked above
-      params.maxDataSize!
-    : params.maxDataSize ?? createRollupGetMaxDataSize(parentChainId);
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
