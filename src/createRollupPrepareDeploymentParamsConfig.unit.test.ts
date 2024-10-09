@@ -6,12 +6,11 @@ import {
   arbitrumSepolia,
   base,
   baseSepolia,
-  CustomParentChain,
   registerCustomParentChain,
 } from './chains';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
-import { createCustomChain } from './customChainsTestHelpers';
+import { createExampleCustomParentChain } from './customChainsTestHelpers';
 
 const chainId = 69_420n;
 const vitalik: `0x${string}` = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
@@ -127,13 +126,9 @@ it('creates config for a chain on top of base sepolia with defaults', () => {
 });
 
 it('fails to create a config for a chain on top of a custom parent chain if "confirmPeriodBlocks" is not provided', () => {
-  const chain: CustomParentChain = {
-    ...createCustomChain({ id: 123 }),
-    contracts: {
-      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
-      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
-    },
-  };
+  const chain = createExampleCustomParentChain({
+    id: 123,
+  });
 
   const publicClient = createPublicClient({
     chain,
@@ -151,13 +146,9 @@ it('fails to create a config for a chain on top of a custom parent chain if "con
 });
 
 it('fails to create a config for a chain on top of a custom parent chain if "sequencerInboxMaxTimeVariation" is not provided', () => {
-  const chain: CustomParentChain = {
-    ...createCustomChain({ id: 123 }),
-    contracts: {
-      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
-      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
-    },
-  };
+  const chain = createExampleCustomParentChain({
+    id: 123,
+  });
 
   const publicClient = createPublicClient({
     chain,
@@ -178,13 +169,9 @@ it('fails to create a config for a chain on top of a custom parent chain if "seq
 });
 
 it('creates a config for a chain on top of a custom parent chain', () => {
-  const chain: CustomParentChain = {
-    ...createCustomChain({ id: 123 }),
-    contracts: {
-      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
-      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
-    },
-  };
+  const chain = createExampleCustomParentChain({
+    id: 123,
+  });
 
   const publicClient = createPublicClient({
     chain,

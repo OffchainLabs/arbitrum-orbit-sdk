@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
 import { validateParentChain } from './types/ParentChain';
-import { CustomParentChain, registerCustomParentChain } from './chains';
-import { createCustomChain } from './customChainsTestHelpers';
+import { registerCustomParentChain } from './chains';
+import { createExampleCustomParentChain } from './customChainsTestHelpers';
 
 describe(`validateParentChain`, () => {
   it(`throws for an unregistered custom parent chain`, () => {
@@ -14,13 +14,9 @@ describe(`validateParentChain`, () => {
   it(`works for a registered custom parent chain`, () => {
     const id = 123_456;
 
-    const chain: CustomParentChain = {
-      ...createCustomChain({ id }),
-      contracts: {
-        rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
-        tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
-      },
-    };
+    const chain = createExampleCustomParentChain({
+      id,
+    });
 
     registerCustomParentChain(chain);
 

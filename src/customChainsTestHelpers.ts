@@ -1,10 +1,10 @@
 import { Chain } from 'viem';
 
-export function createCustomChain({ id }: { id: number }): Chain {
+export function createExampleCustomParentChain({ id }: { id: number }) {
   return {
     id,
-    name: `Custom Chain (${id})`,
-    network: `custom-chain-${id}`,
+    name: `Custom Parent Chain (${id})`,
+    network: `custom-parent-chain-${id}`,
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -18,5 +18,13 @@ export function createCustomChain({ id }: { id: number }): Chain {
         http: ['http://localhost:3000'],
       },
     },
-  };
+    contracts: {
+      rollupCreator: {
+        address: '0x1000000000000000000000000000000000000000',
+      },
+      tokenBridgeCreator: {
+        address: '0x2000000000000000000000000000000000000000',
+      },
+    },
+  } satisfies Chain;
 }

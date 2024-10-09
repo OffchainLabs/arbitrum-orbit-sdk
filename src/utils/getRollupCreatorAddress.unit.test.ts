@@ -3,8 +3,8 @@ import { createPublicClient, http } from 'viem';
 import { sepolia } from 'viem/chains';
 
 import { getRollupCreatorAddress } from './getRollupCreatorAddress';
-import { CustomParentChain, registerCustomParentChain } from '../chains';
-import { createCustomChain } from '../customChainsTestHelpers';
+import { registerCustomParentChain } from '../chains';
+import { createExampleCustomParentChain } from '../customChainsTestHelpers';
 
 it(`successfully returns address for Sepolia`, () => {
   const client = createPublicClient({
@@ -17,7 +17,7 @@ it(`successfully returns address for Sepolia`, () => {
 
 it(`fails to return address for an unrecognized parent chain`, () => {
   const client = createPublicClient({
-    chain: createCustomChain({ id: 123 }),
+    chain: createExampleCustomParentChain({ id: 123 }),
     transport: http(),
   });
 
@@ -25,16 +25,9 @@ it(`fails to return address for an unrecognized parent chain`, () => {
 });
 
 it(`successfully returns address for a registered custom parent chain`, () => {
-  const rollupCreator = '0x1000000000000000000000000000000000000000';
-  const tokenBridgeCreator = '0x2000000000000000000000000000000000000000';
-
-  const chain: CustomParentChain = {
-    ...createCustomChain({ id: 123_456 }),
-    contracts: {
-      rollupCreator: { address: rollupCreator },
-      tokenBridgeCreator: { address: tokenBridgeCreator },
-    },
-  };
+  const chain = createExampleCustomParentChain({
+    id: 123_456,
+  });
 
   registerCustomParentChain(chain);
 
@@ -43,5 +36,5 @@ it(`successfully returns address for a registered custom parent chain`, () => {
     transport: http(),
   });
 
-  expect(getRollupCreatorAddress(client)).toEqual(rollupCreator);
+  expect(getRollupCreatorAddress(client)).toEqual(chain.contracts.rollupCreator.address);
 });

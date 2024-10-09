@@ -10,8 +10,8 @@ import { createRollupPrepareTransactionRequest } from './createRollupPrepareTran
 import { rollupCreatorAddress } from './contracts/RollupCreator';
 
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
-import { CustomParentChain, registerCustomParentChain } from './chains';
-import { createCustomChain } from './customChainsTestHelpers';
+import { registerCustomParentChain } from './chains';
+import { createExampleCustomParentChain } from './customChainsTestHelpers';
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
@@ -302,13 +302,9 @@ it(`fails to prepare transaction request if "params.maxDataSize" is not provided
     arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
   });
 
-  const chain: CustomParentChain = {
-    ...createCustomChain({ id: 123 }),
-    contracts: {
-      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
-      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
-    },
-  };
+  const chain = createExampleCustomParentChain({
+    id: chainId,
+  });
 
   const publicClient = createPublicClient({
     chain,
@@ -419,13 +415,9 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
     arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
   });
 
-  const chain: CustomParentChain = {
-    ...createCustomChain({ id: 123 }),
-    contracts: {
-      rollupCreator: { address: '0x1000000000000000000000000000000000000000' },
-      tokenBridgeCreator: { address: '0x2000000000000000000000000000000000000000' },
-    },
-  };
+  const chain = createExampleCustomParentChain({
+    id: chainId,
+  });
 
   const publicClient = createPublicClient({
     chain,

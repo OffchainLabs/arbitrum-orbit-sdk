@@ -65,14 +65,7 @@ export function getCustomParentChains(): Chain[] {
   return Object.values(customParentChains);
 }
 
-export type CustomParentChain = Chain & {
-  contracts: {
-    rollupCreator: ChainContract;
-    tokenBridgeCreator: ChainContract;
-  };
-};
-
-export function registerCustomParentChain(chain: CustomParentChain) {
+export function registerCustomParentChain(chain: Chain) {
   customParentChains[chain.id] = chain;
 }
 
