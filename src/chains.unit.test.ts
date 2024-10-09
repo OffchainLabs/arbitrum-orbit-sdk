@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { registerCustomParentChain } from './chains';
+import { getCustomParentChains, registerCustomParentChain } from './chains';
 import { testHelper_createCustomParentChain } from './testHelpers';
 
 describe('registerCustomParentChain', () => {
@@ -26,5 +26,18 @@ describe('registerCustomParentChain', () => {
     ).toThrowError(
       `"contracts.tokenBridgeCreator.address" is missing or invalid for custom parent chain with id ${chain.id}`,
     );
+  });
+
+  it('successfully registers a custom parent chain', () => {
+    const chain = testHelper_createCustomParentChain();
+
+    // assert before
+    expect(getCustomParentChains().map((c) => c.id)).not.includes(chain.id);
+
+    // register
+    registerCustomParentChain(chain);
+
+    // assert after
+    expect(getCustomParentChains().map((c) => c.id)).includes(chain.id);
   });
 });
