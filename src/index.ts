@@ -144,7 +144,7 @@ import {
   getConsensusReleaseByWasmModuleRoot,
   GetConsensusReleaseByWasmModuleRoot,
 } from './wasmModuleRoot';
-import { CustomParentChain, registerCustomParentChain } from './customChains';
+import { CustomParentChain, registerCustomParentChain } from './chains';
 export * from './actions';
 
 export {

@@ -3,7 +3,7 @@ import { createPublicClient, http } from 'viem';
 import { sepolia } from 'viem/chains';
 
 import { getRollupCreatorAddress } from './getRollupCreatorAddress';
-import { CustomParentChain, registerCustomParentChain } from '../customChains';
+import { CustomParentChain, registerCustomParentChain } from '../chains';
 import { createCustomChain } from '../customChainsTestHelpers';
 
 it(`successfully returns address for Sepolia`, () => {

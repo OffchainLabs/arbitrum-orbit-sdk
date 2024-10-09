@@ -1,10 +1,16 @@
 import { it, expect } from 'vitest';
 import { Address, createPublicClient, http } from 'viem';
 
-import { arbitrumOne, arbitrumSepolia, base, baseSepolia } from './chains';
+import {
+  arbitrumOne,
+  arbitrumSepolia,
+  base,
+  baseSepolia,
+  CustomParentChain,
+  registerCustomParentChain,
+} from './chains';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
-import { CustomParentChain, registerCustomParentChain } from './customChains';
 import { createCustomChain } from './customChainsTestHelpers';
 
 const chainId = 69_420n;

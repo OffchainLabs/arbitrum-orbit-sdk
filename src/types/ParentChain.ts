@@ -1,18 +1,18 @@
 import { Client, Transport, Chain } from 'viem';
 
-import { chains, nitroTestnodeL3 } from '../chains';
-import { customChains } from '../customChains';
+import { chains, getCustomParentChains, nitroTestnodeL3 } from '../chains';
 
 // exclude nitro-testnode L3 from the list of parent chains
 export type ParentChain = Exclude<(typeof chains)[number], { id: typeof nitroTestnodeL3.id }>;
 export type ParentChainId = ParentChain['id'];
 
-function isCustom(chainId: number) {
-  return customChains.map((chain) => chain.id).includes(chainId);
+function isCustomParentChain(chainId: number): boolean {
+  const ids = getCustomParentChains().map((chain) => chain.id);
+  return ids.includes(chainId);
 }
 
 function isValidParentChainId(parentChainId: number | undefined): parentChainId is number {
-  const ids = [...chains, ...customChains]
+  const ids = [...chains, ...getCustomParentChains()]
     // exclude nitro-testnode L3 from the list of parent chains
     .filter((chain) => chain.id !== nitroTestnodeL3.id)
     .map((chain) => chain.id) as Number[];
@@ -28,7 +28,7 @@ export function validateParentChain<TChain extends Chain | undefined>(
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  if (isCustom(chainId)) {
+  if (isCustomParentChain(chainId)) {
     return { chainId, isCustom: true };
   }
 

@@ -1,4 +1,4 @@
-import { defineChain } from 'viem';
+import { defineChain, Chain, ChainContract } from 'viem';
 import {
   mainnet,
   arbitrum as arbitrumOne,
@@ -58,6 +58,23 @@ const nitroTestnodeL3 = defineChain({
   },
   testnet: true,
 });
+
+const customParentChains: Record<number, Chain> = {};
+
+export function getCustomParentChains(): Chain[] {
+  return Object.values(customParentChains);
+}
+
+export type CustomParentChain = Chain & {
+  contracts: {
+    rollupCreator: ChainContract;
+    tokenBridgeCreator: ChainContract;
+  };
+};
+
+export function registerCustomParentChain(chain: CustomParentChain) {
+  customParentChains[chain.id] = chain;
+}
 
 export const chains = [
   // mainnet L1

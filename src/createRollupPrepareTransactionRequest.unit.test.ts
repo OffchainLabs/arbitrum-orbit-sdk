@@ -10,7 +10,7 @@ import { createRollupPrepareTransactionRequest } from './createRollupPrepareTran
 import { rollupCreatorAddress } from './contracts/RollupCreator';
 
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
-import { CustomParentChain, registerCustomParentChain } from './customChains';
+import { CustomParentChain, registerCustomParentChain } from './chains';
 import { createCustomChain } from './customChainsTestHelpers';
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 

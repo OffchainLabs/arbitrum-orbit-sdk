@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
 import { validateParentChain } from './types/ParentChain';
-import { CustomParentChain, registerCustomParentChain } from './customChains';
+import { CustomParentChain, registerCustomParentChain } from './chains';
 import { createCustomChain } from './customChainsTestHelpers';
 
 describe(`validateParentChain`, () => {
