@@ -38,7 +38,6 @@ export async function createRollupFetchTransactionHash<TChain extends Chain | un
     address: rollup,
     event: RollupInitializedEventAbi,
     fromBlock: getEarliestRollupCreatorDeploymentBlockNumber(publicClient),
-    toBlock: 'latest',
   });
 
   if (rollupInitializedEvents.length !== 1) {

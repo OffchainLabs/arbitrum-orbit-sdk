@@ -130,7 +130,6 @@ export async function getBatchPosters<TChain extends Chain>(
     event: ownerFunctionCalledEventAbi,
     args: { id: 1n },
     fromBlock: blockNumber,
-    toBlock: 'latest',
   });
 
   const events = createRollupTransactionHash
