@@ -62,7 +62,6 @@ export async function getKeysets<TChain extends Chain>(
     address: sequencerInbox,
     events: [SetValidKeysetEventAbi, InvalidateKeysetEventAbi],
     fromBlock: blockNumber,
-    toBlock: 'latest',
   });
 
   const keysets = events.reduce((acc, event) => {

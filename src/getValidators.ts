@@ -124,7 +124,6 @@ export async function getValidators<TChain extends Chain>(
     event: ownerFunctionCalledEventAbi,
     args: { id: 6n },
     fromBlock: blockNumber,
-    toBlock: 'latest',
   });
 
   const txs = await Promise.all(
