@@ -4,27 +4,46 @@ import { getCustomParentChains, registerCustomParentChain } from './chains';
 import { testHelper_createCustomParentChain } from './testHelpers';
 
 describe('registerCustomParentChain', () => {
-  it(`throws if the RollupCreator address wasn't provided`, () => {
-    // omit contracts from the chain
-    const { contracts, ...chain } = testHelper_createCustomParentChain();
-
-    expect(() => registerCustomParentChain(chain)).toThrowError(
-      `"contracts.rollupCreator.address" is missing or invalid for custom parent chain with id ${chain.id}`,
-    );
-  });
-
-  it(`throws if the TokenBridgeCreator address wasn't provided`, () => {
+  it(`throws if "contracts.rollupCreator.address" is invalid`, () => {
     // omit contracts from the chain
     const { contracts, ...chain } = testHelper_createCustomParentChain();
 
     expect(() =>
       registerCustomParentChain({
         ...chain,
-        // add in only RollupCreator
-        contracts: { rollupCreator: contracts.rollupCreator },
+        contracts: {
+          rollupCreator: {
+            address: '0x123',
+          },
+          tokenBridgeCreator: {
+            address: '0x123',
+          },
+        },
       }),
     ).toThrowError(
-      `"contracts.tokenBridgeCreator.address" is missing or invalid for custom parent chain with id ${chain.id}`,
+      `"contracts.rollupCreator.address" is invalid for custom parent chain with id ${chain.id}`,
+    );
+  });
+
+  it(`throws if "contracts.tokenBridgeCreator.address" is invalid`, () => {
+    // omit contracts from the chain
+    const { contracts, ...chain } = testHelper_createCustomParentChain();
+
+    expect(() =>
+      registerCustomParentChain({
+        ...chain,
+        contracts: {
+          rollupCreator: {
+            // use a correct address for the RollupCreator
+            address: contracts.rollupCreator.address,
+          },
+          tokenBridgeCreator: {
+            address: '0x0',
+          },
+        },
+      }),
+    ).toThrowError(
+      `"contracts.tokenBridgeCreator.address" is invalid for custom parent chain with id ${chain.id}`,
     );
   });
 

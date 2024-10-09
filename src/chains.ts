@@ -1,4 +1,4 @@
-import { defineChain, Chain, ChainContract, isAddress } from 'viem';
+import { defineChain, Chain, ChainContract, isAddress, zeroAddress } from 'viem';
 import {
   mainnet,
   arbitrum as arbitrumOne,
@@ -65,22 +65,60 @@ export function getCustomParentChains(): Chain[] {
   return Object.values(customParentChains);
 }
 
-export function registerCustomParentChain(chain: Chain) {
-  const rollupCreator = chain.contracts?.rollupCreator as ChainContract | undefined;
-  const rollupCreatorAddress = rollupCreator?.address;
+/**
+ * Registers a custom parent chain.
+ *
+ * @param {Chain} chain Regular `Chain` object with mandatory `contracts.rollupCreator` and `contracts.tokenBridgeCreator` fields.
+ *
+ * @example
+ * registerCustomParentChain({
+ *   id: 123_456,
+ *   name: `My Chain`,
+ *   network: `my-chain`,
+ *   nativeCurrency: {
+ *     name: 'Ether',
+ *     symbol: 'ETH',
+ *     decimals: 18,
+ *   },
+ *   rpcUrls: {
+ *     public: {
+ *       http: ['http://localhost:8080'],
+ *     },
+ *     default: {
+ *       http: ['http://localhost:8080'],
+ *     },
+ *   },
+ *   // these are mandatory
+ *   contracts: {
+ *     rollupCreator: {
+ *       address: '0x0000000000000000000000000000000000000001',
+ *     },
+ *     tokenBridgeCreator: {
+ *       address: '0x0000000000000000000000000000000000000002',
+ *     },
+ *   },
+ * });
+ */
+export function registerCustomParentChain(
+  chain: Chain & {
+    contracts: {
+      rollupCreator: ChainContract;
+      tokenBridgeCreator: ChainContract;
+    };
+  },
+) {
+  const rollupCreator = chain.contracts.rollupCreator.address;
+  const tokenBridgeCreator = chain.contracts.tokenBridgeCreator.address;
 
-  const tokenBridgeCreator = chain.contracts?.tokenBridgeCreator as ChainContract | undefined;
-  const tokenBridgeCreatorAddress = tokenBridgeCreator?.address;
-
-  if (typeof rollupCreatorAddress === 'undefined' || !isAddress(rollupCreatorAddress)) {
+  if (!isAddress(rollupCreator) || rollupCreator === zeroAddress) {
     throw new Error(
-      `"contracts.rollupCreator.address" is missing or invalid for custom parent chain with id ${chain.id}`,
+      `"contracts.rollupCreator.address" is invalid for custom parent chain with id ${chain.id}`,
     );
   }
 
-  if (typeof tokenBridgeCreatorAddress === 'undefined' || !isAddress(tokenBridgeCreatorAddress)) {
+  if (!isAddress(tokenBridgeCreator) || tokenBridgeCreator === zeroAddress) {
     throw new Error(
-      `"contracts.tokenBridgeCreator.address" is missing or invalid for custom parent chain with id ${chain.id}`,
+      `"contracts.tokenBridgeCreator.address" is invalid for custom parent chain with id ${chain.id}`,
     );
   }
 
