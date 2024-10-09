@@ -28,7 +28,9 @@ export function validateParentChain<TChain extends Chain | undefined>(
     throw new Error(`Parent chain not supported: ${chainId}`);
   }
 
-  return { chainId, isCustom: isCustom(chainId) } as
-    | { chainId: number; isCustom: true }
-    | { chainId: ParentChainId; isCustom: false };
+  if (isCustom(chainId)) {
+    return { chainId, isCustom: true };
+  }
+
+  return { chainId: chainId as ParentChainId, isCustom: false };
 }
