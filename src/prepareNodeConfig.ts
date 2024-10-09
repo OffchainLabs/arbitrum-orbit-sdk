@@ -67,7 +67,7 @@ export function prepareNodeConfig({
 
   if (parentChainIsCustom && typeof parentChainIsArbitrumParam === 'undefined') {
     throw new Error(
-      `"params.parentChainIsArbitrumParam" must be provided when using a custom parent chain.`,
+      `"params.parentChainIsArbitrum" must be provided when using a custom parent chain.`,
     );
   }
 
