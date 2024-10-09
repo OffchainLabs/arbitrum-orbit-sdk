@@ -9,17 +9,16 @@ export function getRollupCreatorAddress<TChain extends Chain | undefined>(
   const { chainId: parentChainId, isCustom: parentChainIsCustom } = validateParentChain(client);
 
   if (parentChainIsCustom) {
-    const customParentChainRollupCreator = client.chain?.contracts?.rollupCreator as
-      | ChainContract
-      | undefined;
+    const contract = client.chain?.contracts?.rollupCreator as ChainContract | undefined;
+    const address = contract?.address;
 
-    // check if it's a custom parent chain with the factory address provided
-
-    if (!customParentChainRollupCreator?.address) {
-      throw new Error('invalid rollup creator address provided');
+    if (typeof address === 'undefined') {
+      throw new Error(
+        `Address for RollupCreator is missing on custom parent chain with id ${parentChainId}`,
+      );
     }
 
-    return customParentChainRollupCreator?.address;
+    return address;
   }
 
   return rollupCreatorAddress[parentChainId];
