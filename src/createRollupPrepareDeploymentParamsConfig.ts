@@ -77,28 +77,27 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
 ): CreateRollupPrepareDeploymentParamsConfigResult {
   const { chainId: parentChainId, isCustom: parentChainIsCustom } = validateParentChain(client);
 
-  if (parentChainIsCustom && typeof confirmPeriodBlocks === 'undefined') {
-    throw new Error(
-      `"params.confirmPeriodBlocks" must be provided when using a custom parent chain.`,
-    );
-  }
-
-  if (parentChainIsCustom && typeof sequencerInboxMaxTimeVariation === 'undefined') {
-    throw new Error(
-      `"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.`,
-    );
-  }
-
   let paramsByParentBlockTime: {
     confirmPeriodBlocks: bigint;
     sequencerInboxMaxTimeVariation: SequencerInboxMaxTimeVariation;
   };
 
   if (parentChainIsCustom) {
-    // ok to use non-null assertions here because we already checked above
+    if (typeof confirmPeriodBlocks === 'undefined') {
+      throw new Error(
+        `"params.confirmPeriodBlocks" must be provided when using a custom parent chain.`,
+      );
+    }
+
+    if (typeof sequencerInboxMaxTimeVariation === 'undefined') {
+      throw new Error(
+        `"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.`,
+      );
+    }
+
     paramsByParentBlockTime = {
-      confirmPeriodBlocks: confirmPeriodBlocks!,
-      sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation!,
+      confirmPeriodBlocks,
+      sequencerInboxMaxTimeVariation,
     };
   } else {
     const defaultConfirmPeriodBlocks = getDefaultConfirmPeriodBlocks(parentChainId);
