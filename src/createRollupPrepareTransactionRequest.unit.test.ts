@@ -447,6 +447,7 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
       maxDataSize: 123_456n,
     },
     account: deployer.address,
+    value: createRollupDefaultRetryablesFees,
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n } },
   });
