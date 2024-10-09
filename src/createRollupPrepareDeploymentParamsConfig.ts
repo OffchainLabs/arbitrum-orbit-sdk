@@ -89,21 +89,26 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     );
   }
 
-  const paramsByParentBlockTime: {
+  let paramsByParentBlockTime: {
     confirmPeriodBlocks: bigint;
     sequencerInboxMaxTimeVariation: SequencerInboxMaxTimeVariation;
-  } = parentChainIsCustom
-    ? {
-        // ok to use non-null assertion here because we already checked above
-        confirmPeriodBlocks: confirmPeriodBlocks!,
-        // ok to use non-null assertion here because we already checked above
-        sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation!,
-      }
-    : {
-        confirmPeriodBlocks: confirmPeriodBlocks ?? getDefaultConfirmPeriodBlocks(parentChainId),
-        sequencerInboxMaxTimeVariation:
-          sequencerInboxMaxTimeVariation ?? getDefaultSequencerInboxMaxTimeVariation(parentChainId),
-      };
+  };
+
+  if (parentChainIsCustom) {
+    // ok to use non-null assertions here because we already checked above
+    paramsByParentBlockTime = {
+      confirmPeriodBlocks: confirmPeriodBlocks!,
+      sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation!,
+    };
+  } else {
+    const defaultConfirmPeriodBlocks = getDefaultConfirmPeriodBlocks(parentChainId);
+    const defaultSequencerInboxMTV = getDefaultSequencerInboxMaxTimeVariation(parentChainId);
+
+    paramsByParentBlockTime = {
+      confirmPeriodBlocks: confirmPeriodBlocks ?? defaultConfirmPeriodBlocks,
+      sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation ?? defaultSequencerInboxMTV,
+    };
+  }
 
   return {
     ...defaults,
