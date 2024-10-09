@@ -1,4 +1,4 @@
-import { defineChain, Chain, ChainContract } from 'viem';
+import { defineChain, Chain, ChainContract, isAddress } from 'viem';
 import {
   mainnet,
   arbitrum as arbitrumOne,
@@ -66,6 +66,24 @@ export function getCustomParentChains(): Chain[] {
 }
 
 export function registerCustomParentChain(chain: Chain) {
+  const rollupCreator = chain.contracts?.rollupCreator as ChainContract | undefined;
+  const rollupCreatorAddress = rollupCreator?.address;
+
+  const tokenBridgeCreator = chain.contracts?.tokenBridgeCreator as ChainContract | undefined;
+  const tokenBridgeCreatorAddress = tokenBridgeCreator?.address;
+
+  if (typeof rollupCreatorAddress === 'undefined' || !isAddress(rollupCreatorAddress)) {
+    throw new Error(
+      `"contracts.rollupCreator.address" is missing or invalid for custom parent chain with id ${chain.id}`,
+    );
+  }
+
+  if (typeof tokenBridgeCreatorAddress === 'undefined' || !isAddress(tokenBridgeCreatorAddress)) {
+    throw new Error(
+      `"contracts.tokenBridgeCreator.address" is missing or invalid for custom parent chain with id ${chain.id}`,
+    );
+  }
+
   customParentChains[chain.id] = chain;
 }
 
