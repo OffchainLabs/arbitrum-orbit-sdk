@@ -4,7 +4,8 @@ import { sepolia } from 'viem/chains';
 
 import { getRollupCreatorAddress } from './getRollupCreatorAddress';
 import { registerCustomParentChain } from '../chains';
-import { createExampleCustomParentChain } from '../customChainsTestHelpers';
+
+import { testHelper_createCustomParentChain } from '../customChainsTestHelpers';
 
 it(`successfully returns address for Sepolia`, () => {
   const client = createPublicClient({
@@ -16,18 +17,20 @@ it(`successfully returns address for Sepolia`, () => {
 });
 
 it(`fails to return address for an unrecognized parent chain`, () => {
+  const chain = testHelper_createCustomParentChain();
+
   const client = createPublicClient({
-    chain: createExampleCustomParentChain({ id: 123 }),
+    chain,
     transport: http(),
   });
 
-  expect(() => getRollupCreatorAddress(client)).toThrowError('Parent chain not supported: 123');
+  expect(() => getRollupCreatorAddress(client)).toThrowError(
+    `Parent chain not supported: ${chain.id}`,
+  );
 });
 
 it(`successfully returns address for a registered custom parent chain`, () => {
-  const chain = createExampleCustomParentChain({
-    id: 123_456,
-  });
+  const chain = testHelper_createCustomParentChain();
 
   registerCustomParentChain(chain);
 

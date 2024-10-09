@@ -1,10 +1,17 @@
 import { Chain } from 'viem';
+import { generatePrivateKey, privateKeyToAddress } from 'viem/accounts';
 
-export function createExampleCustomParentChain({ id }: { id: number }) {
+import { generateChainId } from './utils';
+
+export function testHelper_createCustomParentChain(params?: { id?: number }) {
+  const chainId = params?.id ?? generateChainId();
+  const rollupCreator = privateKeyToAddress(generatePrivateKey());
+  const tokenBridgeCreator = privateKeyToAddress(generatePrivateKey());
+
   return {
-    id,
-    name: `Custom Parent Chain (${id})`,
-    network: `custom-parent-chain-${id}`,
+    id: chainId,
+    name: `Custom Parent Chain (${chainId})`,
+    network: `custom-parent-chain-${chainId}`,
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -12,19 +19,17 @@ export function createExampleCustomParentChain({ id }: { id: number }) {
     },
     rpcUrls: {
       public: {
-        http: ['http://localhost:3000'],
+        // have to put a valid rpc here so using arbitrum sepolia
+        http: ['https://sepolia-rollup.arbitrum.io/rpc'],
       },
       default: {
-        http: ['http://localhost:3000'],
+        // have to put a valid rpc here so using arbitrum sepolia
+        http: ['https://sepolia-rollup.arbitrum.io/rpc'],
       },
     },
     contracts: {
-      rollupCreator: {
-        address: '0x1000000000000000000000000000000000000000',
-      },
-      tokenBridgeCreator: {
-        address: '0x2000000000000000000000000000000000000000',
-      },
+      rollupCreator: { address: rollupCreator },
+      tokenBridgeCreator: { address: tokenBridgeCreator },
     },
   } satisfies Chain;
 }

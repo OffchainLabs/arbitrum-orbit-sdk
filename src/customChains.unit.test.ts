@@ -2,27 +2,25 @@ import { describe, it, expect } from 'vitest';
 
 import { validateParentChain } from './types/ParentChain';
 import { registerCustomParentChain } from './chains';
-import { createExampleCustomParentChain } from './customChainsTestHelpers';
+import { generateChainId } from './utils';
+
+import { testHelper_createCustomParentChain } from './customChainsTestHelpers';
 
 describe(`validateParentChain`, () => {
   it(`throws for an unregistered custom parent chain`, () => {
-    const id = 456_789;
+    const id = generateChainId();
 
     expect(() => validateParentChain(id)).toThrowError(`Parent chain not supported: ${id}`);
   });
 
   it(`works for a registered custom parent chain`, () => {
-    const id = 123_456;
-
-    const chain = createExampleCustomParentChain({
-      id,
-    });
+    const chain = testHelper_createCustomParentChain();
 
     registerCustomParentChain(chain);
 
-    const result = validateParentChain(id);
+    const result = validateParentChain(chain.id);
 
-    expect(result.chainId).toEqual(id);
+    expect(result.chainId).toEqual(chain.id);
     expect(result.isCustom).toEqual(true);
   });
 });

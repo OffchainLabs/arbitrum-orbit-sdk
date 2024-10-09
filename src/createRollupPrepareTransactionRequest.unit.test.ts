@@ -11,7 +11,7 @@ import { rollupCreatorAddress } from './contracts/RollupCreator';
 
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import { registerCustomParentChain } from './chains';
-import { createExampleCustomParentChain } from './customChainsTestHelpers';
+import { testHelper_createCustomParentChain } from './customChainsTestHelpers';
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
@@ -302,7 +302,7 @@ it(`fails to prepare transaction request if "params.maxDataSize" is not provided
     arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
   });
 
-  const chain = createExampleCustomParentChain({
+  const chain = testHelper_createCustomParentChain({
     id: chainId,
   });
 
@@ -415,13 +415,13 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
     arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
   });
 
-  const chain = createExampleCustomParentChain({
+  const chain = testHelper_createCustomParentChain({
     id: chainId,
   });
 
   const publicClient = createPublicClient({
     chain,
-    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+    transport: http(),
   });
 
   registerCustomParentChain(chain);
@@ -451,7 +451,7 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
 
   expect(txRequest.account).toEqual(deployer.address);
   expect(txRequest.from).toEqual(deployer.address);
-  expect(txRequest.to).toEqual('0x1000000000000000000000000000000000000000');
-  expect(txRequest.chainId).toEqual(123);
+  expect(txRequest.to).toEqual(chain.contracts.rollupCreator.address);
+  expect(txRequest.chainId).toEqual(chainId);
   expect(txRequest.gas).toEqual(1_000n);
 });

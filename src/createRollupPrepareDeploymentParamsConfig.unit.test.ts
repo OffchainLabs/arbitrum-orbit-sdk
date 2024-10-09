@@ -10,7 +10,8 @@ import {
 } from './chains';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
-import { createExampleCustomParentChain } from './customChainsTestHelpers';
+
+import { testHelper_createCustomParentChain } from './customChainsTestHelpers';
 
 const chainId = 69_420n;
 const vitalik: `0x${string}` = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
@@ -126,13 +127,11 @@ it('creates config for a chain on top of base sepolia with defaults', () => {
 });
 
 it('fails to create a config for a chain on top of a custom parent chain if "confirmPeriodBlocks" is not provided', () => {
-  const chain = createExampleCustomParentChain({
-    id: 123,
-  });
+  const chain = testHelper_createCustomParentChain();
 
   const publicClient = createPublicClient({
     chain,
-    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+    transport: http(),
   });
 
   registerCustomParentChain(chain);
@@ -146,13 +145,11 @@ it('fails to create a config for a chain on top of a custom parent chain if "con
 });
 
 it('fails to create a config for a chain on top of a custom parent chain if "sequencerInboxMaxTimeVariation" is not provided', () => {
-  const chain = createExampleCustomParentChain({
-    id: 123,
-  });
+  const chain = testHelper_createCustomParentChain();
 
   const publicClient = createPublicClient({
     chain,
-    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+    transport: http(),
   });
 
   registerCustomParentChain(chain);
@@ -169,13 +166,14 @@ it('fails to create a config for a chain on top of a custom parent chain if "seq
 });
 
 it('creates a config for a chain on top of a custom parent chain', () => {
-  const chain = createExampleCustomParentChain({
+  const chain = testHelper_createCustomParentChain({
+    // using a specific chain id here as it's a snapshot test
     id: 123,
   });
 
   const publicClient = createPublicClient({
     chain,
-    transport: http('https://sepolia-rollup.arbitrum.io/rpc'),
+    transport: http(),
   });
 
   registerCustomParentChain(chain);
