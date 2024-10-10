@@ -1,9 +1,17 @@
 import { it, expect } from 'vitest';
 import { Address, createPublicClient, http } from 'viem';
 
-import { arbitrumOne, arbitrumSepolia, base, baseSepolia } from './chains';
+import {
+  arbitrumOne,
+  arbitrumSepolia,
+  base,
+  baseSepolia,
+  registerCustomParentChain,
+} from './chains';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
+
+import { testHelper_createCustomParentChain } from './testHelpers';
 
 const chainId = 69_420n;
 const vitalik: `0x${string}` = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
@@ -114,6 +122,73 @@ it('creates config for a chain on top of base sepolia with defaults', () => {
     createRollupPrepareDeploymentParamsConfig(baseSepoliaClient, {
       owner: vitalik,
       chainId,
+    }),
+  ).toMatchSnapshot();
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "confirmPeriodBlocks" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+    }),
+  ).toThrowError('"params.confirmPeriodBlocks" must be provided when using a custom parent chain');
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "sequencerInboxMaxTimeVariation" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+    }),
+  ).toThrowError(
+    '"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.',
+  );
+});
+
+it('creates a config for a chain on top of a custom parent chain', () => {
+  const chain = testHelper_createCustomParentChain({
+    // using a specific chain id here as it's a snapshot test
+    id: 123,
+  });
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+      sequencerInboxMaxTimeVariation: {
+        delayBlocks: 2n,
+        futureBlocks: 3n,
+        delaySeconds: 4n,
+        futureSeconds: 5n,
+      },
     }),
   ).toMatchSnapshot();
 });

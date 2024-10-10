@@ -1,5 +1,5 @@
-import { Address, Client, PublicClient, zeroAddress } from 'viem';
-import { privateKeyToAccount, PrivateKeyAccount } from 'viem/accounts';
+import { Address, Chain, PublicClient, zeroAddress } from 'viem';
+import { PrivateKeyAccount, privateKeyToAccount, generatePrivateKey } from 'viem/accounts';
 import { config } from 'dotenv';
 import { execSync } from 'node:child_process';
 
@@ -178,4 +178,35 @@ export async function createRollupHelper({
     createRollupConfig,
     createRollupInformation,
   };
+}
+
+export function testHelper_createCustomParentChain(params?: { id?: number }) {
+  const chainId = params?.id ?? generateChainId();
+  const rollupCreator = privateKeyToAccount(generatePrivateKey()).address;
+  const tokenBridgeCreator = privateKeyToAccount(generatePrivateKey()).address;
+
+  return {
+    id: chainId,
+    name: `Custom Parent Chain (${chainId})`,
+    network: `custom-parent-chain-${chainId}`,
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      public: {
+        // have to put a valid rpc here so using arbitrum sepolia
+        http: ['https://sepolia-rollup.arbitrum.io/rpc'],
+      },
+      default: {
+        // have to put a valid rpc here so using arbitrum sepolia
+        http: ['https://sepolia-rollup.arbitrum.io/rpc'],
+      },
+    },
+    contracts: {
+      rollupCreator: { address: rollupCreator },
+      tokenBridgeCreator: { address: tokenBridgeCreator },
+    },
+  } satisfies Chain;
 }

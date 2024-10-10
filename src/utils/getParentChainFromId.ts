@@ -1,13 +1,13 @@
-import { extractChain } from 'viem';
+import { Chain, extractChain } from 'viem';
 
-import { chains } from '../chains';
-import { ParentChain, validateParentChain } from '../types/ParentChain';
+import { validateParentChain } from '../types/ParentChain';
+import { chains, getCustomParentChains } from '../chains';
 
-export function getParentChainFromId(chainId: number): ParentChain {
+export function getParentChainFromId(chainId: number): Chain {
   const { chainId: parentChainId } = validateParentChain(chainId);
 
   return extractChain({
-    chains,
+    chains: [...chains, ...getCustomParentChains()],
     id: parentChainId,
-  }) as ParentChain;
+  });
 }

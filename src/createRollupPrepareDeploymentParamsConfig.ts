@@ -10,7 +10,10 @@ import { prepareChainConfig } from './prepareChainConfig';
 
 import { defaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
-import { getDefaultSequencerInboxMaxTimeVariation } from './getDefaultSequencerInboxMaxTimeVariation';
+import {
+  SequencerInboxMaxTimeVariation,
+  getDefaultSequencerInboxMaxTimeVariation,
+} from './getDefaultSequencerInboxMaxTimeVariation';
 
 export type CreateRollupPrepareDeploymentParamsConfigResult =
   CreateRollupFunctionInputs[0]['config'];
@@ -65,18 +68,50 @@ export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
  */
 export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain | undefined>(
   client: Client<Transport, TChain>,
-  { chainConfig, ...params }: CreateRollupPrepareDeploymentParamsConfigParams,
+  {
+    chainConfig,
+    confirmPeriodBlocks,
+    sequencerInboxMaxTimeVariation,
+    ...params
+  }: CreateRollupPrepareDeploymentParamsConfigParams,
 ): CreateRollupPrepareDeploymentParamsConfigResult {
-  const { chainId: parentChainId } = validateParentChain(client);
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } = validateParentChain(client);
 
-  const defaultsBasedOnParentChain = {
-    confirmPeriodBlocks: getDefaultConfirmPeriodBlocks(parentChainId),
-    sequencerInboxMaxTimeVariation: getDefaultSequencerInboxMaxTimeVariation(parentChainId),
+  let paramsByParentBlockTime: {
+    confirmPeriodBlocks: bigint;
+    sequencerInboxMaxTimeVariation: SequencerInboxMaxTimeVariation;
   };
+
+  if (parentChainIsCustom) {
+    if (typeof confirmPeriodBlocks === 'undefined') {
+      throw new Error(
+        `"params.confirmPeriodBlocks" must be provided when using a custom parent chain.`,
+      );
+    }
+
+    if (typeof sequencerInboxMaxTimeVariation === 'undefined') {
+      throw new Error(
+        `"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.`,
+      );
+    }
+
+    paramsByParentBlockTime = {
+      confirmPeriodBlocks,
+      sequencerInboxMaxTimeVariation,
+    };
+  } else {
+    const defaultConfirmPeriodBlocks = getDefaultConfirmPeriodBlocks(parentChainId);
+    const defaultSequencerInboxMTV = getDefaultSequencerInboxMaxTimeVariation(parentChainId);
+
+    paramsByParentBlockTime = {
+      confirmPeriodBlocks: confirmPeriodBlocks ?? defaultConfirmPeriodBlocks,
+      sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation ?? defaultSequencerInboxMTV,
+    };
+  }
 
   return {
     ...defaults,
-    ...defaultsBasedOnParentChain,
+    ...paramsByParentBlockTime,
     ...params,
     chainConfig: JSON.stringify(
       chainConfig ??

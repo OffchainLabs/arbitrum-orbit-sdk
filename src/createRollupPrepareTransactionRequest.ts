@@ -47,7 +47,8 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   gasOverrides,
   rollupCreatorAddressOverride,
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
-  const { chainId } = validateParentChain(publicClient);
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } =
+    validateParentChain(publicClient);
 
   if (params.batchPosters.length === 0 || params.batchPosters.includes(zeroAddress)) {
     throw new Error(`"params.batchPosters" can't be empty or contain the zero address.`);
@@ -75,6 +76,18 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
+  let maxDataSize: bigint;
+
+  if (parentChainIsCustom) {
+    if (typeof params.maxDataSize === 'undefined') {
+      throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
+    }
+
+    maxDataSize = params.maxDataSize;
+  } else {
+    maxDataSize = params.maxDataSize ?? createRollupGetMaxDataSize(parentChainId);
+  }
+
   const arbOSVersion = chainConfig.arbitrum.InitialArbOSVersion;
   const wasmModuleRoot = params.config.wasmModuleRoot;
 
@@ -94,7 +107,6 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  const maxDataSize = createRollupGetMaxDataSize(chainId);
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
@@ -120,5 +132,5 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     });
   }
 
-  return { ...request, chainId };
+  return { ...request, chainId: parentChainId };
 }
