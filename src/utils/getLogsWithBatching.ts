@@ -5,13 +5,34 @@ import { validateParentChain } from '../types/ParentChain';
 import { getEarliestRollupCreatorDeploymentBlockNumber } from './getEarliestRollupCreatorDeploymentBlockNumber';
 
 type Options = {
+  /** When batching calls, stop on the first event found */
   stopWhenFound?: boolean;
+  /** Size of the batch when batching calls */
   batchSize?: bigint;
 };
 type GetLogsOptions = {
   fromBlock?: bigint;
   toBlock?: bigint;
 };
+
+/**
+ *
+ * @param {PublicClient} publicClient - The chain Viem Public Client
+ * @param {GetLogsParameters} getLogsParameters {@link GetLogsParameters}
+ * @param {Options} options {@link Options}
+ *
+ * @returns Promise<{@link GetLogsReturnType}>
+ *
+ * Fetch logs for a given range. On failure, we batch logs to avoid rate limiting.
+ *
+ * @example
+ * const events = await getLogsWithBatching(client, {
+ *   address: rollupAddress,
+ *   event: RollupInitializedEventAbi,
+ *   fromBlock: 0n,
+ *   toBlock: blockNumber,
+ * });
+ */
 export async function getLogsWithBatching<
   TAbiEvent extends AbiEvent,
   TChain extends Chain | undefined,
