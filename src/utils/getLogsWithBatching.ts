@@ -5,25 +5,28 @@ import { validateParentChain } from '../types/ParentChain';
 import { getEarliestRollupCreatorDeploymentBlockNumber } from './getEarliestRollupCreatorDeploymentBlockNumber';
 
 type Options = {
+  stopWhenFound?: boolean;
+  batchSize?: bigint;
+};
+type GetLogsOptions = {
   fromBlock?: bigint;
   toBlock?: bigint;
-  batchSize?: bigint;
 };
 export async function getLogsWithBatching<
   TAbiEvent extends AbiEvent,
   TChain extends Chain | undefined,
 >(
   publicClient: PublicClient<Transport, TChain>,
-  params: Omit<GetLogsParameters<TAbiEvent>, 'blockHash'> & Options,
-  param?: { stopWhenFound: true },
+  params: Omit<GetLogsParameters<TAbiEvent>, 'blockHash'> & GetLogsOptions,
+  options?: Options,
 ): Promise<GetLogsReturnType<TAbiEvent>>;
 export async function getLogsWithBatching<
   TAbiEvent extends AbiEvent,
   TChain extends Chain | undefined,
 >(
   publicClient: PublicClient<Transport, TChain>,
-  params: Omit<GetLogsParameters<undefined, TAbiEvent[]>, 'blockHash'> & Options,
-  param?: { stopWhenFound: true },
+  params: Omit<GetLogsParameters<undefined, TAbiEvent[]>, 'blockHash'> & GetLogsOptions,
+  options?: Options,
 ): Promise<GetLogsReturnType<undefined, TAbiEvent[]>>;
 export async function getLogsWithBatching<
   TAbiEvent extends AbiEvent,
@@ -33,30 +36,32 @@ export async function getLogsWithBatching<
   {
     fromBlock = 0n,
     toBlock,
-    batchSize = 9_999n,
     ...getLogsParameters
-  }: Omit<GetLogsParameters<TAbiEvent, TAbiEvent[]>, 'blockHash'> & Options,
-  param?: { stopWhenFound: true },
+  }: Omit<GetLogsParameters<TAbiEvent, TAbiEvent[]>, 'blockHash'> & GetLogsOptions,
+  { stopWhenFound = false, batchSize = 9_999n }: Options = {
+    stopWhenFound: false,
+    batchSize: 9_999n,
+  },
 ) {
   let lowerLimit = fromBlock;
   const latestBlockNumber = await publicClient.getBlockNumber();
   const { chainId } = validateParentChain(publicClient);
   if (!fromBlock && chainId) {
-    lowerLimit = getEarliestRollupCreatorDeploymentBlockNumber(chainId);
+    lowerLimit = getEarliestRollupCreatorDeploymentBlockNumber(publicClient);
   }
   const { event, events, args, ...restGetLogsParameters } = getLogsParameters;
-  let options = {};
+  let eventArgs = {};
   if (event) {
-    options = { event, ...(args ? { args } : {}) };
+    eventArgs = { event, ...(args ? { args } : {}) };
   } else {
-    options = { events };
+    eventArgs = { events };
   }
   try {
     return await publicClient.getLogs({
-      ...options,
+      ...eventArgs,
       ...restGetLogsParameters,
       fromBlock,
-      toBlock,
+      toBlock: toBlock ?? latestBlockNumber,
     });
   } catch (e) {
     console.warn(`[getLogsWithBatching] Now batching requests: ${(e as Error).message}`);
@@ -71,7 +76,7 @@ export async function getLogsWithBatching<
       const rangeStart =
         cursor - batchSize + 1n > lowerLimit ? cursor - batchSize + 1n : lowerLimit;
       const logs = await publicClient.getLogs({
-        ...options,
+        ...eventArgs,
         ...restGetLogsParameters,
         fromBlock: rangeStart,
         toBlock: rangeEnd,
@@ -81,7 +86,7 @@ export async function getLogsWithBatching<
         // Add the logs at the beginning to keep the order
         allEvents.unshift(logs);
       }
-      if (param?.stopWhenFound && logs.length > 0) {
+      if (stopWhenFound && logs.length > 0) {
         return logs;
       }
 
