@@ -14,11 +14,11 @@ import {
   createRollupPrepareTransaction,
 } from './createRollupPrepareTransaction';
 import { CreateRollupParams } from './types/createRollupTypes';
-import { ParentChainPublicClient, validateParentChainPublicClient } from './types/ParentChain';
+import { validateParentChain } from './types/ParentChain';
 
 type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain extends Chain | undefined> = {
   nativeToken: Address;
-  parentChainPublicClient: ParentChainPublicClient<TChain>;
+  parentChainPublicClient: PublicClient<Transport, TChain>;
   account: PrivateKeyAccount;
 };
 
@@ -156,15 +156,16 @@ export async function createRollup<TChain extends Chain | undefined>({
   account,
   parentChainPublicClient,
 }: CreateRollupFunctionParams<TChain>): Promise<CreateRollupResults> {
-  const validatedParentChainPublicClient = validateParentChainPublicClient(parentChainPublicClient);
-  const parentChain = validatedParentChainPublicClient.chain;
+  validateParentChain(parentChainPublicClient);
+
+  const parentChain = parentChainPublicClient.chain;
   const nativeToken = params.nativeToken ?? zeroAddress;
 
   if (nativeToken !== zeroAddress) {
     // check Rollup Creator custom gas token spending allowance and approve if necessary
     await ensureCustomGasTokenAllowanceGrantedToRollupCreator({
       nativeToken,
-      parentChainPublicClient: validatedParentChainPublicClient,
+      parentChainPublicClient,
       account,
     });
   }
@@ -173,18 +174,18 @@ export async function createRollup<TChain extends Chain | undefined>({
   const txRequest = await createRollupPrepareTransactionRequest({
     params,
     account: account.address,
-    publicClient: validatedParentChainPublicClient,
+    publicClient: parentChainPublicClient,
   });
 
   // sign and send the transaction
   console.log(`Deploying the Rollup...`);
-  const txHash = await validatedParentChainPublicClient.sendRawTransaction({
+  const txHash = await parentChainPublicClient.sendRawTransaction({
     serializedTransaction: await account.signTransaction(txRequest),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await validatedParentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   // get the transaction
@@ -193,7 +194,7 @@ export async function createRollup<TChain extends Chain | undefined>({
   // https://github.com/wevm/viem/issues/1056#issuecomment-1689800265 )
   const tx = createRollupPrepareTransaction(
     // @ts-ignore (todo: fix viem type issue)
-    await validatedParentChainPublicClient.getTransaction({ hash: txHash }),
+    await parentChainPublicClient.getTransaction({ hash: txHash }),
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);

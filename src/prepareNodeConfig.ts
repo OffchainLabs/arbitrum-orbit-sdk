@@ -31,6 +31,7 @@ export type PrepareNodeConfigParams = {
   batchPosterPrivateKey: string;
   validatorPrivateKey: string;
   parentChainId: ParentChainId;
+  parentChainIsArbitrum?: boolean;
   parentChainRpcUrl: string;
   parentChainBeaconRpcUrl?: string;
   dasServerUrl?: string;
@@ -51,6 +52,7 @@ export function prepareNodeConfig({
   batchPosterPrivateKey,
   validatorPrivateKey,
   parentChainId,
+  parentChainIsArbitrum: parentChainIsArbitrumParam,
   parentChainRpcUrl,
   parentChainBeaconRpcUrl,
   dasServerUrl,
@@ -60,13 +62,24 @@ export function prepareNodeConfig({
     throw new Error(`"parentChainBeaconRpcUrl" is required for L2 Orbit chains.`);
   }
 
+  const { chainId: parentChainIdValidated, isCustom: parentChainIsCustom } =
+    validateParentChain(parentChainId);
+
+  if (parentChainIsCustom && typeof parentChainIsArbitrumParam === 'undefined') {
+    throw new Error(
+      `"params.parentChainIsArbitrum" must be provided when using a custom parent chain.`,
+    );
+  }
+
   const config: NodeConfig = {
     'chain': {
       'info-json': stringifyInfoJson([
         {
           'chain-id': chainConfig.chainId,
           'parent-chain-id': parentChainId,
-          'parent-chain-is-arbitrum': parentChainIsArbitrum(validateParentChain(parentChainId)),
+          'parent-chain-is-arbitrum': parentChainIsCustom
+            ? parentChainIsArbitrumParam!
+            : parentChainIsArbitrum(parentChainIdValidated),
           'chain-name': chainName,
           'chain-config': chainConfig,
           'rollup': {

@@ -8,7 +8,7 @@ import {
 } from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { prepareUpgradeExecutorCallParameters } from '../prepareUpgradeExecutorCallParameters';
-import { validateParentChainPublicClient } from '../types/ParentChain';
+import { validateParentChain } from '../types/ParentChain';
 
 type Args = {
   delayBlocks: bigint;
@@ -31,7 +31,7 @@ export async function buildSetMaxTimeVariation<TChain extends Chain | undefined>
     params,
   }: BuildSetMaxTimeVariationParameters,
 ): Promise<BuildSetMaxTimeVariationReturnType> {
-  const validatedPublicClient = validateParentChainPublicClient(client);
+  const { chainId } = validateParentChain(client);
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
@@ -45,5 +45,5 @@ export async function buildSetMaxTimeVariation<TChain extends Chain | undefined>
     }),
   } satisfies PrepareTransactionRequestParameters);
 
-  return { ...request, chainId: validatedPublicClient.chain.id };
+  return { ...request, chainId };
 }

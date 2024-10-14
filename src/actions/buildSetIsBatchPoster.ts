@@ -8,7 +8,7 @@ import {
 } from '../types/Actions';
 import { Prettify } from '../types/utils';
 import { prepareUpgradeExecutorCallParameters } from '../prepareUpgradeExecutorCallParameters';
-import { validateParentChainPublicClient } from '../types/ParentChain';
+import { validateParentChain } from '../types/ParentChain';
 
 type Args = {
   batchPoster: Address;
@@ -29,7 +29,7 @@ export async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
     params,
   }: BuildSetIsBatchPosterParameters & { params: { enable: boolean } },
 ): Promise<BuildSetIsBatchPosterReturnType> {
-  const validatedPublicClient = validateParentChainPublicClient(client);
+  const { chainId } = validateParentChain(client);
 
   const request = await client.prepareTransactionRequest({
     chain: client.chain,
@@ -43,7 +43,7 @@ export async function buildSetIsBatchPoster<TChain extends Chain | undefined>(
     }),
   } satisfies PrepareTransactionRequestParameters);
 
-  return { ...request, chainId: validatedPublicClient.chain.id };
+  return { ...request, chainId };
 }
 
 export async function buildEnableBatchPoster<TChain extends Chain | undefined>(

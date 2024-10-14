@@ -27,7 +27,7 @@ const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBr
 export type CreateTokenBridgeGetInputsResult = {
   inbox: Address;
   maxGasForContracts: bigint;
-  gasPrice: bigint;
+  maxGasPrice: bigint;
   retryableFee: bigint;
 };
 
@@ -47,57 +47,26 @@ export async function createTokenBridgeGetInputs<
 
   await registerNewNetwork(l1Provider, l2Provider, rollupAddress);
 
-  const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
-    l1TokenBridgeCreatorAddress,
-    L1AtomicTokenBridgeCreator.abi,
-  );
-  const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
-
-  //// gasPrice
-  const gasPrice = await l2Provider.getGasPrice();
-
   //// run retryable estimate for deploying L2 factory
-  const deployFactoryGasParams = await getEstimateForDeployingFactory(
+  const {
+    maxSubmissionCost: maxSubmissionCostForFactoryEstimation,
+    maxGas: maxGasForFactoryEstimation,
+  } = await getEstimateForDeployingFactory(
     l1DeployerAddress,
+    l1TokenBridgeCreatorAddress,
     l1Provider,
     l2Provider,
   );
-  const maxSubmissionCostForFactoryEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
-  const maxGasForFactoryEstimation =
-    (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
 
-  //// run retryable estimate for deploying L2 contracts
-  //// we do this estimate using L2 factory template on L1 because on L2 factory does not yet exist
-  const l2FactoryTemplate = L2AtomicTokenBridgeFactory__factory.attach(
-    await l1TokenBridgeCreator.l2TokenBridgeFactoryTemplate(),
-  ).connect(l1Provider);
-  const l2Code = {
-    router: await l1Provider.getCode(await l1TokenBridgeCreator.l2RouterTemplate()),
-    standardGateway: await l1Provider.getCode(
-      await l1TokenBridgeCreator.l2StandardGatewayTemplate(),
-    ),
-    customGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2CustomGatewayTemplate()),
-    wethGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethGatewayTemplate()),
-    aeWeth: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethTemplate()),
-    upgradeExecutor: await l1Provider.getCode(
-      (
-        await l1TokenBridgeCreator.l1Templates()
-      ).upgradeExecutor,
-    ),
-    multicall: await l1Provider.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
-  };
-  const gasEstimateToDeployContracts = await l2FactoryTemplate.estimateGas.deployL2Contracts(
-    l2Code,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
-    ethers.Wallet.createRandom().address,
+  const {
+    maxSubmissionCost: maxSubmissionCostForContractsEstimation,
+    maxGas: maxGasForContractsEstimation,
+  } = await getEstimateForDeployingContracts(
+    l1DeployerAddress,
+    l1TokenBridgeCreatorAddress,
+    l1Provider,
+    l2Provider,
   );
-  const maxSubmissionCostForContractsEstimation = deployFactoryGasParams.maxSubmissionCost.mul(2);
 
   //// apply gas overrides
   const maxSubmissionCostForFactory =
@@ -142,16 +111,16 @@ export async function createTokenBridgeGetInputs<
           applyPercentIncrease({
             base:
               retryableGasOverrides.maxGasForContracts.base ??
-              BigInt(gasEstimateToDeployContracts.toHexString()),
+              BigInt(maxGasForContractsEstimation.toHexString()),
             percentIncrease: retryableGasOverrides.maxGasForContracts.percentIncrease,
           }),
         )
-      : gasEstimateToDeployContracts;
+      : maxGasForContractsEstimation;
 
   const maxGasPrice =
     retryableGasOverrides && retryableGasOverrides.maxGasPrice
-      ? retryableGasOverrides.maxGasPrice
-      : gasPrice;
+      ? BigNumber.from(retryableGasOverrides.maxGasPrice)
+      : await l2Provider.getGasPrice();
 
   let retryableFee = maxSubmissionCostForFactory
     .add(maxSubmissionCostForContracts)
@@ -164,20 +133,30 @@ export async function createTokenBridgeGetInputs<
   return {
     inbox: inbox as Address,
     maxGasForContracts: maxGasForContracts.toBigInt(),
-    gasPrice: gasPrice.toBigInt(),
+    maxGasPrice: maxGasPrice.toBigInt(),
     retryableFee: retryableFee.toBigInt(),
   };
 }
 
 const getEstimateForDeployingFactory = async (
   l1DeployerAddress: string,
+  l1TokenBridgeCreatorAddress: string,
   l1Provider: ethers.providers.Provider,
   l2Provider: ethers.providers.Provider,
-) => {
+): Promise<{
+  maxSubmissionCost: BigNumber;
+  maxGas: BigNumber;
+}> => {
+  const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
+    l1TokenBridgeCreatorAddress,
+    L1AtomicTokenBridgeCreator.abi,
+  );
+  const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
+
   //// run retryable estimate for deploying L2 factory
   const l1ToL2MsgGasEstimate = new ParentToChildMessageGasEstimator(l2Provider);
 
-  const deployFactoryGasParams = await l1ToL2MsgGasEstimate.estimateAll(
+  const { maxSubmissionCost } = await l1ToL2MsgGasEstimate.estimateAll(
     {
       from: ethers.Wallet.createRandom().address,
       to: ethers.constants.AddressZero,
@@ -190,8 +169,89 @@ const getEstimateForDeployingFactory = async (
     l1Provider,
   );
 
-  return deployFactoryGasParams;
+  const maxGas = (await l1TokenBridgeCreator.gasLimitForL2FactoryDeployment()) as BigNumber;
+
+  return {
+    // there's already a 300% increase buffer in the SDK
+    // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/message/ParentToChildMessageGasEstimator.ts#L27
+    maxSubmissionCost,
+    maxGas,
+  };
 };
+
+async function getEstimateForDeployingContracts(
+  l1DeployerAddress: string,
+  l1TokenBridgeCreatorAddress: string,
+  l1Provider: ethers.providers.Provider,
+  l2Provider: ethers.providers.Provider,
+): Promise<{
+  maxSubmissionCost: BigNumber;
+  maxGas: BigNumber;
+}> {
+  const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
+    l1TokenBridgeCreatorAddress,
+    L1AtomicTokenBridgeCreator.abi,
+  );
+  const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
+
+  const l2FactoryTemplate = L2AtomicTokenBridgeFactory__factory.attach(
+    await l1TokenBridgeCreator.l2TokenBridgeFactoryTemplate(),
+  ).connect(l1Provider);
+  const l2Code = {
+    router: await l1Provider.getCode(await l1TokenBridgeCreator.l2RouterTemplate()),
+    standardGateway: await l1Provider.getCode(
+      await l1TokenBridgeCreator.l2StandardGatewayTemplate(),
+    ),
+    customGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2CustomGatewayTemplate()),
+    wethGateway: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethGatewayTemplate()),
+    aeWeth: await l1Provider.getCode(await l1TokenBridgeCreator.l2WethTemplate()),
+    upgradeExecutor: await l1Provider.getCode(
+      (
+        await l1TokenBridgeCreator.l1Templates()
+      ).upgradeExecutor,
+    ),
+    multicall: await l1Provider.getCode(await l1TokenBridgeCreator.l2MulticallTemplate()),
+  };
+
+  const l1ToL2MsgGasEstimate = new ParentToChildMessageGasEstimator(l2Provider);
+
+  const calldata = l2FactoryTemplate.interface.encodeFunctionData('deployL2Contracts', [
+    l2Code,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+  ]);
+
+  const maxSubmissionCost = await l1ToL2MsgGasEstimate.estimateSubmissionFee(
+    l1Provider,
+    await l1Provider.getGasPrice(),
+    ethers.utils.hexDataLength(calldata),
+  );
+
+  const maxGas = await l2FactoryTemplate.estimateGas.deployL2Contracts(
+    l2Code,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+    ethers.Wallet.createRandom().address,
+  );
+
+  return {
+    // there's already a 300% increase buffer in the SDK
+    // https://github.com/OffchainLabs/arbitrum-sdk/blob/main/src/lib/message/ParentToChildMessageGasEstimator.ts#L27
+    maxSubmissionCost,
+    maxGas: maxGas.mul(2),
+  };
+}
 
 export async function getEstimateForSettingGateway<
   TParentChain extends Chain | undefined,

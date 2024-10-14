@@ -1,7 +1,7 @@
 import { Address, PublicClient, Transport, Chain } from 'viem';
 import { AbiEvent } from 'abitype';
 
-import { validateParentChain } from './types/ParentChain';
+import { ParentChainId, validateParentChain } from './types/ParentChain';
 import {
   mainnet,
   arbitrumOne,
@@ -40,7 +40,9 @@ const RollupInitializedEventAbi: AbiEvent = {
   type: 'event',
 };
 
-const earliestRollupCreatorDeploymentBlockNumber = {
+const earliestRollupCreatorDeploymentBlockNumber: {
+  [Key in ParentChainId]: bigint;
+} = {
   // mainnet L1
   [mainnet.id]: 18736164n,
   // mainnet L2
@@ -62,12 +64,12 @@ export async function createRollupFetchTransactionHash<TChain extends Chain | un
   rollup,
   publicClient,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
-  const chainId = validateParentChain(publicClient);
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } =
+    validateParentChain(publicClient);
 
-  const fromBlock =
-    chainId in earliestRollupCreatorDeploymentBlockNumber
-      ? earliestRollupCreatorDeploymentBlockNumber[chainId]
-      : 'earliest';
+  const fromBlock = parentChainIsCustom
+    ? 'earliest'
+    : earliestRollupCreatorDeploymentBlockNumber[parentChainId];
 
   // Find the RollupInitialized event from that Rollup contract
   const rollupInitializedEvents = await publicClient.getLogs({
