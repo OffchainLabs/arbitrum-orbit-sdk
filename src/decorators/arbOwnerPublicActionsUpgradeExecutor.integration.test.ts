@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { Address, createPublicClient, http, parseGwei, Client } from 'viem';
+import { Address, createPublicClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { nitroTestnodeL3 } from '../chains';
 import { arbOwnerPublicActions } from './arbOwnerPublicActions';
@@ -8,9 +8,6 @@ import { getNitroTestnodePrivateKeyAccounts } from '../testHelpers';
 
 // L3 Owner Private Key
 const devPrivateKey = getNitroTestnodePrivateKeyAccounts().l3RollupOwner.privateKey;
-
-// L3 Upgrade Executor Address
-let upgradeExecutorAddress: Address = '0x24198F8A339cd3C47AEa3A764A20d2dDaB4D1b5b';
 
 const owner = privateKeyToAccount(devPrivateKey);
 const randomAccount = privateKeyToAccount(generatePrivateKey());
@@ -23,50 +20,18 @@ const client = createPublicClient({
   .extend(arbOwnerPublicActions)
   .extend(arbGasInfoPublicActions);
 
-it('succesfully adds chain owner using upgrade executor', async () => {
-  // Checks if random address is not a chain owner yet
-  const isOwnerInitially = await client.arbOwnerReadContract({
-    functionName: 'isChainOwner',
-    args: [randomAccount.address],
-  });
-
-  expect(isOwnerInitially).toEqual(false);
-
-  // Adding random address as chain owner using upgrade executor
+async function sendTransaction(
+  functionName:
+    | 'addChainOwner'
+    | 'removeChainOwner'
+    | 'setInfraFeeAccount'
+    | 'setL1BaseFeeEstimateInertia',
+  args: bigint | Address,
+) {
   const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
-    functionName: 'addChainOwner',
-    args: [randomAccount.address],
-    upgradeExecutor: upgradeExecutorAddress,
-    account: owner.address,
-  });
-
-  // submit tx to add chain owner
-  const txHash = await client.sendRawTransaction({
-    serializedTransaction: await owner.signTransaction(transactionRequest),
-  });
-  await client.waitForTransactionReceipt({ hash: txHash });
-
-  const isOwner = await client.arbOwnerReadContract({
-    functionName: 'isChainOwner',
-    args: [randomAccount.address],
-  });
-  // assert account is now owner
-  expect(isOwner).toEqual(true);
-});
-
-it('succesfully removes chain owner', async () => {
-  const isOwnerInitially = await client.arbOwnerReadContract({
-    functionName: 'isChainOwner',
-    args: [randomAccount.address],
-  });
-
-  // assert account is an owner
-  expect(isOwnerInitially).toEqual(true);
-
-  const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
-    functionName: 'removeChainOwner',
-    args: [randomAccount.address],
-    upgradeExecutor: upgradeExecutorAddress,
+    functionName,
+    args: [args],
+    upgradeExecutor: false,
     account: owner.address,
   });
 
@@ -75,14 +40,27 @@ it('succesfully removes chain owner', async () => {
     serializedTransaction: await owner.signTransaction(transactionRequest),
   });
   await client.waitForTransactionReceipt({ hash: txHash });
+}
 
+it('succesfully adds chain owner using upgrade executor', async () => {
+  // Checks if random address is not a chain owner yet
+  const isOwnerInitially = await client.arbOwnerReadContract({
+    functionName: 'isChainOwner',
+    args: [randomAccount.address],
+  });
+  expect(isOwnerInitially).toEqual(false);
+
+  // Adding random address as chain owner using upgrade executor
+  await sendTransaction('addChainOwner', randomAccount.address);
   const isOwner = await client.arbOwnerReadContract({
     functionName: 'isChainOwner',
     args: [randomAccount.address],
   });
+  // assert account is now owner
+  expect(isOwner).toEqual(true);
 
-  // assert account is no longer chain owner
-  expect(isOwner).toEqual(false);
+  // Revert the state
+  await sendTransaction('removeChainOwner', randomAccount.address);
 });
 
 it('successfully updates infra fee receiver', async () => {
@@ -93,18 +71,7 @@ it('successfully updates infra fee receiver', async () => {
   // assert account is not already infra fee receiver
   expect(initialInfraFeeReceiver).not.toEqual(randomAccount.address);
 
-  const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
-    functionName: 'setInfraFeeAccount',
-    args: [randomAccount.address],
-    upgradeExecutor: upgradeExecutorAddress,
-    account: owner.address,
-  });
-
-  // submit tx to update infra fee receiver
-  const txHash = await client.sendRawTransaction({
-    serializedTransaction: await owner.signTransaction(transactionRequest),
-  });
-  await client.waitForTransactionReceipt({ hash: txHash });
+  await sendTransaction('setInfraFeeAccount', randomAccount.address);
 
   const infraFeeReceiver = await client.arbOwnerReadContract({
     functionName: 'getInfraFeeAccount',
@@ -112,27 +79,24 @@ it('successfully updates infra fee receiver', async () => {
 
   // assert account is now infra fee receiver
   expect(infraFeeReceiver).toEqual(randomAccount.address);
+
+  // Reset state
+  await sendTransaction('setInfraFeeAccount', initialInfraFeeReceiver);
 });
 
-it('successfully updates L2 Base Fee Estimate Inertia on Orbit chain', async () => {
-  const l2BaseFeeEstimateInertia = BigInt(9);
-  const transactionRequest = await client.arbOwnerPrepareTransactionRequest({
-    functionName: 'setL1BaseFeeEstimateInertia',
-    args: [l2BaseFeeEstimateInertia],
-    upgradeExecutor: upgradeExecutorAddress,
-    account: owner.address,
+it('successfully updates L1 Base Fee Estimate Inertia on Orbit chain', async () => {
+  const initialL1BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
+    functionName: 'getL1BaseFeeEstimateInertia',
   });
+  const l1BaseFeeEstimateInertia = BigInt(9);
+  await sendTransaction('setL1BaseFeeEstimateInertia', l1BaseFeeEstimateInertia);
 
-  // submit tx to update infra fee receiver
-  const txHash = await client.sendRawTransaction({
-    serializedTransaction: await owner.signTransaction(transactionRequest),
-  });
-  await client.waitForTransactionReceipt({ hash: txHash });
-
-  const newL2BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
+  const newL1BaseFeeEstimateInertia = await client.arbGasInfoReadContract({
     functionName: 'getL1BaseFeeEstimateInertia',
   });
 
-  // assert account is now infra fee receiver
-  expect(newL2BaseFeeEstimateInertia).toEqual(l2BaseFeeEstimateInertia);
+  expect(newL1BaseFeeEstimateInertia).toEqual(l1BaseFeeEstimateInertia);
+
+  // Revert the state
+  await sendTransaction('setL1BaseFeeEstimateInertia', initialL1BaseFeeEstimateInertia);
 });
