@@ -18,6 +18,7 @@ import {
   CreateRollupParams,
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
+import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -46,7 +47,8 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   gasOverrides,
   rollupCreatorAddressOverride,
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
-  const chainId = validateParentChain(publicClient);
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } =
+    validateParentChain(publicClient);
 
   if (params.batchPosters.length === 0 || params.batchPosters.includes(zeroAddress)) {
     throw new Error(`"params.batchPosters" can't be empty or contain the zero address.`);
@@ -74,16 +76,47 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  const maxDataSize = createRollupGetMaxDataSize(chainId);
+  let maxDataSize: bigint;
+
+  if (parentChainIsCustom) {
+    if (typeof params.maxDataSize === 'undefined') {
+      throw new Error(`"params.maxDataSize" must be provided when using a custom parent chain.`);
+    }
+
+    maxDataSize = params.maxDataSize;
+  } else {
+    maxDataSize = params.maxDataSize ?? createRollupGetMaxDataSize(parentChainId);
+  }
+
+  const arbOSVersion = chainConfig.arbitrum.InitialArbOSVersion;
+  const wasmModuleRoot = params.config.wasmModuleRoot;
+
+  if (arbOSVersion === 30 || arbOSVersion === 31) {
+    throw new Error(
+      `ArbOS ${arbOSVersion} is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
+    );
+  }
+
+  if (isKnownWasmModuleRoot(wasmModuleRoot)) {
+    const consensusRelease = getConsensusReleaseByWasmModuleRoot(wasmModuleRoot);
+
+    if (arbOSVersion > consensusRelease.maxArbOSVersion) {
+      throw new Error(
+        `Consensus v${consensusRelease.version} does not support ArbOS ${arbOSVersion}. Please update your "wasmModuleRoot" to that of a Consensus version compatible with ArbOS ${arbOSVersion}.`,
+      );
+    }
+  }
+
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
+  const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
     data: createRollupEncodeFunctionData([paramsWithDefaults]),
-    value: value ?? createRollupGetCallValue(paramsWithDefaults),
+    value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
     // we'll set the actual value in the code below
@@ -99,5 +132,5 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     });
   }
 
-  return { ...request, chainId };
+  return { ...request, chainId: parentChainId };
 }

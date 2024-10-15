@@ -16,6 +16,7 @@ import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
 
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
+import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
 const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
@@ -105,11 +106,11 @@ export type GetBatchPostersReturnType = {
  *   // batch posters list is not guaranteed to be accurate
  * }
  */
-export async function getBatchPosters<TChain extends Chain | undefined>(
+export async function getBatchPosters<TChain extends Chain>(
   publicClient: PublicClient<Transport, TChain>,
   { rollup, sequencerInbox }: GetBatchPostersParams,
 ): Promise<GetBatchPostersReturnType> {
-  let blockNumber: bigint | 'earliest';
+  let blockNumber: bigint;
   let createRollupTransactionHash: Address | null = null;
   try {
     createRollupTransactionHash = await createRollupFetchTransactionHash({
@@ -121,15 +122,14 @@ export async function getBatchPosters<TChain extends Chain | undefined>(
     });
     blockNumber = receipt.blockNumber;
   } catch (e) {
-    blockNumber = 'earliest';
+    blockNumber = 0n;
   }
 
-  const sequencerInboxEvents = await publicClient.getLogs({
+  const sequencerInboxEvents = await getLogsWithBatching(publicClient, {
     address: sequencerInbox,
     event: ownerFunctionCalledEventAbi,
     args: { id: 1n },
     fromBlock: blockNumber,
-    toBlock: 'latest',
   });
 
   const events = createRollupTransactionHash

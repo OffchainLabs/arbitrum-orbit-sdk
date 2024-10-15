@@ -80,8 +80,8 @@ import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
   createTokenBridge,
-  isTokenBridgeDeployed,
 } from './createTokenBridge';
+import { isTokenBridgeDeployed } from './isTokenBridgeDeployed';
 import {
   createTokenBridgeEnoughCustomFeeTokenAllowance,
   CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams,
@@ -144,6 +144,7 @@ import {
   getConsensusReleaseByWasmModuleRoot,
   GetConsensusReleaseByWasmModuleRoot,
 } from './wasmModuleRoot';
+import { registerCustomParentChain } from './chains';
 export * from './actions';
 
 export {
@@ -264,4 +265,6 @@ export {
   isKnownWasmModuleRoot,
   getConsensusReleaseByWasmModuleRoot,
   GetConsensusReleaseByWasmModuleRoot,
+  //
+  registerCustomParentChain,
 };

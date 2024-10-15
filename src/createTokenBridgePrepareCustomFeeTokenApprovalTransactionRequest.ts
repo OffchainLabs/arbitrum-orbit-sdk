@@ -6,6 +6,7 @@ import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
+import { createTokenBridgeDefaultRetryablesFees } from './constants';
 
 export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,
@@ -21,19 +22,19 @@ export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestPara
 export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest<
   TChain extends Chain | undefined,
 >({
-  amount = maxInt256,
+  amount,
   nativeToken,
   owner,
   publicClient,
   tokenBridgeCreatorAddressOverride,
 }: CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<TChain>) {
-  const chainId = validateParentChain(publicClient);
+  const { chainId } = validateParentChain(publicClient);
 
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner,
     spender: tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(publicClient),
-    amount,
+    amount: amount ?? createTokenBridgeDefaultRetryablesFees,
     publicClient,
   });
 
