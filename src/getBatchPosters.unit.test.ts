@@ -237,6 +237,7 @@ describe('createRollupFunctionSelector', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -272,6 +273,7 @@ describe('setBatchPosterFunctionSelector', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -309,6 +311,7 @@ describe('setBatchPosterFunctionSelector', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -353,6 +356,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -396,6 +400,7 @@ describe('upgradeExecutorExecuteCallFunctionSelector', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -431,6 +436,7 @@ describe('safeL2FunctionSelector', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -465,6 +471,7 @@ describe('safeL2FunctionSelector', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -508,6 +515,7 @@ describe('Detect batch posters added or removed multiple times', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -543,6 +551,7 @@ describe('Detect batch posters added or removed multiple times', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -576,6 +585,7 @@ describe('Detect batch posters added or removed multiple times', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 
@@ -611,6 +621,7 @@ describe('Detect batch posters added or removed multiple times', () => {
       });
 
     const mockClient = createPublicClient({
+      chain: arbitrum,
       transport: mockTransport,
     });
 

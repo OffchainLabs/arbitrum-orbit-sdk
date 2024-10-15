@@ -2,6 +2,7 @@ import { Address, Chain, Hex, PublicClient, Transport, getAbiItem } from 'viem';
 
 import { sequencerInboxABI } from './contracts/SequencerInbox';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
+import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
 const SetValidKeysetEventAbi = getAbiItem({ abi: sequencerInboxABI, name: 'SetValidKeyset' });
 const InvalidateKeysetEventAbi = getAbiItem({ abi: sequencerInboxABI, name: 'InvalidateKeyset' });
@@ -32,11 +33,11 @@ export type GetKeysetsReturnType = {
  * });
  *
  */
-export async function getKeysets<TChain extends Chain | undefined>(
+export async function getKeysets<TChain extends Chain>(
   publicClient: PublicClient<Transport, TChain>,
   { sequencerInbox }: GetKeysetsParams,
 ): Promise<GetKeysetsReturnType> {
-  let blockNumber: bigint | 'earliest';
+  let blockNumber: bigint;
   let createRollupTransactionHash: Address | null = null;
   const rollup = await publicClient.readContract({
     functionName: 'rollup',
@@ -54,14 +55,13 @@ export async function getKeysets<TChain extends Chain | undefined>(
     blockNumber = receipt.blockNumber;
   } catch (e) {
     console.warn(`[getKeysets] ${(e as any).message}`);
-    blockNumber = 'earliest';
+    blockNumber = 0n;
   }
 
-  const events = await publicClient.getLogs({
+  const events = await getLogsWithBatching(publicClient, {
     address: sequencerInbox,
     events: [SetValidKeysetEventAbi, InvalidateKeysetEventAbi],
     fromBlock: blockNumber,
-    toBlock: 'latest',
   });
 
   const keysets = events.reduce((acc, event) => {
