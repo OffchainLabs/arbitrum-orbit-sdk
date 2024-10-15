@@ -79,6 +79,7 @@ jobs:
           l3-node: true
           # L3 node with custom fee token when using --l3-fee-token
           args: --l3-fee-token
+          debug: true
 
       - name: Copy .env
         run: cp ./.env.example ./.env
