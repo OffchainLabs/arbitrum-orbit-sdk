@@ -7,6 +7,7 @@ import { getEarliestRollupCreatorDeploymentBlockNumber } from './utils/getEarlie
 export type CreateRollupFetchTransactionHashParams<TChain extends Chain | undefined> = {
   rollup: Address;
   publicClient: PublicClient<Transport, TChain>;
+  fromBlock?: bigint;
 };
 
 const RollupInitializedEventAbi: AbiEvent = {
@@ -32,12 +33,13 @@ const RollupInitializedEventAbi: AbiEvent = {
 export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
   rollup,
   publicClient,
+  fromBlock,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
   // Find the RollupInitialized event from that Rollup contract
   const rollupInitializedEvents = await getLogsWithBatching(publicClient, {
     address: rollup,
     event: RollupInitializedEventAbi,
-    fromBlock: getEarliestRollupCreatorDeploymentBlockNumber(publicClient),
+    fromBlock: fromBlock ?? getEarliestRollupCreatorDeploymentBlockNumber(publicClient),
   });
 
   if (rollupInitializedEvents.length !== 1) {
