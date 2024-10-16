@@ -19,6 +19,7 @@ import {
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
+import { getNativeTokenDecimals, scaleToNativeTokenDecimals } from './utils/decimals';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -67,13 +68,6 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
         `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
       );
     }
-
-    // custom fee token is only allowed to have 18 decimals
-    if ((await fetchDecimals({ address: params.nativeToken, publicClient })) !== 18) {
-      throw new Error(
-        `"params.nativeToken" can only be configured with a token that uses 18 decimals.`,
-      );
-    }
   }
 
   let maxDataSize: bigint;
@@ -109,6 +103,17 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
+  if (params.nativeToken) {
+    const decimals = await getNativeTokenDecimals({
+      publicClient,
+      nativeTokenAddress: params.nativeToken,
+    });
+    paramsWithDefaults.maxFeePerGasForRetryables = scaleToNativeTokenDecimals({
+      amount: paramsWithDefaults.maxFeePerGasForRetryables,
+      decimals,
+    });
+  }
+
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
 
   // @ts-ignore (todo: fix viem type issue)

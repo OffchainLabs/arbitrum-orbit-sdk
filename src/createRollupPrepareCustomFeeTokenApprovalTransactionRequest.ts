@@ -7,7 +7,6 @@ import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
-import { applyPercentIncrease } from './utils/gasOverrides';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,

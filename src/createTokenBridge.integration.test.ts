@@ -368,7 +368,7 @@ describe('createTokenBridge', () => {
     checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 
-  it('successfully deploys token bridge contracts with a custom fee token', async () => {
+  it('successfully deploys token bridge contracts with a custom fee token (18 decimals)', async () => {
     const testnodeInformation = getInformationFromTestnode();
 
     // deploy a fresh token bridge creator, because it is only possible to deploy one token bridge per rollup per token bridge creator
@@ -435,6 +435,10 @@ describe('createTokenBridge', () => {
 
     checkTokenBridgeContracts(tokenBridgeContracts);
     checkWethGateways(tokenBridgeContracts, { customFeeToken: true });
+  });
+
+  it('successfully deploys token bridge contracts with a custom fee token (non-18 decimals)', async () => {
+    // Deploy a custom chain with non-18 decimals
   });
 
   it('should throw when createTokenBridge is called multiple times', async () => {
