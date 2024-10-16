@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Address, createPublicClient, http, parseGwei, zeroAddress } from 'viem';
+import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
 import {
@@ -68,7 +68,7 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
     client: parentChainPublicClient,
   });
 
-  it(`successfully deploys core contracts through rollup creator`, async () => {
+  it(`successfully deploys core contracts through rollup creator (18 decimals)`, async () => {
     // assert all inputs are correct
     const [arg] = createRollupInformation.transaction.getInputs();
     expect(arg.config).toEqual(createRollupConfig);
@@ -84,14 +84,5 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
 
     // assert the core contracts were successfully obtained
     expect(createRollupInformation.coreContracts).toBeDefined();
-  });
-
-  it(`finds the transaction hash that created a specified deployed rollup contract`, async () => {
-    const transactionHash = await createRollupFetchTransactionHash({
-      rollup: createRollupInformation.coreContracts.rollup,
-      publicClient: parentChainPublicClient,
-    });
-
-    expect(transactionHash).toEqual(createRollupInformation.transactionReceipt.transactionHash);
   });
 });

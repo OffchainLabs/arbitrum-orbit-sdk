@@ -7,6 +7,7 @@ import {
   EstimateGasParameters,
   encodeFunctionData,
   decodeFunctionResult,
+  zeroAddress,
 } from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
@@ -15,6 +16,7 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { defaults as createRollupDefaults } from './createRollupDefaults';
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { createRollupDefaultRetryablesFees } from './constants';
+import { getNativeTokenDecimals, scaleToNativeTokenDecimals } from './utils/decimals';
 
 const deployHelperABI = [
   {
@@ -100,7 +102,14 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const isCustomGasToken = isCustomFeeTokenAddress(nativeToken);
 
   const inbox = isCustomGasToken ? erc20TemplateInbox : ethTemplateInbox;
-  const maxFeePerGas = maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables;
+  const decimals = await getNativeTokenDecimals({
+    publicClient,
+    nativeTokenAddress: nativeToken ?? zeroAddress,
+  });
+  const maxFeePerGas = scaleToNativeTokenDecimals({
+    amount: maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables,
+    decimals,
+  });
 
   const baseFeeWithBuffer = applyPercentIncrease({
     base: await publicClient.getGasPrice(),
