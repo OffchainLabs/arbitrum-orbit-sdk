@@ -192,3 +192,32 @@ it('creates a config for a chain on top of a custom parent chain', () => {
     }),
   ).toMatchSnapshot();
 });
+
+it('creates config for a chain with non-18 decimals token on top of arbitrum sepolia with defaults', async () => {
+  const arbitrumSepoliaClient = createPublicClient({
+    chain: arbitrumSepolia,
+    transport: http(),
+  });
+
+  expect(
+    createRollupPrepareDeploymentParamsConfig(arbitrumSepoliaClient, {
+      owner: vitalik,
+      chainId,
+      decimals: 6,
+    }),
+  ).toMatchSnapshot();
+});
+
+it('creates config for a chain with non-18 decimals token on top of arbitrum sepolia with overrides', () => {
+  const arbitrumSepoliaClient = createPublicClient({
+    chain: arbitrumSepolia,
+    transport: http(),
+  });
+
+  expect(
+    createRollupPrepareDeploymentParamsConfig(arbitrumSepoliaClient, {
+      ...getOverrides({ owner: vitalik, chainId }),
+      decimals: 6,
+    }),
+  ).toMatchSnapshot();
+});

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Address, createPublicClient, http, parseGwei, zeroAddress } from 'viem';
+import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
 import {
@@ -68,7 +68,7 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
     client: parentChainPublicClient,
   });
 
-  it(`successfully deploys core contracts through rollup creator`, async () => {
+  it(`successfully deploys core contracts through rollup creator (18 decimals)`, async () => {
     // assert all inputs are correct
     const [arg] = createRollupInformation.transaction.getInputs();
     expect(arg.config).toEqual(createRollupConfig);
