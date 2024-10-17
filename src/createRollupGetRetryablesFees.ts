@@ -133,11 +133,17 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
     gas: gasWithBuffer,
   });
 
-  return decodeFunctionResult({
+  const decodedResult = decodeFunctionResult({
     abi: deployHelperABI,
     functionName: 'getDeploymentTotalCost',
     data: result!,
   });
+
+  return isCustomGasToken
+    ? // for custom gas token chains, retryable fees don't scale with parent base fee, so there's no need for any buffer
+      decodedResult
+    : // for eth chains, add 3% buffer
+      applyPercentIncrease({ base: decodedResult, percentIncrease: 3n });
 }
 
 export async function createRollupGetRetryablesFeesWithDefaults<TChain extends Chain | undefined>(
