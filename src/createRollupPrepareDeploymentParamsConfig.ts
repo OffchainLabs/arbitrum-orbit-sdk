@@ -22,9 +22,7 @@ type RequiredKeys = 'chainId' | 'owner';
 type RequiredParams = Pick<CreateRollupPrepareDeploymentParamsConfigResult, RequiredKeys>;
 type OptionalParams = Partial<
   Omit<CreateRollupPrepareDeploymentParamsConfigResult, 'chainConfig' | RequiredKeys>
-> & {
-  decimals?: number;
-};
+>;
 
 export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
   RequiredParams & { chainConfig?: ChainConfig } & OptionalParams

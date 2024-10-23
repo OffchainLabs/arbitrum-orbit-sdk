@@ -15,8 +15,6 @@ import {
 } from './createRollupPrepareTransaction';
 import { CreateRollupParams } from './types/createRollupTypes';
 import { validateParentChain } from './types/ParentChain';
-import { getNativeTokenDecimals, nativeTokenDecimalsTo18Decimals } from './utils/decimals';
-import { defaults as createRollupDefaults } from './createRollupDefaults';
 
 type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain extends Chain | undefined> = {
   nativeToken: Address;
@@ -172,21 +170,9 @@ export async function createRollup<TChain extends Chain | undefined>({
     });
   }
 
-  const decimals = await getNativeTokenDecimals({
-    publicClient: parentChainPublicClient,
-    nativeTokenAddress: nativeToken ?? zeroAddress,
-  });
-  const maxFeePerGas = nativeTokenDecimalsTo18Decimals({
-    amount: params.maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables,
-    decimals: Number(decimals),
-  });
-
   // prepare the transaction for deploying the core contracts
   const txRequest = await createRollupPrepareTransactionRequest({
-    params: {
-      ...params,
-      maxFeePerGasForRetryables: maxFeePerGas,
-    },
+    params,
     account: account.address,
     publicClient: parentChainPublicClient,
   });
