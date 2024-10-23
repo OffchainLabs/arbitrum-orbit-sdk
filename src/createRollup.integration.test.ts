@@ -8,6 +8,7 @@ import {
   getInformationFromTestnode,
 } from './testHelpers';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
+import { nativeTokenDecimalsTo18Decimals } from './utils/decimals';
 
 const parentChainPublicClient = createPublicClient({
   chain: nitroTestnodeL2,
@@ -19,6 +20,7 @@ const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 const l3TokenBridgeDeployer = testnodeAccounts.l3TokenBridgeDeployer;
 const batchPosters = [testnodeAccounts.deployer.address];
 const validators = [testnodeAccounts.deployer.address];
+const nativeTokenDecimals = Number(process.env.DECIMALS) ?? 18;
 
 describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
@@ -68,7 +70,7 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
     client: parentChainPublicClient,
   });
 
-  it(`successfully deploys core contracts through rollup creator (18 decimals)`, async () => {
+  it(`successfully deploys core contracts through rollup creator`, async () => {
     // assert all inputs are correct
     const [arg] = createRollupInformation.transaction.getInputs();
     expect(arg.config).toEqual(createRollupConfig);
@@ -77,7 +79,9 @@ describe(`create an AnyTrust chain that uses a custom gas token`, async () => {
     expect(arg.maxDataSize).toEqual(104_857n);
     expect(arg.nativeToken).toEqual(nativeToken);
     expect(arg.deployFactoriesToL2).toEqual(true);
-    expect(arg.maxFeePerGasForRetryables).toEqual(parseGwei('0.1'));
+    expect(arg.maxFeePerGasForRetryables).toEqual(
+      nativeTokenDecimalsTo18Decimals({ amount: 100n, decimals: nativeTokenDecimals }),
+    );
 
     // assert the transaction executed successfully
     expect(createRollupInformation.transactionReceipt.status).toEqual('success');
