@@ -9,7 +9,6 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
-import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
 import { Prettify } from './types/utils';
@@ -103,17 +102,6 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
-  if (params.nativeToken) {
-    const decimals = await getNativeTokenDecimals({
-      publicClient,
-      nativeTokenAddress: params.nativeToken,
-    });
-    paramsWithDefaults.maxFeePerGasForRetryables = scaleToNativeTokenDecimals({
-      amount: paramsWithDefaults.maxFeePerGasForRetryables,
-      decimals: Number(decimals),
-    });
-  }
-
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
 
   // @ts-ignore (todo: fix viem type issue)
