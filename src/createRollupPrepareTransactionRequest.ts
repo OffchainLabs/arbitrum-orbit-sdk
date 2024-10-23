@@ -110,7 +110,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     });
     paramsWithDefaults.maxFeePerGasForRetryables = scaleToNativeTokenDecimals({
       amount: paramsWithDefaults.maxFeePerGasForRetryables,
-      decimals,
+      decimals: Number(decimals),
     });
   }
 

@@ -178,7 +178,7 @@ export async function createRollup<TChain extends Chain | undefined>({
   });
   const maxFeePerGas = nativeTokenDecimalsTo18Decimals({
     amount: params.maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables,
-    decimals,
+    decimals: Number(decimals),
   });
 
   // prepare the transaction for deploying the core contracts

@@ -35,6 +35,9 @@ export async function createTokenBridgeEnoughCustomFeeTokenAllowance<
   const decimals = await getNativeTokenDecimals({ publicClient, nativeTokenAddress: nativeToken });
   return (
     allowance >=
-    scaleToNativeTokenDecimals({ amount: createTokenBridgeDefaultRetryablesFees, decimals })
+    scaleToNativeTokenDecimals({
+      amount: createTokenBridgeDefaultRetryablesFees,
+      decimals: Number(decimals),
+    })
   );
 }
