@@ -90,4 +90,4 @@ jobs:
         run: yarn build
 
       - name: Test
-        run: DECIMALS=${{decimals}} yarn test:integration
+        run: DECIMALS=${{matrix.config.decimals}} yarn test:integration
