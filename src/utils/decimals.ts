@@ -1,5 +1,8 @@
-import { Address, Chain, PublicClient, Transport, zeroAddress } from 'viem';
-import { fetchDecimals } from './erc20';
+import { Address, Chain, PublicClient, Transport } from 'viem';
+import utils from '@arbitrum/sdk/dist/lib/utils/lib';
+import { publicClientToProvider } from '../ethers-compat/publicClientToProvider';
+import { ArbitrumNetwork } from '@arbitrum/sdk';
+import { BigNumber } from 'ethers';
 
 export async function getNativeTokenDecimals<TChain extends Chain | undefined>({
   publicClient,
@@ -8,15 +11,13 @@ export async function getNativeTokenDecimals<TChain extends Chain | undefined>({
   publicClient: PublicClient<Transport, TChain>;
   nativeTokenAddress: Address;
 }) {
-  if (!nativeTokenAddress || nativeTokenAddress === zeroAddress) {
-    return 18;
-  }
-
-  try {
-    return await fetchDecimals({ address: nativeTokenAddress, publicClient });
-  } catch {
-    return 0;
-  }
+  const result = await utils.getNativeTokenDecimals({
+    childNetwork: {
+      nativeToken: nativeTokenAddress,
+    } as ArbitrumNetwork,
+    parentProvider: publicClientToProvider(publicClient),
+  });
+  return BigInt(result.toString());
 }
 
 export function scaleToNativeTokenDecimals({
@@ -26,25 +27,9 @@ export function scaleToNativeTokenDecimals({
   amount: bigint;
   decimals: number;
 }) {
-  // do nothing for 18 decimals
-  if (decimals === 18) {
-    return amount;
-  }
-
-  const decimalsBigInt = BigInt(decimals);
-  if (decimals < 18) {
-    const divisor = 10n ** (18n - decimalsBigInt);
-    const scaledAmount = amount / divisor;
-    // round up if necessary
-    if (scaledAmount * divisor < amount) {
-      return scaledAmount + 1n;
-    }
-
-    return scaledAmount;
-  }
-
-  // decimals > 18
-  return amount * 10n ** (decimalsBigInt - 18n);
+  const amountBigNumber = BigNumber.from(amount);
+  const result = utils.scaleToNativeTokenDecimals({ amount: amountBigNumber, decimals });
+  return BigInt(result.toString());
 }
 
 export function nativeTokenDecimalsTo18Decimals({
@@ -54,11 +39,7 @@ export function nativeTokenDecimalsTo18Decimals({
   amount: bigint;
   decimals: number;
 }) {
-  if (decimals < 18) {
-    return amount * 10n ** BigInt(18 - decimals);
-  } else if (decimals > 18) {
-    return amount / 10n ** BigInt(decimals - 18);
-  }
-
-  return amount;
+  const amountBigNumber = BigNumber.from(amount);
+  const result = utils.nativeTokenDecimalsTo18Decimals({ amount: amountBigNumber, decimals });
+  return BigInt(result.toString());
 }
