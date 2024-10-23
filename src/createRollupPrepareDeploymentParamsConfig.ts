@@ -14,7 +14,6 @@ import {
   SequencerInboxMaxTimeVariation,
   getDefaultSequencerInboxMaxTimeVariation,
 } from './getDefaultSequencerInboxMaxTimeVariation';
-import { scaleToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateRollupPrepareDeploymentParamsConfigResult =
   CreateRollupFunctionInputs[0]['config'];
@@ -53,7 +52,6 @@ export type CreateRollupPrepareDeploymentParamsConfigParams = Prettify<
  * @param {BigInt} [params.sequencerInboxMaxTimeVariation.futureBlocks]
  * @param {BigInt} [params.sequencerInboxMaxTimeVariation.delaySeconds]
  * @param {BigInt} [params.sequencerInboxMaxTimeVariation.futureSeconds]
- * @param {number} [params.decimals]
  *
  * @returns {Object} {@link CreateRollupPrepareDeploymentParamsConfigResult}
  *
@@ -113,18 +111,10 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     };
   }
 
-  // Non-18 decimals, scale baseStake
-  let baseStake = params.baseStake ?? defaults.baseStake;
-  const decimals = params.decimals;
-  if (typeof decimals === 'number') {
-    baseStake = scaleToNativeTokenDecimals({ amount: baseStake, decimals });
-  }
-
   return {
     ...defaults,
     ...paramsByParentBlockTime,
     ...params,
-    baseStake,
     chainConfig: JSON.stringify(
       chainConfig ??
         prepareChainConfig({

@@ -446,12 +446,11 @@ it(`successfully prepare transaction request if "params.nativeToken" doesn't use
       }),
       batchPosters: [deployer.address],
       validators: [deployer.address],
-      nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
+      nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d', // USDC
     },
     value: createRollupDefaultRetryablesFees,
     account: deployer.address,
     publicClient,
-
     gasOverrides: { gasLimit: { base: 1_000n } },
   });
 
