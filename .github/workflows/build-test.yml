@@ -64,10 +64,10 @@ jobs:
     strategy:
       matrix:
         config:
-          - name: Default
+          - name: Custom gas token with 18 decimals
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
             decimals: 18
-          - name: Custom Decimals
+          - name: Custom gas token with 6 decimals
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token --l3-fee-token-decimals 12
             decimals: 6
     steps:
