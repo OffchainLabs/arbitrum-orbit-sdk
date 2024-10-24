@@ -140,8 +140,16 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   });
 
   return isCustomGasToken
-    ? // for custom gas token chains, retryable fees don't scale with parent base fee, so there's no need for any buffer
-      decodedResult
+    ? // for custom gas token chains, retryable fees don't scale with parent base fee
+      //
+      // we add 1% buffer due to potential rounding issues for non-18 decimals
+      // - in the sdk, we get the total cost, then scale and round up
+      // - in the contract, we scale and round up each component, then add them together
+      //
+      // this can lead to a very tiny discrepancy
+      //
+      // https://github.com/OffchainLabs/nitro-contracts/blob/main/src/rollup/RollupCreator.sol#L287-L302
+      applyPercentIncrease({ base: decodedResult, percentIncrease: 1n })
     : // for eth chains, add 3% buffer
       applyPercentIncrease({ base: decodedResult, percentIncrease: 3n });
 }
