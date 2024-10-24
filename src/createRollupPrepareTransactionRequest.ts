@@ -9,6 +9,7 @@ import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
+import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
 import { Prettify } from './types/utils';
@@ -18,8 +19,6 @@ import {
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
-import { getNativeTokenDecimals, scaleToNativeTokenDecimals } from './utils/decimals';
-import { fetchDecimals } from './utils/erc20';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -68,16 +67,12 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
         `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
       );
     }
-  }
 
-  // custom fee token is only allowed to have 18 decimals
-  if (
-    params.nativeToken &&
-    (await getNativeTokenDecimals({ nativeTokenAddress: params.nativeToken, publicClient })) > 36n
-  ) {
-    throw new Error(
-      `"params.nativeToken" can only be configured with a token that uses 36 decimals or less.`,
-    );
+    if ((await fetchDecimals({ address: params.nativeToken, publicClient })) > 36) {
+      throw new Error(
+        `"params.nativeToken" can only be configured with a token that uses 36 decimals or less.`,
+      );
+    }
   }
 
   let maxDataSize: bigint;
