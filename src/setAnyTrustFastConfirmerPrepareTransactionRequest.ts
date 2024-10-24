@@ -17,7 +17,7 @@ export type SetAnyTrustFastConfirmerPrepareTransactionRequestParams<
   TChain extends Chain | undefined,
 > = {
   publicClient: PublicClient<Transport, TChain>;
-  account: PrivateKeyAccount;
+  account: PrivateKeyAccount | `0x${string}`;
   rollup: Address;
   upgradeExecutor: Address;
   fastConfirmer: Address;
@@ -30,7 +30,7 @@ export type SetAnyTrustFastConfirmerPrepareTransactionRequestParams<
  *
  * @param {SetAnyTrustFastConfirmerPrepareTransactionRequestParams} setAnyTrustFastConfirmerPrepareTransactionRequestParams {@link SetAnyTrustFastConfirmerPrepareTransactionRequestParams}
  * @param {PublicClient} setAnyTrustFastConfirmerPrepareTransactionRequestParams.publicClient - A Viem Public Client
- * @param {PrivateKeyAccount} setAnyTrustFastConfirmerPrepareTransactionRequestParams.account - The private key of the chain owner or an account with the executor role in the UpgradeExecutor
+ * @param {PrivateKeyAccount | `0x${string}`} setAnyTrustFastConfirmerPrepareTransactionRequestParams.account - The private key of the deployer of the new Safe or the address of the Safe
  * @param {Address} setAnyTrustFastConfirmerPrepareTransactionRequestParams.rollup - Address of the Rollup contract
  * @param {Address} setAnyTrustFastConfirmerPrepareTransactionRequestParams.upgradeExecutor - Address of the UpgradeExecutor contract
  * @param {Address} setAnyTrustFastConfirmerPrepareTransactionRequestParams.fastConfirmer - Address of the fast confirmer validator (usually a Safe multisig)
