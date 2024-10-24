@@ -1,11 +1,12 @@
 import { Address, PublicClient, Transport, Chain } from 'viem';
 
-import { fetchAllowance } from './utils/erc20';
+import { fetchAllowance, fetchDecimals } from './utils/erc20';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
+import { scaleToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
   Prettify<
@@ -37,5 +38,10 @@ export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends C
     maxFeePerGasForRetryables,
   });
 
-  return allowance >= fees;
+  const decimals = await fetchDecimals({
+    address: nativeToken,
+    publicClient,
+  });
+
+  return allowance >= scaleToNativeTokenDecimals({ amount: fees, decimals });
 }
