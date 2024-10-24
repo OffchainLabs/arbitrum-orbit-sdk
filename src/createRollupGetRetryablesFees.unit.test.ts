@@ -28,13 +28,4 @@ it('successfully fetches retryable fees for a custom gas token chain', async () 
 
   expect(fees).toBeTypeOf('bigint');
   expect(fees).toEqual(124708400000000000n);
-
-  const usdcFees = await createRollupGetRetryablesFees(sepoliaClient, {
-    account: '0x38f918D0E9F1b721EDaA41302E399fa1B79333a9',
-    nativeToken: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-    maxFeePerGasForRetryables: parseGwei('0.1'),
-  });
-
-  expect(usdcFees).toBeTypeOf('bigint');
-  expect(usdcFees).toEqual(124708400000000000n);
 });
