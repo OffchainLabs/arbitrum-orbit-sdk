@@ -427,7 +427,7 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
   expect(txRequest.gas).toEqual(1_000n);
 });
 
-it(`successfully prepare transaction request if "params.nativeToken" doesn't use 18 decimals`, async () => {
+it(`successfully prepare transaction request if "params.nativeToken" uses supported number of decimals`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
