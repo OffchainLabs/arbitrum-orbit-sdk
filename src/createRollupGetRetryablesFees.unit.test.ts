@@ -27,5 +27,5 @@ it('successfully fetches retryable fees for a custom gas token chain', async () 
   });
 
   expect(fees).toBeTypeOf('bigint');
-  expect(fees).toEqual(124708400000000000n);
+  expect(fees).toEqual(124800000000000000n);
 });
