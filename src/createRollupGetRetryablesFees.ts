@@ -7,6 +7,7 @@ import {
   EstimateGasParameters,
   encodeFunctionData,
   decodeFunctionResult,
+  parseEther,
 } from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
@@ -104,9 +105,8 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
 
   const baseFeeWithBuffer = applyPercentIncrease({
     base: await publicClient.getGasPrice(),
-    // for custom gas token chains, retryable fees don't scale with parent base fee, so there's no need for any buffer
-    // for eth chains, add 30% buffer in case of a spike
-    percentIncrease: isCustomGasToken ? undefined : 30n,
+    // add 30% buffer in case of a spike
+    percentIncrease: 30n,
   });
 
   const callParams: CallParameters = {
@@ -140,8 +140,14 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   });
 
   return isCustomGasToken
-    ? // for custom gas token chains, retryable fees don't scale with parent base fee, so there's no need for any buffer
-      decodedResult
+    ? // for custom gas token chains, retryable fees don't scale with parent base fee and are constant at 124708400000000000
+      //
+      // we add some buffer (around 100k gwei) due to potential rounding issues for non-18 decimals, because:
+      // - in the sdk, we get the total cost, then scale and round up
+      // - in the contract, we scale and round up each component, then add them together, which can lead to a very tiny discrepancy
+      //
+      // https://github.com/OffchainLabs/nitro-contracts/blob/main/src/rollup/RollupCreator.sol#L287-L302
+      parseEther('0.1248')
     : // for eth chains, add 3% buffer
       applyPercentIncrease({ base: decodedResult, percentIncrease: 3n });
 }

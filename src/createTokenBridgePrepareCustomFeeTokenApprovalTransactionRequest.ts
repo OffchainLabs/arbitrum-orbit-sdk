@@ -1,12 +1,13 @@
 import { Address, PublicClient, Transport, Chain, maxInt256 } from 'viem';
 
-import { approvePrepareTransactionRequest } from './utils/erc20';
+import { approvePrepareTransactionRequest, fetchDecimals } from './utils/erc20';
 
 import { Prettify } from './types/utils';
 import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
 import { createTokenBridgeDefaultRetryablesFees } from './constants';
+import { scaleToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,
@@ -30,11 +31,21 @@ export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionR
 }: CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<TChain>) {
   const { chainId } = validateParentChain(publicClient);
 
+  const decimals = await fetchDecimals({
+    address: nativeToken,
+    publicClient,
+  });
+
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner,
     spender: tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(publicClient),
-    amount: amount ?? createTokenBridgeDefaultRetryablesFees,
+    amount:
+      amount ??
+      scaleToNativeTokenDecimals({
+        amount: createTokenBridgeDefaultRetryablesFees,
+        decimals,
+      }),
     publicClient,
   });
 

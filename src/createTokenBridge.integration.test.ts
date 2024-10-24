@@ -20,6 +20,7 @@ import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './crea
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { createTokenBridge } from './createTokenBridge';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
+import { scaleToNativeTokenDecimals } from './utils/decimals';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 const l2RollupOwner = testnodeAccounts.l2RollupOwner;
@@ -103,6 +104,8 @@ async function checkWethGateways(
   expect(tokenBridgeContracts.orbitChainContracts.weth).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.wethGateway).not.toEqual(zeroAddress);
 }
+
+const nativeTokenDecimals = process.env.DECIMALS ? Number(process.env.DECIMALS) : 18;
 
 describe('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
@@ -218,7 +221,10 @@ describe('createTokenBridge utils function', () => {
       data: encodeFunctionData({
         abi: erc20ABI,
         functionName: 'transfer',
-        args: [l3RollupOwner.address, parseEther('500')],
+        args: [
+          l3RollupOwner.address,
+          scaleToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
+        ],
       }),
       value: BigInt(0),
       account: l3TokenBridgeDeployer,
@@ -384,7 +390,10 @@ describe('createTokenBridge', () => {
       data: encodeFunctionData({
         abi: erc20ABI,
         functionName: 'transfer',
-        args: [l3RollupOwner.address, parseEther('500')],
+        args: [
+          l3RollupOwner.address,
+          scaleToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
+        ],
       }),
       value: BigInt(0),
       account: l3TokenBridgeDeployer,

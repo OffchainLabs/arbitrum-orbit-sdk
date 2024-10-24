@@ -4,6 +4,11 @@ import {
   getArbitrumNetworkInformationFromRollup,
   registerCustomArbitrumNetwork,
 } from '@arbitrum/sdk';
+import { testnets } from '../chains';
+
+const isTestnet = (parentChainId: number) => {
+  return testnets.some((testnet) => testnet.id === parentChainId);
+};
 
 export const registerNewNetwork = async (
   parentProvider: JsonRpcProvider,
@@ -21,6 +26,7 @@ export const registerNewNetwork = async (
     confirmPeriodBlocks,
     ethBridge,
     isCustom: true,
+    isTestnet: isTestnet(parentChainId),
   };
 
   return registerCustomArbitrumNetwork(arbitrumNetwork);

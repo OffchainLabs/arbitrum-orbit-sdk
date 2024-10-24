@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Address, createPublicClient, http, parseGwei, zeroAddress } from 'viem';
+import { createPublicClient, http, parseGwei, zeroAddress } from 'viem';
 
 import { nitroTestnodeL2 } from './chains';
 import {

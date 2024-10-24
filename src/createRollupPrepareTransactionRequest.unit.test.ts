@@ -262,38 +262,6 @@ it(`fails to prepare transaction request if ArbOS version is incompatible with C
   );
 });
 
-it(`fails to prepare transaction request if "params.nativeToken" doesn't use 18 decimals`, async () => {
-  // generate a random chain id
-  const chainId = generateChainId();
-
-  // create the chain config
-  const chainConfig = prepareChainConfig({
-    chainId,
-    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
-  });
-
-  // prepare the transaction for deploying the core contracts
-  await expect(
-    createRollupPrepareTransactionRequest({
-      params: {
-        config: createRollupPrepareDeploymentParamsConfig(publicClient, {
-          chainId: BigInt(chainId),
-          owner: deployer.address,
-          chainConfig,
-        }),
-        batchPosters: [deployer.address],
-        validators: [deployer.address],
-        // USDC on Arbitrum Sepolia has 6 decimals
-        nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
-      },
-      account: deployer.address,
-      publicClient,
-    }),
-  ).rejects.toThrowError(
-    `"params.nativeToken" can only be configured with a token that uses 18 decimals.`,
-  );
-});
-
 it(`fails to prepare transaction request if "params.maxDataSize" is not provided for a custom parent chain`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
@@ -456,5 +424,39 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
   expect(txRequest.from).toEqual(deployer.address);
   expect(txRequest.to).toEqual(chain.contracts.rollupCreator.address);
   expect(txRequest.chainId).toEqual(chainId);
+  expect(txRequest.gas).toEqual(1_000n);
+});
+
+it(`successfully prepare transaction request if "params.nativeToken" uses supported number of decimals`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: true },
+  });
+
+  const txRequest = await createRollupPrepareTransactionRequest({
+    params: {
+      config: createRollupPrepareDeploymentParamsConfig(publicClient, {
+        chainId: BigInt(chainId),
+        owner: deployer.address,
+        chainConfig,
+      }),
+      batchPosters: [deployer.address],
+      validators: [deployer.address],
+      nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d', // USDC
+    },
+    value: createRollupDefaultRetryablesFees,
+    account: deployer.address,
+    publicClient,
+    gasOverrides: { gasLimit: { base: 1_000n } },
+  });
+
+  expect(txRequest.account).toEqual(deployer.address);
+  expect(txRequest.from).toEqual(deployer.address);
+  expect(txRequest.to).toEqual(rollupCreatorAddress[arbitrumSepolia.id]);
+  expect(txRequest.chainId).toEqual(arbitrumSepolia.id);
   expect(txRequest.gas).toEqual(1_000n);
 });

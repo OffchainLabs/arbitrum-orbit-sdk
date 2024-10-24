@@ -59,8 +59,17 @@ jobs:
         run: yarn test:unit
 
   test-integration:
-    name: Test (Integration)
+    name: Test (Integration) - ${{ matrix.config.name }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config:
+          - name: Custom gas token with 18 decimals
+            args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
+            decimals: 18
+          - name: Custom gas token with 6 decimals
+            args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token --l3-fee-token-decimals 6
+            decimals: 6
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,7 +81,7 @@ jobs:
         uses: OffchainLabs/actions/run-nitro-test-node@feat-simplify
         with:
           nitro-testnode-ref: release
-          args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
+          args: ${{ matrix.config.args }}
 
       - name: Copy .env
         run: cp ./.env.example ./.env
@@ -81,4 +90,4 @@ jobs:
         run: yarn build
 
       - name: Test
-        run: yarn test:integration
+        run: DECIMALS=${{matrix.config.decimals}} yarn test:integration

@@ -125,13 +125,16 @@ export function registerCustomParentChain(
   customParentChains[chain.id] = chain;
 }
 
-export const chains = [
+export const mainnets = [
   // mainnet L1
   mainnet,
   // mainnet L2
   arbitrumOne,
   arbitrumNova,
   base,
+];
+
+export const testnets = [
   // testnet L1
   sepolia,
   holesky,
@@ -142,7 +145,9 @@ export const chains = [
   nitroTestnodeL1,
   nitroTestnodeL2,
   nitroTestnodeL3,
-] as const;
+];
+
+export const chains = [...mainnets, ...testnets] as const;
 
 export {
   // mainnet L1
