@@ -19,6 +19,7 @@ import {
 } from './types/createRollupTypes';
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 import { getNativeTokenDecimals, scaleToNativeTokenDecimals } from './utils/decimals';
+import { fetchDecimals } from './utils/erc20';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
