@@ -68,7 +68,7 @@ jobs:
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
             decimals: 18
           - name: Custom gas token with 6 decimals
-            args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token --l3-fee-token-decimals 12
+            args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token --l3-fee-token-decimals 6
             decimals: 6
     steps:
       - name: Checkout
