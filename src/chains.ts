@@ -141,16 +141,13 @@ export const testnets = [
   // testnet L2
   arbitrumSepolia,
   baseSepolia,
-];
-
-export const chains = [
-  ...mainnets,
-  ...testnets,
   // local nitro-testnode
   nitroTestnodeL1,
   nitroTestnodeL2,
   nitroTestnodeL3,
-] as const;
+];
+
+export const chains = [...mainnets, ...testnets] as const;
 
 export {
   // mainnet L1
