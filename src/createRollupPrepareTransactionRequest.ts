@@ -70,6 +70,16 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
+  // custom fee token is only allowed to have 18 decimals
+  if (
+    params.nativeToken &&
+    (await getNativeTokenDecimals({ nativeTokenAddress: params.nativeToken, publicClient })) > 36n
+  ) {
+    throw new Error(
+      `"params.nativeToken" can only be configured with a token that uses 36 decimals or less.`,
+    );
+  }
+
   let maxDataSize: bigint;
 
   if (parentChainIsCustom) {
