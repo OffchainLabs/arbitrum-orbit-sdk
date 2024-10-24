@@ -1,12 +1,12 @@
 import { Address, PublicClient, Transport, Chain } from 'viem';
 
-import { fetchAllowance } from './utils/erc20';
+import { fetchAllowance, fetchDecimals } from './utils/erc20';
 import { createTokenBridgeDefaultRetryablesFees } from './constants';
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
-import { getNativeTokenDecimals, scaleToNativeTokenDecimals } from './utils/decimals';
+import { scaleToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
   Prettify<
@@ -32,12 +32,16 @@ export async function createTokenBridgeEnoughCustomFeeTokenAllowance<
     publicClient,
   });
 
-  const decimals = await getNativeTokenDecimals({ publicClient, nativeTokenAddress: nativeToken });
+  const decimals = await fetchDecimals({
+    address: nativeToken,
+    publicClient,
+  });
+
   return (
     allowance >=
     scaleToNativeTokenDecimals({
       amount: createTokenBridgeDefaultRetryablesFees,
-      decimals: Number(decimals),
+      decimals,
     })
   );
 }

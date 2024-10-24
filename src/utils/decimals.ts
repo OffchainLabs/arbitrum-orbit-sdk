@@ -1,24 +1,5 @@
-import { Address, Chain, PublicClient, Transport } from 'viem';
-import utils from '@arbitrum/sdk/dist/lib/utils/lib';
-import { publicClientToProvider } from '../ethers-compat/publicClientToProvider';
-import { ArbitrumNetwork } from '@arbitrum/sdk';
 import { BigNumber } from 'ethers';
-
-export async function getNativeTokenDecimals<TChain extends Chain | undefined>({
-  publicClient,
-  nativeTokenAddress,
-}: {
-  publicClient: PublicClient<Transport, TChain>;
-  nativeTokenAddress: Address;
-}) {
-  const result = await utils.getNativeTokenDecimals({
-    childNetwork: {
-      nativeToken: nativeTokenAddress,
-    } as ArbitrumNetwork,
-    parentProvider: publicClientToProvider(publicClient),
-  });
-  return BigInt(result.toString());
-}
+import utils from '@arbitrum/sdk/dist/lib/utils/lib';
 
 export function scaleToNativeTokenDecimals({
   amount,
