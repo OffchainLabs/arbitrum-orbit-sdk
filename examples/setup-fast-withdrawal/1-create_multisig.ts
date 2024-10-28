@@ -73,7 +73,7 @@ async function main() {
   //execute the transaction
   //https://help.safe.global/en/articles/40834-verify-safe-creation
   //in the executed transaction find `ProxyCreation` event
-  //Data singleton : <address> is what you're looing for
+  //Data proxy : <address> is what you're looing for
 }
 
 main();
