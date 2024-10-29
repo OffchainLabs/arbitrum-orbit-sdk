@@ -65,6 +65,16 @@ export type CreateRollupGetRetryablesFeesParams = {
   maxFeePerGasForRetryables?: bigint;
 };
 
+/**
+ * Fetch estimated retryables fees for `createRollup`.
+ *
+ * @param publicClient `PublicClient` for the parent chain.
+ * @param params.account Account used for deploying the rollup.
+ * @param params.nativeToken (Optional) The native token used for the rollup. Defaults to ETH.
+ * @param params.maxFeePerGasForRetryables (Optional) `maxFeePerGas` to use for retryables. Defaults to 0.1 Gwei.
+ *
+ * @returns Estimated fees.
+ */
 export async function createRollupGetRetryablesFees<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
@@ -152,6 +162,16 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
       applyPercentIncrease({ base: decodedResult, percentIncrease: 3n });
 }
 
+/**
+ * Fetch estimated retryables fees for `createRollup`. If the call fails, falls back to approximate values.
+ *
+ * @param publicClient `PublicClient` for the parent chain.
+ * @param params.account Account used for deploying the rollup.
+ * @param params.nativeToken (Optional) The native token used for the rollup. Defaults to ETH.
+ * @param params.maxFeePerGasForRetryables (Optional) `maxFeePerGas` to use for retryables. Defaults to 0.1 Gwei.
+ *
+ * @returns Estimated fees.
+ */
 export async function createRollupGetRetryablesFeesWithDefaults<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
