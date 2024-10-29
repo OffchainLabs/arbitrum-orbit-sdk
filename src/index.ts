@@ -150,6 +150,15 @@ import {
   scaleFrom18DecimalsToNativeTokenDecimals,
   scaleFromNativeTokenDecimalsTo18Decimals,
 } from './utils/decimals';
+import {
+  createRollupDefaultRetryablesFees,
+  createTokenBridgeDefaultRetryablesFees,
+} from './constants';
+import {
+  CreateRollupGetRetryablesFeesParams,
+  createRollupGetRetryablesFees,
+  createRollupGetRetryablesFeesWithDefaults,
+} from './createRollupGetRetryablesFees';
 
 export {
   arbOwnerPublicActions,
@@ -274,4 +283,11 @@ export {
   //
   scaleFrom18DecimalsToNativeTokenDecimals,
   scaleFromNativeTokenDecimalsTo18Decimals,
+  //
+  createRollupDefaultRetryablesFees,
+  createRollupGetRetryablesFees,
+  createRollupGetRetryablesFeesWithDefaults,
+  CreateRollupGetRetryablesFeesParams,
+  //
+  createTokenBridgeDefaultRetryablesFees,
 };
