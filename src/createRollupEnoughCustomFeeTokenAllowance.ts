@@ -6,7 +6,7 @@ import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
-import { scaleToNativeTokenDecimals } from './utils/decimals';
+import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
   Prettify<
@@ -43,5 +43,5 @@ export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends C
     publicClient,
   });
 
-  return allowance >= scaleToNativeTokenDecimals({ amount: fees, decimals });
+  return allowance >= scaleFrom18DecimalsToNativeTokenDecimals({ amount: fees, decimals });
 }
