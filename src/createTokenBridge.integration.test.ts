@@ -20,7 +20,7 @@ import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './crea
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { createTokenBridge } from './createTokenBridge';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
-import { scaleToNativeTokenDecimals } from './utils/decimals';
+import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 const l2RollupOwner = testnodeAccounts.l2RollupOwner;
@@ -223,7 +223,7 @@ describe('createTokenBridge utils function', () => {
         functionName: 'transfer',
         args: [
           l3RollupOwner.address,
-          scaleToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
+          scaleFrom18DecimalsToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
         ],
       }),
       value: BigInt(0),
@@ -392,7 +392,7 @@ describe('createTokenBridge', () => {
         functionName: 'transfer',
         args: [
           l3RollupOwner.address,
-          scaleToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
+          scaleFrom18DecimalsToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
         ],
       }),
       value: BigInt(0),

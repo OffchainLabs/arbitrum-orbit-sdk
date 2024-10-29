@@ -7,7 +7,7 @@ import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { Prettify } from './types/utils';
 import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
-import { scaleToNativeTokenDecimals } from './utils/decimals';
+import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,
@@ -48,7 +48,7 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
     address: nativeToken,
     owner: account,
     spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    amount: amount ?? scaleToNativeTokenDecimals({ amount: fees, decimals }),
+    amount: amount ?? scaleFrom18DecimalsToNativeTokenDecimals({ amount: fees, decimals }),
     publicClient,
   });
 

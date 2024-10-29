@@ -6,7 +6,7 @@ import { createTokenBridgeDefaultRetryablesFees } from './constants';
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
-import { scaleToNativeTokenDecimals } from './utils/decimals';
+import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
   Prettify<
@@ -39,7 +39,7 @@ export async function createTokenBridgeEnoughCustomFeeTokenAllowance<
 
   return (
     allowance >=
-    scaleToNativeTokenDecimals({
+    scaleFrom18DecimalsToNativeTokenDecimals({
       amount: createTokenBridgeDefaultRetryablesFees,
       decimals,
     })

@@ -146,6 +146,10 @@ import {
 } from './wasmModuleRoot';
 import { registerCustomParentChain } from './chains';
 export * from './actions';
+import {
+  scaleFrom18DecimalsToNativeTokenDecimals,
+  scaleFromNativeTokenDecimalsTo18Decimals,
+} from './utils/decimals';
 
 export {
   arbOwnerPublicActions,
@@ -267,4 +271,7 @@ export {
   GetConsensusReleaseByWasmModuleRoot,
   //
   registerCustomParentChain,
+  //
+  scaleFrom18DecimalsToNativeTokenDecimals,
+  scaleFromNativeTokenDecimalsTo18Decimals,
 };

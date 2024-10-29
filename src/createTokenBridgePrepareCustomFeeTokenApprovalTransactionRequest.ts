@@ -7,7 +7,7 @@ import { validateParentChain } from './types/ParentChain';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
 import { createTokenBridgeDefaultRetryablesFees } from './constants';
-import { scaleToNativeTokenDecimals } from './utils/decimals';
+import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateTokenBridgePrepareCustomFeeTokenApprovalTransactionRequestParams<
   TChain extends Chain | undefined,
@@ -42,7 +42,7 @@ export async function createTokenBridgePrepareCustomFeeTokenApprovalTransactionR
     spender: tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(publicClient),
     amount:
       amount ??
-      scaleToNativeTokenDecimals({
+      scaleFrom18DecimalsToNativeTokenDecimals({
         amount: createTokenBridgeDefaultRetryablesFees,
         decimals,
       }),
