@@ -109,16 +109,16 @@ export const registerNewNetwork = async (
   return registerCustomArbitrumNetwork(arbitrumNetwork);
 };
 
-export const registerNewNetworkFromParentPublicClient = async <TChain extends Chain | undefined>({
+export async function registerNewNetworkFromParentPublicClient<TChain extends Chain | undefined>({
   parentChainPublicClient,
   rollupAddress,
 }: {
   parentChainPublicClient: PublicClient<Transport, TChain>;
   rollupAddress: Address;
-}): Promise<ArbitrumNetwork> => {
+}): Promise<ArbitrumNetwork> {
   const arbitrumNetwork = await prepareRegisterNewNetworkParams({
     parentChainPublicClient,
     rollupAddress,
   });
   return registerCustomArbitrumNetwork(arbitrumNetwork);
-};
+}
