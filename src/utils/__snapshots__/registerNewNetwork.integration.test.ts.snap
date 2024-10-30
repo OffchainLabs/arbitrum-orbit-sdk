@@ -1,0 +1,37 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`prepareRegisterNewNetworkParams > should create orbit chain network object (Xai) 1`] = `
+{
+  "chainId": 660279,
+  "confirmPeriodBlocks": 45818,
+  "ethBridge": {
+    "bridge": "0x7dd8A76bdAeBE3BBBaCD7Aa87f1D4FDa1E60f94f",
+    "inbox": "0xaE21fDA3de92dE2FDAF606233b2863782Ba046F9",
+    "outbox": "0x1E400568AD4840dbE50FB32f306B842e9ddeF726",
+    "rollup": "0xc47dacfbaa80bd9d8112f4e8069482c2a3221336",
+    "sequencerInbox": "0x995a9d3ca121D48d21087eDE20bc8acb2398c8B1",
+  },
+  "isCustom": true,
+  "isTestnet": false,
+  "name": "660279-arbitrum-network",
+  "nativeToken": "0x4Cb9a7AE498CEDcBb5EAe9f25736aE7d428C9D66",
+  "parentChainId": 42161,
+  "retryableLifetimeSeconds": 604800,
+  "tokenBridge": {
+    "childCustomGateway": "0x96551194230725c72ACF8E9573B1382CCBC70635",
+    "childErc20Gateway": "0x0c71417917D24F4A6A6A55559B98c5cCEcb33F7a",
+    "childGatewayRouter": "0xd096e8dE90D34de758B0E0bA4a796eA2e1e272cF",
+    "childMultiCall": "0xEEC168551A85911Ec3A905e0561b656979f3ea67",
+    "childProxyAdmin": "0x56800fDCFbE19Ea3EE9d115dAC30d95d6459c44E",
+    "childWeth": "0x0000000000000000000000000000000000000000",
+    "childWethGateway": "0x0000000000000000000000000000000000000000",
+    "parentCustomGateway": "0xb15A0826d65bE4c2fDd961b72636168ee70Af030",
+    "parentErc20Gateway": "0xb591cE747CF19cF30e11d656EB94134F523A9e77",
+    "parentGatewayRouter": "0x22CCA5Dc96a4Ac1EC32c9c7C5ad4D66254a24C35",
+    "parentMultiCall": "0x90B02D9F861017844F30dFbdF725b6aa84E63822",
+    "parentProxyAdmin": "0x041F85dD87c46B941dc9b15c6628B19ee5358485",
+    "parentWeth": "0x0000000000000000000000000000000000000000",
+    "parentWethGateway": "0x0000000000000000000000000000000000000000",
+  },
+}
+`;
