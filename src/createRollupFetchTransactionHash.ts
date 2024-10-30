@@ -10,7 +10,7 @@ export type CreateRollupFetchTransactionHashParams<TChain extends Chain | undefi
   fromBlock?: bigint;
 };
 
-const RollupInitializedEventAbi: AbiEvent = {
+const RollupInitializedEventAbi = {
   anonymous: false,
   inputs: [
     {
@@ -28,9 +28,9 @@ const RollupInitializedEventAbi: AbiEvent = {
   ],
   name: 'RollupInitialized',
   type: 'event',
-};
+} as const satisfies AbiEvent;
 
-export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
+export async function getRollupInitializedEvents<TChain extends Chain | undefined>({
   rollup,
   publicClient,
   fromBlock,
@@ -48,8 +48,17 @@ export async function createRollupFetchTransactionHash<TChain extends Chain | un
     );
   }
 
+  return rollupInitializedEvents;
+}
+
+export async function createRollupFetchTransactionHash<TChain extends Chain | undefined>({
+  rollup,
+  publicClient,
+  fromBlock,
+}: CreateRollupFetchTransactionHashParams<TChain>) {
   // Get the transaction hash that emitted that event
-  const transactionHash = rollupInitializedEvents[0].transactionHash;
+  const transactionHash = (await getRollupInitializedEvents({ rollup, publicClient, fromBlock }))[0]
+    .transactionHash;
 
   if (!transactionHash) {
     throw new Error(
