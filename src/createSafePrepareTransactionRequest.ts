@@ -77,7 +77,7 @@ export const SafeProxyFactoryAbi = [
  */
 export type CreateSafePrepareTransactionRequestParams<TChain extends Chain | undefined> = {
   publicClient: PublicClient<Transport, TChain>;
-  account: PrivateKeyAccount | `0x${string}`;
+  account: Address;
   owners: Address[];
   threshold: number;
   saltNonce?: bigint;
