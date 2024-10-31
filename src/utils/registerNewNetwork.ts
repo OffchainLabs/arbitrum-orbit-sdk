@@ -5,10 +5,7 @@ import {
   registerCustomArbitrumNetwork,
 } from '@arbitrum/sdk';
 import { testnets } from '../chains';
-import {
-  createRollupFetchTransactionHash,
-  getRollupInitializedEvents,
-} from '../createRollupFetchTransactionHash';
+import { getRollupInitializedEvents } from '../createRollupFetchTransactionHash';
 import { Address, Chain, PublicClient, Transport } from 'viem';
 import { publicClientToProvider } from '../ethers-compat/publicClientToProvider';
 import { createRollupPrepareTransactionReceipt } from '../createRollupPrepareTransactionReceipt';
@@ -34,10 +31,7 @@ export async function prepareArbitrumNetwork<TChain extends Chain | undefined>(
   }
 
   // Fetch native token address and TokenBridge address
-  const rollupCreationtransactionHash = await createRollupFetchTransactionHash({
-    rollup,
-    publicClient: parentChainPublicClient,
-  });
+  const rollupCreationtransactionHash = rollupInitializedEvent[0].transactionHash;
   const transactionReceipt = createRollupPrepareTransactionReceipt(
     await parentChainPublicClient.waitForTransactionReceipt({
       hash: rollupCreationtransactionHash,
