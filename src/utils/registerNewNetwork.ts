@@ -18,7 +18,7 @@ const isTestnet = (parentChainId: number) => {
   return testnets.some((testnet) => testnet.id === parentChainId);
 };
 
-export async function prepareRegisterNewNetworkParams<TChain extends Chain | undefined>(
+export async function prepareArbitrumNetwork<TChain extends Chain | undefined>(
   parentChainPublicClient: PublicClient<Transport, TChain>,
   { rollup }: { rollup: Address },
 ): Promise<ArbitrumNetwork> {
@@ -80,7 +80,6 @@ export async function prepareRegisterNewNetworkParams<TChain extends Chain | und
       parentMultiCall: parentChainContracts.multicall,
       childMultiCall: orbitChainContracts.multicall,
     },
-    retryableLifetimeSeconds: 7 * 24 * 60 * 60, // 7 days
   } satisfies ArbitrumNetwork;
 }
 

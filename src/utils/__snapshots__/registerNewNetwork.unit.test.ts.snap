@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`prepareRegisterNewNetworkParams > should create orbit chain network object for ETH gas token chain (Proof of Play Apex) 1`] = `
+exports[`prepareArbitrumNetwork > should create orbit chain network object for ETH gas token chain (Proof of Play Apex) 1`] = `
 {
   "chainId": 70700,
   "confirmPeriodBlocks": 40320,
@@ -16,7 +16,6 @@ exports[`prepareRegisterNewNetworkParams > should create orbit chain network obj
   "name": "70700-arbitrum-network",
   "nativeToken": "0x0000000000000000000000000000000000000000",
   "parentChainId": 42161,
-  "retryableLifetimeSeconds": 604800,
   "tokenBridge": {
     "childCustomGateway": "0x1a4ba648Ddc0E726085A847178eBff204411EB1A",
     "childErc20Gateway": "0x7aEdD5a2F3bBd4841711D017Edf90d611aD96a9e",
@@ -36,7 +35,7 @@ exports[`prepareRegisterNewNetworkParams > should create orbit chain network obj
 }
 `;
 
-exports[`prepareRegisterNewNetworkParams > should create orbit chain network object for custom gas token chain (Xai) 1`] = `
+exports[`prepareArbitrumNetwork > should create orbit chain network object for custom gas token chain (Xai) 1`] = `
 {
   "chainId": 660279,
   "confirmPeriodBlocks": 45818,
@@ -52,7 +51,6 @@ exports[`prepareRegisterNewNetworkParams > should create orbit chain network obj
   "name": "660279-arbitrum-network",
   "nativeToken": "0x4Cb9a7AE498CEDcBb5EAe9f25736aE7d428C9D66",
   "parentChainId": 42161,
-  "retryableLifetimeSeconds": 604800,
   "tokenBridge": {
     "childCustomGateway": "0x96551194230725c72ACF8E9573B1382CCBC70635",
     "childErc20Gateway": "0x0c71417917D24F4A6A6A55559B98c5cCEcb33F7a",
