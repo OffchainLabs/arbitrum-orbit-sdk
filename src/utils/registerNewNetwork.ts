@@ -18,15 +18,12 @@ const isTestnet = (parentChainId: number) => {
   return testnets.some((testnet) => testnet.id === parentChainId);
 };
 
-export async function prepareRegisterNewNetworkParams<TChain extends Chain | undefined>({
-  parentChainPublicClient,
-  rollupAddress,
-}: {
-  parentChainPublicClient: PublicClient<Transport, TChain>;
-  rollupAddress: Address;
-}): Promise<ArbitrumNetwork> {
+export async function prepareRegisterNewNetworkParams<TChain extends Chain | undefined>(
+  parentChainPublicClient: PublicClient<Transport, TChain>,
+  { rollup }: { rollup: Address },
+): Promise<ArbitrumNetwork> {
   const rollupInitializedEvent = await getRollupInitializedEvents({
-    rollup: rollupAddress,
+    rollup,
     publicClient: parentChainPublicClient,
   });
 
@@ -38,7 +35,7 @@ export async function prepareRegisterNewNetworkParams<TChain extends Chain | und
 
   // Fetch native token address and TokenBridge address
   const rollupCreationtransactionHash = await createRollupFetchTransactionHash({
-    rollup: rollupAddress,
+    rollup,
     publicClient: parentChainPublicClient,
   });
   const transactionReceipt = createRollupPrepareTransactionReceipt(
@@ -49,7 +46,7 @@ export async function prepareRegisterNewNetworkParams<TChain extends Chain | und
   const { nativeToken, inbox, adminProxy } = transactionReceipt.getCoreContracts();
   const { parentChainId, ethBridge, confirmPeriodBlocks } =
     await getArbitrumNetworkInformationFromRollup(
-      rollupAddress,
+      rollup,
       publicClientToProvider(parentChainPublicClient),
     );
   const { parentChainContracts, orbitChainContracts } =
@@ -108,17 +105,3 @@ export const registerNewNetwork = async (
 
   return registerCustomArbitrumNetwork(arbitrumNetwork);
 };
-
-export async function registerNewNetworkFromParentPublicClient<TChain extends Chain | undefined>({
-  parentChainPublicClient,
-  rollupAddress,
-}: {
-  parentChainPublicClient: PublicClient<Transport, TChain>;
-  rollupAddress: Address;
-}): Promise<ArbitrumNetwork> {
-  const arbitrumNetwork = await prepareRegisterNewNetworkParams({
-    parentChainPublicClient,
-    rollupAddress,
-  });
-  return registerCustomArbitrumNetwork(arbitrumNetwork);
-}
