@@ -17,7 +17,7 @@ export type SetAnyTrustFastConfirmerPrepareTransactionRequestParams<
   TChain extends Chain | undefined,
 > = {
   publicClient: PublicClient<Transport, TChain>;
-  account: PrivateKeyAccount | `0x${string}`;
+  account: Address;
   rollup: Address;
   upgradeExecutor: Address;
   fastConfirmer: Address;
