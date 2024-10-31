@@ -159,6 +159,12 @@ import {
   createRollupGetRetryablesFees,
   createRollupGetRetryablesFeesWithDefaults,
 } from './createRollupGetRetryablesFees';
+import {
+  fetchAllowance,
+  FetchAllowanceProps,
+  fetchDecimals,
+  FetchDecimalsProps,
+} from './utils/erc20';
 
 export {
   arbOwnerPublicActions,
@@ -290,4 +296,9 @@ export {
   CreateRollupGetRetryablesFeesParams,
   //
   createTokenBridgeDefaultRetryablesFees,
+  //
+  fetchAllowance,
+  FetchAllowanceProps,
+  fetchDecimals,
+  FetchDecimalsProps,
 };

@@ -1,8 +1,8 @@
 import { BigNumber } from 'ethers';
 import {
-  scaleToNativeTokenDecimals as ethers_scaleToNativeTokenDecimals,
-  nativeTokenDecimalsTo18Decimals as ethers_nativeTokenDecimalsTo18Decimals,
-} from '@arbitrum/sdk/dist/lib/utils/lib';
+  scaleFrom18DecimalsToNativeTokenDecimals as ethers_scaleFrom18DecimalsToNativeTokenDecimals,
+  scaleFromNativeTokenDecimalsTo18Decimals as ethers_scaleFromNativeTokenDecimalsTo18Decimals,
+} from '@arbitrum/sdk';
 
 /**
  * Scales a value from 18 decimals to the number of decimals of the native token.
@@ -20,7 +20,10 @@ export function scaleFrom18DecimalsToNativeTokenDecimals({
   decimals: number;
 }): bigint {
   const amountBigNumber = BigNumber.from(amount);
-  const result = ethers_scaleToNativeTokenDecimals({ amount: amountBigNumber, decimals });
+  const result = ethers_scaleFrom18DecimalsToNativeTokenDecimals({
+    amount: amountBigNumber,
+    decimals,
+  });
   return BigInt(result.toString());
 }
 
@@ -40,6 +43,9 @@ export function scaleFromNativeTokenDecimalsTo18Decimals({
   decimals: number;
 }): bigint {
   const amountBigNumber = BigNumber.from(amount);
-  const result = ethers_nativeTokenDecimalsTo18Decimals({ amount: amountBigNumber, decimals });
+  const result = ethers_scaleFromNativeTokenDecimalsTo18Decimals({
+    amount: amountBigNumber,
+    decimals,
+  });
   return BigInt(result.toString());
 }
