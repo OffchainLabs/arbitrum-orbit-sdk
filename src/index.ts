@@ -165,6 +165,7 @@ import {
   fetchDecimals,
   FetchDecimalsProps,
 } from './utils/erc20';
+import { prepareArbitrumNetwork } from './utils/registerNewNetwork';
 
 export {
   arbOwnerPublicActions,
@@ -301,4 +302,6 @@ export {
   FetchAllowanceProps,
   fetchDecimals,
   FetchDecimalsProps,
+  //
+  prepareArbitrumNetwork,
 };
