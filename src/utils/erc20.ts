@@ -90,13 +90,15 @@ export async function fetchAllowance<TChain extends Chain | undefined>({
   });
 }
 
+export type FetchDecimalsProps<TChain extends Chain | undefined> = {
+  address: Address;
+  publicClient: PublicClient<Transport, TChain>;
+};
+
 export function fetchDecimals<TChain extends Chain | undefined>({
   address,
   publicClient,
-}: {
-  address: Address;
-  publicClient: PublicClient<Transport, TChain>;
-}) {
+}: FetchDecimalsProps<TChain>) {
   return publicClient.readContract({
     address,
     abi: erc20ABI,
