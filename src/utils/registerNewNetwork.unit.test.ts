@@ -17,9 +17,9 @@ describe('prepareRegisterNewNetworkParams', () => {
     expect(network).toMatchSnapshot();
   });
 
-  it(`should create orbit chain network object for ETH gas token chain (Rari)`, async () => {
+  it(`should create orbit chain network object for ETH gas token chain (Proof of Play Apex)`, async () => {
     const network = await prepareRegisterNewNetworkParams(client, {
-      rollup: '0x2e988Ea0873C9d712628F0bf38DAFdE754927C89',
+      rollup: '0x65AD139061B3f6DDb16170a07b925337ddf42407',
     });
     expect(network).toMatchSnapshot();
   });
