@@ -22,10 +22,10 @@
     "@openzeppelin/contracts-upgradeable" "4.5.2"
     patch-package "^6.4.7"
 
-"@arbitrum/sdk@^4.0.2-beta.2":
-  version "4.0.2-beta.2"
-  resolved "https://registry.yarnpkg.com/@arbitrum/sdk/-/sdk-4.0.2-beta.2.tgz#4da9cf686ea93b31ca2c6a47bb26bdeca43dc9f9"
-  integrity sha512-ABEkDexf0U6jYbXS9yyuNDqthyzSlH2yZDwYTC/kKqcrvbSOwQI+ahfpiBx79WR05X7gaRRFHHGMEVhZ0Zha2Q==
+"@arbitrum/sdk@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@arbitrum/sdk/-/sdk-4.0.2.tgz#23555858f49e2b237b94a65bd486c65edb7b1690"
+  integrity sha512-KkuXNwbG5c/hCT66EG2tFMHXxIDCvt9dxAIeykZYnW7KyEH5GNlRwaPzwo6MU0shHNc0qg6pZzy2XakJWuSw2Q==
   dependencies:
     "@ethersproject/address" "^5.0.8"
     "@ethersproject/bignumber" "^5.1.1"
