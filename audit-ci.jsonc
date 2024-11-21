@@ -91,6 +91,16 @@
     // DOM Clobbering Gadget found in rollup bundled scripts that leads to XSS
     // rollup is not used in production
     // from vite > rollup
-    "GHSA-gcx4-mw62-g8wm"
+    "GHSA-gcx4-mw62-g8wm",
+    // https://github.com/advisories/GHSA-3xgq-45jj-v275
+    // cross-spawn command injection vulnerability
+    // Only used during development via audit-ci, nyc, and patch-package
+    // from: audit-ci>cross-spawn
+    // from: nyc>foreground-child>cross-spawn
+    // from: nyc>spawn-wrap>foreground-child>cross-spawn
+    // from: @arbitrum/nitro-contracts>patch-package>cross-spawn
+    // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>cross-spawn
+    // from: @offchainlabs/l1-l3-teleport-contracts>@arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>cross-spawn
+    "GHSA-3xgq-45jj-v275"
   ]
 }
