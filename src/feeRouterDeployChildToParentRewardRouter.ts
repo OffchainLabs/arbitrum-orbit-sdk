@@ -123,7 +123,7 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
     // obtain the token address in the Orbit chain
     // (we can use either gateway router to obtain the "L2 token address")
     const orbitChainTokenAddress = await parentChainPublicClient.readContract({
-      address: orbitChainGatewayRouter,
+      address: tokenBridgeContracts.parentChainContracts.router,
       abi: parseAbi(['function calculateL2TokenAddress(address) view returns (address)']),
       functionName: 'calculateL2TokenAddress',
       args: [parentChainTokenAddress],
