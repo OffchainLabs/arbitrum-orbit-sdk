@@ -27,7 +27,7 @@ Note that if all three fee types are collected by the same address, only one Rew
 
 When executing this script, the RewardDistributor contract will be configured to send 10% of the funds received (10% of the revenue of the chain) to the address specified in PARENT_CHAIN_TARGET_ADDRESS, in the parent chain.
 
-For L2 Orbit chains settling to Ethereum, this variable should be the `ParentToChildRewardRouter` contract that lives on Ethereum, which routes its funds to the Arbitrum DAO Treasury Timelock contract on Arbitrum One.
+For L2 Orbit chains settling to Ethereum, this variable should be the multisig wallet owned by the Arbitrum Foundation that lives on Ethereum, which will eventually route the collected fees to the Arbitrum DAO Treasury Timelock contract on Arbitrum One.
 
 L3 chains (or further layers) might need to specify a different target address on the parent chain depending on the gas token of the chain. If the chain uses ETH as the gas token, and a `ChildToParentRouter` contract is deployed in the parent chain, they can route their funds to that contract. If the chain uses a different gas token, please contact the Arbitrum Foundation to confirm the target address to withdraw the AEP fees to.
 
