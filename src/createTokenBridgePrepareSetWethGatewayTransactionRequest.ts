@@ -23,7 +23,17 @@ export type CreateTokenBridgePrepareRegisterWethGatewayTransactionRequestParams<
   TOrbitChain extends Chain | undefined,
 > = Prettify<
   WithTokenBridgeCreatorAddressOverride<{
+    /**
+     * Address of the Rollup contract.
+     */
     rollup: Address;
+    /**
+     * Number of the block in which the Rollup contract was deployed.
+     *
+     * This parameter is used to reduce the span of blocks to query, so it doesn't have to be exactly the right block number.
+     * However, for the query to work properly, it has to be **less than or equal to** the right block number.
+     */
+    rollupDeploymentBlockNumber?: bigint;
     parentChainPublicClient: PublicClient<Transport, TParentChain>;
     orbitChainPublicClient: PublicClient<Transport, TOrbitChain>;
     account: Address;
@@ -97,6 +107,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest<
   TOrbitChain extends Chain | undefined,
 >({
   rollup,
+  rollupDeploymentBlockNumber,
   parentChainPublicClient,
   orbitChainPublicClient,
   account,
@@ -149,6 +160,7 @@ export async function createTokenBridgePrepareSetWethGatewayTransactionRequest<
 
   const rollupCoreContracts = await createRollupFetchCoreContracts({
     rollup,
+    rollupDeploymentBlockNumber,
     publicClient: parentChainPublicClient,
   });
 

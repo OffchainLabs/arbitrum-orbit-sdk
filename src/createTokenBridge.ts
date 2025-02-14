@@ -40,8 +40,21 @@ export type CreateTokenBridgeParams<
   TParentChain extends Chain | undefined,
   TOrbitChain extends Chain | undefined,
 > = WithTokenBridgeCreatorAddressOverride<{
+  /**
+   * Owner of the Rollup contract.
+   */
   rollupOwner: Address;
+  /**
+   * Address of the Rollup contract.
+   */
   rollupAddress: Address;
+  /**
+   * Number of the block in which the Rollup contract was deployed.
+   *
+   * This parameter is used to reduce the span of blocks to query, so it doesn't have to be exactly the right block number.
+   * However, for the query to work properly, it has to be **less than or equal to** the right block number.
+   */
+  rollupDeploymentBlockNumber?: bigint;
   account: PrivateKeyAccount;
   nativeTokenAddress?: Address;
   parentChainPublicClient: PublicClient<Transport, TParentChain>;
@@ -161,6 +174,7 @@ export async function createTokenBridge<
 >({
   rollupOwner,
   rollupAddress,
+  rollupDeploymentBlockNumber,
   account,
   nativeTokenAddress,
   parentChainPublicClient,
@@ -274,6 +288,7 @@ export async function createTokenBridge<
     // set weth gateway
     const setWethGatewayTxRequest = await createTokenBridgePrepareSetWethGatewayTransactionRequest({
       rollup: rollupAddress,
+      rollupDeploymentBlockNumber,
       parentChainPublicClient,
       orbitChainPublicClient,
       account: account.address,
