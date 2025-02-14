@@ -101,6 +101,12 @@
     // from: @arbitrum/nitro-contracts>patch-package>cross-spawn
     // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>cross-spawn
     // from: @offchainlabs/l1-l3-teleport-contracts>@arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>cross-spawn
-    "GHSA-3xgq-45jj-v275"
+    "GHSA-3xgq-45jj-v275",
+    // https://github.com/advisories/GHSA-vg6x-rcgg-rjx6
+    // Websites were able to send any requests to the development server and read the response in vite
+    // vitest is only used in testing
+    // from: vitest>vite
+    // from: vitest>vite-node>vite
+    "GHSA-vg6x-rcgg-rjx6"
   ]
 }
