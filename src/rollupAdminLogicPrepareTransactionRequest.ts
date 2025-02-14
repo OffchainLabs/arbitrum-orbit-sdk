@@ -32,13 +32,14 @@ function rollupAdminLogicEncodeFunctionData<TFunctionName extends RollupAdminLog
   });
 }
 
-type RollupAdminLogicPrepareFunctionDataParameters<
+export type RollupAdminLogicPrepareFunctionDataParameters<
   TFunctionName extends RollupAdminLogicFunctionName,
 > = RollupAdminLogicEncodeFunctionDataParameters<TFunctionName> & {
   upgradeExecutor: Address | false;
   abi: RollupAdminLogicAbi;
   rollup: Address;
 };
+
 export function rollupAdminLogicPrepareFunctionData<
   TFunctionName extends RollupAdminLogicFunctionName,
 >(params: RollupAdminLogicPrepareFunctionDataParameters<TFunctionName>) {

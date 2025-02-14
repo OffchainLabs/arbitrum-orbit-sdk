@@ -27,13 +27,14 @@ function arbOwnerEncodeFunctionData<
   });
 }
 
-type ArbOwnerPrepareFunctionDataParameters<
+export type ArbOwnerPrepareFunctionDataParameters<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
 > = ArbOwnerEncodeFunctionDataParameters<TFunctionName> & {
   upgradeExecutor: Address | false;
   abi: ArbOwnerAbi;
 };
-function arbOwnerPrepareFunctionData<
+
+export function arbOwnerPrepareFunctionData<
   TFunctionName extends ArbOwnerPrepareTransactionRequestFunctionName,
 >(params: ArbOwnerPrepareFunctionDataParameters<TFunctionName>) {
   const { upgradeExecutor } = params;

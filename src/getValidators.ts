@@ -170,10 +170,23 @@ export async function getValidators<TChain extends Chain>(
           abi: [execTransactionABI],
           data: tx.input,
         });
+
+        const execTransactionCalldataData = execTransactionCalldata[2];
+        const execTransactionCalldataDataFnSelector = execTransactionCalldataData.slice(0, 10);
+
+        if (execTransactionCalldataDataFnSelector !== upgradeExecutorExecuteCallFunctionSelector) {
+          console.warn(
+            `[getValidators] unable to decode "execTransaction" calldata, tx id: ${tx.hash}`,
+          );
+          isAccurate = false;
+          return acc;
+        }
+
         const { args: executeCallCalldata } = decodeFunctionData({
           abi: [executeCallABI],
-          data: execTransactionCalldata[2],
+          data: execTransactionCalldataData,
         });
+
         return updateAccumulator(acc, executeCallCalldata[1]);
       }
       default: {

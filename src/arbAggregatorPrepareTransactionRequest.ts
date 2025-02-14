@@ -27,13 +27,14 @@ function arbAggregatorEncodeFunctionData<
   });
 }
 
-type ArbAggregatorPrepareFunctionDataParameters<
+export type ArbAggregatorPrepareFunctionDataParameters<
   TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
 > = ArbAggregatorEncodeFunctionDataParameters<TFunctionName> & {
   upgradeExecutor: Address | false;
   abi: ArbAggregatorAbi;
 };
-function arbAggregatorPrepareFunctionData<
+
+export function arbAggregatorPrepareFunctionData<
   TFunctionName extends ArbAggregatorPrepareTransactionRequestFunctionName,
 >(params: ArbAggregatorPrepareFunctionDataParameters<TFunctionName>) {
   const { upgradeExecutor } = params;

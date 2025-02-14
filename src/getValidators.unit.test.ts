@@ -151,7 +151,7 @@ it('getValidators return all validators (Xai)', async () => {
     rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336',
   });
   expect(validators).toEqual(['0x25EA41f0bDa921a0eBf48291961B1F10b59BC6b8']);
-  expect(isAccurate).toBeTruthy();
+  expect(isAccurate).toBeFalsy();
 });
 
 // https://sepolia.arbiscan.io/tx/0x5b0b49e0259289fc89949a55a5ad35a8939440a55065d29b14e5e7ef7494efff
