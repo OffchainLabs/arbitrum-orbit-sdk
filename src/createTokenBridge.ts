@@ -174,6 +174,7 @@ export async function createTokenBridge<
 >({
   rollupOwner,
   rollupAddress,
+  rollupDeploymentBlockNumber,
   account,
   nativeTokenAddress,
   parentChainPublicClient,
