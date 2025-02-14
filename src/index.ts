@@ -70,6 +70,10 @@ import {
 } from './arbOwnerPrepareTransactionRequest';
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
+import {
+  arbAggregatorPrepareFunctionData,
+  ArbAggregatorPrepareFunctionDataParameters,
+} from './arbAggregatorPrepareTransactionRequest';
 import { arbAggregatorActions } from './decorators/arbAggregatorActions';
 import { sequencerInboxActions } from './decorators/sequencerInboxActions';
 import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
@@ -177,7 +181,11 @@ export {
   ArbOwnerPrepareFunctionDataParameters,
   //
   arbGasInfoPublicActions,
+  //
   arbAggregatorActions,
+  arbAggregatorPrepareFunctionData,
+  ArbAggregatorPrepareFunctionDataParameters,
+  //
   sequencerInboxActions,
   rollupAdminLogicPublicActions,
   createRollupPrepareTransactionRequest,
