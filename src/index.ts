@@ -75,6 +75,10 @@ import {
   ArbAggregatorPrepareFunctionDataParameters,
 } from './arbAggregatorPrepareTransactionRequest';
 import { arbAggregatorActions } from './decorators/arbAggregatorActions';
+import {
+  sequencerInboxPrepareFunctionData,
+  SequencerInboxPrepareFunctionDataParameters,
+} from './sequencerInboxPrepareTransactionRequest';
 import { sequencerInboxActions } from './decorators/sequencerInboxActions';
 import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
 
@@ -187,6 +191,9 @@ export {
   ArbAggregatorPrepareFunctionDataParameters,
   //
   sequencerInboxActions,
+  sequencerInboxPrepareFunctionData,
+  SequencerInboxPrepareFunctionDataParameters,
+  //
   rollupAdminLogicPublicActions,
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
