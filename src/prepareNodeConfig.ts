@@ -8,6 +8,7 @@ import { CoreContracts } from './types/CoreContracts';
 import { ParentChainId, validateParentChain } from './types/ParentChain';
 import { getParentChainLayer } from './utils';
 import { parentChainIsArbitrum } from './parentChainIsArbitrum';
+import { Address } from 'viem';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
@@ -35,6 +36,33 @@ export type PrepareNodeConfigParams = {
   parentChainRpcUrl: string;
   parentChainBeaconRpcUrl?: string;
   dasServerUrl?: string;
+};
+
+export type OrbitSetupScriptConfigParams = {
+  networkFeeReceiver: Address;
+  infrastructureFeeCollector: Address;
+  staker: Address;
+  batchPoster: Address;
+  chainOwner: Address;
+  chainId: number;
+  chainName: string;
+  minL2BaseFee: number;
+  parentChainId: number;
+  'parent-chain-node-url': string;
+  utils: Address;
+  rollup: Address;
+  inbox: Address;
+  nativeToken: Address;
+  outbox: Address;
+  rollupEventInbox: Address;
+  challengeManager: Address;
+  adminProxy: Address;
+  sequencerInbox: Address;
+  bridge: Address;
+  upgradeExecutor: Address;
+  validatorUtils: Address;
+  validatorWalletCreator: Address;
+  deployedAtBlockNumber: number;
 };
 
 function getDisableBlobReader(parentChainId: ParentChainId): boolean {
