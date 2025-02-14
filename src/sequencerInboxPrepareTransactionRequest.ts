@@ -30,12 +30,14 @@ function sequencerInboxEncodeFunctionData<TFunctionName extends SequencerInboxFu
   });
 }
 
-type SequencerInboxPrepareFunctionDataParameters<TFunctionName extends SequencerInboxFunctionName> =
-  SequencerInboxEncodeFunctionDataParameters<TFunctionName> & {
-    upgradeExecutor: Address | false;
-    abi: SequencerInboxAbi;
-    sequencerInbox: Address;
-  };
+export type SequencerInboxPrepareFunctionDataParameters<
+  TFunctionName extends SequencerInboxFunctionName,
+> = SequencerInboxEncodeFunctionDataParameters<TFunctionName> & {
+  upgradeExecutor: Address | false;
+  abi: SequencerInboxAbi;
+  sequencerInbox: Address;
+};
+
 export function sequencerInboxPrepareFunctionData<TFunctionName extends SequencerInboxFunctionName>(
   params: SequencerInboxPrepareFunctionDataParameters<TFunctionName>,
 ) {
