@@ -64,6 +64,10 @@ import {
   upgradeExecutorPrepareRemoveExecutorTransactionRequest,
   UpgradeExecutorPrepareRemoveExecutorTransactionRequestParams,
 } from './upgradeExecutorPrepareRemoveExecutorTransactionRequest';
+import {
+  arbOwnerPrepareFunctionData,
+  ArbOwnerPrepareFunctionDataParameters,
+} from './arbOwnerPrepareTransactionRequest';
 import { arbOwnerPublicActions } from './decorators/arbOwnerPublicActions';
 import { arbGasInfoPublicActions } from './decorators/arbGasInfoPublicActions';
 import { arbAggregatorActions } from './decorators/arbAggregatorActions';
@@ -169,6 +173,9 @@ import { prepareArbitrumNetwork } from './utils/registerNewNetwork';
 
 export {
   arbOwnerPublicActions,
+  arbOwnerPrepareFunctionData,
+  ArbOwnerPrepareFunctionDataParameters,
+  //
   arbGasInfoPublicActions,
   arbAggregatorActions,
   sequencerInboxActions,
