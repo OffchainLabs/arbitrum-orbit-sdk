@@ -80,6 +80,10 @@ import {
   SequencerInboxPrepareFunctionDataParameters,
 } from './sequencerInboxPrepareTransactionRequest';
 import { sequencerInboxActions } from './decorators/sequencerInboxActions';
+import {
+  rollupAdminLogicPrepareFunctionData,
+  RollupAdminLogicPrepareFunctionDataParameters,
+} from './rollupAdminLogicPrepareTransactionRequest';
 import { rollupAdminLogicPublicActions } from './decorators/rollupAdminLogicPublicActions';
 
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
@@ -195,6 +199,9 @@ export {
   SequencerInboxPrepareFunctionDataParameters,
   //
   rollupAdminLogicPublicActions,
+  rollupAdminLogicPrepareFunctionData,
+  RollupAdminLogicPrepareFunctionDataParameters,
+  //
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
