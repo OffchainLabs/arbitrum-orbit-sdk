@@ -109,12 +109,13 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   const batchPosterManager = params.batchPosterManager ?? zeroAddress;
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
+  const data = createRollupEncodeFunctionData([paramsWithDefaults]);
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    data: createRollupEncodeFunctionData([paramsWithDefaults]),
+    data,
     value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
