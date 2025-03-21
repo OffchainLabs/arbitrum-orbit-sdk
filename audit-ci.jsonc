@@ -107,6 +107,14 @@
     // vitest is only used in testing
     // from: vitest>vite
     // from: vitest>vite-node>vite
-    "GHSA-vg6x-rcgg-rjx6"
+    "GHSA-vg6x-rcgg-rjx6",
+
+    // https://github.com/advisories/GHSA-67mh-4wv8-2f99
+    // esbuild enables any website to send any requests to the development server and read the response
+    // esbuild is only used with @wagmi/cli and vitest during development
+    // from: @wagmi/cli>esbuild
+    // from: vitest>vite-node>vite>esbuild
+    // from: vitest>vite>esbuild
+    "GHSA-67mh-4wv8-2f99"
   ]
 }
