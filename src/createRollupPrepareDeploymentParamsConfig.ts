@@ -128,7 +128,8 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
       max: BigInt(14400),
       replenishRateInBasis: BigInt(500),
     },
-    //
+    // default to chain owner if not provided
+    loserStakeEscrow: params.loserStakeEscrow ?? params.owner,
     chainConfig: JSON.stringify(
       chainConfig ??
         prepareChainConfig({

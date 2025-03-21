@@ -18,8 +18,6 @@ export const defaults = {
   stakeToken: '0x980b62da83eff3d4576c647993b0c1d7faf17c73',
   baseStake: parseEther(String(0.1)),
   wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
-  // todo: temp
-  loserStakeEscrow: '0x000000000000000000000000000000000000dead',
   genesisBlockNum: BigInt(0),
   genesisInboxCount: BigInt(0),
   genesisAssertionState,
