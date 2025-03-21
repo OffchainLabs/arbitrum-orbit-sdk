@@ -213,3 +213,32 @@ export const rollupCreatorABI = [
   },
   { stateMutability: 'payable', type: 'receive' },
 ] as const;
+
+export const rollupCreatorAddress = {
+  1: '0x0000000000000000000000000000000000000000',
+  1337: '0x0000000000000000000000000000000000000000',
+  8453: '0x0000000000000000000000000000000000000000',
+  17000: '0x0000000000000000000000000000000000000000',
+  42161: '0x0000000000000000000000000000000000000000',
+  42170: '0x0000000000000000000000000000000000000000',
+  84532: '0x0000000000000000000000000000000000000000',
+  412346: '0x0000000000000000000000000000000000000000',
+  421614: '0xEca237537EdCa574f01E95bC286A9B2136FFb085',
+  11155111: '0x0000000000000000000000000000000000000000',
+} as const;
+
+/**
+ * - [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x90d68b056c411015eae3ec0b98ad94e2c91419f1)
+ * -
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x850F050C65B34966895AdA26a4D06923901916DB)
+ * -
+ * - [__View Contract on Arbitrum One Arbiscan__](https://arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
+ * - [__View Contract on Arbitrum Nova Arbiscan__](https://nova.arbiscan.io/address/0x9CAd81628aB7D8e239F1A5B497313341578c5F71)
+ * - [__View Contract on Base Sepolia Blockscout__](https://base-sepolia.blockscout.com/address/0x1E0921818df948c338380e722C8aE91Bb285763C)
+ * - [__View Contract on Arbitrum Sepolia Blockscout__](https://sepolia-explorer.arbitrum.io/address/0x06E341073b2749e0Bb9912461351f716DeCDa9b0)
+ * - [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xfbd0b034e6305788007f6e0123cc5eae701a5751)
+ */
+export const rollupCreatorConfig = {
+  address: rollupCreatorAddress,
+  abi: rollupCreatorABI,
+} as const;
