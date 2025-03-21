@@ -1,6 +1,16 @@
-import { parseEther, zeroAddress } from 'viem';
+import { parseEther, zeroAddress, zeroHash } from 'viem';
 
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
+import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from './createRollupPrepareDeploymentParamsConfig';
+
+const genesisAssertionState: Config['genesisAssertionState'] = {
+  globalState: {
+    bytes32Vals: [zeroHash, zeroHash],
+    u64Vals: [BigInt(0), BigInt(0)],
+  },
+  machineStatus: 0,
+  endHistoryRoot: zeroHash,
+} as const;
 
 export const defaults = {
   extraChallengeTimeBlocks: BigInt(0),
@@ -11,4 +21,7 @@ export const defaults = {
   // todo: temp
   loserStakeEscrow: '0x000000000000000000000000000000000000dead',
   genesisBlockNum: BigInt(0),
+  genesisInboxCount: BigInt(0),
+  genesisAssertionState,
+  anyTrustFastConfirmer: zeroAddress,
 } as const;
