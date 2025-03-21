@@ -1,17 +1,20 @@
 import { Address, GetFunctionArgs } from 'viem';
 
 import { rollupCreatorABI } from '../contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from '../contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from '../contracts/RollupCreator/v1.1';
 
 import { Prettify } from './utils';
 
-export type RollupCreatorVersion = 'v2.1' | 'v1.1';
-export type RollupCreatorLatestVersion = Extract<RollupCreatorVersion, 'v2.1'>;
+export type RollupCreatorVersion = 'v3.0' | 'v2.1' | 'v1.1';
+export type RollupCreatorLatestVersion = Extract<RollupCreatorVersion, 'v3.0'>;
 
 export type RollupCreatorABI<TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion> =
   //
-  TVersion extends 'v2.1'
+  TVersion extends 'v3.0'
     ? typeof rollupCreatorABI
+    : TVersion extends 'v2.1'
+    ? typeof rollupCreatorV2Dot1ABI
     : TVersion extends 'v1.1'
     ? typeof rollupCreatorV1Dot1ABI
     : never;
@@ -24,7 +27,9 @@ type GetCreateRollupRequiredKeys<
   TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion,
 > =
   //
-  TVersion extends 'v2.1'
+  TVersion extends 'v3.0'
+    ? 'config' | 'batchPosters' | 'validators'
+    : TVersion extends 'v2.1'
     ? 'config' | 'batchPosters' | 'validators'
     : TVersion extends 'v1.1'
     ? 'config' | 'batchPoster' | 'validators'
