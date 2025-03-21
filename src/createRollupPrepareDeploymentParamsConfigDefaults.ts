@@ -7,6 +7,7 @@ export const defaults = {
   stakeToken: zeroAddress,
   baseStake: parseEther(String(0.1)),
   wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
-  loserStakeEscrow: zeroAddress,
+  // todo: temp
+  loserStakeEscrow: '0x000000000000000000000000000000000000dead',
   genesisBlockNum: BigInt(0),
 } as const;
