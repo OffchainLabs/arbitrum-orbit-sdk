@@ -8,7 +8,7 @@ const genesisAssertionState: Config['genesisAssertionState'] = {
     bytes32Vals: [zeroHash, zeroHash],
     u64Vals: [BigInt(0), BigInt(0)],
   },
-  machineStatus: 0,
+  machineStatus: 1,
   endHistoryRoot: zeroHash,
 } as const;
 
