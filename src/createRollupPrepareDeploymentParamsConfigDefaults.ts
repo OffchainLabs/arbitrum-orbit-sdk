@@ -4,7 +4,8 @@ import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 
 export const defaults = {
   extraChallengeTimeBlocks: BigInt(0),
-  stakeToken: zeroAddress,
+  // todo: temp, hardcoded to arb sepolia weth
+  stakeToken: '0x980b62da83eff3d4576c647993b0c1d7faf17c73',
   baseStake: parseEther(String(0.1)),
   wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
   // todo: temp
