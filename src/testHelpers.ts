@@ -184,6 +184,7 @@ export function testHelper_createCustomParentChain(params?: { id?: number }) {
   const chainId = params?.id ?? generateChainId();
   const rollupCreator = privateKeyToAccount(generatePrivateKey()).address;
   const tokenBridgeCreator = privateKeyToAccount(generatePrivateKey()).address;
+  const weth = privateKeyToAccount(generatePrivateKey()).address;
 
   return {
     id: chainId,
@@ -207,6 +208,7 @@ export function testHelper_createCustomParentChain(params?: { id?: number }) {
     contracts: {
       rollupCreator: { address: rollupCreator },
       tokenBridgeCreator: { address: tokenBridgeCreator },
+      weth: { address: weth },
     },
   } satisfies Chain;
 }
