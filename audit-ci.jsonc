@@ -108,7 +108,6 @@
     // from: vitest>vite
     // from: vitest>vite-node>vite
     "GHSA-vg6x-rcgg-rjx6",
-
     // https://github.com/advisories/GHSA-67mh-4wv8-2f99
     // esbuild enables any website to send any requests to the development server and read the response
     // esbuild is only used with @wagmi/cli and vitest during development
