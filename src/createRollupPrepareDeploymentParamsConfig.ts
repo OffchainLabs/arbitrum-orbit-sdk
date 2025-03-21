@@ -1,4 +1,4 @@
-import { Chain, Client, Transport } from 'viem';
+import { Chain, Client, Transport, zeroAddress, zeroHash } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
 import { validateParentChain } from './types/ParentChain';
@@ -113,6 +113,32 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     ...defaults,
     ...paramsByParentBlockTime,
     ...params,
+    // todo: nicer defaults, currently based on this
+    // https://github.com/OffchainLabs/nitro-contracts/pull/312/files#diff-9f526a29af0fe82b358ec76bde5921666dca4b51d1d7ee1bc7bfbe1251032107
+    minimumAssertionPeriod: BigInt(75),
+    validatorAfkBlocks: BigInt(201600),
+    genesisAssertionState: {
+      globalState: {
+        bytes32Vals: [zeroHash, zeroHash],
+        u64Vals: [BigInt(0), BigInt(0)],
+      },
+      machineStatus: 0,
+      endHistoryRoot: zeroHash,
+    },
+    genesisInboxCount: BigInt(0),
+    miniStakeValues: [BigInt(4), BigInt(2), BigInt(1)],
+    layerZeroBlockEdgeHeight: BigInt(2 ** 5),
+    layerZeroBigStepEdgeHeight: BigInt(2 ** 5),
+    layerZeroSmallStepEdgeHeight: BigInt(2 ** 5),
+    numBigStepLevel: 1,
+    challengeGracePeriodBlocks: BigInt(10),
+    bufferConfig: {
+      threshold: BigInt(600),
+      max: BigInt(14400),
+      replenishRateInBasis: BigInt(500),
+    },
+    anyTrustFastConfirmer: zeroAddress,
+    //
     chainConfig: JSON.stringify(
       chainConfig ??
         prepareChainConfig({
