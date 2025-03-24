@@ -7,13 +7,25 @@ import {
   DecodeEventLogReturnType,
 } from 'viem';
 
-import { rollupCreatorABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV3Dot0ABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
+
 import { CoreContracts } from './types/CoreContracts';
 
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt): Log<bigint, number> {
-  const abiItem = getAbiItem({ abi: rollupCreatorABI, name: 'RollupCreated' });
-  const eventSelector = getEventSelector(abiItem);
-  const log = txReceipt.logs.find((log) => log.topics[0] === eventSelector);
+  // v3.0
+  const v3Dot0EventSelector = getEventSelector(
+    getAbiItem({ abi: rollupCreatorV3Dot0ABI, name: 'RollupCreated' }),
+  );
+  // v2.1 and v1.1 are the same, so we only need to handle v2.1
+  const v2Dot1EventSelector = getEventSelector(
+    getAbiItem({ abi: rollupCreatorV2Dot1ABI, name: 'RollupCreated' }),
+  );
+
+  const log = txReceipt.logs.find((log) => {
+    const topic = log.topics[0];
+    return topic === v3Dot0EventSelector || topic === v2Dot1EventSelector;
+  });
 
   if (typeof log === 'undefined') {
     throw new Error(
@@ -25,17 +37,38 @@ function findRollupCreatedEventLog(txReceipt: TransactionReceipt): Log<bigint, n
 }
 
 type DecodeRollupCreatedEventLogReturnType = DecodeEventLogReturnType<
-  typeof rollupCreatorABI,
+  // v3.0
+  | typeof rollupCreatorV3Dot0ABI
+  // v2.1 and v1.1 are the same, so we only need to handle v2.1
+  | typeof rollupCreatorV2Dot1ABI,
   'RollupCreated'
 >;
 
 function decodeRollupCreatedEventLog(
   log: Log<bigint, number>,
 ): DecodeRollupCreatedEventLogReturnType {
-  const decodedEventLog = decodeEventLog({ ...log, abi: rollupCreatorABI });
+  let decodedEventLog: DecodeRollupCreatedEventLogReturnType | null = null;
 
-  if (decodedEventLog.eventName !== 'RollupCreated') {
-    throw new Error(`Expected "RollupCreated" event but found: ${decodedEventLog.eventName}`);
+  // try parsing from multiple RollupCreator versions
+  [
+    // v3.0
+    rollupCreatorV3Dot0ABI,
+    // v2.1 and v1.1 are the same, so we only need to handle v2.1
+    rollupCreatorV2Dot1ABI,
+  ].forEach((abi) => {
+    try {
+      const result = decodeEventLog({ ...log, abi });
+
+      if (result.eventName === 'RollupCreated') {
+        decodedEventLog = result;
+      }
+    } catch (error) {
+      // do nothing
+    }
+  });
+
+  if (decodedEventLog === null) {
+    throw new Error(`Failed to decode "RollupCreated" event log: ${log}`);
   }
 
   return decodedEventLog;
