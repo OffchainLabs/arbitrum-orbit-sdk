@@ -2,9 +2,11 @@ import { Address, Chain, PublicClient, Transport, decodeFunctionData, getAbiItem
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 
 const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
+const createRollupV2Dot1ABI = getAbiItem({ abi: rollupCreatorV2Dot1ABI, name: 'createRollup' });
 const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
 
 function parseConfig(config: { chainConfig: string }): boolean {
@@ -30,8 +32,10 @@ export async function isAnyTrust<TChain extends Chain>({
   let result: boolean | null = null;
   // try parsing from multiple RollupCreator versions
   [
-    // v2.1
+    // v3.0
     createRollupABI,
+    // v2.1
+    createRollupV2Dot1ABI,
     // v1.1
     createRollupV1Dot1ABI,
   ].forEach((abi) => {
