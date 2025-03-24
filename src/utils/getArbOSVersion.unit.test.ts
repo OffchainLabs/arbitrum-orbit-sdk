@@ -16,7 +16,7 @@ it('returns the ArbOS version of Arbitrum One', async () => {
 it('throws if the chain is not an Arbitrum chain', async () => {
   const sepoliaClient = createPublicClient({
     chain: sepolia,
-    transport: http(),
+    transport: http('https://gateway.tenderly.co/public/sepolia'),
   });
 
   await expect(getArbOSVersion(sepoliaClient)).rejects.toThrowError();
