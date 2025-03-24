@@ -2,6 +2,7 @@ import { Transaction, decodeFunctionData } from 'viem';
 import { DecodeFunctionDataReturnType } from 'viem/_types/utils/abi/decodeFunctionData';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 
 import {
@@ -18,8 +19,10 @@ function createRollupDecodeFunctionData<TAbi extends RollupCreatorABI<'v2.1' | '
 
   // try parsing from multiple RollupCreator versions
   [
-    // v2.1
+    // v3.0
     rollupCreatorABI,
+    // v2.1
+    rollupCreatorV2Dot1ABI,
     // v1.1
     rollupCreatorV1Dot1ABI,
   ].forEach((abi) => {
