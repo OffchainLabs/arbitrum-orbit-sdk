@@ -1,8 +1,9 @@
-import { Chain, Client, Transport, zeroAddress, zeroHash } from 'viem';
+import { Chain, Client, Transport, parseEther } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
 import { validateParentChain } from './types/ParentChain';
 import { Prettify } from './types/utils';
+import { getWethAddress } from './utils';
 
 import { createRollup } from './createRollup';
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
@@ -113,6 +114,8 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     ...defaults,
     ...paramsByParentBlockTime,
     ...params,
+    stakeToken: params.stakeToken ?? getWethAddress(client),
+    baseStake: params.baseStake ?? parseEther(String(0.1)),
     // todo: nicer defaults, currently based on this
     // https://github.com/OffchainLabs/nitro-contracts/pull/312/files#diff-9f526a29af0fe82b358ec76bde5921666dca4b51d1d7ee1bc7bfbe1251032107
     minimumAssertionPeriod: BigInt(75),
