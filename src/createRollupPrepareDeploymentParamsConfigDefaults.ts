@@ -16,5 +16,6 @@ export const defaults = {
   anyTrustFastConfirmer: zeroAddress,
   genesisAssertionState,
   genesisInboxCount: BigInt(0),
+  numBigStepLevel: 1,
   wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
 } as const;

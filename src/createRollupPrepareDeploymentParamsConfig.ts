@@ -124,7 +124,6 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     layerZeroBlockEdgeHeight: BigInt(2 ** 5),
     layerZeroBigStepEdgeHeight: BigInt(2 ** 5),
     layerZeroSmallStepEdgeHeight: BigInt(2 ** 5),
-    numBigStepLevel: 1,
     challengeGracePeriodBlocks: BigInt(10),
     bufferConfig: {
       threshold: BigInt(600),
