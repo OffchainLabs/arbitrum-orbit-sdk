@@ -78,7 +78,7 @@ jobs:
         uses: OffchainLabs/actions/node-modules/install@main
 
       - name: Set up the local node
-        uses: OffchainLabs/actions/run-nitro-test-node@feat-simplify
+        uses: OffchainLabs/actions/run-nitro-test-node@feat-simplify-2
         with:
           nitro-testnode-ref: release
           args: ${{ matrix.config.args }}
