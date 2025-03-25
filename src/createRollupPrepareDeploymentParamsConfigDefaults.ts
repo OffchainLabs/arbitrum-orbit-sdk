@@ -13,10 +13,8 @@ const genesisAssertionState: Config['genesisAssertionState'] = {
 } as const;
 
 export const defaults = {
-  extraChallengeTimeBlocks: BigInt(0),
-  wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
-  genesisBlockNum: BigInt(0),
-  genesisInboxCount: BigInt(0),
-  genesisAssertionState,
   anyTrustFastConfirmer: zeroAddress,
+  genesisAssertionState,
+  genesisInboxCount: BigInt(0),
+  wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
 } as const;
