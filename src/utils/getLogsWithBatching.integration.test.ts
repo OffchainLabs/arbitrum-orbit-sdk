@@ -59,7 +59,7 @@ it(`getLogsWithBatching doesn't default to batching if first call is successful`
     fromBlock: expectedEvent.blockNumber,
     toBlock: 262_377_453n,
   });
-  expect(getLogsSpy.mock.results[0]).toEqual({ type: 'return', value: [expectedEvent] });
+  expect(getLogsSpy.mock.settledResults[0]).toEqual({ type: 'fulfilled', value: [expectedEvent] });
   expect(rollupInitializedEvents).toEqual([expectedEvent]);
 });
 
@@ -80,21 +80,21 @@ it(`getLogsWithBatching default to batching if first call is failing`, async () 
   // First call with the entire range plus 4 calls
   expect(getLogsSpy).toBeCalledTimes(5);
 
-  expect(getLogsSpy.mock.results[0].type).toEqual('throw');
+  expect(getLogsSpy.mock.settledResults[0].type).toEqual('rejected');
   expect(getLogsSpy.mock.calls[0][0]).toMatchObject({
     fromBlock: expectedEvent.blockNumber,
     toBlock: expectedEvent.blockNumber + 3n * 9_999n,
   });
 
   for (let i = 1; i <= 3; i++) {
-    expect(getLogsSpy.mock.results[i]).toEqual({ type: 'return', value: [] });
+    expect(getLogsSpy.mock.settledResults[i]).toEqual({ type: 'fulfilled', value: [] });
     expect(getLogsSpy.mock.calls[i][0]).toMatchObject({
       fromBlock: expectedEvent.blockNumber + (3n - BigInt(i)) * 9_999n + 1n,
       toBlock: expectedEvent.blockNumber + (4n - BigInt(i)) * 9_999n,
     });
   }
 
-  expect(getLogsSpy.mock.results[4]).toEqual({ type: 'return', value: [expectedEvent] });
+  expect(getLogsSpy.mock.settledResults[4]).toEqual({ type: 'fulfilled', value: [expectedEvent] });
   expect(getLogsSpy.mock.calls[4][0]).toMatchObject({
     fromBlock: expectedEvent.blockNumber,
     toBlock: expectedEvent.blockNumber,
@@ -128,7 +128,10 @@ describe('when stopWhenFound option is set to true', () => {
       fromBlock: 0n,
       toBlock: expectedEvent.blockNumber + 10_000n,
     });
-    expect(getLogsSpy.mock.results[0]).toEqual({ type: 'return', value: [expectedEvent] });
+    expect(getLogsSpy.mock.settledResults[0]).toEqual({
+      type: 'fulfilled',
+      value: [expectedEvent],
+    });
     expect(rollupInitializedEvents).toEqual([expectedEvent]);
   });
 
@@ -152,19 +155,22 @@ describe('when stopWhenFound option is set to true', () => {
       },
     );
     expect(getLogsSpy).toBeCalledTimes(3);
-    expect(getLogsSpy.mock.results[0].type).toEqual('throw');
+    expect(getLogsSpy.mock.settledResults[0].type).toEqual('rejected');
     expect(getLogsSpy.mock.calls[0][0]).toMatchObject({
       fromBlock: 0n,
       toBlock: expectedEvent.blockNumber + 10_000n,
     });
 
-    expect(getLogsSpy.mock.results[1]).toEqual({ type: 'return', value: [] });
+    expect(getLogsSpy.mock.settledResults[1]).toEqual({ type: 'fulfilled', value: [] });
     expect(getLogsSpy.mock.calls[1][0]).toMatchObject({
       fromBlock: expectedEvent.blockNumber + 2n,
       toBlock: expectedEvent.blockNumber + 10_000n,
     });
 
-    expect(getLogsSpy.mock.results[2]).toEqual({ type: 'return', value: [expectedEvent] });
+    expect(getLogsSpy.mock.settledResults[2]).toEqual({
+      type: 'fulfilled',
+      value: [expectedEvent],
+    });
     expect(getLogsSpy.mock.calls[2][0]).toMatchObject({
       fromBlock: expectedEvent.blockNumber - 9_999n + 2n,
       toBlock: expectedEvent.blockNumber + 1n,
@@ -195,7 +201,10 @@ describe('when batch size is set', () => {
       },
     );
     expect(getLogsSpy).toBeCalledTimes(1);
-    expect(getLogsSpy.mock.results[0]).toEqual({ type: 'return', value: [expectedEvent] });
+    expect(getLogsSpy.mock.settledResults[0]).toEqual({
+      type: 'fulfilled',
+      value: [expectedEvent],
+    });
     expect(getLogsSpy.mock.calls[0][0]).toMatchObject({
       fromBlock: 0n,
       toBlock: expectedEvent.blockNumber + 10_000n,
@@ -224,25 +233,28 @@ describe('when batch size is set', () => {
       },
     );
 
-    expect(getLogsSpy.mock.results[0].type).toEqual('throw');
+    expect(getLogsSpy.mock.settledResults[0].type).toEqual('rejected');
     expect(getLogsSpy.mock.calls[0][0]).toMatchObject({
       fromBlock: expectedEvent.blockNumber,
       toBlock: expectedEvent.blockNumber + 14_000n,
     });
 
-    expect(getLogsSpy.mock.results[1]).toEqual({ type: 'return', value: [] });
+    expect(getLogsSpy.mock.settledResults[1]).toEqual({ type: 'fulfilled', value: [] });
     expect(getLogsSpy.mock.calls[1][0]).toMatchObject({
       fromBlock: expectedEvent.blockNumber + 9_000n + 1n,
       toBlock: expectedEvent.blockNumber + 14_000n,
     });
 
-    expect(getLogsSpy.mock.results[2]).toEqual({ type: 'return', value: [] });
+    expect(getLogsSpy.mock.settledResults[2]).toEqual({ type: 'fulfilled', value: [] });
     expect(getLogsSpy.mock.calls[2][0]).toMatchObject({
       fromBlock: expectedEvent.blockNumber + 4_000n + 1n,
       toBlock: expectedEvent.blockNumber + 9_000n,
     });
 
-    expect(getLogsSpy.mock.results[3]).toEqual({ type: 'return', value: [expectedEvent] });
+    expect(getLogsSpy.mock.settledResults[3]).toEqual({
+      type: 'fulfilled',
+      value: [expectedEvent],
+    });
     expect(getLogsSpy.mock.calls[3][0]).toMatchObject({
       fromBlock: expectedEvent.blockNumber,
       toBlock: expectedEvent.blockNumber + 4_000n,
