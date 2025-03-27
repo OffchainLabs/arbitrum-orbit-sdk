@@ -36,7 +36,17 @@ function sleep(ms: number = 1_000) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// @ts-ignore
+mainnet.rpcUrls.default.http[0] = 'https://mainnet.gateway.tenderly.co';
+// @ts-ignore
+mainnet.rpcUrls.public.http[0] = 'https://mainnet.gateway.tenderly.co';
+// @ts-ignore
+sepolia.rpcUrls.default.http[0] = 'https://sepolia.gateway.tenderly.co';
+// @ts-ignore
+sepolia.rpcUrls.public.http[0] = 'https://sepolia.gateway.tenderly.co';
+
 const arbiscanApiKey = loadApiKey('ARBISCAN_API_KEY');
+const arbiscanNovaApiKey = loadApiKey('ARBISCAN_NOVA_API_KEY');
 const etherscanApiKey = loadApiKey('ETHERSCAN_API_KEY');
 const basescanApikey = loadApiKey('BASESCAN_API_KEY');
 
@@ -53,7 +63,7 @@ const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string 
   },
   [arbitrumNova.id]: {
     url: 'https://api-nova.arbiscan.io/api',
-    apiKey: arbiscanApiKey,
+    apiKey: arbiscanNovaApiKey,
   },
   [base.id]: {
     url: 'https://api.basescan.org/api',
