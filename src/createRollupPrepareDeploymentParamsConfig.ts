@@ -115,12 +115,10 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     ...paramsByParentBlockTime,
     ...params,
     stakeToken: params.stakeToken ?? getWethAddress(client),
-    baseStake: params.baseStake ?? parseEther(String(0.1)),
     // todo: nicer defaults, currently based on this
     // https://github.com/OffchainLabs/nitro-contracts/pull/312/files#diff-9f526a29af0fe82b358ec76bde5921666dca4b51d1d7ee1bc7bfbe1251032107
     minimumAssertionPeriod: BigInt(75),
     validatorAfkBlocks: BigInt(201600),
-    miniStakeValues: [BigInt(4), BigInt(2), BigInt(1)],
     layerZeroBlockEdgeHeight: BigInt(2 ** 5),
     layerZeroBigStepEdgeHeight: BigInt(2 ** 5),
     layerZeroSmallStepEdgeHeight: BigInt(2 ** 5),
