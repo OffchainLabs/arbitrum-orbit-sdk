@@ -19,7 +19,6 @@ export const defaults = {
   layerZeroBlockEdgeHeight: BigInt(2 ** 26),
   layerZeroBigStepEdgeHeight: BigInt(2 ** 19),
   layerZeroSmallStepEdgeHeight: BigInt(2 ** 23),
-  miniStakeValues: [BigInt(0), BigInt(1), BigInt(1)],
   numBigStepLevel: 1,
   wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
 } as const;

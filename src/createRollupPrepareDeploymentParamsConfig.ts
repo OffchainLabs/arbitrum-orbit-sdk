@@ -113,6 +113,7 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
   const defaultsForStake = {
     stakeToken: getWethAddress(client),
     baseStake: parseEther('1'),
+    miniStakeValues: [BigInt(0), BigInt(1), BigInt(1)],
     loserStakeEscrow: params.owner,
   };
 
