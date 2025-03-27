@@ -1,4 +1,4 @@
-import { parseEther, zeroAddress, zeroHash } from 'viem';
+import { zeroAddress, zeroHash } from 'viem';
 
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from './createRollupPrepareDeploymentParamsConfig';
@@ -14,7 +14,6 @@ const genesisAssertionState: Config['genesisAssertionState'] = {
 
 export const defaults = {
   anyTrustFastConfirmer: zeroAddress,
-  baseStake: parseEther('1'),
   genesisAssertionState,
   genesisInboxCount: BigInt(0),
   layerZeroBlockEdgeHeight: BigInt(2 ** 26),

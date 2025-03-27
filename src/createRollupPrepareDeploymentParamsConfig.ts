@@ -110,11 +110,17 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     };
   }
 
+  const defaultsForStake = {
+    stakeToken: getWethAddress(client),
+    baseStake: parseEther('1'),
+    loserStakeEscrow: params.owner,
+  };
+
   return {
     ...defaults,
+    ...defaultsForStake,
     ...paramsByParentBlockTime,
     ...params,
-    stakeToken: params.stakeToken ?? getWethAddress(client),
     // todo: nicer defaults, currently based on this
     // https://github.com/OffchainLabs/nitro-contracts/pull/312/files#diff-9f526a29af0fe82b358ec76bde5921666dca4b51d1d7ee1bc7bfbe1251032107
     minimumAssertionPeriod: BigInt(75),
@@ -125,8 +131,6 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
       max: BigInt(14400),
       replenishRateInBasis: BigInt(500),
     },
-    // default to chain owner if not provided
-    loserStakeEscrow: params.loserStakeEscrow ?? params.owner,
     chainConfig: JSON.stringify(
       chainConfig ??
         prepareChainConfig({
