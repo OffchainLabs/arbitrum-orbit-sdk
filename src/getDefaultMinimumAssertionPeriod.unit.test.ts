@@ -4,7 +4,7 @@ import { chains } from './chains';
 import { ParentChainId } from './types/ParentChain';
 import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
 
-it('returns default value for challengeGracePeriodBlocks based on parent chain', () => {
+it('returns default value for minimumAssertionPeriod based on parent chain', () => {
   expect(
     chains
       .filter((chain) => chain.id !== 333333)

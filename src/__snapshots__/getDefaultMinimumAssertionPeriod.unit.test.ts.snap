@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`returns default value for challengeGracePeriodBlocks based on parent chain 1`] = `
+exports[`returns default value for minimumAssertionPeriod based on parent chain 1`] = `
 {
   "1": 75n,
   "11155111": 75n,
