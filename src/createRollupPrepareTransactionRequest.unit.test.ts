@@ -292,6 +292,9 @@ it(`fails to prepare transaction request if "params.maxDataSize" is not provided
           owner: deployer.address,
           chainConfig,
           confirmPeriodBlocks: 1n,
+          challengeGracePeriodBlocks: 2n,
+          minimumAssertionPeriod: 3n,
+          validatorAfkBlocks: 4n,
           sequencerInboxMaxTimeVariation: {
             delayBlocks: 2n,
             futureBlocks: 3n,
@@ -403,6 +406,9 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
         owner: deployer.address,
         chainConfig,
         confirmPeriodBlocks: 1n,
+        challengeGracePeriodBlocks: 2n,
+        minimumAssertionPeriod: 3n,
+        validatorAfkBlocks: 4n,
         sequencerInboxMaxTimeVariation: {
           delayBlocks: 2n,
           futureBlocks: 3n,
