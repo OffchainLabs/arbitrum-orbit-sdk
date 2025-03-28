@@ -1,7 +1,6 @@
 import { Client, Transport, Chain } from 'viem';
 
 import { ParentChainId, validateParentChain } from './types/ParentChain';
-import { parentChainIsMainnet } from './parentChainIsMainnet';
 import { getParentChainBlockTime } from './getParentChainBlockTime';
 
 export function getDefaultValidatorAfkBlocks<TChain extends Chain | undefined>(
@@ -16,12 +15,8 @@ export function getDefaultValidatorAfkBlocks<TChain extends Chain | undefined>(
     );
   }
 
-  const isMainnet = parentChainIsMainnet(parentChainId);
   const blocksPerMinute = 60 / getParentChainBlockTime(parentChainId);
 
-  return isMainnet
-    ? // 28 days
-      BigInt(28 * 24 * 60 * blocksPerMinute)
-    : // 7 days
-      BigInt(7 * 24 * 60 * blocksPerMinute);
+  // 28 days
+  return BigInt(28 * 24 * 60 * blocksPerMinute);
 }
