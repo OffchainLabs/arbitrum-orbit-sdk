@@ -17,6 +17,11 @@ export function getDefaultValidatorAfkBlocks<TChain extends Chain | undefined>(
 
   const blocksPerMinute = 60 / getParentChainBlockTime(parentChainId);
 
+  // https://github.com/OffchainLabs/nitro-contracts/blob/main/src/rollup/RollupAdminLogic.sol#L58-L60
+  //
   // 28 days
+  //
+  // Since it can take 14 days under normal circumstances to confirm an assertion, this means
+  // the validators will have been inactive for a further 14 days before the whitelist is removed.
   return BigInt(28 * 24 * 60 * blocksPerMinute);
 }
