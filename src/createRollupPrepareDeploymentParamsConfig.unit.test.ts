@@ -144,6 +144,70 @@ it('fails to create a config for a chain on top of a custom parent chain if "con
   ).toThrowError('"params.confirmPeriodBlocks" must be provided when using a custom parent chain');
 });
 
+it('fails to create a config for a chain on top of a custom parent chain if "challengeGracePeriodBlocks" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+    }),
+  ).toThrowError(
+    '"params.challengeGracePeriodBlocks" must be provided when using a custom parent chain',
+  );
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "minimumAssertionPeriod" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+    }),
+  ).toThrowError(
+    '"params.minimumAssertionPeriod" must be provided when using a custom parent chain',
+  );
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "validatorAfkBlocks" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+      minimumAssertionPeriod: 3n,
+    }),
+  ).toThrowError('"params.validatorAfkBlocks" must be provided when using a custom parent chain');
+});
+
 it('fails to create a config for a chain on top of a custom parent chain if "sequencerInboxMaxTimeVariation" is not provided', () => {
   const chain = testHelper_createCustomParentChain();
 
@@ -159,6 +223,9 @@ it('fails to create a config for a chain on top of a custom parent chain if "seq
       owner: vitalik,
       chainId: BigInt(chain.id),
       confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+      minimumAssertionPeriod: 3n,
+      validatorAfkBlocks: 4n,
     }),
   ).toThrowError(
     '"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.',
@@ -183,11 +250,14 @@ it('creates a config for a chain on top of a custom parent chain', () => {
       owner: vitalik,
       chainId: BigInt(chain.id),
       confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+      minimumAssertionPeriod: 3n,
+      validatorAfkBlocks: 4n,
       sequencerInboxMaxTimeVariation: {
-        delayBlocks: 2n,
-        futureBlocks: 3n,
-        delaySeconds: 4n,
-        futureSeconds: 5n,
+        delayBlocks: 1n,
+        futureBlocks: 2n,
+        delaySeconds: 3n,
+        futureSeconds: 4n,
       },
     }),
   ).toMatchSnapshot();

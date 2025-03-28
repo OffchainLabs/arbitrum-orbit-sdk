@@ -30,6 +30,19 @@ it('should return true for AnyTrust chain (RollupCreator v2.1)', async () => {
   expect(isAnyTrustChain).toBeTruthy();
 });
 
+it('should return true for AnyTrust chain (RollupCreator v3.0)', async () => {
+  const client = createPublicClient({
+    chain: arbitrumSepolia,
+    transport: http(),
+  });
+  // https://sepolia.arbiscan.io/tx/0x59ad9d153ff86cde48441436230141e618a302baabbb501124c716fda5e72d9c
+  const isAnyTrustChain = await isAnyTrust({
+    publicClient: client,
+    rollup: '0xC913879A24d1e176AB7113857712C8CDa059C128',
+  });
+  expect(isAnyTrustChain).toBeTruthy();
+});
+
 it('should return false for non AnyTrust chain (RollupCreator v1.1)', async () => {
   const client = createPublicClient({
     chain: arbitrumSepolia,
@@ -52,6 +65,19 @@ it('should return false for non AnyTrust chain (RollupCreator v2.1)', async () =
   const isAnyTrustChain = await isAnyTrust({
     publicClient: client,
     rollup: '0xD0c7B5C4E8f72E0750ed9dc70A10cf6F5Afd4787',
+  });
+  expect(isAnyTrustChain).toBeFalsy();
+});
+
+it('should return false for non AnyTrust chain (RollupCreator v3.0)', async () => {
+  const client = createPublicClient({
+    chain: arbitrumSepolia,
+    transport: http(),
+  });
+  // https://sepolia.arbiscan.io/tx/0xda485d8ab8d47a8e9ea46677df8790b94faf3888fb1afbc52bb7bc104c29c3f3
+  const isAnyTrustChain = await isAnyTrust({
+    publicClient: client,
+    rollup: '0x08061Bd37Dc6d251435b994aBf57b087CE9b58fa',
   });
   expect(isAnyTrustChain).toBeFalsy();
 });

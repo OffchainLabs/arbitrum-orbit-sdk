@@ -12,7 +12,7 @@ export type NodeConfigChainInfoJson = [
       'inbox': string;
       'sequencer-inbox': string;
       'rollup': string;
-      'validator-utils': string;
+      'validator-utils'?: string;
       'validator-wallet-creator': string;
       'deployed-at': number;
     };
