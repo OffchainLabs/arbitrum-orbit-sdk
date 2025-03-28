@@ -126,6 +126,9 @@ import {
 import * as utils from './utils';
 
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
+import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
+import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
+import { getDefaultValidatorAfkBlocks } from './getDefaultValidatorAfkBlocks';
 import {
   getDefaultSequencerInboxMaxTimeVariation,
   SequencerInboxMaxTimeVariation,
@@ -282,6 +285,9 @@ export {
   FeeRouterDeployRewardDistributorParams,
   //
   getDefaultConfirmPeriodBlocks,
+  getDefaultChallengeGracePeriodBlocks,
+  getDefaultMinimumAssertionPeriod,
+  getDefaultValidatorAfkBlocks,
   getDefaultSequencerInboxMaxTimeVariation,
   SequencerInboxMaxTimeVariation,
   //
