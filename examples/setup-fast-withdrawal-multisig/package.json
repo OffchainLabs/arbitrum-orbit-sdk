@@ -1,0 +1,15 @@
+{
+  "name": "setup-fast-withdrawal",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --outDir dist"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "typescript": "^5.2.2",
+    "@safe-global/api-kit": "^2.4.5",
+    "@safe-global/safe-core-sdk-types": "^5.1.0"
+  }
+}
