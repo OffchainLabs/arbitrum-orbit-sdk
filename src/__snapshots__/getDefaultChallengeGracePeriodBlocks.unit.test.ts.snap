@@ -5,7 +5,6 @@ exports[`returns default value for challengeGracePeriodBlocks based on parent ch
   "1": 14400n,
   "11155111": 14400n,
   "1337": 14400n,
-  "17000": 14400n,
   "412346": 14400n,
   "42161": 14400n,
   "421614": 14400n,
