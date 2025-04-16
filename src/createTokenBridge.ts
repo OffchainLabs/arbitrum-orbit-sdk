@@ -30,7 +30,7 @@ import {
   CreateTokenBridgeSetWethGatewayTransactionReceipt,
   createTokenBridgePrepareSetWethGatewayTransactionReceipt,
 } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
-import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { isNonZeroAddress } from './utils/isNonZeroAddress';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { TransactionRequestGasOverrides } from './utils/gasOverrides';
 import { getBlockExplorerUrl } from './utils/getBlockExplorerUrl';
@@ -197,7 +197,7 @@ export async function createTokenBridge<
     throw new Error(`Token bridge contracts for Rollup ${rollupAddress} are already deployed`);
   }
 
-  const isCustomFeeTokenBridge = isCustomFeeTokenAddress(nativeTokenAddress);
+  const isCustomFeeTokenBridge = isNonZeroAddress(nativeTokenAddress);
   if (isCustomFeeTokenBridge) {
     // set the custom fee token
     // prepare transaction to approve custom fee token spend
