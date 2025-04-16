@@ -5,7 +5,7 @@ import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
 import { rollupCreatorABI } from './contracts/RollupCreator';
 import { validateParentChain } from './types/ParentChain';
-import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { isValidNonZeroAddress } from './utils/isCustomFeeTokenAddress';
 import { ChainConfig } from './types/ChainConfig';
 import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
@@ -60,7 +60,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
-  if (isCustomFeeTokenAddress(params.nativeToken)) {
+  if (isValidNonZeroAddress(params.nativeToken)) {
     // custom fee token is only allowed for anytrust chains
     if (!isAnyTrustChainConfig(chainConfig)) {
       throw new Error(

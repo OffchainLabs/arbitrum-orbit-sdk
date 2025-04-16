@@ -1,5 +1,5 @@
-import { Address, zeroAddress } from 'viem';
+import { Address, isAddress, zeroAddress } from 'viem';
 
-export function isCustomFeeTokenAddress(nativeToken: Address | undefined): nativeToken is Address {
-  return typeof nativeToken !== 'undefined' && nativeToken !== zeroAddress;
+export function isValidNonZeroAddress(address: Address | undefined): address is Address {
+  return typeof address !== 'undefined' && isAddress(address) && address !== zeroAddress;
 }

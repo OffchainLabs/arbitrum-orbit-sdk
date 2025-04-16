@@ -3,7 +3,7 @@ import { Chain, PublicClient, Transport, Address } from 'viem';
 import { CreateRollupParams } from './types/createRollupTypes';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
 
-import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { isValidNonZeroAddress } from './utils/isCustomFeeTokenAddress';
 
 export async function createRollupGetCallValue<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
@@ -15,7 +15,7 @@ export async function createRollupGetCallValue<TChain extends Chain | undefined>
   }
 
   // when using a custom fee token, the retryable tickets will be paid for in the custom fee token, so no callvalue is necessary
-  if (isCustomFeeTokenAddress(params.nativeToken)) {
+  if (isValidNonZeroAddress(params.nativeToken)) {
     return BigInt(0);
   }
 
