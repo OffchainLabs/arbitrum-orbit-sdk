@@ -12,7 +12,7 @@ import {
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
-import { isCustomFeeTokenAddress } from './utils/isCustomFeeTokenAddress';
+import { isNonZeroAddress } from './utils/isNonZeroAddress';
 import { defaults as createRollupDefaults } from './createRollupDefaults';
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { createRollupDefaultRetryablesFees } from './constants';
@@ -108,7 +108,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
   const [, , ethTemplateInbox] = ethBasedTemplates;
   const [, , erc20TemplateInbox] = erc20BasedTemplates;
 
-  const isCustomGasToken = isCustomFeeTokenAddress(nativeToken);
+  const isCustomGasToken = isNonZeroAddress(nativeToken);
 
   const inbox = isCustomGasToken ? erc20TemplateInbox : ethTemplateInbox;
   const maxFeePerGas = maxFeePerGasForRetryables ?? createRollupDefaults.maxFeePerGasForRetryables;
