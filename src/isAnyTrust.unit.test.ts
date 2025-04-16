@@ -74,7 +74,7 @@ it('should return false for non AnyTrust chain (RollupCreator v3.1)', async () =
     chain: sepolia,
     transport: http('https://sepolia.gateway.tenderly.co'),
   });
-  // https://sepolia.arbiscan.io/tx/0x751f1b2bab2806769f663db2141d434e4d8c9b65bc4a5d7ca10ed597f918191f
+  // https://sepolia.etherscan.io/tx/0x751f1b2bab2806769f663db2141d434e4d8c9b65bc4a5d7ca10ed597f918191f
   const isAnyTrustChain = await isAnyTrust({
     publicClient: client,
     rollup: '0x6677e09F9475Bb66C320Cd50C5db8Ae75D9E42b7',
