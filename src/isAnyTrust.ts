@@ -5,7 +5,7 @@ import { rollupCreatorABI as rollupCreatorV3Dot1ABI } from './contracts/RollupCr
 import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 
-const createRollupV3Dot0ABI = getAbiItem({ abi: rollupCreatorV3Dot1ABI, name: 'createRollup' });
+const createRollupV3Dot1ABI = getAbiItem({ abi: rollupCreatorV3Dot1ABI, name: 'createRollup' });
 const createRollupV2Dot1ABI = getAbiItem({ abi: rollupCreatorV2Dot1ABI, name: 'createRollup' });
 const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
 
@@ -33,7 +33,7 @@ export async function isAnyTrust<TChain extends Chain>({
   // try parsing from multiple RollupCreator versions
   [
     // v3.1
-    createRollupV3Dot0ABI,
+    createRollupV3Dot1ABI,
     // v2.1
     createRollupV2Dot1ABI,
     // v1.1
