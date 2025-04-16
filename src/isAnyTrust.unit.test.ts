@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { createPublicClient, http } from 'viem';
-import { arbitrumNova, arbitrumSepolia } from 'viem/chains';
+import { sepolia, arbitrumNova, arbitrumSepolia } from 'viem/chains';
 
 import { isAnyTrust } from './isAnyTrust';
 
@@ -30,15 +30,15 @@ it('should return true for AnyTrust chain (RollupCreator v2.1)', async () => {
   expect(isAnyTrustChain).toBeTruthy();
 });
 
-it('should return true for AnyTrust chain (RollupCreator v3.0)', async () => {
+it('should return true for AnyTrust chain (RollupCreator v3.1)', async () => {
   const client = createPublicClient({
-    chain: arbitrumSepolia,
-    transport: http(),
+    chain: sepolia,
+    transport: http('https://sepolia.gateway.tenderly.co'),
   });
-  // https://sepolia.arbiscan.io/tx/0x59ad9d153ff86cde48441436230141e618a302baabbb501124c716fda5e72d9c
+  // https://sepolia.etherscan.io/tx/0xa9d3653df519f230d7b2995c13a7bca2667cefdd82ae0c1c76c834ffb92d8291
   const isAnyTrustChain = await isAnyTrust({
     publicClient: client,
-    rollup: '0xC913879A24d1e176AB7113857712C8CDa059C128',
+    rollup: '0x0F52486d49959C6b568746dD4D8A7BBa0702AC9D',
   });
   expect(isAnyTrustChain).toBeTruthy();
 });
@@ -69,15 +69,15 @@ it('should return false for non AnyTrust chain (RollupCreator v2.1)', async () =
   expect(isAnyTrustChain).toBeFalsy();
 });
 
-it('should return false for non AnyTrust chain (RollupCreator v3.0)', async () => {
+it('should return false for non AnyTrust chain (RollupCreator v3.1)', async () => {
   const client = createPublicClient({
-    chain: arbitrumSepolia,
-    transport: http(),
+    chain: sepolia,
+    transport: http('https://sepolia.gateway.tenderly.co'),
   });
-  // https://sepolia.arbiscan.io/tx/0xda485d8ab8d47a8e9ea46677df8790b94faf3888fb1afbc52bb7bc104c29c3f3
+  // https://sepolia.arbiscan.io/tx/0x751f1b2bab2806769f663db2141d434e4d8c9b65bc4a5d7ca10ed597f918191f
   const isAnyTrustChain = await isAnyTrust({
     publicClient: client,
-    rollup: '0x08061Bd37Dc6d251435b994aBf57b087CE9b58fa',
+    rollup: '0x6677e09F9475Bb66C320Cd50C5db8Ae75D9E42b7',
   });
   expect(isAnyTrustChain).toBeFalsy();
 });
