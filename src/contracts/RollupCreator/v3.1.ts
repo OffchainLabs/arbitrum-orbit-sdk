@@ -117,6 +117,7 @@ export const rollupCreatorABI = [
           { internalType: 'uint256', name: 'maxFeePerGasForRetryables', type: 'uint256' },
           { internalType: 'address[]', name: 'batchPosters', type: 'address[]' },
           { internalType: 'address', name: 'batchPosterManager', type: 'address' },
+          { internalType: 'contract IFeeTokenPricer', name: 'feeTokenPricer', type: 'address' },
         ],
         internalType: 'struct RollupCreator.RollupDeploymentParams',
         name: 'deployParams',

@@ -106,8 +106,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  const batchPosterManager = params.batchPosterManager ?? zeroAddress;
-  const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
+  const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
 
   // @ts-ignore (todo: fix viem type issue)
