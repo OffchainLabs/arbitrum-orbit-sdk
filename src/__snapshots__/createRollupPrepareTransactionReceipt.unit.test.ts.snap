@@ -36,19 +36,19 @@ exports[`successfully parses core contracts from a tx receipt on RollupCreator v
 }
 `;
 
-exports[`successfully parses core contracts from a tx receipt on RollupCreator v3.0 1`] = `
+exports[`successfully parses core contracts from a tx receipt on RollupCreator v3.1 1`] = `
 {
-  "adminProxy": "0x2BfBACEF55215c80Ab12E2D03bc3c1963cebcDC3",
-  "bridge": "0xB5b051649858f75f2B386Da5Fd555C4DA713C839",
-  "challengeManager": "0x3f02252EbE2E3dAbE2e028C94E0B479a13d0FfA1",
-  "deployedAtBlockNumber": 135436199,
-  "inbox": "0xcc5037C3c4438ad5Cce87c813574A93b1D252a3d",
+  "adminProxy": "0xf58519b0A94fd7a12C99c30f6FE984EFea1ac1de",
+  "bridge": "0x633dE45a02bB399fA519B8F91f62F9Ef57ACDE52",
+  "challengeManager": "0x0938581d28E37EbD23Ef448fd02F8beB206e0383",
+  "deployedAtBlockNumber": 8131558,
+  "inbox": "0x05F27c4F65abBe0c59a13A924148Da3eafF91C53",
   "nativeToken": "0x0000000000000000000000000000000000000000",
-  "outbox": "0xb8860af98521D5fF5EEa3Ea67b78a648e607C483",
-  "rollup": "0x08061Bd37Dc6d251435b994aBf57b087CE9b58fa",
-  "rollupEventInbox": "0x8E6467a40E4b1d1c6841cBa1b2eEF160F445a386",
-  "sequencerInbox": "0xb17A8622CF559B5eB29ef373486155515938B78F",
-  "upgradeExecutor": "0xB7A15E401877C165f9b9C293b4466b3445C76349",
-  "validatorWalletCreator": "0xab1b430e7a8eCb135bb6CC114F50DaCd03564cED",
+  "outbox": "0x5F54ebfC67fa30565b725e709A5712dcD67C2880",
+  "rollup": "0x6677e09F9475Bb66C320Cd50C5db8Ae75D9E42b7",
+  "rollupEventInbox": "0x12d28390eB4515e98cd467Cec394BE1a2c79E481",
+  "sequencerInbox": "0xdddbBeD40a93985DDC1fbeaF8d588804919eF707",
+  "upgradeExecutor": "0x96Eb6Da3FA34494AfDdc3466ffdc9DFc194008c3",
+  "validatorWalletCreator": "0x1cB01EA4b15884DEf0e64201C342681B897Db38F",
 }
 `;
