@@ -25,6 +25,7 @@ export const sequencerInboxABI = [
     name: 'BadSequencerNumber',
     type: 'error',
   },
+  { inputs: [], name: 'CannotSetFeeTokenPricer', type: 'error' },
   { inputs: [], name: 'DataBlobsNotSupported', type: 'error' },
   {
     inputs: [
@@ -112,6 +113,12 @@ export const sequencerInboxABI = [
       },
     ],
     name: 'BufferConfigSet',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: 'address', name: 'feeTokenPricer', type: 'address' }],
+    name: 'FeeTokenPricerSet',
     type: 'event',
   },
   {
@@ -477,6 +484,13 @@ export const sequencerInboxABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'feeTokenPricer',
+    outputs: [{ internalType: 'contract IFeeTokenPricer', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'uint256', name: '_totalDelayedMessagesRead', type: 'uint256' },
       { internalType: 'uint8', name: 'kind', type: 'uint8' },
@@ -535,6 +549,7 @@ export const sequencerInboxABI = [
         name: 'bufferConfig_',
         type: 'tuple',
       },
+      { internalType: 'contract IFeeTokenPricer', name: 'feeTokenPricer_', type: 'address' },
     ],
     name: 'initialize',
     outputs: [],
@@ -662,6 +677,15 @@ export const sequencerInboxABI = [
       },
     ],
     name: 'setBufferConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'contract IFeeTokenPricer', name: 'feeTokenPricer_', type: 'address' },
+    ],
+    name: 'setFeeTokenPricer',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
