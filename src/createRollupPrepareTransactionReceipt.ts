@@ -7,15 +7,15 @@ import {
   DecodeEventLogReturnType,
 } from 'viem';
 
-import { rollupCreatorABI as rollupCreatorV3Dot0ABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV3Dot1ABI } from './contracts/RollupCreator';
 import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 
 import { CoreContracts } from './types/CoreContracts';
 
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt): Log<bigint, number> {
-  // v3.0
+  // v3.1
   const v3Dot0EventSelector = getEventSelector(
-    getAbiItem({ abi: rollupCreatorV3Dot0ABI, name: 'RollupCreated' }),
+    getAbiItem({ abi: rollupCreatorV3Dot1ABI, name: 'RollupCreated' }),
   );
   // v2.1 and v1.1 are the same, so we only need to handle v2.1
   const v2Dot1EventSelector = getEventSelector(
@@ -37,8 +37,8 @@ function findRollupCreatedEventLog(txReceipt: TransactionReceipt): Log<bigint, n
 }
 
 type DecodeRollupCreatedEventLogReturnType = DecodeEventLogReturnType<
-  // v3.0
-  | typeof rollupCreatorV3Dot0ABI
+  // v3.1
+  | typeof rollupCreatorV3Dot1ABI
   // v2.1 and v1.1 are the same, so we only need to handle v2.1
   | typeof rollupCreatorV2Dot1ABI,
   'RollupCreated'
@@ -51,8 +51,8 @@ function decodeRollupCreatedEventLog(
 
   // try parsing from multiple RollupCreator versions
   [
-    // v3.0
-    rollupCreatorV3Dot0ABI,
+    // v3.1
+    rollupCreatorV3Dot1ABI,
     // v2.1 and v1.1 are the same, so we only need to handle v2.1
     rollupCreatorV2Dot1ABI,
   ].forEach((abi) => {
