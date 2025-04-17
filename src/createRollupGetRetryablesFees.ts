@@ -105,8 +105,9 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
     }),
   ]);
 
-  const [, , ethTemplateInbox] = ethBasedTemplates;
-  const [, , erc20TemplateInbox] = erc20BasedTemplates;
+  // bridge, sequencerInbox, delayBufferableSequencerInbox, inbox, rollupEventInbox, outbox
+  const [, , , ethTemplateInbox] = ethBasedTemplates;
+  const [, , , erc20TemplateInbox] = erc20BasedTemplates;
 
   const isCustomGasToken = isNonZeroAddress(nativeToken);
 

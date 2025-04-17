@@ -9,7 +9,7 @@ import {
   getFunctionSelector,
 } from 'viem';
 
-import { rollupCreatorABI } from './contracts/RollupCreator';
+import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
@@ -18,8 +18,8 @@ import { rollupABI } from './contracts/Rollup';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
-const createRollupABI = getAbiItem({ abi: rollupCreatorABI, name: 'createRollup' });
-const createRollupFunctionSelector = getFunctionSelector(createRollupABI);
+const createRollupV2Dot1ABI = getAbiItem({ abi: rollupCreatorV2Dot1ABI, name: 'createRollup' });
+const createRollupV2Dot1FunctionSelector = getFunctionSelector(createRollupV2Dot1ABI);
 
 const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
 const createRollupV1Dot1FunctionSelector = getFunctionSelector(createRollupV1Dot1ABI);
@@ -37,7 +37,7 @@ const ownerFunctionCalledEventAbi = getAbiItem({ abi: rollupABI, name: 'OwnerFun
 
 function getValidatorsFromFunctionData<
   TAbi extends
-    | (typeof createRollupABI)[]
+    | (typeof createRollupV2Dot1ABI)[]
     | (typeof createRollupV1Dot1ABI)[]
     | (typeof setValidatorABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
@@ -139,9 +139,9 @@ export async function getValidators<TChain extends Chain>(
     const txSelectedFunction = tx.input.slice(0, 10);
 
     switch (txSelectedFunction) {
-      case createRollupFunctionSelector: {
+      case createRollupV2Dot1FunctionSelector: {
         const [{ validators }] = getValidatorsFromFunctionData({
-          abi: [createRollupABI],
+          abi: [createRollupV2Dot1ABI],
           data: tx.input,
         });
 
