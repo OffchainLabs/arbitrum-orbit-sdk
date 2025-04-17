@@ -14,7 +14,7 @@ import { CoreContracts } from './types/CoreContracts';
 
 function findRollupCreatedEventLog(txReceipt: TransactionReceipt): Log<bigint, number> {
   // v3.1
-  const v3Dot0EventSelector = getEventSelector(
+  const v3Dot1EventSelector = getEventSelector(
     getAbiItem({ abi: rollupCreatorV3Dot1ABI, name: 'RollupCreated' }),
   );
   // v2.1 and v1.1 are the same, so we only need to handle v2.1
@@ -24,7 +24,7 @@ function findRollupCreatedEventLog(txReceipt: TransactionReceipt): Log<bigint, n
 
   const log = txReceipt.logs.find((log) => {
     const topic = log.topics[0];
-    return topic === v3Dot0EventSelector || topic === v2Dot1EventSelector;
+    return topic === v3Dot1EventSelector || topic === v2Dot1EventSelector;
   });
 
   if (typeof log === 'undefined') {
