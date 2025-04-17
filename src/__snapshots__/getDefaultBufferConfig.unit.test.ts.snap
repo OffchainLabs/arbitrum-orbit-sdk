@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`returns default value for bufferConfig based on parent chain 1`] = `
+{
+  "1": {
+    "max": 14400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 600n,
+  },
+  "11155111": {
+    "max": 14400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 600n,
+  },
+  "1337": {
+    "max": 14400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 600n,
+  },
+  "412346": {
+    "max": 14400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 600n,
+  },
+  "42161": {
+    "max": 14400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 600n,
+  },
+  "421614": {
+    "max": 14400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 600n,
+  },
+  "42170": {
+    "max": 14400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 600n,
+  },
+  "8453": {
+    "max": 86400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 3600n,
+  },
+  "84532": {
+    "max": 86400n,
+    "replenishRateInBasis": 500n,
+    "threshold": 3600n,
+  },
+}
+`;
