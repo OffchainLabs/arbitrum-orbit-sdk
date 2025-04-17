@@ -254,10 +254,10 @@ it('creates a config for a chain on top of a custom parent chain', () => {
       minimumAssertionPeriod: 3n,
       validatorAfkBlocks: 4n,
       sequencerInboxMaxTimeVariation: {
-        delayBlocks: 1n,
-        futureBlocks: 2n,
-        delaySeconds: 3n,
-        futureSeconds: 4n,
+        delayBlocks: 2n,
+        futureBlocks: 3n,
+        delaySeconds: 4n,
+        futureSeconds: 5n,
       },
     }),
   ).toMatchSnapshot();
