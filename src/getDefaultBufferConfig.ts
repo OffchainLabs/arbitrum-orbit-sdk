@@ -3,7 +3,6 @@ import { Client, Transport, Chain } from 'viem';
 import { ParentChainId, validateParentChain } from './types/ParentChain';
 import { getParentChainBlockTime } from './getParentChainBlockTime';
 
-// todo: get from abi
 export type BufferConfig = {
   threshold: bigint;
   max: bigint;
