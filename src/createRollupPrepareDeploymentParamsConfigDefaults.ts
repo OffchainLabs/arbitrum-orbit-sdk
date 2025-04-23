@@ -3,6 +3,12 @@ import { zeroAddress, zeroHash } from 'viem';
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from './createRollupPrepareDeploymentParamsConfig';
 
+const bufferConfig: Config['bufferConfig'] = {
+  threshold: BigInt(2 ** 32),
+  max: BigInt(2 ** 32),
+  replenishRateInBasis: BigInt(500),
+};
+
 const genesisAssertionState: Config['genesisAssertionState'] = {
   globalState: {
     bytes32Vals: [zeroHash, zeroHash],
@@ -14,6 +20,7 @@ const genesisAssertionState: Config['genesisAssertionState'] = {
 
 export const defaults = {
   anyTrustFastConfirmer: zeroAddress,
+  bufferConfig,
   genesisAssertionState,
   genesisInboxCount: BigInt(0),
   layerZeroBlockEdgeHeight: BigInt(2 ** 26),

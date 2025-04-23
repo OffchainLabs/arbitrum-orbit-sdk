@@ -158,13 +158,6 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     ...defaultsForStake,
     ...paramsByParentBlockTime,
     ...params,
-    // todo: nicer defaults, currently based on this
-    // https://github.com/OffchainLabs/nitro-contracts/pull/312/files#diff-9f526a29af0fe82b358ec76bde5921666dca4b51d1d7ee1bc7bfbe1251032107
-    bufferConfig: {
-      threshold: BigInt(600),
-      max: BigInt(14400),
-      replenishRateInBasis: BigInt(500),
-    },
     chainConfig: JSON.stringify(
       chainConfig ??
         prepareChainConfig({
