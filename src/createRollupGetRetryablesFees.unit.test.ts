@@ -6,7 +6,7 @@ import { createRollupGetRetryablesFees } from './createRollupGetRetryablesFees';
 
 const sepoliaClient = createPublicClient({
   chain: sepolia,
-  transport: http('https://sepolia.gateway.tenderly.co'),
+  transport: http('https://ethereum-sepolia-rpc.publicnode.com'),
 });
 
 it('successfully fetches retryable fees for an eth-based chain', async () => {
