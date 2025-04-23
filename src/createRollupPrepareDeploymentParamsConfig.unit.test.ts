@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { Address, createPublicClient, http } from 'viem';
+import { Address, createPublicClient, http, parseEther } from 'viem';
 
 import {
   arbitrumOne,
@@ -29,7 +29,12 @@ function getOverrides({ owner, chainId }: { owner: Address; chainId: bigint }) {
       },
     }),
     confirmPeriodBlocks: 4200n,
-    extraChallengeTimeBlocks: 5n,
+    challengeGracePeriodBlocks: 4201n,
+    bufferConfig: {
+      threshold: BigInt(2),
+      max: BigInt(2),
+      replenishRateInBasis: BigInt(25),
+    },
     loserStakeEscrow: '0x0000000000000000000000000000000000000001',
     sequencerInboxMaxTimeVariation: {
       delayBlocks: 200n,
@@ -37,6 +42,9 @@ function getOverrides({ owner, chainId }: { owner: Address; chainId: bigint }) {
       futureBlocks: 100n,
       futureSeconds: 1n,
     },
+    validatorAfkBlocks: 14n,
+    minimumAssertionPeriod: 15n,
+    baseStake: parseEther('3'),
     stakeToken: '0x0000000000000000000000000000000000000002',
     wasmModuleRoot: '0xWasmModuleRoot',
   } as const;
