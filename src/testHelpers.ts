@@ -182,9 +182,11 @@ export async function createRollupHelper({
 
 export function testHelper_createCustomParentChain(params?: { id?: number }) {
   const chainId = params?.id ?? generateChainId();
+
   const rollupCreator = privateKeyToAccount(generatePrivateKey()).address;
   const tokenBridgeCreator = privateKeyToAccount(generatePrivateKey()).address;
-  const weth = privateKeyToAccount(generatePrivateKey()).address;
+  // randomly generated and hardcoded because it must not change for snapshot tests
+  const weth = '0xabaF3D9f5cbDcE54cDc43b429d8f7154A3E19Afa';
 
   return {
     id: chainId,

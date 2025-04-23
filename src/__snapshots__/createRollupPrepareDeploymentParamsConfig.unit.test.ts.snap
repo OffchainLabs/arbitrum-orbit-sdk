@@ -46,7 +46,7 @@ exports[`creates a config for a chain on top of a custom parent chain 1`] = `
     "futureBlocks": 3n,
     "futureSeconds": 5n,
   },
-  "stakeToken": "0x8568eD68AE96Ec133AA32b12a9fE594C359d575b",
+  "stakeToken": "0xabaF3D9f5cbDcE54cDc43b429d8f7154A3E19Afa",
   "validatorAfkBlocks": 4n,
   "wasmModuleRoot": "0x184884e1eb9fefdc158f6c8ac912bb183bf3cf83f0090317e0bc4ac5860baa39",
 }
