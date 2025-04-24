@@ -31,9 +31,9 @@ function getOverrides({ owner, chainId }: { owner: Address; chainId: bigint }) {
     confirmPeriodBlocks: 4200n,
     challengeGracePeriodBlocks: 4201n,
     bufferConfig: {
-      threshold: BigInt(2),
-      max: BigInt(2),
-      replenishRateInBasis: BigInt(25),
+      threshold: 2n,
+      max: 2n,
+      replenishRateInBasis: 25n,
     },
     loserStakeEscrow: '0x0000000000000000000000000000000000000001',
     sequencerInboxMaxTimeVariation: {
