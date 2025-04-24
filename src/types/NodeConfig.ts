@@ -14,6 +14,7 @@ export type NodeConfigChainInfoJson = [
       'rollup': string;
       'validator-utils'?: string;
       'validator-wallet-creator': string;
+      'stake-token': string;
       'deployed-at': number;
     };
   },
