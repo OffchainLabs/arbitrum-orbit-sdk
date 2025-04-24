@@ -61,9 +61,10 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 
   if (isNonZeroAddress(params.nativeToken)) {
     const isRollupChain = chainConfig.arbitrum.DataAvailabilityCommittee === false;
+    const isFeeTokenPricerMissing = !isNonZeroAddress(params.feeTokenPricer);
 
     // fee token pricer is mandatory for custom gas token rollup chains
-    if (isRollupChain && !isNonZeroAddress(params.feeTokenPricer)) {
+    if (isRollupChain && isFeeTokenPricerMissing) {
       throw new Error(
         `"params.feeTokenPricer" must be provided for a custom gas token rollup chain.`,
       );
