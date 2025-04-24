@@ -59,7 +59,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   // the test env check is so we don't have to update all the unit tests for this case
   if (!isBoldSupported && process.env.NODE_ENV !== 'test') {
     throw new Error(
-      'BoLD is currently only supported on L2s, with support for L3s coming soon. If you wish to deploy an L3, please use an older version of the SDK.',
+      `BoLD is currently only supported on L2s, with support for L3s coming soon. If you wish to deploy an L3, please use an older version of the SDK that doesn't use BoLD.`,
     );
   }
 
