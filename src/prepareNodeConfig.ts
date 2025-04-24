@@ -30,6 +30,7 @@ export type PrepareNodeConfigParams = {
   coreContracts: CoreContracts;
   batchPosterPrivateKey: string;
   validatorPrivateKey: string;
+  stakeToken: string;
   parentChainId: ParentChainId;
   parentChainIsArbitrum?: boolean;
   parentChainRpcUrl: string;
@@ -51,6 +52,7 @@ export function prepareNodeConfig({
   coreContracts,
   batchPosterPrivateKey,
   validatorPrivateKey,
+  stakeToken,
   parentChainId,
   parentChainIsArbitrum: parentChainIsArbitrumParam,
   parentChainRpcUrl,
@@ -89,6 +91,7 @@ export function prepareNodeConfig({
             'rollup': coreContracts.rollup,
             'validator-utils': coreContracts.validatorUtils,
             'validator-wallet-creator': coreContracts.validatorWalletCreator,
+            'stake-token': stakeToken,
             'deployed-at': coreContracts.deployedAtBlockNumber,
           },
         },
