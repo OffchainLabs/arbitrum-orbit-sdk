@@ -64,8 +64,9 @@ async function main() {
     await parentChainPublicClient.getTransactionReceipt({ hash: txHash }),
   );
 
+  const config = tx.getInputs()[0].config;
   // get the chain config from the transaction inputs
-  const chainConfig: ChainConfig = JSON.parse(tx.getInputs()[0].config.chainConfig);
+  const chainConfig: ChainConfig = JSON.parse(config.chainConfig);
   // get the core contracts from the transaction receipt
   const coreContracts = txReceipt.getCoreContracts();
 
@@ -76,6 +77,7 @@ async function main() {
     coreContracts,
     batchPosterPrivateKey: process.env.BATCH_POSTER_PRIVATE_KEY as `0x${string}`,
     validatorPrivateKey: process.env.VALIDATOR_PRIVATE_KEY as `0x${string}`,
+    stakeToken: config.stakeToken,
     parentChainId: parentChain.id,
     parentChainRpcUrl: getRpcUrl(parentChain),
   };
