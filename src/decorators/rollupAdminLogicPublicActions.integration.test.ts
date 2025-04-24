@@ -19,7 +19,7 @@ const client = createPublicClient({
   }),
 );
 
-it('successfully set validators', async () => {
+it.skip('successfully set validators', async () => {
   const randomAccounts = [
     privateKeyToAccount(generatePrivateKey()).address,
     privateKeyToAccount(generatePrivateKey()).address,

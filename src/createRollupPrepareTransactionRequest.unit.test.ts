@@ -139,7 +139,7 @@ it(`fails to prepare transaction request if "params.validators" includes the zer
   ).rejects.toThrowError(`"params.validators" can't be empty or contain the zero address.`);
 });
 
-it(`fails to prepare transaction request if "params.nativeToken" is custom and chain is not anytrust`, async () => {
+it(`fails to prepare transaction request if "params.nativeToken" is custom, is Rollup chain and "params.feeTokenPricer" is not provided`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -167,7 +167,7 @@ it(`fails to prepare transaction request if "params.nativeToken" is custom and c
       publicClient,
     }),
   ).rejects.toThrowError(
-    `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
+    `"params.feeTokenPricer" must be provided for a custom gas token rollup chain.`,
   );
 });
 
@@ -292,6 +292,9 @@ it(`fails to prepare transaction request if "params.maxDataSize" is not provided
           owner: deployer.address,
           chainConfig,
           confirmPeriodBlocks: 1n,
+          challengeGracePeriodBlocks: 2n,
+          minimumAssertionPeriod: 3n,
+          validatorAfkBlocks: 4n,
           sequencerInboxMaxTimeVariation: {
             delayBlocks: 2n,
             futureBlocks: 3n,
@@ -403,6 +406,9 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
         owner: deployer.address,
         chainConfig,
         confirmPeriodBlocks: 1n,
+        challengeGracePeriodBlocks: 2n,
+        minimumAssertionPeriod: 3n,
+        validatorAfkBlocks: 4n,
         sequencerInboxMaxTimeVariation: {
           delayBlocks: 2n,
           futureBlocks: 3n,
@@ -427,7 +433,7 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
   expect(txRequest.gas).toEqual(1_000n);
 });
 
-it(`successfully prepare transaction request if "params.nativeToken" uses supported number of decimals`, async () => {
+it(`successfully prepares a transaction request with a custom gas token AnyTrust chain`, async () => {
   // generate a random chain id
   const chainId = generateChainId();
 
@@ -447,6 +453,41 @@ it(`successfully prepare transaction request if "params.nativeToken" uses suppor
       batchPosters: [deployer.address],
       validators: [deployer.address],
       nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d', // USDC
+    },
+    value: createRollupDefaultRetryablesFees,
+    account: deployer.address,
+    publicClient,
+    gasOverrides: { gasLimit: { base: 1_000n } },
+  });
+
+  expect(txRequest.account).toEqual(deployer.address);
+  expect(txRequest.from).toEqual(deployer.address);
+  expect(txRequest.to).toEqual(rollupCreatorAddress[arbitrumSepolia.id]);
+  expect(txRequest.chainId).toEqual(arbitrumSepolia.id);
+  expect(txRequest.gas).toEqual(1_000n);
+});
+
+it(`successfully prepares a transaction request with a custom gas token Rollup chain`, async () => {
+  // generate a random chain id
+  const chainId = generateChainId();
+
+  // create the chain config
+  const chainConfig = prepareChainConfig({
+    chainId,
+    arbitrum: { InitialChainOwner: deployer.address, DataAvailabilityCommittee: false },
+  });
+
+  const txRequest = await createRollupPrepareTransactionRequest({
+    params: {
+      config: createRollupPrepareDeploymentParamsConfig(publicClient, {
+        chainId: BigInt(chainId),
+        owner: deployer.address,
+        chainConfig,
+      }),
+      batchPosters: [deployer.address],
+      validators: [deployer.address],
+      nativeToken: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d', // USDC
+      feeTokenPricer: '0x31421C442c422BD16aef6ae44D3b11F404eeaBd9', // some address for the fee token pricer
     },
     value: createRollupDefaultRetryablesFees,
     account: deployer.address,

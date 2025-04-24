@@ -7,7 +7,6 @@ import { rollupCreatorABI } from './contracts/RollupCreator';
 import { validateParentChain } from './types/ParentChain';
 import { isNonZeroAddress } from './utils/isNonZeroAddress';
 import { ChainConfig } from './types/ChainConfig';
-import { isAnyTrustChainConfig } from './utils/isAnyTrustChainConfig';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
@@ -61,10 +60,13 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   const chainConfig: ChainConfig = JSON.parse(params.config.chainConfig);
 
   if (isNonZeroAddress(params.nativeToken)) {
-    // custom fee token is only allowed for anytrust chains
-    if (!isAnyTrustChainConfig(chainConfig)) {
+    const isRollupChain = chainConfig.arbitrum.DataAvailabilityCommittee === false;
+    const isFeeTokenPricerMissing = !isNonZeroAddress(params.feeTokenPricer);
+
+    // fee token pricer is mandatory for custom gas token rollup chains
+    if (isRollupChain && isFeeTokenPricerMissing) {
       throw new Error(
-        `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
+        `"params.feeTokenPricer" must be provided for a custom gas token rollup chain.`,
       );
     }
 
@@ -106,8 +108,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     }
   }
 
-  const batchPosterManager = params.batchPosterManager ?? zeroAddress;
-  const paramsWithDefaults = { ...defaults, ...params, maxDataSize, batchPosterManager };
+  const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
   const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
 
   // @ts-ignore (todo: fix viem type issue)

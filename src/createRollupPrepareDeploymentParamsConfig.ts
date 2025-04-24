@@ -1,8 +1,9 @@
-import { Chain, Client, Transport } from 'viem';
+import { Chain, Client, Transport, parseEther } from 'viem';
 
 import { ChainConfig } from './types/ChainConfig';
 import { validateParentChain } from './types/ParentChain';
 import { Prettify } from './types/utils';
+import { getWethAddress } from './utils';
 
 import { createRollup } from './createRollup';
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
@@ -10,6 +11,9 @@ import { prepareChainConfig } from './prepareChainConfig';
 
 import { defaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
+import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
+import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
+import { getDefaultValidatorAfkBlocks } from './getDefaultValidatorAfkBlocks';
 import {
   SequencerInboxMaxTimeVariation,
   getDefaultSequencerInboxMaxTimeVariation,
@@ -71,6 +75,9 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
   {
     chainConfig,
     confirmPeriodBlocks,
+    challengeGracePeriodBlocks,
+    minimumAssertionPeriod,
+    validatorAfkBlocks,
     sequencerInboxMaxTimeVariation,
     ...params
   }: CreateRollupPrepareDeploymentParamsConfigParams,
@@ -79,6 +86,9 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
 
   let paramsByParentBlockTime: {
     confirmPeriodBlocks: bigint;
+    challengeGracePeriodBlocks: bigint;
+    minimumAssertionPeriod: bigint;
+    validatorAfkBlocks: bigint;
     sequencerInboxMaxTimeVariation: SequencerInboxMaxTimeVariation;
   };
 
@@ -86,6 +96,24 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     if (typeof confirmPeriodBlocks === 'undefined') {
       throw new Error(
         `"params.confirmPeriodBlocks" must be provided when using a custom parent chain.`,
+      );
+    }
+
+    if (typeof challengeGracePeriodBlocks === 'undefined') {
+      throw new Error(
+        `"params.challengeGracePeriodBlocks" must be provided when using a custom parent chain.`,
+      );
+    }
+
+    if (typeof minimumAssertionPeriod === 'undefined') {
+      throw new Error(
+        `"params.minimumAssertionPeriod" must be provided when using a custom parent chain.`,
+      );
+    }
+
+    if (typeof validatorAfkBlocks === 'undefined') {
+      throw new Error(
+        `"params.validatorAfkBlocks" must be provided when using a custom parent chain.`,
       );
     }
 
@@ -97,20 +125,37 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
 
     paramsByParentBlockTime = {
       confirmPeriodBlocks,
+      challengeGracePeriodBlocks,
+      minimumAssertionPeriod,
+      validatorAfkBlocks,
       sequencerInboxMaxTimeVariation,
     };
   } else {
     const defaultConfirmPeriodBlocks = getDefaultConfirmPeriodBlocks(parentChainId);
+    const defaultChallengeGracePeriodBlocks = getDefaultChallengeGracePeriodBlocks(parentChainId);
+    const defaultMinimumAssertionPeriod = getDefaultMinimumAssertionPeriod(parentChainId);
+    const defaultValidatorAfkBlocks = getDefaultValidatorAfkBlocks(parentChainId);
     const defaultSequencerInboxMTV = getDefaultSequencerInboxMaxTimeVariation(parentChainId);
 
     paramsByParentBlockTime = {
       confirmPeriodBlocks: confirmPeriodBlocks ?? defaultConfirmPeriodBlocks,
+      challengeGracePeriodBlocks: challengeGracePeriodBlocks ?? defaultChallengeGracePeriodBlocks,
+      minimumAssertionPeriod: minimumAssertionPeriod ?? defaultMinimumAssertionPeriod,
+      validatorAfkBlocks: validatorAfkBlocks ?? defaultValidatorAfkBlocks,
       sequencerInboxMaxTimeVariation: sequencerInboxMaxTimeVariation ?? defaultSequencerInboxMTV,
     };
   }
 
+  const defaultsForStake = {
+    stakeToken: getWethAddress(client),
+    baseStake: parseEther('1'),
+    miniStakeValues: [BigInt(0), BigInt(1), BigInt(1)],
+    loserStakeEscrow: params.owner,
+  };
+
   return {
     ...defaults,
+    ...defaultsForStake,
     ...paramsByParentBlockTime,
     ...params,
     chainConfig: JSON.stringify(

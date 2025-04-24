@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { Address, createPublicClient, http } from 'viem';
+import { Address, createPublicClient, http, parseEther } from 'viem';
 
 import {
   arbitrumOne,
@@ -29,7 +29,12 @@ function getOverrides({ owner, chainId }: { owner: Address; chainId: bigint }) {
       },
     }),
     confirmPeriodBlocks: 4200n,
-    extraChallengeTimeBlocks: 5n,
+    challengeGracePeriodBlocks: 4201n,
+    bufferConfig: {
+      threshold: 2n,
+      max: 2n,
+      replenishRateInBasis: 25n,
+    },
     loserStakeEscrow: '0x0000000000000000000000000000000000000001',
     sequencerInboxMaxTimeVariation: {
       delayBlocks: 200n,
@@ -37,6 +42,9 @@ function getOverrides({ owner, chainId }: { owner: Address; chainId: bigint }) {
       futureBlocks: 100n,
       futureSeconds: 1n,
     },
+    validatorAfkBlocks: 14n,
+    minimumAssertionPeriod: 15n,
+    baseStake: parseEther('3'),
     stakeToken: '0x0000000000000000000000000000000000000002',
     wasmModuleRoot: '0xWasmModuleRoot',
   } as const;
@@ -144,6 +152,70 @@ it('fails to create a config for a chain on top of a custom parent chain if "con
   ).toThrowError('"params.confirmPeriodBlocks" must be provided when using a custom parent chain');
 });
 
+it('fails to create a config for a chain on top of a custom parent chain if "challengeGracePeriodBlocks" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+    }),
+  ).toThrowError(
+    '"params.challengeGracePeriodBlocks" must be provided when using a custom parent chain',
+  );
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "minimumAssertionPeriod" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+    }),
+  ).toThrowError(
+    '"params.minimumAssertionPeriod" must be provided when using a custom parent chain',
+  );
+});
+
+it('fails to create a config for a chain on top of a custom parent chain if "validatorAfkBlocks" is not provided', () => {
+  const chain = testHelper_createCustomParentChain();
+
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  registerCustomParentChain(chain);
+
+  expect(() =>
+    createRollupPrepareDeploymentParamsConfig(publicClient, {
+      owner: vitalik,
+      chainId: BigInt(chain.id),
+      confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+      minimumAssertionPeriod: 3n,
+    }),
+  ).toThrowError('"params.validatorAfkBlocks" must be provided when using a custom parent chain');
+});
+
 it('fails to create a config for a chain on top of a custom parent chain if "sequencerInboxMaxTimeVariation" is not provided', () => {
   const chain = testHelper_createCustomParentChain();
 
@@ -159,6 +231,9 @@ it('fails to create a config for a chain on top of a custom parent chain if "seq
       owner: vitalik,
       chainId: BigInt(chain.id),
       confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+      minimumAssertionPeriod: 3n,
+      validatorAfkBlocks: 4n,
     }),
   ).toThrowError(
     '"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.',
@@ -183,6 +258,9 @@ it('creates a config for a chain on top of a custom parent chain', () => {
       owner: vitalik,
       chainId: BigInt(chain.id),
       confirmPeriodBlocks: 1n,
+      challengeGracePeriodBlocks: 2n,
+      minimumAssertionPeriod: 3n,
+      validatorAfkBlocks: 4n,
       sequencerInboxMaxTimeVariation: {
         delayBlocks: 2n,
         futureBlocks: 3n,
