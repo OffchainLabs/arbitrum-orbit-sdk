@@ -39,6 +39,8 @@ const ownerFunctionCalledEventAbi = getAbiItem({
   name: 'OwnerFunctionCalled',
 });
 
+const validatorsSetEventAbi = getAbiItem({ abi: rollupV3Dot1ABI, name: 'ValidatorsSet' });
+
 function getValidatorsFromFunctionData<
   TAbi extends
     | (typeof createRollupV2Dot1ABI)[]
@@ -130,6 +132,34 @@ export async function getValidators<TChain extends Chain>(
     fromBlock: blockNumber,
   });
 
+  const validatorsSetEvents = await getLogsWithBatching(publicClient, {
+    address: rollup,
+    event: validatorsSetEventAbi,
+    fromBlock: blockNumber,
+  });
+
+  const validatorsFromEvents = validatorsSetEvents
+    .filter((e) => e.eventName === 'ValidatorsSet')
+    .reduce((acc, event) => {
+      const { validators: _validators, enabled: _enabled } = event.args;
+
+      if (typeof _validators === 'undefined' || typeof _enabled === 'undefined') {
+        return;
+      }
+
+      const copy = new Set<Address>(acc);
+
+      for (let i = 0; i < _validators.length; i++) {
+        if (_enabled[i]) {
+          copy.add(_validators[i]);
+        } else {
+          copy.delete(_validators[i]);
+        }
+      }
+
+      return copy;
+    }, new Set<Address>());
+
   const txs = await Promise.all(
     events.map((event) =>
       publicClient.getTransaction({
@@ -199,7 +229,7 @@ export async function getValidators<TChain extends Chain>(
         return acc;
       }
     }
-  }, new Set<Address>());
+  }, validatorsFromEvents);
 
   return {
     isAccurate,
