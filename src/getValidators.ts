@@ -13,7 +13,8 @@ import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCr
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
-import { rollupABI } from './contracts/Rollup';
+import { rollupABI as rollupV3Dot1ABI } from './contracts/Rollup';
+import { rollupABI as rollupV2Dot1ABI } from './contracts/Rollup/v2.1';
 
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { getLogsWithBatching } from './utils/getLogsWithBatching';
@@ -24,7 +25,7 @@ const createRollupV2Dot1FunctionSelector = getFunctionSelector(createRollupV2Dot
 const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
 const createRollupV1Dot1FunctionSelector = getFunctionSelector(createRollupV1Dot1ABI);
 
-const setValidatorABI = getAbiItem({ abi: rollupABI, name: 'setValidator' });
+const setValidatorABI = getAbiItem({ abi: rollupV3Dot1ABI, name: 'setValidator' });
 const setValidatorFunctionSelector = getFunctionSelector(setValidatorABI);
 
 const executeCallABI = getAbiItem({ abi: upgradeExecutorABI, name: 'executeCall' });
@@ -33,7 +34,10 @@ const upgradeExecutorExecuteCallFunctionSelector = getFunctionSelector(executeCa
 const execTransactionABI = getAbiItem({ abi: gnosisSafeL2ABI, name: 'execTransaction' });
 const safeL2FunctionSelector = getFunctionSelector(execTransactionABI);
 
-const ownerFunctionCalledEventAbi = getAbiItem({ abi: rollupABI, name: 'OwnerFunctionCalled' });
+const ownerFunctionCalledEventAbi = getAbiItem({
+  abi: rollupV2Dot1ABI,
+  name: 'OwnerFunctionCalled',
+});
 
 function getValidatorsFromFunctionData<
   TAbi extends
