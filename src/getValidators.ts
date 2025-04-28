@@ -9,6 +9,7 @@ import {
   getFunctionSelector,
 } from 'viem';
 
+import { rollupCreatorABI as rollupCreatorV3Dot1ABI } from './contracts/RollupCreator';
 import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
@@ -19,14 +20,20 @@ import { rollupABI as rollupV2Dot1ABI } from './contracts/Rollup/v2.1';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
+const createRollupV3Dot1ABI = getAbiItem({ abi: rollupCreatorV3Dot1ABI, name: 'createRollup' });
+const createRollupV3Dot1FunctionSelector = getFunctionSelector(createRollupV3Dot1ABI);
+
 const createRollupV2Dot1ABI = getAbiItem({ abi: rollupCreatorV2Dot1ABI, name: 'createRollup' });
 const createRollupV2Dot1FunctionSelector = getFunctionSelector(createRollupV2Dot1ABI);
 
 const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
 const createRollupV1Dot1FunctionSelector = getFunctionSelector(createRollupV1Dot1ABI);
 
-const setValidatorABI = getAbiItem({ abi: rollupV3Dot1ABI, name: 'setValidator' });
-const setValidatorFunctionSelector = getFunctionSelector(setValidatorABI);
+const setValidatorV3Dot1ABI = getAbiItem({ abi: rollupV3Dot1ABI, name: 'setValidator' });
+const setValidatorV3Dot1FunctionSelector = getFunctionSelector(setValidatorV3Dot1ABI);
+
+const setValidatorPreV3Dot1ABI = getAbiItem({ abi: rollupV2Dot1ABI, name: 'setValidator' });
+const setValidatorPreV3Dot1FunctionSelector = getFunctionSelector(setValidatorPreV3Dot1ABI);
 
 const executeCallABI = getAbiItem({ abi: upgradeExecutorABI, name: 'executeCall' });
 const upgradeExecutorExecuteCallFunctionSelector = getFunctionSelector(executeCallABI);
@@ -43,9 +50,10 @@ const validatorsSetEventAbi = getAbiItem({ abi: rollupV3Dot1ABI, name: 'Validato
 
 function getValidatorsFromFunctionData<
   TAbi extends
+    | (typeof createRollupV3Dot1ABI)[]
     | (typeof createRollupV2Dot1ABI)[]
     | (typeof createRollupV1Dot1ABI)[]
-    | (typeof setValidatorABI)[],
+    | (typeof setValidatorV3Dot1ABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
@@ -56,7 +64,7 @@ function getValidatorsFromFunctionData<
 
 function updateAccumulator(acc: Set<Address>, input: Hex) {
   const [validators, states] = getValidatorsFromFunctionData({
-    abi: [setValidatorABI],
+    abi: [setValidatorV3Dot1ABI],
     data: input,
   });
 
@@ -160,19 +168,32 @@ export async function getValidators<TChain extends Chain>(
       return copy;
     }, new Set<Address>());
 
-  const preV3Dot1Txs = await Promise.all(
-    preV3Dot1Events.map((event) =>
+  const txs = await Promise.all([
+    ...preV3Dot1Events.map((event) =>
       publicClient.getTransaction({
         hash: event.transactionHash,
       }),
     ),
-  );
+    ...v3Dot1ValidatorsSetEvents.map((event) =>
+      publicClient.getTransaction({
+        hash: event.transactionHash,
+      }),
+    ),
+  ]);
 
   let isAccurate = true;
-  const validators = preV3Dot1Txs.reduce((acc, tx) => {
+  const validators = txs.reduce((acc, tx) => {
     const txSelectedFunction = tx.input.slice(0, 10);
 
     switch (txSelectedFunction) {
+      case createRollupV3Dot1FunctionSelector: {
+        const [{ validators }] = getValidatorsFromFunctionData({
+          abi: [createRollupV3Dot1ABI],
+          data: tx.input,
+        });
+
+        return new Set([...acc, ...validators]);
+      }
       case createRollupV2Dot1FunctionSelector: {
         const [{ validators }] = getValidatorsFromFunctionData({
           abi: [createRollupV2Dot1ABI],
@@ -189,7 +210,10 @@ export async function getValidators<TChain extends Chain>(
 
         return new Set([...acc, ...validators]);
       }
-      case setValidatorFunctionSelector: {
+      case setValidatorV3Dot1FunctionSelector: {
+        return updateAccumulator(acc, tx.input);
+      }
+      case setValidatorPreV3Dot1FunctionSelector: {
         return updateAccumulator(acc, tx.input);
       }
       case upgradeExecutorExecuteCallFunctionSelector: {
@@ -229,7 +253,7 @@ export async function getValidators<TChain extends Chain>(
         return acc;
       }
     }
-  }, validatorsFromV3Dot1Events);
+  }, new Set<Address>());
 
   return {
     isAccurate,
