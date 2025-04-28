@@ -182,8 +182,8 @@ it('getValidators returns validators for a chain created with RollupCreator v2.1
   expect(isAccurate).toBeTruthy();
 });
 
-//sepolia.etherscan.io/tx/0xd79a80b7300df1bcb14e2e3ea83521d1ae37e5f171a787fb0f5377ea7f5003ad
-https: it('getValidators returns validators for a chain created with RollupCreator v3.1', async () => {
+// https://sepolia.etherscan.io/tx/0xd79a80b7300df1bcb14e2e3ea83521d1ae37e5f171a787fb0f5377ea7f5003ad
+it('getValidators returns validators for a chain created with RollupCreator v3.1', async () => {
   const { isAccurate, validators } = await getValidators(sepoliaClient, {
     rollup: '0x5D65e18b873dD978EeE4704BC6033436aA253936',
   });

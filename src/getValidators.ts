@@ -125,26 +125,26 @@ export async function getValidators<TChain extends Chain>(
     blockNumber = 0n;
   }
 
-  const events = await getLogsWithBatching(publicClient, {
+  const preV3Dot1Events = await getLogsWithBatching(publicClient, {
     address: rollup,
     event: ownerFunctionCalledEventAbi,
     args: { id: 6n },
     fromBlock: blockNumber,
   });
 
-  const validatorsSetEvents = await getLogsWithBatching(publicClient, {
+  const v3Dot1ValidatorsSetEvents = await getLogsWithBatching(publicClient, {
     address: rollup,
     event: validatorsSetEventAbi,
     fromBlock: blockNumber,
   });
 
-  const validatorsFromEvents = validatorsSetEvents
-    .filter((e) => e.eventName === 'ValidatorsSet')
+  const validatorsFromV3Dot1Events = v3Dot1ValidatorsSetEvents
+    .filter((event) => event.eventName === 'ValidatorsSet')
     .reduce((acc, event) => {
       const { validators: _validators, enabled: _enabled } = event.args;
 
       if (typeof _validators === 'undefined' || typeof _enabled === 'undefined') {
-        return;
+        return acc;
       }
 
       const copy = new Set<Address>(acc);
@@ -160,8 +160,8 @@ export async function getValidators<TChain extends Chain>(
       return copy;
     }, new Set<Address>());
 
-  const txs = await Promise.all(
-    events.map((event) =>
+  const preV3Dot1Txs = await Promise.all(
+    preV3Dot1Events.map((event) =>
       publicClient.getTransaction({
         hash: event.transactionHash,
       }),
@@ -169,7 +169,7 @@ export async function getValidators<TChain extends Chain>(
   );
 
   let isAccurate = true;
-  const validators = txs.reduce((acc, tx) => {
+  const validators = preV3Dot1Txs.reduce((acc, tx) => {
     const txSelectedFunction = tx.input.slice(0, 10);
 
     switch (txSelectedFunction) {
@@ -229,7 +229,7 @@ export async function getValidators<TChain extends Chain>(
         return acc;
       }
     }
-  }, validatorsFromEvents);
+  }, validatorsFromV3Dot1Events);
 
   return {
     isAccurate,
