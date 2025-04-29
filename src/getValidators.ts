@@ -30,7 +30,6 @@ const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'c
 const createRollupV1Dot1FunctionSelector = getFunctionSelector(createRollupV1Dot1ABI);
 
 const setValidatorV3Dot1ABI = getAbiItem({ abi: rollupV3Dot1ABI, name: 'setValidator' });
-const setValidatorV3Dot1FunctionSelector = getFunctionSelector(setValidatorV3Dot1ABI);
 
 const setValidatorPreV3Dot1ABI = getAbiItem({ abi: rollupV2Dot1ABI, name: 'setValidator' });
 const setValidatorPreV3Dot1FunctionSelector = getFunctionSelector(setValidatorPreV3Dot1ABI);
@@ -203,9 +202,6 @@ export async function getValidators<TChain extends Chain>(
         });
 
         return new Set([...acc, ...validators]);
-      }
-      case setValidatorV3Dot1FunctionSelector: {
-        return updateAccumulator(acc, tx.input);
       }
       case setValidatorPreV3Dot1FunctionSelector: {
         return updateAccumulator(acc, tx.input);

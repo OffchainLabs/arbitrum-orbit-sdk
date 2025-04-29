@@ -48,8 +48,11 @@ describe('successfully get validators', () => {
         rollup: l3Rollup,
       },
     );
-    // By default, chains from nitro testnode has 10 validators
-    expect(initialValidators).toHaveLength(10);
+
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     await setValidator(randomAccount, false);
@@ -88,8 +91,10 @@ describe('successfully get validators', () => {
         rollup: l3Rollup,
       },
     );
-    // By default, chains from nitro testnode has 10 validators
-    expect(initialValidators).toHaveLength(10);
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     await setValidator(randomAccount, true);
@@ -113,7 +118,10 @@ describe('successfully get validators', () => {
       client,
       { rollup: l3Rollup },
     );
-    expect(initialValidators).toHaveLength(10);
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     const firstValidator = initialValidators[0];
@@ -129,7 +137,10 @@ describe('successfully get validators', () => {
       client,
       { rollup: l3Rollup },
     );
-    expect(initialValidators).toHaveLength(10);
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     const lastValidator = initialValidators[initialValidators.length - 1];
