@@ -39,7 +39,7 @@ async function setValidator(validator: Address, state: boolean) {
 
 // Tests can be enabled once we run one node per integration test
 describe('successfully get validators', () => {
-  it('when disabling the same validator multiple time', async () => {
+  it('when disabling the same validator multiple times', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
     const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(
@@ -79,7 +79,7 @@ describe('successfully get validators', () => {
     expect(isAccurateFinal).toBeTruthy();
   });
 
-  it('when enabling the same validators multiple time', async () => {
+  it('when enabling the same validators multiple times', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
     const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(

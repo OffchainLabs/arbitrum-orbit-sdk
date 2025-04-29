@@ -62,22 +62,36 @@ function getValidatorsFromFunctionData<
   return args;
 }
 
+function iterateThroughValidatorsList(
+  acc: Set<Address>,
+  validators: Readonly<Address[]> | undefined,
+  enabled: Readonly<boolean[]> | undefined,
+) {
+  if (typeof validators === 'undefined' || typeof enabled === 'undefined') {
+    return acc;
+  }
+
+  const copy = new Set<Address>(acc);
+
+  validators.forEach((validator, i) => {
+    const isAdd = enabled[i];
+    if (isAdd) {
+      copy.add(validator);
+    } else {
+      copy.delete(validator);
+    }
+  });
+
+  return copy;
+}
+
 function updateAccumulator(acc: Set<Address>, input: Hex) {
-  const [validators, states] = getValidatorsFromFunctionData({
+  const [validators, enabled] = getValidatorsFromFunctionData({
     abi: [setValidatorV3Dot1ABI],
     data: input,
   });
 
-  validators.forEach((validator, i) => {
-    const isAdd = states[i];
-    if (isAdd) {
-      acc.add(validator);
-    } else {
-      acc.delete(validator);
-    }
-  });
-
-  return acc;
+  return iterateThroughValidatorsList(acc, validators, enabled);
 }
 
 export type GetValidatorsParams = {
@@ -150,36 +164,16 @@ export async function getValidators<TChain extends Chain>(
     .filter((event) => event.eventName === 'ValidatorsSet')
     .reduce((acc, event) => {
       const { validators: _validators, enabled: _enabled } = event.args;
-
-      if (typeof _validators === 'undefined' || typeof _enabled === 'undefined') {
-        return acc;
-      }
-
-      const copy = new Set<Address>(acc);
-
-      for (let i = 0; i < _validators.length; i++) {
-        if (_enabled[i]) {
-          copy.add(_validators[i]);
-        } else {
-          copy.delete(_validators[i]);
-        }
-      }
-
-      return copy;
+      return iterateThroughValidatorsList(acc, _validators, _enabled);
     }, new Set<Address>());
 
-  const txs = await Promise.all([
-    ...preV3Dot1Events.map((event) =>
+  const txs = await Promise.all(
+    preV3Dot1Events.map((event) =>
       publicClient.getTransaction({
         hash: event.transactionHash,
       }),
     ),
-    ...v3Dot1ValidatorsSetEvents.map((event) =>
-      publicClient.getTransaction({
-        hash: event.transactionHash,
-      }),
-    ),
-  ]);
+  );
 
   let isAccurate = true;
   const validators = txs.reduce((acc, tx) => {
@@ -253,7 +247,7 @@ export async function getValidators<TChain extends Chain>(
         return acc;
       }
     }
-  }, new Set<Address>());
+  }, validatorsFromV3Dot1Events);
 
   return {
     isAccurate,
