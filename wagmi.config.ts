@@ -44,52 +44,9 @@ sepolia.rpcUrls.default.http[0] = 'https://sepolia.gateway.tenderly.co';
 // @ts-ignore
 sepolia.rpcUrls.public.http[0] = 'https://sepolia.gateway.tenderly.co';
 
-const arbiscanApiKey = loadApiKey('ARBISCAN_API_KEY');
-const arbiscanNovaApiKey = loadApiKey('ARBISCAN_NOVA_API_KEY');
-const etherscanApiKey = loadApiKey('ETHERSCAN_API_KEY');
-const basescanApikey = loadApiKey('BASESCAN_API_KEY');
-
-const blockExplorerApiUrls: Record<ParentChainId, { url: string; apiKey: string }> = {
-  // mainnet L1
-  [mainnet.id]: {
-    url: 'https://api.etherscan.io/api',
-    apiKey: etherscanApiKey,
-  },
-  // mainnet L2
-  [arbitrumOne.id]: {
-    url: 'https://api.arbiscan.io/api',
-    apiKey: arbiscanApiKey,
-  },
-  [arbitrumNova.id]: {
-    url: 'https://api-nova.arbiscan.io/api',
-    apiKey: arbiscanNovaApiKey,
-  },
-  [base.id]: {
-    url: 'https://api.basescan.org/api',
-    apiKey: basescanApikey,
-  },
-  // testnet L1
-  [sepolia.id]: {
-    url: 'https://api-sepolia.etherscan.io/api',
-    apiKey: etherscanApiKey,
-  },
-  // testnet L2
-  [arbitrumSepolia.id]: {
-    url: 'https://api-sepolia.arbiscan.io/api',
-    apiKey: arbiscanApiKey,
-  },
-  [baseSepolia.id]: {
-    url: 'https://api-sepolia.basescan.org/api',
-    apiKey: basescanApikey,
-  },
-  // local nitro-testnode / fine to omit these as we skip abi fetch
-  [nitroTestnodeL1.id]: { url: '', apiKey: '' },
-  [nitroTestnodeL2.id]: { url: '', apiKey: '' },
-};
+const apiKey = loadApiKey('ETHERSCAN_API_KEY');
 
 export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
-  const { url, apiKey } = blockExplorerApiUrls[chainId];
-
   const client = createPublicClient({
     chain: chains.find((chain) => chain.id === chainId),
     transport: http(),
@@ -104,7 +61,7 @@ export async function fetchAbi(chainId: ParentChainId, address: `0x${string}`) {
 
   const responseJson = await (
     await fetch(
-      `${url}?module=contract&action=getabi&format=raw&address=${address}&apikey=${apiKey}`,
+      `https://api.etherscan.io/v2/api?chainid=${chainId}&module=contract&action=getabi&format=raw&address=${address}&apikey=${apiKey}`,
     )
   ).json();
 
@@ -226,7 +183,10 @@ export async function assertContractAbisMatch(contract: ContractConfig) {
         );
       })
       // fetch abis for all chains and hash them
-      .map(async ([chainId, address]) => {
+      .map(async ([chainId, address], index) => {
+        // sleep to avoid rate limiting
+        await sleep(index * 500);
+
         const abi = await fetchAbi(Number(chainId) as ParentChainId, address);
         const abiHash = hashMessage(JSON.stringify(abi));
 
@@ -287,7 +247,7 @@ export default async function () {
       plugins: [
         etherscan({
           chainId: arbitrumSepolia.id,
-          apiKey: arbiscanApiKey,
+          apiKey,
           // todo: fix viem type issue
           contracts: [contract],
           cacheDuration: 0,
