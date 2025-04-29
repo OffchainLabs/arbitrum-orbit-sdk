@@ -9,7 +9,6 @@ import {
   getFunctionSelector,
 } from 'viem';
 
-import { rollupCreatorABI as rollupCreatorV3Dot1ABI } from './contracts/RollupCreator';
 import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
@@ -20,16 +19,11 @@ import { rollupABI as rollupV2Dot1ABI } from './contracts/Rollup/v2.1';
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { getLogsWithBatching } from './utils/getLogsWithBatching';
 
-const createRollupV3Dot1ABI = getAbiItem({ abi: rollupCreatorV3Dot1ABI, name: 'createRollup' });
-const createRollupV3Dot1FunctionSelector = getFunctionSelector(createRollupV3Dot1ABI);
-
 const createRollupV2Dot1ABI = getAbiItem({ abi: rollupCreatorV2Dot1ABI, name: 'createRollup' });
 const createRollupV2Dot1FunctionSelector = getFunctionSelector(createRollupV2Dot1ABI);
 
 const createRollupV1Dot1ABI = getAbiItem({ abi: rollupCreatorV1Dot1ABI, name: 'createRollup' });
 const createRollupV1Dot1FunctionSelector = getFunctionSelector(createRollupV1Dot1ABI);
-
-const setValidatorV3Dot1ABI = getAbiItem({ abi: rollupV3Dot1ABI, name: 'setValidator' });
 
 const setValidatorPreV3Dot1ABI = getAbiItem({ abi: rollupV2Dot1ABI, name: 'setValidator' });
 const setValidatorPreV3Dot1FunctionSelector = getFunctionSelector(setValidatorPreV3Dot1ABI);
@@ -49,10 +43,9 @@ const validatorsSetEventAbi = getAbiItem({ abi: rollupV3Dot1ABI, name: 'Validato
 
 function getValidatorsFromFunctionData<
   TAbi extends
-    | (typeof createRollupV3Dot1ABI)[]
     | (typeof createRollupV2Dot1ABI)[]
     | (typeof createRollupV1Dot1ABI)[]
-    | (typeof setValidatorV3Dot1ABI)[],
+    | (typeof setValidatorPreV3Dot1ABI)[],
 >({ abi, data }: { abi: TAbi; data: Hex }) {
   const { args } = decodeFunctionData({
     abi,
@@ -86,7 +79,7 @@ function iterateThroughValidatorsList(
 
 function updateAccumulator(acc: Set<Address>, input: Hex) {
   const [validators, enabled] = getValidatorsFromFunctionData({
-    abi: [setValidatorV3Dot1ABI],
+    abi: [setValidatorPreV3Dot1ABI],
     data: input,
   });
 
@@ -166,7 +159,11 @@ export async function getValidators<TChain extends Chain>(
       return iterateThroughValidatorsList(acc, _validators, _enabled);
     }, new Set<Address>());
 
-  const txs = await Promise.all(
+  /** For pre v3.1, the OwnerFunctionCalled event is emitted when the validators list is updated
+   * the event is emitted without the validators list and the new states in the event args
+   * so we have to grab the tx and decode the calldata to get the validators list
+   */
+  const preV3Dot1Txs = await Promise.all(
     preV3Dot1Events.map((event) =>
       publicClient.getTransaction({
         hash: event.transactionHash,
@@ -175,18 +172,10 @@ export async function getValidators<TChain extends Chain>(
   );
 
   let isAccurate = true;
-  const validators = txs.reduce((acc, tx) => {
+  const validators = preV3Dot1Txs.reduce((acc, tx) => {
     const txSelectedFunction = tx.input.slice(0, 10);
 
     switch (txSelectedFunction) {
-      case createRollupV3Dot1FunctionSelector: {
-        const [{ validators }] = getValidatorsFromFunctionData({
-          abi: [createRollupV3Dot1ABI],
-          data: tx.input,
-        });
-
-        return new Set([...acc, ...validators]);
-      }
       case createRollupV2Dot1FunctionSelector: {
         const [{ validators }] = getValidatorsFromFunctionData({
           abi: [createRollupV2Dot1ABI],
