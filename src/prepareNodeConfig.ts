@@ -136,7 +136,6 @@ export function prepareNodeConfig({
         'disable-blob-reader': getDisableBlobReader(parentChainId),
       },
       'bold': {
-        enable: true,
         strategy: 'MakeNodes',
       },
     },
