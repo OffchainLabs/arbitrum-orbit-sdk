@@ -19,7 +19,7 @@ const client = createPublicClient({
   }),
 );
 
-it.skip('successfully set validators', async () => {
+it('successfully set validators', async () => {
   const randomAccounts = [
     privateKeyToAccount(generatePrivateKey()).address,
     privateKeyToAccount(generatePrivateKey()).address,
@@ -31,7 +31,10 @@ it.skip('successfully set validators', async () => {
       rollup: l3Rollup,
     },
   );
-  expect(initialValidators).toHaveLength(10);
+  // By default, chains from nitro testnode has 11 validators
+  // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+  // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+  expect(initialValidators).toHaveLength(11);
   expect(isAccurateInitially).toBeTruthy();
 
   const tx = await client.rollupAdminLogicPrepareTransactionRequest({

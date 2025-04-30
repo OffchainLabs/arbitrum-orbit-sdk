@@ -9,6 +9,7 @@ import {
   getFunctionSelector,
 } from 'viem';
 
+import { rollupCreatorABI as rollupCreatorV3Dot1ABI } from './contracts/RollupCreator';
 import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from './contracts/RollupCreator/v1.1';
 import { sequencerInboxABI } from './contracts/SequencerInbox';
@@ -17,6 +18,9 @@ import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
 
 import { createRollupFetchTransactionHash } from './createRollupFetchTransactionHash';
 import { getLogsWithBatching } from './utils/getLogsWithBatching';
+
+const createRollupV3Dot1ABI = getAbiItem({ abi: rollupCreatorV3Dot1ABI, name: 'createRollup' });
+const createRollupV3Dot1FunctionSelector = getFunctionSelector(createRollupV3Dot1ABI);
 
 const createRollupV2Dot1ABI = getAbiItem({ abi: rollupCreatorV2Dot1ABI, name: 'createRollup' });
 const createRollupV2Dot1FunctionSelector = getFunctionSelector(createRollupV2Dot1ABI);
@@ -40,6 +44,7 @@ const ownerFunctionCalledEventAbi = getAbiItem({
 
 function getBatchPostersFromFunctionData<
   TAbi extends
+    | (typeof createRollupV3Dot1ABI)[]
     | (typeof createRollupV2Dot1ABI)[]
     | (typeof createRollupV1Dot1ABI)[]
     | (typeof setIsBatchPosterABI)[],
@@ -148,6 +153,14 @@ export async function getBatchPosters<TChain extends Chain>(
     const txSelectedFunction = tx.input.slice(0, 10);
 
     switch (txSelectedFunction) {
+      case createRollupV3Dot1FunctionSelector: {
+        const [{ batchPosters }] = getBatchPostersFromFunctionData({
+          abi: [createRollupV3Dot1ABI],
+          data: tx.input,
+        });
+
+        return new Set([...acc, ...batchPosters]);
+      }
       case createRollupV2Dot1FunctionSelector: {
         const [{ batchPosters }] = getBatchPostersFromFunctionData({
           abi: [createRollupV2Dot1ABI],

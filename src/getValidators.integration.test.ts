@@ -38,8 +38,8 @@ async function setValidator(validator: Address, state: boolean) {
 }
 
 // Tests can be enabled once we run one node per integration test
-describe.skip('successfully get validators', () => {
-  it('when disabling the same validator multiple time', async () => {
+describe('successfully get validators', () => {
+  it('when disabling the same validator multiple times', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
     const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(
@@ -48,8 +48,11 @@ describe.skip('successfully get validators', () => {
         rollup: l3Rollup,
       },
     );
-    // By default, chains from nitro testnode has 10 validators
-    expect(initialValidators).toHaveLength(10);
+
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     await setValidator(randomAccount, false);
@@ -79,7 +82,7 @@ describe.skip('successfully get validators', () => {
     expect(isAccurateFinal).toBeTruthy();
   });
 
-  it('when enabling the same validators multiple time', async () => {
+  it('when enabling the same validators multiple times', async () => {
     const randomAccount = privateKeyToAccount(generatePrivateKey()).address;
 
     const { isAccurate: isAccurateInitially, validators: initialValidators } = await getValidators(
@@ -88,8 +91,10 @@ describe.skip('successfully get validators', () => {
         rollup: l3Rollup,
       },
     );
-    // By default, chains from nitro testnode has 10 validators
-    expect(initialValidators).toHaveLength(10);
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     await setValidator(randomAccount, true);
@@ -113,7 +118,10 @@ describe.skip('successfully get validators', () => {
       client,
       { rollup: l3Rollup },
     );
-    expect(initialValidators).toHaveLength(10);
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     const firstValidator = initialValidators[0];
@@ -129,7 +137,10 @@ describe.skip('successfully get validators', () => {
       client,
       { rollup: l3Rollup },
     );
-    expect(initialValidators).toHaveLength(10);
+    // By default, chains from nitro testnode has 11 validators
+    // https://github.com/OffchainLabs/nitro-testnode/blob/de8cf4edec0d12e5ef1b7623e54e35ddb579ff0b/test-node.bash#L634
+    // https://github.com/OffchainLabs/nitro-contracts/blob/47a9c034bc082256d498f8031fab1a37c37a123c/scripts/rollupCreation.ts#L250-L257
+    expect(initialValidators).toHaveLength(11);
     expect(isAccurateInitially).toBeTruthy();
 
     const lastValidator = initialValidators[initialValidators.length - 1];
