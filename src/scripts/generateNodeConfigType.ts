@@ -5,7 +5,7 @@ import { Project, WriterFunction, Writers } from 'ts-morph';
 const { objectType } = Writers;
 
 function getNitroNodeImageTag(): string {
-  const defaultNitroNodeTag = 'v3.5.6-9a29a1e';
+  const defaultNitroNodeTag = 'v3.6.0-fc07dd2';
   const argv = process.argv.slice(2);
 
   if (argv.length < 2 || argv[0] !== '--nitro-node-tag') {
