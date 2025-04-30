@@ -101,63 +101,17 @@ export type GetValidatorsReturnType = {
   validators: Address[];
 };
 
-/**
- *
- * @param {PublicClient} publicClient - The chain Viem Public Client
- * @param {GetValidatorsParams} GetValidatorsParams {@link GetValidatorsParams}
- *
- * @returns Promise<{@link GetValidatorsReturnType}>
- *
- * @remarks validators list is not guaranteed to be exhaustive if the `isAccurate` flag is false.
- * It might contain false positive (validators that were removed, but returned as validator)
- * or false negative (validators that were added, but not present in the list)
- *
- * @example
- * const { isAccurate, validators } = getValidators(client, { rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336' });
- *
- * if (isAccurate) {
- *   // Validators were all fetched properly
- * } else {
- *   // Validators list is not guaranteed to be accurate
- * }
- */
-export async function getValidators<TChain extends Chain>(
+async function getValidatorsPreV3Dot1<TChain extends Chain>(
   publicClient: PublicClient<Transport, TChain>,
   { rollup }: GetValidatorsParams,
+  blockNumber: bigint,
 ): Promise<GetValidatorsReturnType> {
-  let blockNumber: bigint;
-  try {
-    const createRollupTransactionHash = await createRollupFetchTransactionHash({
-      rollup,
-      publicClient,
-    });
-    const receipt = await publicClient.waitForTransactionReceipt({
-      hash: createRollupTransactionHash,
-    });
-    blockNumber = receipt.blockNumber;
-  } catch (e) {
-    blockNumber = 0n;
-  }
-
   const preV3Dot1Events = await getLogsWithBatching(publicClient, {
     address: rollup,
     event: ownerFunctionCalledEventAbi,
     args: { id: 6n },
     fromBlock: blockNumber,
   });
-
-  const v3Dot1ValidatorsSetEvents = await getLogsWithBatching(publicClient, {
-    address: rollup,
-    event: validatorsSetEventAbi,
-    fromBlock: blockNumber,
-  });
-
-  const validatorsFromV3Dot1Events = v3Dot1ValidatorsSetEvents
-    .filter((event) => event.eventName === 'ValidatorsSet')
-    .reduce((acc, event) => {
-      const { validators: _validators, enabled: _enabled } = event.args;
-      return iterateThroughValidatorsList(acc, _validators, _enabled);
-    }, new Set<Address>());
 
   /** For pre v3.1, the OwnerFunctionCalled event is emitted when the validators list is updated
    * the event is emitted without the validators list and the new states in the event args
@@ -232,10 +186,71 @@ export async function getValidators<TChain extends Chain>(
         return acc;
       }
     }
-  }, validatorsFromV3Dot1Events);
+  }, new Set<Address>());
 
   return {
     isAccurate,
     validators: [...validators],
   };
+}
+
+/**
+ *
+ * @param {PublicClient} publicClient - The chain Viem Public Client
+ * @param {GetValidatorsParams} GetValidatorsParams {@link GetValidatorsParams}
+ *
+ * @returns Promise<{@link GetValidatorsReturnType}>
+ *
+ * @remarks validators list is not guaranteed to be exhaustive if the `isAccurate` flag is false.
+ * It might contain false positive (validators that were removed, but returned as validator)
+ * or false negative (validators that were added, but not present in the list)
+ *
+ * @example
+ * const { isAccurate, validators } = getValidators(client, { rollup: '0xc47dacfbaa80bd9d8112f4e8069482c2a3221336' });
+ *
+ * if (isAccurate) {
+ *   // Validators were all fetched properly
+ * } else {
+ *   // Validators list is not guaranteed to be accurate
+ * }
+ */
+export async function getValidators<TChain extends Chain>(
+  publicClient: PublicClient<Transport, TChain>,
+  { rollup }: GetValidatorsParams,
+): Promise<GetValidatorsReturnType> {
+  let blockNumber: bigint;
+  try {
+    const createRollupTransactionHash = await createRollupFetchTransactionHash({
+      rollup,
+      publicClient,
+    });
+    const receipt = await publicClient.waitForTransactionReceipt({
+      hash: createRollupTransactionHash,
+    });
+    blockNumber = receipt.blockNumber;
+  } catch (e) {
+    blockNumber = 0n;
+  }
+
+  const v3Dot1ValidatorsSetEvents = await getLogsWithBatching(publicClient, {
+    address: rollup,
+    event: validatorsSetEventAbi,
+    fromBlock: blockNumber,
+  });
+
+  const validatorsFromV3Dot1Events = v3Dot1ValidatorsSetEvents
+    .filter((event) => event.eventName === 'ValidatorsSet')
+    .reduce((acc, event) => {
+      const { validators: _validators, enabled: _enabled } = event.args;
+      return iterateThroughValidatorsList(acc, _validators, _enabled);
+    }, new Set<Address>());
+
+  if (validatorsFromV3Dot1Events.size > 0) {
+    return {
+      isAccurate: true,
+      validators: [...validatorsFromV3Dot1Events],
+    };
+  }
+
+  return await getValidatorsPreV3Dot1(publicClient, { rollup }, blockNumber);
 }
