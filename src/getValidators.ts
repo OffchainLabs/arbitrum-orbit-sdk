@@ -232,25 +232,25 @@ export async function getValidators<TChain extends Chain>(
     blockNumber = 0n;
   }
 
-  const v3Dot1ValidatorsSetEvents = await getLogsWithBatching(publicClient, {
+  const validatorsSetEvents = await getLogsWithBatching(publicClient, {
     address: rollup,
     event: validatorsSetEventAbi,
     fromBlock: blockNumber,
   });
 
-  const validatorsFromV3Dot1Events = v3Dot1ValidatorsSetEvents
+  const validatorsFromEvents = validatorsSetEvents
     .filter((event) => event.eventName === 'ValidatorsSet')
     .reduce((acc, event) => {
       const { validators: _validators, enabled: _enabled } = event.args;
       return iterateThroughValidatorsList(acc, _validators, _enabled);
     }, new Set<Address>());
 
-  if (validatorsFromV3Dot1Events.size > 0) {
+  if (validatorsFromEvents.size > 0) {
     return {
       isAccurate: true,
-      validators: [...validatorsFromV3Dot1Events],
+      validators: [...validatorsFromEvents],
     };
   }
 
-  return await getValidatorsPreV3Dot1(publicClient, { rollup }, blockNumber);
+  return getValidatorsPreV3Dot1(publicClient, { rollup }, blockNumber);
 }
