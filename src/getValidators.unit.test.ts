@@ -7,7 +7,7 @@ import {
   encodeFunctionData,
   http,
 } from 'viem';
-import { arbitrum, arbitrumSepolia } from 'viem/chains';
+import { arbitrum, arbitrumSepolia, sepolia } from 'viem/chains';
 import { it, expect, vi, describe } from 'vitest';
 
 import { gnosisSafeL2ABI } from './contracts/GnosisSafeL2';
@@ -24,6 +24,11 @@ const client = createPublicClient({
 const arbitrumSepoliaClient = createPublicClient({
   chain: arbitrumSepolia,
   transport: http(),
+});
+
+const sepoliaClient = createPublicClient({
+  chain: sepolia,
+  transport: http('https://sepolia.gateway.tenderly.co'),
 });
 
 function mockLog(transactionHash: string) {
@@ -174,6 +179,15 @@ it('getValidators returns validators for a chain created with RollupCreator v2.1
     '0x39B4Ce32E557225a401917a701ac4d267648635a',
     '0xe2D0cC872647B1A129B942BbFC980B31E8e94Df2',
   ]);
+  expect(isAccurate).toBeTruthy();
+});
+
+// https://sepolia.etherscan.io/tx/0xd79a80b7300df1bcb14e2e3ea83521d1ae37e5f171a787fb0f5377ea7f5003ad
+it('getValidators returns validators for a chain created with RollupCreator v3.1', async () => {
+  const { isAccurate, validators } = await getValidators(sepoliaClient, {
+    rollup: '0x5D65e18b873dD978EeE4704BC6033436aA253936',
+  });
+  expect(validators).toEqual(['0x776C1B18cde829C020ce1a3f75ae3B82F6a9108a']);
   expect(isAccurate).toBeTruthy();
 });
 
