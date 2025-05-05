@@ -18,7 +18,6 @@ import {
   WithRollupCreatorAddressOverride,
 } from './types/createRollupTypes';
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
-import { getParentChainLayer } from './utils';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
   return encodeFunctionData({
@@ -49,19 +48,6 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
   const { chainId: parentChainId, isCustom: parentChainIsCustom } =
     validateParentChain(publicClient);
-
-  const isBoldSupported = parentChainIsCustom
-    ? // allow for custom parent chains because they are likely alt L1s
-      true
-    : // allow for L2s only
-      getParentChainLayer(parentChainId) === 1;
-
-  // our tests mostly deploy L3s, so adding the test env check so it doesn't affect them
-  if (!isBoldSupported && process.env.NODE_ENV !== 'test') {
-    throw new Error(
-      `BoLD is currently only supported on L2s, with support for L3s coming soon. If you wish to deploy an L3, please use an older version of the SDK (v0.22.x) that doesn't use BoLD.`,
-    );
-  }
 
   if (params.batchPosters.length === 0 || params.batchPosters.includes(zeroAddress)) {
     throw new Error(`"params.batchPosters" can't be empty or contain the zero address.`);
