@@ -3,18 +3,21 @@ import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { ParentToChildMessageGasEstimator } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
-import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
+
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrepareTransactionRequest';
 import { registerNewNetwork } from './utils/registerNewNetwork';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
-import { tokenBridgeCreatorABI as L1AtomicTokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
+import { tokenBridgeCreatorABI as l1TokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
+import {
+  l2AtomicTokenBridgeFactoryABI,
+  l2AtomicTokenBridgeFactoryBytecode,
+} from './contracts/TokenBridgeCreator/L2AtomicTokenBridgeFactory';
 
-// import from token-bridge-contracts directly to make sure the bytecode is the same
 const L2AtomicTokenBridgeFactory__factory = new ContractFactory(
-  L2AtomicTokenBridgeFactory.abi,
-  L2AtomicTokenBridgeFactory.bytecode,
+  l2AtomicTokenBridgeFactoryABI,
+  l2AtomicTokenBridgeFactoryBytecode,
 );
 
 export type CreateTokenBridgeGetInputsResult = {
@@ -142,7 +145,7 @@ const getEstimateForDeployingFactory = async (
 }> => {
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
     l1TokenBridgeCreatorAddress,
-    L1AtomicTokenBridgeCreatorABI,
+    l1TokenBridgeCreatorABI,
   );
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
 
@@ -183,7 +186,7 @@ async function getEstimateForDeployingContracts(
 }> {
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
     l1TokenBridgeCreatorAddress,
-    L1AtomicTokenBridgeCreatorABI,
+    l1TokenBridgeCreatorABI,
   );
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
 
