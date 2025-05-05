@@ -96,12 +96,16 @@
     // https://github.com/advisories/GHSA-xcj6-pq6g-qj4x
     // the vite dev server (when exposed to the network with --host) can return contents of arbitrary files
     //
+    // https://github.com/advisories/GHSA-859w-5945-r5v3
+    // the vite dev server (when exposed to the network with --host) can return contents of arbitrary files
+    //
     // vite is only used with vitest for running tests, and without exposing the dev server to the network
     //
     // from: vitest>vite
     // from: vitest>vite-node>vite
     "GHSA-4r4m-qw57-chr8",
     "GHSA-356w-63v5-8wf4",
-    "GHSA-xcj6-pq6g-qj4x"
+    "GHSA-xcj6-pq6g-qj4x",
+    "GHSA-859w-5945-r5v3"
   ]
 }
