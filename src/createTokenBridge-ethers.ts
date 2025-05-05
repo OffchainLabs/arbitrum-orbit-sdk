@@ -11,19 +11,11 @@ import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
 import { tokenBridgeCreatorABI as L1AtomicTokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 
-type NamedFactory = ContractFactory & { contractName: string };
-const NamedFactoryInstance = (contractJson: {
-  abi: any;
-  bytecode: string;
-  contractName: string;
-}): NamedFactory => {
-  const factory = new ContractFactory(contractJson.abi, contractJson.bytecode) as NamedFactory;
-  factory['contractName'] = contractJson.contractName;
-  return factory;
-};
-
 // import from token-bridge-contracts directly to make sure the bytecode is the same
-const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBridgeFactory);
+const L2AtomicTokenBridgeFactory__factory = new ContractFactory(
+  L2AtomicTokenBridgeFactory.abi,
+  L2AtomicTokenBridgeFactory.bytecode,
+);
 
 export type CreateTokenBridgeGetInputsResult = {
   inbox: Address;
