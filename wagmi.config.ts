@@ -121,6 +121,26 @@ const contracts: ContractConfig[] = [
     },
   },
   {
+    name: 'RollupCreator',
+    version: '3.1',
+    address: {
+      // mainnet L1
+      [mainnet.id]: '0x43698080f40dB54DEE6871540037b8AB8fD0AB44',
+      // mainnet L2
+      [arbitrumOne.id]: '0xB90e53fd945Cd28Ec4728cBfB566981dD571eB8b',
+      [arbitrumNova.id]: '0xF916Bfe431B7A7AaE083273F5b862e00a15d60F4',
+      [base.id]: '0xDbe3e840569a0446CDfEbc65D7d429c5Da5537b7',
+      // testnet L1
+      [sepolia.id]: '0x687Bc1D23390875a868Db158DA1cDC8998E31640',
+      // testnet L2
+      [arbitrumSepolia.id]: '0x5F45675AC8DDF7d45713b2c7D191B287475C16cF',
+      [baseSepolia.id]: '0x70cA29dA3B116A2c4A267c549bf7947d47f41e22',
+      // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
+      [nitroTestnodeL1.id]: '0xb562622f2D76F355D673560CB88c1dF6088702f1',
+      [nitroTestnodeL2.id]: '0x1E08B9c3f94E9aBcc531f67F949d796eC76963b9',
+    },
+  },
+  {
     name: 'TokenBridgeCreator',
     version: '1.2',
     address: {
