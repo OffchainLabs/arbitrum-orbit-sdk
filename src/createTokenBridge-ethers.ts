@@ -3,26 +3,22 @@ import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { ParentToChildMessageGasEstimator } from '@arbitrum/sdk';
 import { getBaseFee } from '@arbitrum/sdk/dist/lib/utils/lib';
 import { RollupAdminLogic__factory } from '@arbitrum/sdk/dist/lib/abi/factories/RollupAdminLogic__factory';
-import L1AtomicTokenBridgeCreator from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/ethereum/L1AtomicTokenBridgeCreator.sol/L1AtomicTokenBridgeCreator.json';
-import L2AtomicTokenBridgeFactory from '@arbitrum/token-bridge-contracts/build/contracts/contracts/tokenbridge/arbitrum/L2AtomicTokenBridgeFactory.sol/L2AtomicTokenBridgeFactory.json';
+
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { TransactionRequestRetryableGasOverrides } from './createTokenBridgePrepareTransactionRequest';
 import { registerNewNetwork } from './utils/registerNewNetwork';
 import { publicClientToProvider } from './ethers-compat/publicClientToProvider';
 
-type NamedFactory = ContractFactory & { contractName: string };
-const NamedFactoryInstance = (contractJson: {
-  abi: any;
-  bytecode: string;
-  contractName: string;
-}): NamedFactory => {
-  const factory = new ContractFactory(contractJson.abi, contractJson.bytecode) as NamedFactory;
-  factory['contractName'] = contractJson.contractName;
-  return factory;
-};
+import { tokenBridgeCreatorABI as l1TokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
+import {
+  l2AtomicTokenBridgeFactoryABI,
+  l2AtomicTokenBridgeFactoryBytecode,
+} from './contracts/TokenBridgeCreator/L2AtomicTokenBridgeFactory';
 
-// import from token-bridge-contracts directly to make sure the bytecode is the same
-const L2AtomicTokenBridgeFactory__factory = NamedFactoryInstance(L2AtomicTokenBridgeFactory);
+const L2AtomicTokenBridgeFactory__factory = new ContractFactory(
+  l2AtomicTokenBridgeFactoryABI,
+  l2AtomicTokenBridgeFactoryBytecode,
+);
 
 export type CreateTokenBridgeGetInputsResult = {
   inbox: Address;
@@ -149,7 +145,7 @@ const getEstimateForDeployingFactory = async (
 }> => {
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
     l1TokenBridgeCreatorAddress,
-    L1AtomicTokenBridgeCreator.abi,
+    l1TokenBridgeCreatorABI,
   );
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
 
@@ -190,7 +186,7 @@ async function getEstimateForDeployingContracts(
 }> {
   const L1AtomicTokenBridgeCreator__factory = new ethers.Contract(
     l1TokenBridgeCreatorAddress,
-    L1AtomicTokenBridgeCreator.abi,
+    l1TokenBridgeCreatorABI,
   );
   const l1TokenBridgeCreator = L1AtomicTokenBridgeCreator__factory.connect(l1Provider);
 
