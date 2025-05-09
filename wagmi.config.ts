@@ -105,16 +105,16 @@ const contracts: ContractConfig[] = [
     version: '2.1',
     address: {
       // mainnet L1
-      [mainnet.id]: '0x8c88430658a03497D13cDff7684D37b15aA2F3e1',
+      [mainnet.id]: '0x09De8b5E61E413F35f630798250ecE1B6ECA872A',
       // mainnet L2
-      [arbitrumOne.id]: '0x79607f00e61E6d7C0E6330bd7E9c4AC320D50FC9',
-      [arbitrumNova.id]: '0x9B523BF5F77e8d90e0E9eb0924aEA6E40B081aE6',
-      [base.id]: '0x091b8FC0F48613b191f81009797ce55Cf97Af7C8',
+      [arbitrumOne.id]: '0x351015499AC958272E3A9B6936db0968dd31741A',
+      [arbitrumNova.id]: '0xa1bd8B5b1FbacD24888C38A09fb4fDCf28c43263',
+      [base.id]: '0x36395b4102526A51Bf730637334807fb182Bd0b6',
       // testnet L1
-      [sepolia.id]: '0xfb774ea8a92ae528a596c8d90cbcf1bdbc4cee79',
+      [sepolia.id]: '0x57A8aBED71b14dBa84b5d400A4227Ff4B4f31EB5',
       // testnet L2
-      [arbitrumSepolia.id]: '0xd2Ec8376B1dF436fAb18120E416d3F2BeC61275b',
-      [baseSepolia.id]: '0x6e244cD02BBB8a6dbd7F626f05B2ef82151Ab502',
+      [arbitrumSepolia.id]: '0x2Bf262F2f2187a998B87Ff5F91e418bDF38d89a4',
+      [baseSepolia.id]: '0x04824235981aCAe210A9362E7bBfe77452e9cD5b',
       // local nitro-testnode (on "release" branch with --tokenbridge --l3node --l3-token-bridge flags)
       [nitroTestnodeL1.id]: '0x82a3c114b40ecf1fc34745400a1b9b9115c33d31',
       [nitroTestnodeL2.id]: '0x4287839696d650a0cf93b98351e85199102335d0',
