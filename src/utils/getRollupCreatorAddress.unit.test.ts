@@ -13,7 +13,7 @@ it(`successfully returns address for Sepolia`, () => {
     transport: http(),
   });
 
-  expect(getRollupCreatorAddress(client)).toEqual('0x2Bf262F2f2187a998B87Ff5F91e418bDF38d89a4');
+  expect(getRollupCreatorAddress(client)).toEqual('0x7edb2dfBeEf9417e0454A80c51EE0C034e45a570');
 });
 
 it(`fails to return address for an unrecognized parent chain`, () => {
