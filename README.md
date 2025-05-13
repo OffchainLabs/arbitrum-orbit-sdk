@@ -20,7 +20,7 @@ cp .env.example .env
 
 ## Run integration tests
 
-Clone the branch `main` of [nitro-testnode](https://github.com/OffchainLabs/nitro-testnode), and run the testnode using the following arguments:
+Clone the `release` branch of [nitro-testnode](https://github.com/OffchainLabs/nitro-testnode), and run the testnode using the following arguments:
 
 ```bash
 ./test-node.bash --init --tokenbridge --l3node --l3-fee-token --l3-token-bridge
