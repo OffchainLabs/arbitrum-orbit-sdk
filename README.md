@@ -10,6 +10,14 @@ Make sure you are using Node.js v18 or greater.
 yarn add @arbitrum/orbit-sdk viem@^1.20.0
 ```
 
+## Environment Setup
+
+Copy the example environment file to a new `.env` file:
+
+```bash
+cp .env.example .env
+```
+
 ## Run integration tests
 
 Clone the branch `main` of [nitro-testnode](https://github.com/OffchainLabs/nitro-testnode), and run the testnode using the following arguments:
