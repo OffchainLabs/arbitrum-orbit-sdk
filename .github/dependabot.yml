@@ -20,7 +20,7 @@ updates:
       - 'dependencies'
       - 'internal'
 
-  # ===  External dependenciesc ===
+  # ===  External dependencies ===
   - package-ecosystem: 'npm'
     directories:
       - '/'
