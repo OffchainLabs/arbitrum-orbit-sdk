@@ -1,17 +1,18 @@
 version: 2
 updates:
-  # === Root package.json (/) ===
-  # Internal dependencies
+  # ===  Internal dependencies ===
   - package-ecosystem: 'npm'
-    directory: '/'
+    directories:
+      - '/'
+      - '/src'
     schedule:
       interval: 'daily'
-    allow:
+    allow: 
       - dependency-name: '@arbitrum/*'
       - dependency-name: '@offchainlabs/*'
     versioning-strategy: increase-if-necessary
-    ignore:
-      - dependency-name: '*'
+    ignore: # ignore patch updates
+      - dependency-name: '*' 
         update-types: ['version-update:semver-patch']
     reviewers:
       - 'OffchainLabs/full-stack'
@@ -19,50 +20,18 @@ updates:
       - 'dependencies'
       - 'internal'
 
-  # External dependencies
+  # ===  External dependenciesc ===
   - package-ecosystem: 'npm'
-    directory: '/'
+    directories:
+      - '/'
+      - '/src'
     schedule:
       interval: 'daily'
-    ignore:
+    ignore: # exclude internal dependencies
       - dependency-name: '@arbitrum/*'
       - dependency-name: '@offchainlabs/*'
-    # Disable version updates for external dependencies - security only
-    open-pull-requests-limit: 0
-    reviewers:
-      - 'OffchainLabs/full-stack'
-    labels:
-      - 'dependencies'
-      - 'external'
-
-  # === src/package.json (/src) ===
-  # Internal dependencies
-  - package-ecosystem: 'npm'
-    directory: '/src'
-    schedule:
-      interval: 'daily'
-    allow:
-      - dependency-name: '@arbitrum/*'
-      - dependency-name: '@offchainlabs/*'
-    versioning-strategy: increase-if-necessary
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-patch']
-    reviewers:
-      - 'OffchainLabs/full-stack'
-    labels:
-      - 'dependencies'
-      - 'internal'
-
-  # External dependencies
-  - package-ecosystem: 'npm'
-    directory: '/src'
-    schedule:
-      interval: 'daily'
-    ignore:
-      - dependency-name: '@arbitrum/*'
-      - dependency-name: '@offchainlabs/*'
-    # Disable version updates for external dependencies - security only
+    # For all other (external) dependencies not caught by the ignore above,
+    # disable version updates, allowing only security updates.
     open-pull-requests-limit: 0
     reviewers:
       - 'OffchainLabs/full-stack'
