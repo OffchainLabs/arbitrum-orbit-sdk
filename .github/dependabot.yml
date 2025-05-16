@@ -7,12 +7,12 @@ updates:
       - '/src'
     schedule:
       interval: 'daily'
-    allow: 
+    allow:
       - dependency-name: '@arbitrum/*'
       - dependency-name: '@offchainlabs/*'
     versioning-strategy: increase-if-necessary
     ignore: # ignore patch updates
-      - dependency-name: '*' 
+      - dependency-name: '*'
         update-types: ['version-update:semver-patch']
     reviewers:
       - 'OffchainLabs/full-stack'
