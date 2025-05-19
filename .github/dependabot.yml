@@ -1,19 +1,35 @@
 version: 2
 updates:
+  # INTERNAL
   - package-ecosystem: npm
     directories:
-      - '/*'
-    schedule: { interval: daily }
-    versioning-strategy: increase-if-necessary
+      - '/**/*'
+    schedule:
+      interval: daily
+    allow:
+      - dependency-name: '@arbitrum/*'
+      - dependency-name: '@offchainlabs/*'
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-patch']
-    reviewers: ['OffchainLabs/full-stack']
-    labels: ['dependencies']
-
     groups:
-      internal:
+      internal-major-minor:
         patterns: ['@arbitrum/*', '@offchainlabs/*']
+        update-types:
+          - 'major'
+          - 'minor'
+
+  # EXTERNAL
+  - package-ecosystem: npm
+    directories:
+      - '/**/*'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: '@arbitrum/*'
+      - dependency-name: '@offchainlabs/*'
+    open-pull-requests-limit: 0
+    groups:
       external-security:
-        exclude-patterns: ['@arbitrum/*', '@offchainlabs/*']
         applies-to: security-updates
+        exclude-patterns: ['@arbitrum/*', '@offchainlabs/*']
