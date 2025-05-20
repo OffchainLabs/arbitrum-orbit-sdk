@@ -27,7 +27,7 @@
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.8.3",
-    "ts-morph": "^21.0.1",
+    "ts-morph": "^26.0.0",
     "typescript": "^5.2.2",
     "vitest": "^3.0.9"
   },
