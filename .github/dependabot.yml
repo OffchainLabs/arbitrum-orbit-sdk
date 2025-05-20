@@ -1,41 +1,16 @@
 version: 2
 updates:
-  # ── Internal packages ──
   - package-ecosystem: npm
-    directory: '/'
+    directories: ["**/*"]
     schedule: { interval: daily }
-    allow:
-      - dependency-name: '@arbitrum/*'
-      - dependency-name: '@offchainlabs/*'
     versioning-strategy: increase
     ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-patch']
-
-  - package-ecosystem: npm
-    directory: '/src'
-    schedule: { interval: daily }
-    allow:
-      - dependency-name: '@arbitrum/*'
-      - dependency-name: '@offchainlabs/*'
-    versioning-strategy: increase
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-patch']
-
-  # ── External packages ──
-  - package-ecosystem: npm
-    directory: '/'
-    schedule: { interval: daily }
-    ignore:
-      - dependency-name: '@arbitrum/*'
-      - dependency-name: '@offchainlabs/*'
-    open-pull-requests-limit: 0   # security-only
-
-  - package-ecosystem: npm
-    directory: '/src'
-    schedule: { interval: daily }
-    ignore:
-      - dependency-name: '@arbitrum/*'
-      - dependency-name: '@offchainlabs/*'
-    open-pull-requests-limit: 0   # security-only
+      - dependency-name: "@arbitrum/*"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "@offchainlabs/*"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
