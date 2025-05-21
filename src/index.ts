@@ -115,6 +115,7 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { prepareKeyset } from './prepareKeyset';
+import { prepareKeysetHash } from './prepareKeysetHash';
 import {
   feeRouterDeployChildToParentRewardRouter,
   FeeRouterDeployChildToParentRewardRouterParams,
@@ -262,6 +263,7 @@ export {
   PrepareNodeConfigParams,
   prepareNodeConfig,
   prepareKeyset,
+  prepareKeysetHash,
   utils,
   //
   isTokenBridgeDeployed,
