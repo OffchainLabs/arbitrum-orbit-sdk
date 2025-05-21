@@ -1,5 +1,7 @@
 /**
- * `SetValidKeyset` event logs emitted by Arbitrum Nova's Sequencer Inbox.
+ * `SetValidKeyset` event logs emitted by the Arbitrum Nova Sequencer Inbox.
+ *
+ * @see https://etherscan.io/address/0x211E1c4c7f1bF5351Ac850Ed10FD68CFfCF6c21b
  */
 export const logs = [
   {

@@ -1,5 +1,7 @@
 /**
- * `SetValidKeyset` event logs emitted by Xai's Sequencer Inbox.
+ * `SetValidKeyset` event logs emitted by the Xai Sequencer Inbox.
+ *
+ * @see https://arbiscan.io/address/0x995a9d3ca121d48d21087ede20bc8acb2398c8b1
  */
 export const logs = [
   {
