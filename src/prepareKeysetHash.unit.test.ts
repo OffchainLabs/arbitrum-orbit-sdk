@@ -18,3 +18,8 @@ logs_xai.forEach((log, index) => {
     expect(prepareKeysetHash(keysetBytes)).toEqual(keysetHash);
   });
 });
+
+it(`successfully calculates keyset hash (no 0x prefix)`, () => {
+  const { keysetBytes, keysetHash } = logs_arbitrumNova[0].args;
+  expect(prepareKeysetHash(keysetBytes.slice(2))).toEqual(keysetHash);
+});
