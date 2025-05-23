@@ -91,7 +91,7 @@ import { CoreContracts } from './types/CoreContracts';
 import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
-import { PrepareNodeConfigParams, prepareNodeConfig } from './prepareNodeConfig';
+import { PrepareNodeConfigParams, prepareNodeConfig, OrbitSetupScriptConfigParams } from './prepareNodeConfig';
 import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
@@ -261,6 +261,7 @@ export {
   NodeConfig,
   NodeConfigChainInfoJson,
   PrepareNodeConfigParams,
+  OrbitSetupScriptConfigParams,
   prepareNodeConfig,
   prepareKeyset,
   prepareKeysetHash,
