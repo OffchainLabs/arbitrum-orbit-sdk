@@ -6,6 +6,7 @@ updates:
     schedule:
       interval: daily
     versioning-strategy: increase
+    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types:
