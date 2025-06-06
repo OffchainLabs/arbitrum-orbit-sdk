@@ -35,6 +35,7 @@ export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | u
       value?: bigint;
       publicClient: PublicClient<Transport, TChain>;
       gasOverrides?: TransactionRequestGasOverrides;
+      bold?: boolean;
     }>
   >;
 
