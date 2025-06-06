@@ -1,7 +1,7 @@
 import { zeroAddress, zeroHash } from 'viem';
 
-import { getConsensusReleaseByVersion } from './wasmModuleRoot';
-import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from './createRollupPrepareDeploymentParamsConfig';
+import { getConsensusReleaseByVersion } from '../wasmModuleRoot';
+import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from '../createRollupPrepareDeploymentParamsConfig';
 
 const bufferConfig: Config['bufferConfig'] = {
   threshold: BigInt(2 ** 32),
