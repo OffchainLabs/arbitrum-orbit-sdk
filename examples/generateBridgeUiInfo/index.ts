@@ -1,7 +1,11 @@
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 import { config } from 'dotenv';
-import { ChainConfig, createRollupPrepareTransaction, createRollupPrepareTransactionReceipt } from '@arbitrum/orbit-sdk';
+import {
+  ChainConfig,
+  createRollupPrepareTransaction,
+  createRollupPrepareTransactionReceipt,
+} from '@arbitrum/orbit-sdk';
 import { createTokenBridgeFetchTokenBridgeContracts } from '@arbitrum/orbit-sdk';
 import { writeFile } from 'fs/promises';
 config();
@@ -51,7 +55,7 @@ async function main() {
     // Create chain client
     const parentChainPublicClient = createPublicClient({
       chain: parentChain,
-      transport: http()
+      transport: http(),
     });
 
     // Get chain information
@@ -61,7 +65,7 @@ async function main() {
 
     // get the transaction
     const tx = createRollupPrepareTransaction(
-        await parentChainPublicClient.getTransaction({ hash: txHash }),
+      await parentChainPublicClient.getTransaction({ hash: txHash }),
     );
 
     // get the chain config from the transaction inputs
@@ -70,7 +74,7 @@ async function main() {
 
     // get the transaction receipt
     const txReceipt = createRollupPrepareTransactionReceipt(
-        await parentChainPublicClient.getTransactionReceipt({ hash: txHash }),
+      await parentChainPublicClient.getTransactionReceipt({ hash: txHash }),
     );
 
     // Get core contract addresses
@@ -79,7 +83,7 @@ async function main() {
     // Get token bridge contract addresses
     const tokenBridgeContracts = await createTokenBridgeFetchTokenBridgeContracts({
       inbox: coreContracts.inbox,
-      parentChainPublicClient: parentChainPublicClient
+      parentChainPublicClient: parentChainPublicClient,
     });
 
     // Build chain info object
@@ -90,7 +94,7 @@ async function main() {
         parentChainId: parentChain.id,
         rpcUrl: process.env.ORBIT_CHAIN_RPC || 'http://localhost:8449',
         explorerUrl: process.env.ORBIT_CHAIN_EXPLORER_URL || 'http://localhost',
-        nativeToken: coreContracts.nativeToken
+        nativeToken: coreContracts.nativeToken,
       },
       coreContracts: {
         rollup: coreContracts.rollup,
@@ -98,7 +102,7 @@ async function main() {
         outbox: coreContracts.outbox,
         sequencerInbox: coreContracts.sequencerInbox,
         bridge: coreContracts.bridge,
-        nativeToken: coreContracts.nativeToken
+        nativeToken: coreContracts.nativeToken,
       },
       tokenBridgeContracts: {
         l2Contracts: {
@@ -108,7 +112,7 @@ async function main() {
           router: tokenBridgeContracts.parentChainContracts.router,
           standardGateway: tokenBridgeContracts.parentChainContracts.standardGateway,
           weth: tokenBridgeContracts.parentChainContracts.weth,
-          wethGateway: tokenBridgeContracts.parentChainContracts.wethGateway
+          wethGateway: tokenBridgeContracts.parentChainContracts.wethGateway,
         },
         l3Contracts: {
           customGateway: tokenBridgeContracts.orbitChainContracts.customGateway,
@@ -117,19 +121,17 @@ async function main() {
           router: tokenBridgeContracts.orbitChainContracts.router,
           standardGateway: tokenBridgeContracts.orbitChainContracts.standardGateway,
           weth: tokenBridgeContracts.orbitChainContracts.weth,
-          wethGateway: tokenBridgeContracts.orbitChainContracts.wethGateway
-        }
-      }
+          wethGateway: tokenBridgeContracts.orbitChainContracts.wethGateway,
+        },
+      },
     };
 
     // Write to output.json file
     await writeFile('output.json', JSON.stringify(chainInfo, null, 2));
     console.log('Bridge UI info has been written to output.json');
-
-
   } catch (error) {
     console.error('Error generating chain info:', error);
   }
 }
 
-main().catch(console.error); 
+main().catch(console.error);
