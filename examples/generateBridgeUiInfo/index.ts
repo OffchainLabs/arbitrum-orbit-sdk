@@ -52,14 +52,11 @@ interface BridgeUiInfo {
 async function main() {
   try {
     const parentChain = arbitrumSepolia;
-    // Create chain client
+    // create chain client
     const parentChainPublicClient = createPublicClient({
       chain: parentChain,
       transport: http(),
     });
-
-    // Get chain information
-    const chainId = await parentChainPublicClient.getChainId();
 
     const txHash = process.env.ORBIT_DEPLOYMENT_TRANSACTION_HASH as `0x${string}`;
 
@@ -77,16 +74,16 @@ async function main() {
       await parentChainPublicClient.getTransactionReceipt({ hash: txHash }),
     );
 
-    // Get core contract addresses
+    // get core contract addresses
     const coreContracts = txReceipt.getCoreContracts();
 
-    // Get token bridge contract addresses
+    // get token bridge contract addresses
     const tokenBridgeContracts = await createTokenBridgeFetchTokenBridgeContracts({
       inbox: coreContracts.inbox,
       parentChainPublicClient: parentChainPublicClient,
     });
 
-    // Build chain info object
+    // build chain info object
     const chainInfo: BridgeUiInfo = {
       chainInfo: {
         chainName: 'My Orbit Chain',
@@ -126,7 +123,7 @@ async function main() {
       },
     };
 
-    // Write to output.json file
+    // write to output.json file
     await writeFile('output.json', JSON.stringify(chainInfo, null, 2));
     console.log('Bridge UI info has been written to output.json');
   } catch (error) {
