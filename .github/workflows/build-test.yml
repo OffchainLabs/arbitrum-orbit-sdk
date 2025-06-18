@@ -80,7 +80,7 @@ jobs:
       - name: Set up the local node
         uses: OffchainLabs/actions/run-nitro-test-node@feat-simplify
         with:
-          nitro-testnode-ref: v3-support
+          nitro-testnode-ref: release
           args: ${{ matrix.config.args }}
 
       - name: Copy .env
