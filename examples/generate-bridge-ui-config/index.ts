@@ -24,7 +24,7 @@ async function main() {
       params: {
         parentChain,
         deploymentTxHash: txHash,
-        chainName: 'My Orbit Chain2',
+        chainName: process.env.ORBIT_CHAIN_NAME || 'My Orbit Chain2',
         rpcUrl: process.env.ORBIT_CHAIN_RPC || 'http://localhost:8449',
         explorerUrl: process.env.ORBIT_CHAIN_EXPLORER_URL || 'http://localhost',
       },
