@@ -32,14 +32,14 @@ export type GetBridgeUiConfigFunctionParams<TChain extends Chain> = {
  *
  * Returns the bridge UI configuration object.
  *
- * @param {Object} getBridgeUiConfigParams - Parameters for fetching bridge UI config
- * @param {Object} getBridgeUiConfigParams.params - Configuration parameters
- * @param {Object} getBridgeUiConfigParams.params.parentChain - The parent chain object (e.g., arbitrumSepolia)
- * @param {string} getBridgeUiConfigParams.params.deploymentTxHash - The transaction hash of the Orbit chain deployment
- * @param {string} [getBridgeUiConfigParams.params.chainName] - Optional, the name of the Orbit chain
- * @param {string} [getBridgeUiConfigParams.params.rpcUrl] - Optional, the RPC URL for the Orbit chain
- * @param {string} [getBridgeUiConfigParams.params.explorerUrl] - Optional, the block explorer URL for the Orbit chain
- * @param {Object} [getBridgeUiConfigParams.parentChainPublicClient] - Optional, a Viem PublicClient instance for the parent chain
+ * @param {Object} GetBridgeUiConfigFunctionParams - Parameters for fetching bridge UI config
+ * @param {Object} GetBridgeUiConfigFunctionParams.params - Configuration parameters
+ * @param {Object} GetBridgeUiConfigFunctionParams.params.parentChain - The parent chain object (e.g., arbitrumSepolia)
+ * @param {string} GetBridgeUiConfigFunctionParams.params.deploymentTxHash - The transaction hash of the Orbit chain deployment
+ * @param {string} [GetBridgeUiConfigFunctionParams.params.chainName] - Optional, the name of the Orbit chain
+ * @param {string} [GetBridgeUiConfigFunctionParams.params.rpcUrl] - Optional, the RPC URL for the Orbit chain
+ * @param {string} [GetBridgeUiConfigFunctionParams.params.explorerUrl] - Optional, the block explorer URL for the Orbit chain
+ * @param {Object} [GetBridgeUiConfigFunctionParams.parentChainPublicClient] - Optional, a Viem PublicClient instance for the parent chain
  *
  * @returns {Promise<BridgeUiConfig>} - The bridge UI configuration object
  *

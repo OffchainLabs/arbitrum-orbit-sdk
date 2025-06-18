@@ -52,15 +52,3 @@ export type BridgeUiConfig = {
     };
   };
 };
-
-/**
- * Parameters for retrieving bridge UI configuration
- */
-export type GetBridgeUiConfigParams<TChain extends Chain | undefined> = {
-  parentChain: TChain;
-  deploymentTxHash: `0x${string}`;
-  chainName?: string;
-  rpcUrl?: string;
-  explorerUrl?: string;
-  parentChainPublicClient?: PublicClient<Transport, TChain>;
-};
