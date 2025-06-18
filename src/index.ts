@@ -127,7 +127,7 @@ import {
 } from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
-import { getBridgeUiConfig, GetBridgeUiConfigParams } from './getBridgeUiConfig';
+import { getBridgeUiConfig, GetBridgeUiConfigFunctionParams } from './getBridgeUiConfig';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
 import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
@@ -297,7 +297,7 @@ export {
   //
   getBridgeUiConfig,
   BridgeUiConfig,
-  GetBridgeUiConfigParams,
+  GetBridgeUiConfigFunctionParams,
   //
   getValidators,
   GetValidatorsParams,

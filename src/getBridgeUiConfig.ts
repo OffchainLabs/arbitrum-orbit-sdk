@@ -8,47 +8,58 @@ import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeF
 /**
  * Parameters for retrieving bridge UI configuration
  */
-export type GetBridgeUiConfigParams<TChain extends Chain> = {
-  parentChain: TChain;
-  deploymentTxHash: `0x${string}`;
-  chainName?: string;
-  rpcUrl?: string;
-  explorerUrl?: string;
+export type GetBridgeUiConfigFunctionParams<TChain extends Chain> = {
+  /**
+   * Configuration parameters
+   */
+  params: {
+    parentChain: TChain;
+    deploymentTxHash: `0x${string}`;
+    chainName?: string;
+    rpcUrl?: string;
+    explorerUrl: string;
+  };
   parentChainPublicClient?: PublicClient<Transport, TChain>;
 };
 
 /**
- * Retrieves the bridge UI configuration for an Orbit chain
+ * Retrieves the bridge UI configuration for an Orbit chain.
  *
- * This function fetches all necessary contract addresses and chain information
- * required to set up a bridge UI for an Orbit chain. It uses the deployment
- * transaction to extract core contract addresses and token bridge information.
+ * This function fetches all necessary contract addresses and metadata
+ * required for adding a new test arbitrum chain to the bridge UI.
  *
- * @param params - Configuration parameters for retrieving bridge UI information
- * @returns Bridge UI configuration information
+ * Accepts arbitrum chain deployment config, parent chain, and the parent chain public client.
+ *
+ * Returns the bridge UI configuration object.
+ *
+ * @param {Object} getBridgeUiConfigParams - Parameters for fetching bridge UI config
+ * @param {Object} getBridgeUiConfigParams.params - Configuration parameters
+ * @param {Object} getBridgeUiConfigParams.params.parentChain - The parent chain object (e.g., arbitrumSepolia)
+ * @param {string} getBridgeUiConfigParams.params.deploymentTxHash - The transaction hash of the Orbit chain deployment
+ * @param {string} [getBridgeUiConfigParams.params.chainName] - Optional, the name of the Orbit chain
+ * @param {string} [getBridgeUiConfigParams.params.rpcUrl] - Optional, the RPC URL for the Orbit chain
+ * @param {string} [getBridgeUiConfigParams.params.explorerUrl] - Optional, the block explorer URL for the Orbit chain
+ * @param {Object} [getBridgeUiConfigParams.parentChainPublicClient] - Optional, a Viem PublicClient instance for the parent chain
+ *
+ * @returns {Promise<BridgeUiConfig>} - The bridge UI configuration object
  *
  * @example
- * ```typescript
- * const bridgeConfig = await getBridgeUiConfig({
- *   parentChain: arbitrumSepolia,
- *   deploymentTxHash: '0x...',
- *   chainName: 'My Orbit Chain',
- *   rpcUrl: 'https://my-rpc-url',
- *   explorerUrl: 'https://my-explorer'
+ * const bridgeUiInfo = await getBridgeUiConfig({
+ *   params: {
+ *     parentChain,
+ *     deploymentTxHash: '0x...',
+ *     chainName: 'My Orbit Chain',
+ *     rpcUrl: 'http://localhost:8449',
+ *     explorerUrl: 'http://localhost',
+ *   },
+ *   parentChainPublicClient,
  * });
- * ```
  */
-export async function getBridgeUiConfig<TChain extends Chain>(
-  params: GetBridgeUiConfigParams<TChain>,
-): Promise<BridgeUiConfig> {
-  const {
-    parentChain,
-    deploymentTxHash,
-    chainName = 'Orbit Chain',
-    rpcUrl = 'http://localhost:8449',
-    explorerUrl = 'http://localhost',
-    parentChainPublicClient: providedClient,
-  } = params;
+export async function getBridgeUiConfig<TChain extends Chain>({
+  params,
+  parentChainPublicClient: providedClient,
+}: GetBridgeUiConfigFunctionParams<TChain>): Promise<BridgeUiConfig> {
+  const { parentChain, deploymentTxHash, chainName, rpcUrl, explorerUrl } = params;
 
   // Create a new public client if not provided
   const parentChainPublicClient: PublicClient<Transport, TChain> =
@@ -84,10 +95,10 @@ export async function getBridgeUiConfig<TChain extends Chain>(
   // Build and return the configuration object
   return {
     chainInfo: {
-      chainName,
+      chainName: chainName ?? 'Orbit Chain',
       chainId: chainConfig.chainId,
       parentChainId: parentChain.id,
-      rpcUrl,
+      rpcUrl: rpcUrl ?? 'http://localhost:8449',
       explorerUrl,
       nativeToken: coreContracts.nativeToken,
     },
