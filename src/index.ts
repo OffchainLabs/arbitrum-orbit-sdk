@@ -127,7 +127,7 @@ import {
 } from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
-import { getBridgeUiConfig, GetBridgeUiConfigParams} from './getBridgeUiConfig';
+import { getBridgeUiConfig, GetBridgeUiConfigParams } from './getBridgeUiConfig';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
 import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
@@ -296,7 +296,7 @@ export {
   SequencerInboxMaxTimeVariation,
   //
   getBridgeUiConfig,
-  BridgeUiConfig, 
+  BridgeUiConfig,
   GetBridgeUiConfigParams,
   //
   getValidators,

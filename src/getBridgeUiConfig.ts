@@ -1,24 +1,21 @@
 import { createPublicClient, PublicClient, Chain, Transport, http } from 'viem';
-import {
-  ChainConfig,
-} from './types/ChainConfig';
+import { ChainConfig } from './types/ChainConfig';
 import { BridgeUiConfig } from './types/bridgeUiConfig';
 import { createRollupPrepareTransaction } from './createRollupPrepareTransaction';
 import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 
-
 /**
  * Parameters for retrieving bridge UI configuration
  */
 export type GetBridgeUiConfigParams<TChain extends Chain> = {
-    parentChain: TChain;
-    deploymentTxHash: `0x${string}`;
-    chainName?: string;
-    rpcUrl?: string;
-    explorerUrl?: string;
-    parentChainPublicClient?: PublicClient<Transport, TChain>;
-}
+  parentChain: TChain;
+  deploymentTxHash: `0x${string}`;
+  chainName?: string;
+  rpcUrl?: string;
+  explorerUrl?: string;
+  parentChainPublicClient?: PublicClient<Transport, TChain>;
+};
 
 /**
  * Retrieves the bridge UI configuration for an Orbit chain
@@ -42,7 +39,7 @@ export type GetBridgeUiConfigParams<TChain extends Chain> = {
  * ```
  */
 export async function getBridgeUiConfig<TChain extends Chain>(
-  params: GetBridgeUiConfigParams<TChain>
+  params: GetBridgeUiConfigParams<TChain>,
 ): Promise<BridgeUiConfig> {
   const {
     parentChain,
@@ -61,22 +58,19 @@ export async function getBridgeUiConfig<TChain extends Chain>(
       transport: http(),
     });
 
-  
   const txData = await parentChainPublicClient.getTransaction({ hash: deploymentTxHash });
   // Get the deployment transaction
-  const tx = createRollupPrepareTransaction(
-    txData
-  );
+  const tx = createRollupPrepareTransaction(txData);
 
   // Extract chain configuration from transaction inputs
   const config = tx.getInputs()[0].config;
   const chainConfig: ChainConfig = JSON.parse(config.chainConfig);
 
   // Get the transaction receipt
-  const txReceiptData = await parentChainPublicClient.getTransactionReceipt({ hash: deploymentTxHash });
-  const txReceipt = createRollupPrepareTransactionReceipt(
-    txReceiptData
-  );
+  const txReceiptData = await parentChainPublicClient.getTransactionReceipt({
+    hash: deploymentTxHash,
+  });
+  const txReceipt = createRollupPrepareTransactionReceipt(txReceiptData);
 
   // Get core contract addresses
   const coreContracts = txReceipt.getCoreContracts();
