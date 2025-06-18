@@ -1,5 +1,5 @@
 {
-  "name": "generatebridgeuifile",
+  "name": "generate-bridge-ui-config",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,9 +9,5 @@
   "devDependencies": {
     "@types/node": "^20.9.0",
     "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "@arbitrum/orbit-sdk": "^0.23.3",
-    "viem": "^1.20.0"
   }
 }
