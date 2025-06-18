@@ -92,7 +92,7 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { PrepareNodeConfigParams, prepareNodeConfig } from './prepareNodeConfig';
-import { BridgeUiConfig, GetBridgeUiConfigParams } from './types/bridgeUiConfig';
+import { BridgeUiConfig } from './types/bridgeUiConfig';
 import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
@@ -127,7 +127,7 @@ import {
 } from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
-import { getBridgeUiConfig } from './getBridgeUiConfig';
+import { getBridgeUiConfig, GetBridgeUiConfigParams} from './getBridgeUiConfig';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
 import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
