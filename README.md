@@ -8,7 +8,7 @@ Arbitrum chains address challenges like Ethereum's high demand for block space b
 - Arbitrum One uses the Rollup protocol, storing data on Ethereum
 - Arbitrum Nova adopts the AnyTrust protocol, enhancing performance through a data availability committee.
 
-Benefits of Arbitrum chains for decentralized app development include dedicated throughput, low-costs, fast finality, EVM+ compatibility for deploying smart contracts in various programming languages, and the ability to create independent roadmaps for app development, allowing for innovation ahead of Ethereum's public roadmap. Overall, Arbitrum chains provide tailored solutions that significantly scale Ethereum while offering greater control and flexibility for developers.
+Benefits of Arbitrum chains for decentralized app development include dedicated throughput, low costs, fast finality, EVM+ compatibility for deploying smart contracts in various programming languages, and the ability to create independent roadmaps for app development, allowing for innovation ahead of Ethereum's public roadmap. Overall, Arbitrum chains provide tailored solutions that significantly scale Ethereum while offering greater control and flexibility for developers.
 
 ## Installation
 
