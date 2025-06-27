@@ -1,4 +1,4 @@
-![Arbitrum Orbit](orbit-primary.png)
+![Arbitrum Orbit](arbitrum-chain-primary.png)
 
 # Arbitrum Orbit SDK
 
