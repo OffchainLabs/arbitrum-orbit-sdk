@@ -5,6 +5,7 @@
 The Arbitrum (Orbit) chain SDK is software written in TypeScript for building [Arbitrum (Orbit) chains](https://arbitrum.io/orbit). These chains can settle directly to Ethereum or other Ethereum L2 chains. Key features include the ability to configure various components such as throughput, privacy, and governance, giving users control over their chains.
 
 Arbitrum chains address challenges like Ethereum's high demand for block space by offloading workloads to decentralized networks, with options for Rollup or AnyTrust chains:
+
 - Arbitrum One uses the Rollup protocol, storing data on Ethereum
 - Arbitrum Nova adopts the AnyTrust protocol, enhancing performance through a data availability committee.
 
