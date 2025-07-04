@@ -173,7 +173,7 @@ async function main() {
     `0x${string}`
   >;
 
-  for await (const [feeCollectorKey, feeCollector] of feeCollectors.entries()) {
+  for (const [feeCollectorKey, feeCollector] of feeCollectors.entries()) {
     // Determine the recipient address - use custom recipient if provided, otherwise use fee collector
     let recipientAddress = feeCollector;
 
