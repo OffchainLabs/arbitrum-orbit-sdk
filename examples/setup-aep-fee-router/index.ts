@@ -306,13 +306,13 @@ async function main() {
     `Parent chain surplus fee collector correctly set to the RewardDistributor contract ${currentParentChainRewardRecipient}`,
   );
 
-  if(currentParentChainRewardRecipient == currentNetworkFeeAccount) {
+  if (currentParentChainRewardRecipient === currentNetworkFeeAccount) {
     throw new Error(
       `Parent chain surplus fee collector and Orbit surplus fee collector are the same.`,
     );
   }
 
-  if (currentParentChainRewardRecipient == currentInfraFeeAccount) {
+  if (currentParentChainRewardRecipient === currentInfraFeeAccount) {
     throw new Error(
       `Parent chain surplus fee collector and Orbit base fee collector are the same.`,
     );
