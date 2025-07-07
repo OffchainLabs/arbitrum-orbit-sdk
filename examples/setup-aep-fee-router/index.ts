@@ -176,7 +176,7 @@ async function main() {
     `0x${string}`
   >;
 
-  for await (const [feeCollectorKey] of feeCollectors.entries()) {
+  for (const [feeCollectorKey] of feeCollectors.entries()) {
     // Determine the recipient address based on the fee collector type
     let recipientAddress: `0x${string}`;
 
