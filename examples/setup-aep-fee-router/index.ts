@@ -28,18 +28,21 @@ if (
   typeof process.env.ORBIT_CHAIN_ID === 'undefined' ||
   typeof process.env.ORBIT_CHAIN_RPC === 'undefined' ||
   typeof process.env.PARENT_CHAIN_ID === 'undefined' ||
-  typeof process.env.PARENT_CHAIN_TARGET_ADDRESS === 'undefined'
+  typeof process.env.PARENT_CHAIN_TARGET_ADDRESS === 'undefined' ||
+  typeof process.env.INFRA_FEE_DISTRIBUTOR_RECIPIENT === 'undefined' ||
+  typeof process.env.NETWORK_FEE_DISTRIBUTOR_RECIPIENT === 'undefined' ||
+  typeof process.env.L1_REWARD_DISTRIBUTOR_RECIPIENT === 'undefined'
 ) {
   throw new Error(
-    `Please provide the following environment variables: ROLLUP_ADDRESS, CHAIN_OWNER_PRIVATE_KEY, ORBIT_CHAIN_ID, ORBIT_CHAIN_RPC, PARENT_CHAIN_ID, PARENT_CHAIN_TARGET_ADDRESS.`,
+    `Please provide the following environment variables: ROLLUP_ADDRESS, CHAIN_OWNER_PRIVATE_KEY, ORBIT_CHAIN_ID, ORBIT_CHAIN_RPC, PARENT_CHAIN_ID, PARENT_CHAIN_TARGET_ADDRESS, INFRA_FEE_DISTRIBUTOR_RECIPIENT, NETWORK_FEE_DISTRIBUTOR_RECIPIENT, L1_REWARD_DISTRIBUTOR_RECIPIENT.`,
   );
 }
 
-// Optional environment variables for custom recipients
-const customRecipients = {
-  infraFeeDistributorRecipient: process.env.INFRA_FEE_DISTRIBUTOR_RECIPIENT,
-  networkFeeDistributorRecipient: process.env.NETWORK_FEE_DISTRIBUTOR_RECIPIENT,
-  l1RewardDistributorRecipient: process.env.L1_REWARD_DISTRIBUTOR_RECIPIENT,
+// Mandatory recipient addresses
+const recipients = {
+  infraFeeDistributorRecipient: getAddress(process.env.INFRA_FEE_DISTRIBUTOR_RECIPIENT),
+  networkFeeDistributorRecipient: getAddress(process.env.NETWORK_FEE_DISTRIBUTOR_RECIPIENT),
+  l1RewardDistributorRecipient: getAddress(process.env.L1_REWARD_DISTRIBUTOR_RECIPIENT),
 };
 
 // load the chain owner account (or any account that has the executor role in the UpgradeExecutor)
@@ -173,28 +176,22 @@ async function main() {
     `0x${string}`
   >;
 
-  for await (const [feeCollectorKey, feeCollector] of feeCollectors.entries()) {
-    // Determine the recipient address - use custom recipient if provided, otherwise use fee collector
-    let recipientAddress = feeCollector;
+  for await (const [feeCollectorKey] of feeCollectors.entries()) {
+    // Determine the recipient address based on the fee collector type
+    let recipientAddress: `0x${string}`;
 
-    if (feeCollectorKey === 'infraFeeAccount' && customRecipients.infraFeeDistributorRecipient) {
-      recipientAddress = getAddress(customRecipients.infraFeeDistributorRecipient);
-      console.log(`Using custom infra fee recipient: ${recipientAddress}`);
-    } else if (
-      feeCollectorKey === 'networkFeeAccount' &&
-      customRecipients.networkFeeDistributorRecipient
-    ) {
-      recipientAddress = getAddress(customRecipients.networkFeeDistributorRecipient);
-      console.log(`Using custom network fee recipient: ${recipientAddress}`);
-    } else if (
-      feeCollectorKey === 'parentChainRewardRecipient' &&
-      customRecipients.l1RewardDistributorRecipient
-    ) {
-      recipientAddress = getAddress(customRecipients.l1RewardDistributorRecipient);
-      console.log(`Using custom L1 reward recipient: ${recipientAddress}`);
+    if (feeCollectorKey === 'infraFeeAccount') {
+      recipientAddress = recipients.infraFeeDistributorRecipient;
+    } else if (feeCollectorKey === 'networkFeeAccount') {
+      recipientAddress = recipients.networkFeeDistributorRecipient;
+    } else if (feeCollectorKey === 'parentChainRewardRecipient') {
+      recipientAddress = recipients.l1RewardDistributorRecipient;
+    } else {
+      // This should never happen due to TypeScript constraints
+      throw new Error(`Unknown fee collector key: ${feeCollectorKey}`);
     }
 
-    const recipients = [
+    const rewardDistributorRecipients = [
       {
         account: recipientAddress,
         weight: 9000n,
@@ -207,7 +204,7 @@ async function main() {
     console.log('Deploying RewardDistributor contract...');
     const rewardDistributorDeploymentTransactionHash = await feeRouterDeployRewardDistributor({
       orbitChainWalletClient,
-      recipients,
+      recipients: rewardDistributorRecipients,
     });
 
     const rewardDistributorDeploymentTransactionReceipt =
