@@ -1,9 +1,12 @@
 import { writeFile } from 'fs/promises';
 import { Chain, createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
+import { privateKeyToAccount } from 'viem/accounts';
+import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import {
   ChainConfig,
   PrepareNodeConfigParams,
+  OrbitSetupScriptConfigParams,
   createRollupPrepareTransaction,
   createRollupPrepareTransactionReceipt,
   prepareNodeConfig,
@@ -70,16 +73,46 @@ async function main() {
   // get the core contracts from the transaction receipt
   const coreContracts = txReceipt.getCoreContracts();
 
+  const chainName = process.env.CHAIN_NAME ?? 'My Orbit Chain';
+  const parentChainRpc = process.env.PARENT_CHAIN_RPC ?? getRpcUrl(parentChain);
+
   // prepare the node config
   const nodeConfigParameters: PrepareNodeConfigParams = {
-    chainName: 'My Orbit Chain',
+    chainName,
     chainConfig,
     coreContracts,
     batchPosterPrivateKey: process.env.BATCH_POSTER_PRIVATE_KEY as `0x${string}`,
     validatorPrivateKey: process.env.VALIDATOR_PRIVATE_KEY as `0x${string}`,
     stakeToken: config.stakeToken,
     parentChainId: parentChain.id,
-    parentChainRpcUrl: getRpcUrl(parentChain),
+    parentChainRpcUrl: parentChainRpc,
+  };
+
+  const orbitSetupScriptConfigParams: OrbitSetupScriptConfigParams = {
+    networkFeeReceiver: chainConfig.arbitrum.InitialChainOwner,
+    infrastructureFeeCollector: chainConfig.arbitrum.InitialChainOwner,
+    staker: privateKeyToAccount(sanitizePrivateKey(process.env.VALIDATOR_PRIVATE_KEY!)).address,
+    batchPoster: privateKeyToAccount(sanitizePrivateKey(process.env.BATCH_POSTER_PRIVATE_KEY!)).address,
+    chainOwner: chainConfig.arbitrum.InitialChainOwner,
+    chainId: chainConfig.chainId,
+    chainName,
+    minL2BaseFee: 100000000, // todo: check default?
+    parentChainId: parentChain.id,
+    'parent-chain-node-url': parentChainRpc,
+    utils: coreContracts.validatorUtils, // todo: same as validatorUtils?
+    rollup: coreContracts.rollup,
+    inbox: coreContracts.inbox,
+    nativeToken: coreContracts.nativeToken,
+    outbox: coreContracts.outbox,
+    rollupEventInbox: coreContracts.rollupEventInbox,
+    challengeManager: coreContracts.challengeManager,
+    adminProxy: coreContracts.adminProxy,
+    sequencerInbox: coreContracts.sequencerInbox,
+    bridge: coreContracts.bridge,
+    upgradeExecutor: coreContracts.upgradeExecutor,
+    validatorUtils: coreContracts.validatorUtils,
+    validatorWalletCreator: coreContracts.validatorWalletCreator,
+    deployedAtBlockNumber: coreContracts.deployedAtBlockNumber
   };
 
   // For L2 Orbit chains settling to Ethereum mainnet or testnet
@@ -89,8 +122,12 @@ async function main() {
 
   const nodeConfig = prepareNodeConfig(nodeConfigParameters);
 
-  await writeFile('node-config.json', JSON.stringify(nodeConfig, null, 2));
+  await writeFile('nodeConfig.json', JSON.stringify(nodeConfig, null, 2));
   console.log(`Node config written to "node-config.json"`);
+
+  await writeFile('orbitSetupScriptConfig.json', JSON.stringify(orbitSetupScriptConfigParams, null, 2));
+  console.log(`Orbit setup script config written to "orbitSetupScriptConfig.json"`);
+
 }
 
 main();
