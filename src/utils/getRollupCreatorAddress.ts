@@ -6,7 +6,7 @@ import { validateParentChain } from '../types/ParentChain';
 
 export function getRollupCreatorAddress<TChain extends Chain | undefined>(
   client: Client<Transport, TChain>,
-  contractVersion: 'v2.1' | 'v3.1' = 'v3.1',
+  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
 ): Address {
   const { chainId: parentChainId, isCustom: parentChainIsCustom } = validateParentChain(client);
 
@@ -24,7 +24,7 @@ export function getRollupCreatorAddress<TChain extends Chain | undefined>(
   }
 
   const rollupCreatorAddress =
-    contractVersion === 'v3.1'
+    rollupCreatorVersion === 'v3.1'
       ? //
         rollupCreatorV3Dot1Address
       : //
