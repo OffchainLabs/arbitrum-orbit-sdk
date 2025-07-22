@@ -1,4 +1,5 @@
 import { createPublicClient, PublicClient, Chain, Transport, http } from 'viem';
+
 import { ChainConfig } from './types/ChainConfig';
 import { BridgeUiConfig } from './types/BridgeUiConfig';
 import { createRollupPrepareTransaction } from './createRollupPrepareTransaction';
@@ -50,7 +51,7 @@ export type GetBridgeUiConfigFunctionParams<TChain extends Chain> = {
  *     deploymentTxHash: '0x...',
  *     chainName: 'My Orbit Chain',
  *     rpcUrl: 'http://localhost:8449',
- *     explorerUrl: 'http://localhost',
+ *     explorerUrl: 'http://localhost:4000',
  *   },
  *   parentChainPublicClient,
  * });
@@ -63,11 +64,7 @@ export async function getBridgeUiConfig<TChain extends Chain>({
 
   // Create a new public client if not provided
   const parentChainPublicClient: PublicClient<Transport, TChain> =
-    providedClient ||
-    createPublicClient({
-      chain: parentChain,
-      transport: http(),
-    });
+    providedClient ?? createPublicClient({ chain: parentChain, transport: http() });
 
   const txData = await parentChainPublicClient.getTransaction({ hash: deploymentTxHash });
   // Get the deployment transaction
@@ -95,11 +92,11 @@ export async function getBridgeUiConfig<TChain extends Chain>({
   // Build and return the configuration object
   return {
     chainInfo: {
-      chainName: chainName ?? 'Orbit Chain',
+      chainName: chainName || 'My Orbit Chain',
       chainId: chainConfig.chainId,
       parentChainId: parentChain.id,
-      rpcUrl: rpcUrl ?? 'http://localhost:8449',
-      explorerUrl,
+      rpcUrl: rpcUrl || 'http://localhost:8449',
+      explorerUrl: explorerUrl || 'http://localhost:4000',
       nativeToken: coreContracts.nativeToken,
     },
     coreContracts: {
