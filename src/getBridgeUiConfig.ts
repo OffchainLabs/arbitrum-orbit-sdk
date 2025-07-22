@@ -1,6 +1,6 @@
 import { createPublicClient, PublicClient, Chain, Transport, http } from 'viem';
 import { ChainConfig } from './types/ChainConfig';
-import { BridgeUiConfig } from './types/bridgeUiConfig';
+import { BridgeUiConfig } from './types/BridgeUiConfig';
 import { createRollupPrepareTransaction } from './createRollupPrepareTransaction';
 import { createRollupPrepareTransactionReceipt } from './createRollupPrepareTransactionReceipt';
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';

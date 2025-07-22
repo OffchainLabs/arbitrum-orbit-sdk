@@ -92,7 +92,7 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { PrepareNodeConfigParams, prepareNodeConfig } from './prepareNodeConfig';
-import { BridgeUiConfig } from './types/bridgeUiConfig';
+import { BridgeUiConfig } from './types/BridgeUiConfig';
 import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
