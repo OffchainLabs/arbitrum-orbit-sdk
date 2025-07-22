@@ -1,5 +1,3 @@
-import { Chain, PublicClient, Transport } from 'viem';
-
 /**
  * Bridge UI configuration information for adding a new test arbitrum chain
  */
