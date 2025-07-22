@@ -9,10 +9,8 @@ The script performs the following operations:
 1. Obtain all chain contracts (needed to execute the next steps)
 2. Obtain the current fee collectors of the chain: Orbit base fee collector, Orbit surplus fee collector, Parent chain surplus fee collector
 3. Deploy the ChildToParentRouter contract, configured to send the amounts received to the appropriate address on the parent chain controlled by the Arbitrum Foundation
-4. Deploy a RewardDistributor contract for each different fee collector account, configured to distribute 90% of the amounts received to the current fee collector, and 10% to the ChildToParentRouter contract
+4. Deploy a RewardDistributor contract for each different fee collector account, configured to distribute 90% of the amounts received to the specified recipient address, and 10% to the ChildToParentRouter contract
 5. Set each of the fee collectors to the RewardDistributor contracts
-
-Note that if all three fee types are collected by the same address, only one RewardDistributor contract will be deployed that will collect all those fees.
 
 ## Variables needed
 
@@ -22,6 +20,9 @@ Note that if all three fee types are collected by the same address, only one Rew
 - ORBIT_CHAIN_RPC: RPC of the Orbit chain
 - PARENT_CHAIN_ID: chain id of the parent chain (should be a non-Arbitrum chain)
 - PARENT_CHAIN_TARGET_ADDRESS: address on the parent chain where 10% of the revenue will be sent to (more information below)
+- INFRA_FEE_DISTRIBUTOR_RECIPIENT: address to receive 90% of infrastructure fees
+- NETWORK_FEE_DISTRIBUTOR_RECIPIENT: address to receive 90% of network fees
+- L1_REWARD_DISTRIBUTOR_RECIPIENT: address to receive 90% of L1 rewards
 
 ### What PARENT_CHAIN_TARGET_ADDRESS to use
 
