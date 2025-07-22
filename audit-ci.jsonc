@@ -106,6 +106,13 @@
     "GHSA-4r4m-qw57-chr8",
     "GHSA-356w-63v5-8wf4",
     "GHSA-xcj6-pq6g-qj4x",
-    "GHSA-859w-5945-r5v3"
+    "GHSA-859w-5945-r5v3",
+    // https://github.com/advisories/GHSA-v6h2-p8h4-qcjw
+    // brace-expansion exposes a regular expression denial of service vulnerability
+    // Only used in development (patch-package and ts-morph)
+    // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>rimraf>glob>minimatch>brace-expansion
+    // from: patch-package>rimraf>glob>minimatch>brace-expansion
+    // from: ts-morph>@ts-morph/common>minimatch>brace-expansion
+    "GHSA-v6h2-p8h4-qcjw"
   ]
 }
