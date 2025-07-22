@@ -18,7 +18,7 @@ export type GetBridgeUiConfigFunctionParams<TChain extends Chain> = {
     deploymentTxHash: `0x${string}`;
     chainName?: string;
     rpcUrl?: string;
-    explorerUrl: string;
+    explorerUrl?: string;
   };
   parentChainPublicClient?: PublicClient<Transport, TChain>;
 };
