@@ -31,8 +31,6 @@ function getRollupCreatorVersionFromEnv(): 'v2.1' | 'v3.1' {
   return 'v3.1';
 }
 
-console.log({ rollupCreatorVersion: getRollupCreatorVersionFromEnv() });
-
 describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
     deployer: l3TokenBridgeDeployer,

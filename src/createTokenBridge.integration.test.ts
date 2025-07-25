@@ -109,8 +109,6 @@ const nativeTokenDecimals = process.env.INTEGRATION_TEST_DECIMALS
   ? Number(process.env.INTEGRATION_TEST_DECIMALS)
   : 18;
 
-console.log({ nativeTokenDecimals });
-
 describe('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
     const testnodeInformation = getInformationFromTestnode();
