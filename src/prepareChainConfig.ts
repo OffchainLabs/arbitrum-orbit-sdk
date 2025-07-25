@@ -1,6 +1,23 @@
 import { ExcludeSome, Prettify, RequireSome } from './types/utils';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
 
+function withSortedKeys<T extends Record<string, any>>(obj: T): T {
+  const result = {} as T;
+  const sortedKeys = Object.keys(obj).sort();
+
+  for (const key of sortedKeys) {
+    const value = obj[key];
+
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      result[key as keyof T] = withSortedKeys(value);
+    } else {
+      result[key as keyof T] = value;
+    }
+  }
+
+  return result;
+}
+
 export const defaults = {
   homesteadBlock: 0,
   daoForkBlock: null,
@@ -48,9 +65,9 @@ export type PrepareChainConfigArbitrumParams = RequireSome<
 >;
 
 export function prepareChainConfig(params: PrepareChainConfigParams): ChainConfig {
-  return {
+  return withSortedKeys({
     ...defaults,
     chainId: params.chainId,
     arbitrum: { ...defaults.arbitrum, ...params.arbitrum },
-  };
+  });
 }
