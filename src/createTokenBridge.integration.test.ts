@@ -105,7 +105,11 @@ async function checkWethGateways(
   expect(tokenBridgeContracts.orbitChainContracts.wethGateway).not.toEqual(zeroAddress);
 }
 
-const nativeTokenDecimals = process.env.DECIMALS ? Number(process.env.DECIMALS) : 18;
+const nativeTokenDecimals = process.env.INTEGRATION_TEST_DECIMALS
+  ? Number(process.env.INTEGRATION_TEST_DECIMALS)
+  : 18;
+
+console.log({ nativeTokenDecimals });
 
 describe('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
