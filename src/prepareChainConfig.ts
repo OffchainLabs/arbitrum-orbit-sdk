@@ -1,5 +1,6 @@
 import { ExcludeSome, Prettify, RequireSome } from './types/utils';
 import { ChainConfig, ChainConfigArbitrumParams } from './types/ChainConfig';
+import { withSortedKeys } from './utils/withSortedKeys';
 
 export const defaults = {
   homesteadBlock: 0,
@@ -48,9 +49,9 @@ export type PrepareChainConfigArbitrumParams = RequireSome<
 >;
 
 export function prepareChainConfig(params: PrepareChainConfigParams): ChainConfig {
-  return {
+  return withSortedKeys({
     ...defaults,
     chainId: params.chainId,
     arbitrum: { ...defaults.arbitrum, ...params.arbitrum },
-  };
+  });
 }
