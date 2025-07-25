@@ -20,6 +20,14 @@ const l3TokenBridgeDeployer = testnodeAccounts.l3TokenBridgeDeployer;
 const batchPosters = [testnodeAccounts.deployer.address];
 const validators = [testnodeAccounts.deployer.address];
 
+const rollupCreatorVersion: 'v2.1' | 'v3.1' = process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH
+  ? (process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH.split('.').slice(0, 2).join('.') as
+      | 'v2.1'
+      | 'v3.1')
+  : 'v3.1';
+
+console.log({ rollupCreatorVersion });
+
 describe(`create an AnyTrust chain that uses ETH as gas token`, async () => {
   const { createRollupConfig, createRollupInformation } = await createRollupHelper({
     deployer: l3TokenBridgeDeployer,
