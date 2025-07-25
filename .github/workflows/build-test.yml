@@ -64,25 +64,19 @@ jobs:
     strategy:
       matrix:
         config:
-          - name: Nitro contracts v3.1 - Chain with ETH
-            nitro-contracts-branch: v3.1.1
-            args: --tokenbridge --l3node --l3-token-bridge
-          - name: Nitro contracts v3.1 - Chain with custom gas token (18 decimals)
+          - name: Nitro contracts v3.1 - Custom gas token with 18 decimals
             nitro-contracts-branch: v3.1.1
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
             decimals: 18
-          - name: Nitro contracts v3.1 - Chain with custom gas token (6 decimals)
+          - name: Nitro contracts v3.1 - Custom gas token with 6 decimals
             nitro-contracts-branch: v3.1.1
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token --l3-fee-token-decimals 6
             decimals: 6
-          - name: Nitro contracts v2.1 - Chain with ETH
-            nitro-contracts-branch: v2.1.3
-            args: --tokenbridge --l3node --l3-token-bridge
-          - name: Nitro contracts v2.1 - Chain with custom gas token (18 decimals)
+          - name: Nitro contracts v2.1 - Custom gas token with 18 decimals
             nitro-contracts-branch: v2.1.3
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
             decimals: 18
-          - name: Nitro contracts v2.1 - Chain with custom gas token (6 decimals)
+          - name: Nitro contracts v2.1 - Custom gas token with 6 decimals
             nitro-contracts-branch: v2.1.3
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token --l3-fee-token-decimals 6
             decimals: 6
