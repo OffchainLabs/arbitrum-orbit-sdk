@@ -14,6 +14,7 @@ export type CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain extends Chain
     account: Address;
     publicClient: PublicClient<Transport, TChain>;
     rollupCreatorAddressOverride?: Address;
+    rollupCreatorVersion?: 'v2.1' | 'v3.1';
   }>;
 
 export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends Chain | undefined>({
@@ -22,11 +23,13 @@ export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends C
   account,
   publicClient,
   rollupCreatorAddressOverride,
+  rollupCreatorVersion = 'v3.1',
 }: CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain>) {
   const allowance = await fetchAllowance({
     address: nativeToken,
     owner: account,
-    spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
+    spender:
+      rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient, rollupCreatorVersion),
     publicClient,
   });
 
@@ -34,6 +37,7 @@ export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends C
     account,
     nativeToken,
     maxFeePerGasForRetryables,
+    rollupCreatorVersion,
   });
 
   const decimals = await fetchDecimals({

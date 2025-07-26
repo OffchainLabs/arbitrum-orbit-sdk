@@ -20,6 +20,7 @@ type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain extends Ch
   nativeToken: Address;
   parentChainPublicClient: PublicClient<Transport, TChain>;
   account: PrivateKeyAccount;
+  rollupCreatorVersion?: 'v2.1' | 'v3.1';
 };
 
 /**
@@ -36,11 +37,13 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator<
   nativeToken,
   parentChainPublicClient,
   account,
+  rollupCreatorVersion = 'v3.1',
 }: EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain>) {
   const allowanceParams = {
     nativeToken,
     account: account.address,
     publicClient: parentChainPublicClient,
+    rollupCreatorVersion,
   };
 
   if (!(await createRollupEnoughCustomFeeTokenAllowance(allowanceParams))) {
@@ -182,6 +185,7 @@ export async function createRollup<TChain extends Chain | undefined>({
       nativeToken,
       parentChainPublicClient,
       account,
+      rollupCreatorVersion: 'rollupCreatorVersion' in rest ? rest.rollupCreatorVersion : 'v3.1',
     });
   }
 
