@@ -7,7 +7,7 @@ import { isNonZeroAddress } from './utils/isNonZeroAddress';
 
 export async function createRollupGetCallValue<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  params: CreateRollupParams & { account: Address },
+  params: { deployFactoriesToL2: boolean; nativeToken: Address; account: Address },
 ): Promise<bigint> {
   // when not deploying deterministic factories to L2, no callvalue is necessary, as no retryable tickets will be created
   if (!params.deployFactoriesToL2) {
