@@ -73,11 +73,25 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator<
 /**
  * This type is for the params of the createRollup function
  */
-export type CreateRollupFunctionParams<TChain extends Chain | undefined> = {
-  params: CreateRollupParams;
-  account: PrivateKeyAccount;
-  parentChainPublicClient: PublicClient<Transport, TChain>;
-};
+export type CreateRollupFunctionParams<TChain extends Chain | undefined> =
+  | {
+      params: CreateRollupParams<'v2.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion: 'v2.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion: 'v3.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion?: never;
+    };
 
 /**
  * @param {Object} createRollupResults - results of the createRollup function
@@ -155,6 +169,7 @@ export async function createRollup<TChain extends Chain | undefined>({
   params,
   account,
   parentChainPublicClient,
+  ...rest
 }: CreateRollupFunctionParams<TChain>): Promise<CreateRollupResults> {
   validateParentChain(parentChainPublicClient);
 
@@ -171,10 +186,13 @@ export async function createRollup<TChain extends Chain | undefined>({
   }
 
   // prepare the transaction for deploying the core contracts
+  //
+  // @ts-ignore (todo: fix before shipping versioning)
   const txRequest = await createRollupPrepareTransactionRequest({
     params,
     account: account.address,
     publicClient: parentChainPublicClient,
+    rollupCreatorVersion: 'rollupCreatorVersion' in rest ? rest.rollupCreatorVersion : 'v3.1',
   });
 
   // sign and send the transaction
