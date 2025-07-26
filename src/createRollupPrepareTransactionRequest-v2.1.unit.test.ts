@@ -7,7 +7,7 @@ import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupDefaultRetryablesFees } from './constants';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig/v2.1';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
-import { rollupCreatorAddress } from './contracts/RollupCreator';
+import { rollupCreatorAddress } from './contracts/RollupCreator/v2.1';
 
 import {
   getNitroTestnodePrivateKeyAccounts,
