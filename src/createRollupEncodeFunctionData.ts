@@ -5,36 +5,37 @@ import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCr
 
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 
-// function overloads for createRollupEncodeFunctionData
-export function createRollupEncodeFunctionData(
-  args: CreateRollupFunctionInputs<'v2.1'>,
-  rollupCreatorVersion: 'v2.1',
-): Hex;
-export function createRollupEncodeFunctionData(
-  args: CreateRollupFunctionInputs<'v3.1'>,
-  rollupCreatorVersion: 'v3.1',
-): Hex;
-export function createRollupEncodeFunctionData(
-  args: CreateRollupFunctionInputs<'v3.1'>,
-  // rollupCreatorVersion defaults to v3.1
-): Hex;
+export type CreateRollupEncodeFunctionDataParams =
+  | {
+      rollupCreatorVersion: 'v2.1';
+      args: CreateRollupFunctionInputs<'v2.1'>;
+    }
+  | {
+      rollupCreatorVersion: 'v3.1';
+      args: CreateRollupFunctionInputs<'v3.1'>;
+    }
+  | {
+      rollupCreatorVersion?: never;
+      args: CreateRollupFunctionInputs<'v3.1'>;
+    };
 
-// implementation with union types
-export function createRollupEncodeFunctionData(
-  args: CreateRollupFunctionInputs<'v2.1'> | CreateRollupFunctionInputs<'v3.1'>,
-  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
-) {
+export function createRollupEncodeFunctionData(params: CreateRollupEncodeFunctionDataParams): Hex {
+  const rollupCreatorVersion =
+    'rollupCreatorVersion' in params //
+      ? params.rollupCreatorVersion
+      : 'v3.1';
+
   if (rollupCreatorVersion === 'v2.1') {
     return encodeFunctionData({
       abi: rollupCreatorV2Dot1ABI,
       functionName: 'createRollup',
-      args: args as CreateRollupFunctionInputs<'v2.1'>,
+      args: params.args as CreateRollupFunctionInputs<'v2.1'>,
     });
   }
 
   return encodeFunctionData({
     abi: rollupCreatorV3Dot1ABI,
     functionName: 'createRollup',
-    args: args as CreateRollupFunctionInputs<'v3.1'>,
+    args: params.args as CreateRollupFunctionInputs<'v3.1'>,
   });
 }
