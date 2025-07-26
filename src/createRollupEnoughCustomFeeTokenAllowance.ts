@@ -4,19 +4,17 @@ import { fetchAllowance, fetchDecimals } from './utils/erc20';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 
 import { Prettify } from './types/utils';
-import { WithRollupCreatorAddressOverride } from './types/createRollupTypes';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
 import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
 export type CreateRollupEnoughCustomFeeTokenAllowanceParams<TChain extends Chain | undefined> =
-  Prettify<
-    WithRollupCreatorAddressOverride<{
-      nativeToken: Address;
-      maxFeePerGasForRetryables?: bigint;
-      account: Address;
-      publicClient: PublicClient<Transport, TChain>;
-    }>
-  >;
+  Prettify<{
+    nativeToken: Address;
+    maxFeePerGasForRetryables?: bigint;
+    account: Address;
+    publicClient: PublicClient<Transport, TChain>;
+    rollupCreatorAddressOverride?: Address;
+  }>;
 
 export async function createRollupEnoughCustomFeeTokenAllowance<TChain extends Chain | undefined>({
   nativeToken,

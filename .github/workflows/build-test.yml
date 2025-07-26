@@ -9,9 +9,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  ARBISCAN_API_KEY: ${{ secrets.ARBISCAN_API_KEY }}
-
 jobs:
   audit:
     name: 'Audit'
@@ -64,12 +61,16 @@ jobs:
     strategy:
       matrix:
         config:
-          - name: Custom gas token with 18 decimals
+          - name: Nitro contracts v3.1 - Custom gas token with 18 decimals
+            nitro-contracts-branch: v3.1.1
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token
             decimals: 18
-          - name: Custom gas token with 6 decimals
+
+          - name: Nitro contracts v3.1 - Custom gas token with 6 decimals
+            nitro-contracts-branch: v3.1.1
             args: --tokenbridge --l3node --l3-token-bridge --l3-fee-token --l3-fee-token-decimals 6
             decimals: 6
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -81,6 +82,7 @@ jobs:
         uses: OffchainLabs/actions/run-nitro-test-node@feat-simplify
         with:
           nitro-testnode-ref: release
+          nitro-contracts-branch: ${{ matrix.config.nitro-contracts-branch }}
           args: ${{ matrix.config.args }}
 
       - name: Copy .env
@@ -90,4 +92,7 @@ jobs:
         run: yarn build
 
       - name: Test
-        run: DECIMALS=${{matrix.config.decimals}} yarn test:integration
+        run: |
+          INTEGRATION_TEST_DECIMALS=${{matrix.config.decimals}} \
+          INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH=${{matrix.config.nitro-contracts-branch}} \
+          yarn test:integration
