@@ -3,7 +3,7 @@ import { Address, PublicClient, Transport, Chain, encodeFunctionData, zeroAddres
 import { defaults } from './createRollupDefaults';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
-import { rollupCreatorABI } from './contracts/RollupCreator';
+import { createRollupEncodeFunctionData } from './createRollupEncodeFunctionData';
 import { validateParentChain } from './types/ParentChain';
 import { isNonZeroAddress } from './utils/isNonZeroAddress';
 import { ChainConfig } from './types/ChainConfig';
@@ -12,16 +12,9 @@ import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
 import { Prettify } from './types/utils';
-import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
-import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
+import { CreateRollupParams } from './types/createRollupTypes';
 
-function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
-  return encodeFunctionData({
-    abi: rollupCreatorABI,
-    functionName: 'createRollup',
-    args,
-  });
-}
+import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
 export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | undefined> =
   Prettify<{
@@ -110,7 +103,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    data: createRollupEncodeFunctionData([paramsWithDefaults]),
+    data: createRollupEncodeFunctionData({ args: [paramsWithDefaults] }),
     value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
