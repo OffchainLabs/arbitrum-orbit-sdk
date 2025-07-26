@@ -143,7 +143,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
-    to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
+    to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient, rollupCreatorVersion),
     // @ts-ignore (todo: fix before shipping versioning)
     data: createRollupEncodeFunctionData({ rollupCreatorVersion, args: [paramsWithDefaults] }),
     value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
