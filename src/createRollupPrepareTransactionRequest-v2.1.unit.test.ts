@@ -5,7 +5,7 @@ import { arbitrumSepolia } from 'viem/chains';
 import { generateChainId } from './utils';
 import { prepareChainConfig } from './prepareChainConfig';
 import { createRollupDefaultRetryablesFees } from './constants';
-import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
+import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig/v2.1';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
 import { rollupCreatorAddress } from './contracts/RollupCreator';
 
@@ -48,6 +48,7 @@ it(`fails to prepare transaction request if "params.batchPosters" is set to an e
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(`"params.batchPosters" can't be empty or contain the zero address.`);
 });
@@ -77,6 +78,7 @@ it(`fails to prepare transaction request if "params.batchPosters" includes the z
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(`"params.batchPosters" can't be empty or contain the zero address.`);
 });
@@ -106,6 +108,7 @@ it(`fails to prepare transaction request if "params.validators" is set to an emp
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(`"params.validators" can't be empty or contain the zero address.`);
 });
@@ -135,6 +138,7 @@ it(`fails to prepare transaction request if "params.validators" includes the zer
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(`"params.validators" can't be empty or contain the zero address.`);
 });
@@ -165,6 +169,7 @@ it(`fails to prepare transaction request if "params.nativeToken" is custom and c
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(
     `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
@@ -195,6 +200,7 @@ it(`fails to prepare transaction request if ArbOS version 30 is selected`, async
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(
     `ArbOS 30 is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
@@ -225,6 +231,7 @@ it(`fails to prepare transaction request if ArbOS version 31 is selected`, async
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(
     `ArbOS 31 is not supported. Please set the ArbOS version to 32 or later by updating "arbitrum.InitialArbOSVersion" in your chain config.`,
@@ -256,6 +263,7 @@ it(`fails to prepare transaction request if ArbOS version is incompatible with C
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(
     `Consensus v20 does not support ArbOS 32. Please update your "wasmModuleRoot" to that of a Consensus version compatible with ArbOS 32.`,
@@ -304,6 +312,7 @@ it(`fails to prepare transaction request if "params.maxDataSize" is not provided
       },
       account: deployer.address,
       publicClient,
+      rollupCreatorVersion: 'v2.1',
     }),
   ).rejects.toThrowError(`"params.maxDataSize" must be provided when using a custom parent chain.`);
 });
@@ -332,6 +341,7 @@ it(`successfully prepares a transaction request with the default rollup creator 
     account: deployer.address,
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n } },
+    rollupCreatorVersion: 'v2.1',
   });
 
   expect(txRequest.account).toEqual(deployer.address);
@@ -366,6 +376,7 @@ it(`successfully prepares a transaction request with a custom rollup creator and
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n, percentIncrease: 20n } },
     rollupCreatorAddressOverride: '0x31421C442c422BD16aef6ae44D3b11F404eeaBd9',
+    rollupCreatorVersion: 'v2.1',
   });
 
   expect(txRequest.account).toEqual(deployer.address);
@@ -418,6 +429,7 @@ it(`successfully prepares a transaction request with a custom parent chain`, asy
     value: createRollupDefaultRetryablesFees,
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n } },
+    rollupCreatorVersion: 'v2.1',
   });
 
   expect(txRequest.account).toEqual(deployer.address);
@@ -452,6 +464,7 @@ it(`successfully prepare transaction request if "params.nativeToken" uses suppor
     account: deployer.address,
     publicClient,
     gasOverrides: { gasLimit: { base: 1_000n } },
+    rollupCreatorVersion: 'v2.1',
   });
 
   expect(txRequest.account).toEqual(deployer.address);
