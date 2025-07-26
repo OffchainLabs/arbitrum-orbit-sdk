@@ -138,7 +138,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   }
 
   const paramsWithDefaults = { ...defaults, ...params, maxDataSize };
-  const createRollupGetCallValueParams = { ...paramsWithDefaults, account };
+  const createRollupGetCallValueParams = { ...paramsWithDefaults, account, rollupCreatorVersion };
 
   // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
