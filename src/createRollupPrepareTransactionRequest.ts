@@ -11,20 +11,38 @@ import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
-import { Prettify } from './types/utils';
 import { CreateRollupParams } from './types/createRollupTypes';
 
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
 export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | undefined> =
-  Prettify<{
-    params: CreateRollupParams;
-    account: Address;
-    value?: bigint;
-    publicClient: PublicClient<Transport, TChain>;
-    gasOverrides?: TransactionRequestGasOverrides;
-    rollupCreatorAddressOverride?: Address;
-  }>;
+  | {
+      params: CreateRollupParams<'v2.1'>;
+      account: Address;
+      value?: bigint;
+      publicClient: PublicClient<Transport, TChain>;
+      gasOverrides?: TransactionRequestGasOverrides;
+      rollupCreatorAddressOverride?: Address;
+      rollupCreatorVersion: 'v2.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: Address;
+      value?: bigint;
+      publicClient: PublicClient<Transport, TChain>;
+      gasOverrides?: TransactionRequestGasOverrides;
+      rollupCreatorAddressOverride?: Address;
+      rollupCreatorVersion: 'v3.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: Address;
+      value?: bigint;
+      publicClient: PublicClient<Transport, TChain>;
+      gasOverrides?: TransactionRequestGasOverrides;
+      rollupCreatorAddressOverride?: Address;
+      rollupCreatorVersion?: never;
+    };
 
 export async function createRollupPrepareTransactionRequest<TChain extends Chain | undefined>({
   params,
@@ -33,7 +51,13 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   publicClient,
   gasOverrides,
   rollupCreatorAddressOverride,
+  ...rest
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
+  const rollupCreatorVersion =
+    'rollupCreatorVersion' in rest //
+      ? rest.rollupCreatorVersion
+      : 'v3.1';
+
   const { chainId: parentChainId, isCustom: parentChainIsCustom } =
     validateParentChain(publicClient);
 
@@ -49,13 +73,30 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 
   if (isNonZeroAddress(params.nativeToken)) {
     const isRollupChain = chainConfig.arbitrum.DataAvailabilityCommittee === false;
-    const isFeeTokenPricerMissing = !isNonZeroAddress(params.feeTokenPricer);
 
-    // fee token pricer is mandatory for custom gas token rollup chains
-    if (isRollupChain && isFeeTokenPricerMissing) {
-      throw new Error(
-        `"params.feeTokenPricer" must be provided for a custom gas token rollup chain.`,
-      );
+    switch (rollupCreatorVersion) {
+      case 'v2.1': {
+        if (isRollupChain) {
+          throw new Error(
+            `"params.nativeToken" can only be used on AnyTrust chains. Set "arbitrum.DataAvailabilityCommittee" to "true" in the chain config.`,
+          );
+        }
+
+        break;
+      }
+
+      case 'v3.1': {
+        const isFeeTokenPricerMissing = !isNonZeroAddress(
+          (params as CreateRollupParams<'v3.1'>).feeTokenPricer,
+        );
+
+        // fee token pricer is mandatory for custom gas token rollup chains
+        if (isRollupChain && isFeeTokenPricerMissing) {
+          throw new Error(
+            `"params.feeTokenPricer" must be provided for a custom gas token rollup chain.`,
+          );
+        }
+      }
     }
 
     if ((await fetchDecimals({ address: params.nativeToken, publicClient })) > 36) {
@@ -103,7 +144,8 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    data: createRollupEncodeFunctionData({ args: [paramsWithDefaults] }),
+    // @ts-ignore (todo: fix before shipping versioning)
+    data: createRollupEncodeFunctionData({ rollupCreatorVersion, args: [paramsWithDefaults] }),
     value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation

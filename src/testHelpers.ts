@@ -5,7 +5,8 @@ import { execSync } from 'node:child_process';
 
 import { generateChainId, sanitizePrivateKey } from './utils';
 import { createRollup } from './createRollup';
-import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
+import { createRollupPrepareDeploymentParamsConfig as createRollupPrepareDeploymentParamsConfigV3Dot1 } from './createRollupPrepareDeploymentParamsConfig';
+import { createRollupPrepareDeploymentParamsConfig as createRollupPrepareDeploymentParamsConfigV2Dot1 } from './createRollupPrepareDeploymentParamsConfig/v2.1';
 import { prepareChainConfig } from './prepareChainConfig';
 
 config();
@@ -135,6 +136,23 @@ export function getInformationFromTestnode(): TestnodeInformation {
   throw new Error('nitro-testnode sequencer not found');
 }
 
+function getRollupCreatorVersionFromEnv(): 'v2.1' | 'v3.1' {
+  if (process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH) {
+    // extract just major and minor version numbers
+    return process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH.split('.').slice(0, 2).join('.') as
+      | 'v2.1'
+      | 'v3.1';
+  }
+
+  return 'v3.1';
+}
+
+const rollupCreatorVersion = getRollupCreatorVersionFromEnv();
+const createRollupPrepareDeploymentParamsConfig =
+  rollupCreatorVersion === 'v2.1'
+    ? createRollupPrepareDeploymentParamsConfigV2Dot1
+    : createRollupPrepareDeploymentParamsConfigV3Dot1;
+
 export async function createRollupHelper({
   deployer,
   batchPosters,
@@ -163,6 +181,7 @@ export async function createRollupHelper({
   });
 
   const createRollupInformation = await createRollup({
+    // @ts-ignore (todo: fix before shipping versioning)
     params: {
       config: createRollupConfig,
       batchPosters,
@@ -171,6 +190,7 @@ export async function createRollupHelper({
     },
     account: deployer,
     parentChainPublicClient: client,
+    rollupCreatorVersion,
   });
 
   // create test rollup with ETH as gas token
