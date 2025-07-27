@@ -214,3 +214,14 @@ export function testHelper_createCustomParentChain(params?: { id?: number }) {
     },
   } satisfies Chain;
 }
+
+export function testHelper_getRollupCreatorVersionFromEnv(): 'v3.1' | 'v2.1' {
+  if (process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH) {
+    // extract just major and minor version numbers
+    return process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH.split('.').slice(0, 2).join('.') as
+      | 'v3.1'
+      | 'v2.1';
+  }
+
+  return 'v3.1';
+}
