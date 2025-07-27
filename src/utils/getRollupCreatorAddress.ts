@@ -2,11 +2,13 @@ import { Client, Transport, Chain, ChainContract, Address } from 'viem';
 
 import { rollupCreatorAddress as rollupCreatorV3Dot1Address } from '../contracts/RollupCreator';
 import { rollupCreatorAddress as rollupCreatorV2Dot1Address } from '../contracts/RollupCreator/v2.1';
+
 import { validateParentChain } from '../types/ParentChain';
+import { RollupCreatorSupportedVersion } from '../types/createRollupTypes';
 
 export function getRollupCreatorAddress<TChain extends Chain | undefined>(
   client: Client<Transport, TChain>,
-  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
+  rollupCreatorVersion: RollupCreatorSupportedVersion = 'v3.1',
 ): Address {
   const { chainId: parentChainId, isCustom: parentChainIsCustom } = validateParentChain(client);
 

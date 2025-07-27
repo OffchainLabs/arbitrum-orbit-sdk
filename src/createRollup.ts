@@ -13,14 +13,14 @@ import {
   CreateRollupTransaction,
   createRollupPrepareTransaction,
 } from './createRollupPrepareTransaction';
-import { CreateRollupParams } from './types/createRollupTypes';
+import { CreateRollupParams, RollupCreatorSupportedVersion } from './types/createRollupTypes';
 import { validateParentChain } from './types/ParentChain';
 
 type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain extends Chain | undefined> = {
   nativeToken: Address;
   parentChainPublicClient: PublicClient<Transport, TChain>;
   account: PrivateKeyAccount;
-  rollupCreatorVersion?: 'v2.1' | 'v3.1';
+  rollupCreatorVersion?: RollupCreatorSupportedVersion;
 };
 
 /**

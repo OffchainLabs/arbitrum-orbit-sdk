@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import { execSync } from 'node:child_process';
 
 import { generateChainId, sanitizePrivateKey } from './utils';
+import { RollupCreatorSupportedVersion } from './types/createRollupTypes';
 import { createRollup } from './createRollup';
 import { createRollupPrepareDeploymentParamsConfig as createRollupPrepareDeploymentParamsConfigV3Dot1 } from './createRollupPrepareDeploymentParamsConfig';
 import { createRollupPrepareDeploymentParamsConfig as createRollupPrepareDeploymentParamsConfigV2Dot1 } from './createRollupPrepareDeploymentParamsConfig/v2.1';
@@ -224,12 +225,12 @@ export function testHelper_createCustomParentChain(params?: { id?: number }) {
   } satisfies Chain;
 }
 
-export function testHelper_getRollupCreatorVersionFromEnv(): 'v3.1' | 'v2.1' {
+export function testHelper_getRollupCreatorVersionFromEnv(): RollupCreatorSupportedVersion {
   if (process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH) {
     // extract just major and minor version numbers
-    return process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH.split('.').slice(0, 2).join('.') as
-      | 'v3.1'
-      | 'v2.1';
+    return process.env.INTEGRATION_TEST_NITRO_CONTRACTS_BRANCH.split('.')
+      .slice(0, 2)
+      .join('.') as RollupCreatorSupportedVersion;
   }
 
   return 'v3.1';

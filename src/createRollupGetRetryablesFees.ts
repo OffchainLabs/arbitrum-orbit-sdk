@@ -11,6 +11,7 @@ import {
 } from 'viem';
 
 import { rollupCreatorABI } from './contracts/RollupCreator';
+import { RollupCreatorSupportedVersion } from './types/createRollupTypes';
 import { bridgeCreatorABI as bridgeCreatorV3Dot1ABI } from './contracts/BridgeCreator';
 import { bridgeCreatorABI as bridgeCreatorV2Dot1ABI } from './contracts/BridgeCreator/v2.1';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
@@ -34,7 +35,7 @@ const deployHelperABI = [
 
 async function getTemplates<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  rollupCreatorVersion: 'v2.1' | 'v3.1',
+  rollupCreatorVersion: RollupCreatorSupportedVersion,
 ) {
   const bridgeCreatorAddress = await publicClient.readContract({
     abi: rollupCreatorABI,
@@ -83,7 +84,7 @@ export type CreateRollupGetRetryablesFeesParams = {
   account: Address;
   nativeToken?: Address;
   maxFeePerGasForRetryables?: bigint;
-  rollupCreatorVersion?: 'v2.1' | 'v3.1';
+  rollupCreatorVersion?: RollupCreatorSupportedVersion;
 };
 
 /**
