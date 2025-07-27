@@ -7,7 +7,8 @@ import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from '../contracts/RollupC
 import { Prettify } from './utils';
 
 export type RollupCreatorVersion = 'v3.1' | 'v2.1' | 'v1.1';
-export type RollupCreatorLatestSupportedVersion = Extract<RollupCreatorVersion, 'v3.1'>;
+export type RollupCreatorSupportedVersion = Extract<RollupCreatorVersion, 'v3.1' | 'v2.1'>;
+export type RollupCreatorLatestSupportedVersion = Extract<RollupCreatorSupportedVersion, 'v3.1'>;
 
 export type RollupCreatorABI<
   TVersion extends RollupCreatorVersion = RollupCreatorLatestSupportedVersion,

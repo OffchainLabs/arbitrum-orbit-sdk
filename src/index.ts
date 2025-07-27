@@ -18,6 +18,7 @@ import {
 } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
 import {
   RollupCreatorVersion,
+  RollupCreatorSupportedVersion,
   RollupCreatorLatestSupportedVersion,
   RollupCreatorABI,
   CreateRollupFunctionInputs,
@@ -221,6 +222,7 @@ export {
   CreateRollupParams,
   //
   RollupCreatorVersion,
+  RollupCreatorSupportedVersion,
   RollupCreatorLatestSupportedVersion,
   RollupCreatorABI,
   //

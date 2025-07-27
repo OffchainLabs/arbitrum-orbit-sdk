@@ -12,7 +12,7 @@ import {
   RollupCreatorLatestSupportedVersion,
 } from './types/createRollupTypes';
 
-function createRollupDecodeFunctionData<TAbi extends RollupCreatorABI<'v3.1' | 'v2.1' | 'v1.1'>>(
+function createRollupDecodeFunctionData<TAbi extends RollupCreatorABI<RollupCreatorVersion>>(
   data: `0x${string}`,
 ): DecodeFunctionDataReturnType<TAbi> {
   let result: DecodeFunctionDataReturnType<TAbi> | null = null;
