@@ -7,9 +7,11 @@ import { rollupCreatorABI as rollupCreatorV1Dot1ABI } from '../contracts/RollupC
 import { Prettify } from './utils';
 
 export type RollupCreatorVersion = 'v3.1' | 'v2.1' | 'v1.1';
-export type RollupCreatorLatestVersion = Extract<RollupCreatorVersion, 'v3.1'>;
+export type RollupCreatorLatestSupportedVersion = Extract<RollupCreatorVersion, 'v3.1'>;
 
-export type RollupCreatorABI<TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion> =
+export type RollupCreatorABI<
+  TVersion extends RollupCreatorVersion = RollupCreatorLatestSupportedVersion,
+> =
   //
   TVersion extends 'v3.1'
     ? typeof rollupCreatorV3Dot1ABI
@@ -20,11 +22,11 @@ export type RollupCreatorABI<TVersion extends RollupCreatorVersion = RollupCreat
     : never;
 
 export type CreateRollupFunctionInputs<
-  TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion,
+  TVersion extends RollupCreatorVersion = RollupCreatorLatestSupportedVersion,
 > = GetFunctionArgs<RollupCreatorABI<TVersion>, 'createRollup'>['args'] & readonly unknown[]; // this tells TypeScript that the type is also an indexable array
 
 type GetCreateRollupRequiredKeys<
-  TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion,
+  TVersion extends RollupCreatorVersion = RollupCreatorLatestSupportedVersion,
 > =
   //
   TVersion extends 'v3.1'
@@ -44,8 +46,9 @@ type GetCreateRollupRequiredKeys<
       >
     : never;
 
-export type CreateRollupParams<TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion> =
-  Prettify<
-    Pick<CreateRollupFunctionInputs<TVersion>[0], GetCreateRollupRequiredKeys<TVersion>> &
-      Partial<Omit<CreateRollupFunctionInputs<TVersion>[0], GetCreateRollupRequiredKeys<TVersion>>>
-  >;
+export type CreateRollupParams<
+  TVersion extends RollupCreatorVersion = RollupCreatorLatestSupportedVersion,
+> = Prettify<
+  Pick<CreateRollupFunctionInputs<TVersion>[0], GetCreateRollupRequiredKeys<TVersion>> &
+    Partial<Omit<CreateRollupFunctionInputs<TVersion>[0], GetCreateRollupRequiredKeys<TVersion>>>
+>;

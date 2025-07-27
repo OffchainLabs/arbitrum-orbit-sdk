@@ -9,7 +9,7 @@ import {
   CreateRollupFunctionInputs,
   RollupCreatorABI,
   RollupCreatorVersion,
-  RollupCreatorLatestVersion,
+  RollupCreatorLatestSupportedVersion,
 } from './types/createRollupTypes';
 
 function createRollupDecodeFunctionData<TAbi extends RollupCreatorABI<'v3.1' | 'v2.1' | 'v1.1'>>(
@@ -42,7 +42,7 @@ function createRollupDecodeFunctionData<TAbi extends RollupCreatorABI<'v3.1' | '
 
 export type CreateRollupTransaction = Transaction & {
   getInputs<
-    TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion,
+    TVersion extends RollupCreatorVersion = RollupCreatorLatestSupportedVersion,
   >(): CreateRollupFunctionInputs<TVersion>;
 };
 
