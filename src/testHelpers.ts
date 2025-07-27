@@ -136,12 +136,6 @@ export function getInformationFromTestnode(): TestnodeInformation {
   throw new Error('nitro-testnode sequencer not found');
 }
 
-const rollupCreatorVersion = getRollupCreatorVersionFromEnv();
-const createRollupPrepareDeploymentParamsConfig =
-  rollupCreatorVersion === 'v2.1'
-    ? createRollupPrepareDeploymentParamsConfigV2Dot1
-    : createRollupPrepareDeploymentParamsConfigV3Dot1;
-
 export async function createRollupHelper({
   deployer,
   batchPosters,
@@ -156,6 +150,12 @@ export async function createRollupHelper({
   client: PublicClient;
 }) {
   const chainId = generateChainId();
+  const rollupCreatorVersion = testHelper_getRollupCreatorVersionFromEnv();
+
+  const createRollupPrepareDeploymentParamsConfig =
+    rollupCreatorVersion === 'v2.1'
+      ? createRollupPrepareDeploymentParamsConfigV2Dot1
+      : createRollupPrepareDeploymentParamsConfigV3Dot1;
 
   const createRollupConfig = createRollupPrepareDeploymentParamsConfig(client, {
     chainId: BigInt(chainId),
