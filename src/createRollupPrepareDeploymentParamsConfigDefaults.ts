@@ -39,16 +39,16 @@ const defaultsV3Dot1 = {
   wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
 } as const;
 
-export function getCreateRollupPrepareDeploymentParamsConfigDefaults(
+export function createRollupPrepareDeploymentParamsConfigDefaults(
   rollupCreatorVersion: 'v2.1',
 ): typeof defaultsV2Dot1;
-export function getCreateRollupPrepareDeploymentParamsConfigDefaults(
+export function createRollupPrepareDeploymentParamsConfigDefaults(
   rollupCreatorVersion: 'v3.1',
 ): typeof defaultsV3Dot1;
-export function getCreateRollupPrepareDeploymentParamsConfigDefaults(
+export function createRollupPrepareDeploymentParamsConfigDefaults(
   rollupCreatorVersion?: never,
 ): typeof defaultsV3Dot1;
-export function getCreateRollupPrepareDeploymentParamsConfigDefaults(
+export function createRollupPrepareDeploymentParamsConfigDefaults(
   rollupCreatorVersion: 'v3.1' | 'v2.1' = 'v3.1',
 ) {
   if (rollupCreatorVersion === 'v2.1') {

@@ -9,7 +9,7 @@ import { createRollup } from './createRollup';
 import { CreateRollupFunctionInputs } from './types/createRollupTypes';
 import { prepareChainConfig } from './prepareChainConfig';
 
-import { getCreateRollupPrepareDeploymentParamsConfigDefaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
+import { createRollupPrepareDeploymentParamsConfigDefaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
 import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
@@ -154,7 +154,7 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
   };
 
   return {
-    ...getCreateRollupPrepareDeploymentParamsConfigDefaults(),
+    ...createRollupPrepareDeploymentParamsConfigDefaults(),
     ...defaultsForStake,
     ...paramsByParentBlockTime,
     ...params,
