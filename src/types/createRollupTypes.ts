@@ -1,4 +1,4 @@
-import { Address, GetFunctionArgs } from 'viem';
+import { GetFunctionArgs } from 'viem';
 
 import { rollupCreatorABI as rollupCreatorV3Dot1ABI } from '../contracts/RollupCreator';
 import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from '../contracts/RollupCreator/v2.1';
@@ -42,10 +42,3 @@ export type CreateRollupParams<TVersion extends RollupCreatorVersion = RollupCre
       // @ts-ignore this works perfectly fine, not sure why typescript is complaining
       Partial<Omit<CreateRollupFunctionInputs<TVersion>[0], GetCreateRollupRequiredKeys<TVersion>>>
   >;
-
-export type WithRollupCreatorAddressOverride<T> = T & {
-  /**
-   * Specifies a custom address for the RollupCreator. By default, the address will be automatically detected based on the provided chain.
-   */
-  rollupCreatorAddressOverride?: Address;
-};

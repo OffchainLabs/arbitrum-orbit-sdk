@@ -12,11 +12,7 @@ import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
 import { Prettify } from './types/utils';
-import {
-  CreateRollupFunctionInputs,
-  CreateRollupParams,
-  WithRollupCreatorAddressOverride,
-} from './types/createRollupTypes';
+import { CreateRollupFunctionInputs, CreateRollupParams } from './types/createRollupTypes';
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
 function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
@@ -28,15 +24,14 @@ function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
 }
 
 export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | undefined> =
-  Prettify<
-    WithRollupCreatorAddressOverride<{
-      params: CreateRollupParams;
-      account: Address;
-      value?: bigint;
-      publicClient: PublicClient<Transport, TChain>;
-      gasOverrides?: TransactionRequestGasOverrides;
-    }>
-  >;
+  Prettify<{
+    params: CreateRollupParams;
+    account: Address;
+    value?: bigint;
+    publicClient: PublicClient<Transport, TChain>;
+    gasOverrides?: TransactionRequestGasOverrides;
+    rollupCreatorAddressOverride?: Address;
+  }>;
 
 export async function createRollupPrepareTransactionRequest<TChain extends Chain | undefined>({
   params,

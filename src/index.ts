@@ -1,3 +1,4 @@
+import { createRollupPrepareDeploymentParamsConfigDefaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import {
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
@@ -217,6 +218,7 @@ export {
   RollupCreatorLatestVersion,
   RollupCreatorABI,
   //
+  createRollupPrepareDeploymentParamsConfigDefaults,
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
