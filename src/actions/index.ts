@@ -5,3 +5,4 @@ export * from './buildInvalidateKeysetHash';
 export * from './buildSetIsBatchPoster';
 export * from './buildSetValidKeyset';
 export * from './buildSetMaxTimeVariation';
+export * from './buildScheduleArbOSUpgrade';
