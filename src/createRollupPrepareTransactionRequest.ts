@@ -1,4 +1,4 @@
-import { Address, PublicClient, Transport, Chain, encodeFunctionData, zeroAddress } from 'viem';
+import { Address, PublicClient, Transport, Chain, zeroAddress } from 'viem';
 
 import { defaults } from './createRollupDefaults';
 import { createRollupEncodeFunctionData } from './createRollupEncodeFunctionData';
