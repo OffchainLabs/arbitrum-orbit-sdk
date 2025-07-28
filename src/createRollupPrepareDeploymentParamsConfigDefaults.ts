@@ -39,6 +39,23 @@ const defaultsV3Dot1 = {
   wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
 } as const;
 
+/**
+ * Returns default values for the `config` parameter in `createRollup` for a given RollupCreator version.
+ *
+ * @param {('v2.1' | 'v3.1')} [rollupCreatorVersion='v3.1'] - The version of the RollupCreator contract
+ * @returns {Object} Default configuration parameters specific to the RollupCreator version
+ *
+ * @example
+ * // Get defaults for latest version (v3.1)
+ * const defaults = createRollupPrepareDeploymentParamsConfigDefaults();
+ *
+ * @example
+ * // Get defaults for specific version
+ * const v2Defaults = createRollupPrepareDeploymentParamsConfigDefaults('v2.1');
+ * const v3Defaults = createRollupPrepareDeploymentParamsConfigDefaults('v3.1');
+ *
+ * @see {@link https://docs.arbitrum.io/launch-orbit-chain/reference/additional-configuration-parameters}
+ */
 export function createRollupPrepareDeploymentParamsConfigDefaults(
   rollupCreatorVersion: 'v2.1',
 ): typeof defaultsV2Dot1;
