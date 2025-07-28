@@ -3,7 +3,7 @@ import { zeroAddress, zeroHash, parseEther } from 'viem';
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from './createRollupPrepareDeploymentParamsConfig';
 
-export const defaultsV2Dot1 = {
+const defaultsV2Dot1 = {
   extraChallengeTimeBlocks: BigInt(0),
   stakeToken: zeroAddress,
   baseStake: parseEther(String(0.1)),
