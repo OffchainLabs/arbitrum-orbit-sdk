@@ -215,7 +215,6 @@ export {
   createRollupEncodeFunctionData,
   CreateRollupEncodeFunctionDataParams,
   //
-  //
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
