@@ -1,8 +1,22 @@
-import { Address, PublicClient, Transport, Chain, GetLogsReturnType } from 'viem';
+import {
+  Address,
+  PublicClient,
+  Transport,
+  Chain,
+  GetLogsReturnType,
+  TransactionReceipt,
+  getAbiItem,
+  getEventSelector,
+  decodeEventLog,
+  Log,
+  Hex,
+} from 'viem';
 import { AbiEvent } from 'abitype';
 
 import { getLogsWithBatching } from './utils/getLogsWithBatching';
 import { getEarliestRollupCreatorDeploymentBlockNumber } from './utils/getEarliestRollupCreatorDeploymentBlockNumber';
+import { rollupABI as rollupV3Dot1ABI } from './contracts/Rollup';
+import { rollupABI as rollupV2Dot1ABI } from './contracts/Rollup/v2.1';
 
 export type CreateRollupFetchTransactionHashParams<TChain extends Chain | undefined> = {
   rollup: Address;
@@ -30,6 +44,43 @@ const RollupInitializedEventAbi = {
   type: 'event',
 } as const satisfies AbiEvent;
 
+// it's the same between v2.1 and v3.1
+const pausedEventSelector = getEventSelector(getAbiItem({ abi: rollupV3Dot1ABI, name: 'Paused' }));
+const userStakeUpdatedEventSelector = getEventSelector(
+  getAbiItem({ abi: rollupV3Dot1ABI, name: 'UserStakeUpdated' }),
+);
+
+const userStakeUpdatedEventSelector2 = getEventSelector(
+  getAbiItem({ abi: rollupV2Dot1ABI, name: 'UserStakeUpdated' }),
+);
+
+function getNextRollupQuery(txReceipt: TransactionReceipt): Address | undefined {
+  let pausedEventLog: Log<bigint, number> | undefined = undefined;
+  let userStakeUpdatedEventLog: Log<bigint, number> | undefined = undefined;
+
+  txReceipt.logs.forEach((log) => {
+    const topic = log.topics[0];
+
+    if (topic === pausedEventSelector) {
+      pausedEventLog = log;
+    }
+
+    if (topic === userStakeUpdatedEventSelector || topic === userStakeUpdatedEventSelector2) {
+      userStakeUpdatedEventLog = log;
+    }
+  });
+
+  if (typeof pausedEventLog !== 'undefined' && typeof userStakeUpdatedEventLog !== 'undefined') {
+    // @ts-ignore
+    return pausedEventLog.address;
+  }
+
+  return undefined;
+}
+
+console.log({ userStakeUpdatedEventSelector });
+console.log({ userStakeUpdatedEventSelector2 });
+
 export async function getRollupInitializedEvents<TChain extends Chain | undefined>({
   rollup,
   publicClient,
@@ -56,9 +107,22 @@ export async function createRollupFetchTransactionHash<TChain extends Chain | un
   publicClient,
   fromBlock,
 }: CreateRollupFetchTransactionHashParams<TChain>) {
-  // Get the transaction hash that emitted that event
-  const transactionHash = (await getRollupInitializedEvents({ rollup, publicClient, fromBlock }))[0]
-    .transactionHash;
+  let rollupQuery: Address | undefined = rollup;
+  let transactionHash: Hex | undefined = undefined;
+
+  while (rollupQuery) {
+    // get the transaction hash and receipt for transaction that emitted the RollupInitialized event
+    transactionHash = (
+      await getRollupInitializedEvents({ rollup: rollupQuery, publicClient, fromBlock })
+    )[0].transactionHash;
+    const transactionReceipt = await publicClient.getTransactionReceipt({
+      hash: transactionHash,
+    });
+
+    // we'll check the transaction receipt to see if it looks like a Rollup upgrade transaction, and return the next address to query
+    // we'll keep following the chain of upgrades until we find the original deployment
+    rollupQuery = getNextRollupQuery(transactionReceipt);
+  }
 
   if (!transactionHash) {
     throw new Error(
