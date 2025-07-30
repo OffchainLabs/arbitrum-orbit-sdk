@@ -3,11 +3,9 @@ import {
   PublicClient,
   Transport,
   Chain,
-  GetLogsReturnType,
   TransactionReceipt,
   getAbiItem,
   getEventSelector,
-  decodeEventLog,
   Log,
   Hex,
 } from 'viem';
@@ -46,17 +44,17 @@ const RollupInitializedEventAbi = {
 
 // it's the same between v2.1 and v3.1
 const pausedEventSelector = getEventSelector(getAbiItem({ abi: rollupV3Dot1ABI, name: 'Paused' }));
-const userStakeUpdatedEventSelector = getEventSelector(
+const userStakeUpdatedEventSelectorV3Dot1 = getEventSelector(
   getAbiItem({ abi: rollupV3Dot1ABI, name: 'UserStakeUpdated' }),
 );
 
-const userStakeUpdatedEventSelector2 = getEventSelector(
+const userStakeUpdatedEventSelectorV2Dot1 = getEventSelector(
   getAbiItem({ abi: rollupV2Dot1ABI, name: 'UserStakeUpdated' }),
 );
 
 function getNextRollupQuery(txReceipt: TransactionReceipt): Address | undefined {
-  let pausedEventLog: Log<bigint, number> | undefined = undefined;
-  let userStakeUpdatedEventLog: Log<bigint, number> | undefined = undefined;
+  let pausedEventLog: Log<bigint, number, false> | undefined;
+  let userStakeUpdatedEventLog: Log<bigint, number, false> | undefined;
 
   txReceipt.logs.forEach((log) => {
     const topic = log.topics[0];
@@ -65,21 +63,20 @@ function getNextRollupQuery(txReceipt: TransactionReceipt): Address | undefined 
       pausedEventLog = log;
     }
 
-    if (topic === userStakeUpdatedEventSelector || topic === userStakeUpdatedEventSelector2) {
+    if (
+      topic === userStakeUpdatedEventSelectorV3Dot1 ||
+      topic === userStakeUpdatedEventSelectorV2Dot1
+    ) {
       userStakeUpdatedEventLog = log;
     }
   });
 
   if (typeof pausedEventLog !== 'undefined' && typeof userStakeUpdatedEventLog !== 'undefined') {
-    // @ts-ignore
     return pausedEventLog.address;
   }
 
   return undefined;
 }
-
-console.log({ userStakeUpdatedEventSelector });
-console.log({ userStakeUpdatedEventSelector2 });
 
 export async function getRollupInitializedEvents<TChain extends Chain | undefined>({
   rollup,
