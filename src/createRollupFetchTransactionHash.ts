@@ -43,13 +43,23 @@ const RollupInitializedEventAbi = {
 } as const satisfies AbiEvent;
 
 // it's the same between v2.1 and v3.1
-const pausedEventSelector = getEventSelector(getAbiItem({ abi: rollupV3Dot1ABI, name: 'Paused' }));
-const userStakeUpdatedEventSelectorV3Dot1 = getEventSelector(
-  getAbiItem({ abi: rollupV3Dot1ABI, name: 'UserStakeUpdated' }),
+const pausedEventSelector = getEventSelector(
+  getAbiItem({
+    abi: rollupV3Dot1ABI,
+    name: 'Paused',
+  }),
 );
-
+const userStakeUpdatedEventSelectorV3Dot1 = getEventSelector(
+  getAbiItem({
+    abi: rollupV3Dot1ABI,
+    name: 'UserStakeUpdated',
+  }),
+);
 const userStakeUpdatedEventSelectorV2Dot1 = getEventSelector(
-  getAbiItem({ abi: rollupV2Dot1ABI, name: 'UserStakeUpdated' }),
+  getAbiItem({
+    abi: rollupV2Dot1ABI,
+    name: 'UserStakeUpdated',
+  }),
 );
 
 function getNextRollupQuery(txReceipt: TransactionReceipt): Address | undefined {
@@ -71,6 +81,7 @@ function getNextRollupQuery(txReceipt: TransactionReceipt): Address | undefined 
     }
   });
 
+  // both events are there, so it's likely an upgrade
   if (typeof pausedEventLog !== 'undefined' && typeof userStakeUpdatedEventLog !== 'undefined') {
     return pausedEventLog.address;
   }
