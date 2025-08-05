@@ -21,7 +21,7 @@ Clone the branch `main` of [nitro-testnode](https://github.com/OffchainLabs/nitr
 Then, run the integration tests:
 
 ```bash
-yarn test:integration
+pnpm test:integration
 ```
 
 ## Examples
