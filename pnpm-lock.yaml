@@ -15,6 +15,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      viem:
+        specifier: 1.20.0
+        version: 1.20.0(typescript@5.2.2)(zod@3.22.4)
     devDependencies:
       '@offchainlabs/prettier-config':
         specifier: 0.2.1
@@ -163,12 +167,21 @@ importers:
       '@arbitrum/token-bridge-contracts':
         specifier: ^1.2.2
         version: 1.2.2
+      '@ethersproject/abstract-provider':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ethersproject/providers':
+        specifier: ^5.7.2
+        version: 5.7.2
       '@offchainlabs/fund-distribution-contracts':
         specifier: ^1.0.1
         version: 1.0.1
       '@safe-global/protocol-kit':
         specifier: ^4.1.7
         version: 4.1.7(typescript@5.2.2)(zod@3.22.4)
+      abitype:
+        specifier: ^1.0.8
+        version: 1.0.8(typescript@5.2.2)(zod@3.22.4)
       ethers:
         specifier: ^5.7.2
         version: 5.7.2
@@ -842,8 +855,8 @@ packages:
       zod:
         optional: true
 
-  abitype@1.0.5:
-    resolution: {integrity: sha512-YzDhti7cjlfaBhHutMaboYB21Ha3rXR9QTkNJFzYC4kC8YclaiwPBBBJY8ejFdu2wnJeZCVZSMlQJ7fi8S6hsw==}
+  abitype@1.0.8:
+    resolution: {integrity: sha512-ZeiI6h3GnW06uYDLx0etQtX/p8E24UaHHBj57RSjK7YBFe7iuVn07EDpOeP451D06sF27VOz9JJPlIKJmXgkEg==}
     peerDependencies:
       typescript: '>=5.0.4'
       zod: ^3 >=3.22.0
@@ -2820,7 +2833,7 @@ snapshots:
       '@safe-global/safe-core-sdk-types': 5.1.0(typescript@5.2.2)(zod@3.22.4)
       '@safe-global/safe-deployments': 1.37.32
       '@safe-global/safe-modules-deployments': 2.2.8
-      abitype: 1.0.5(typescript@5.2.2)(zod@3.22.4)
+      abitype: 1.0.8(typescript@5.2.2)(zod@3.22.4)
       ethereumjs-util: 7.1.5
       ethers: 6.13.1
       semver: 7.6.2
@@ -2832,7 +2845,7 @@ snapshots:
 
   '@safe-global/safe-core-sdk-types@5.1.0(typescript@5.2.2)(zod@3.22.4)':
     dependencies:
-      abitype: 1.0.5(typescript@5.2.2)(zod@3.22.4)
+      abitype: 1.0.8(typescript@5.2.2)(zod@3.22.4)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -2972,7 +2985,7 @@ snapshots:
       typescript: 5.2.2
       zod: 3.22.4
 
-  abitype@1.0.5(typescript@5.2.2)(zod@3.22.4):
+  abitype@1.0.8(typescript@5.2.2)(zod@3.22.4):
     optionalDependencies:
       typescript: 5.2.2
       zod: 3.22.4

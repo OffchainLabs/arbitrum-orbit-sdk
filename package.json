@@ -4,9 +4,9 @@
   "scripts": {
     "prebuild": "rm -rf ./src/dist",
     "build": "tsc --project ./tsconfig.json --module commonjs --outDir ./src/dist --declaration",
-    "dev": "yarn build --watch",
+    "dev": "pnpm build --watch",
     "generate": "wagmi generate",
-    "generate:node-config-type": "yarn build && node ./src/dist/scripts/generateNodeConfigType.js",
+    "generate:node-config-type": "pnpm build && node ./src/dist/scripts/generateNodeConfigType.js",
     "postgenerate:node-config-type": "prettier --write ./src/types/NodeConfig.generated.ts",
     "test:unit": "vitest --config vitest.unit.config.ts",
     "test:integration": "vitest --config vitest.integration.config.ts",
@@ -26,5 +26,8 @@
     "ts-morph": "^21.0.1",
     "typescript": "^5.2.2",
     "vitest": "^3.0.9"
+  },
+  "dependencies": {
+    "viem": "1.20.0"
   }
 }
