@@ -241,7 +241,10 @@ async function updateContractWithImplementationIfProxy(contract: ContractConfig)
   }
 
   // only add arbitrum sepolia implementation as that's the one we're generating from
-  contract.implementation = { [arbitrumSepolia.id]: implementation };
+  contract.implementation = { [arbitrumSepolia.id]: implementation } as Record<
+    ParentChainId,
+    `0x${string}`
+  >;
 }
 
 export default async function () {
