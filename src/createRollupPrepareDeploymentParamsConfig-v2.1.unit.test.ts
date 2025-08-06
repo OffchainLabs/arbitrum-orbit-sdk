@@ -9,7 +9,7 @@ import {
   registerCustomParentChain,
 } from './chains';
 import { prepareChainConfig } from './prepareChainConfig';
-import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig-v2.1';
+import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 
 import { testHelper_createCustomParentChain } from './testHelpers';
 
@@ -50,6 +50,7 @@ it('creates config for a chain on top of arbitrum one with defaults', () => {
 
   expect(
     createRollupPrepareDeploymentParamsConfig(arbitrumOneClient, {
+      rollupCreatorVersion: 'v2.1',
       owner: vitalik,
       chainId,
     }),
@@ -63,10 +64,10 @@ it('creates config for a chain on top of arbitrum one with overrides', () => {
   });
 
   expect(
-    createRollupPrepareDeploymentParamsConfig(
-      arbitrumOneClient,
-      getOverrides({ owner: vitalik, chainId }),
-    ),
+    createRollupPrepareDeploymentParamsConfig(arbitrumOneClient, {
+      rollupCreatorVersion: 'v2.1',
+      ...getOverrides({ owner: vitalik, chainId }),
+    }),
   ).toMatchSnapshot();
 });
 
@@ -78,6 +79,7 @@ it('creates config for a chain on top of arbitrum sepolia with defaults', () => 
 
   expect(
     createRollupPrepareDeploymentParamsConfig(arbitrumSepoliaClient, {
+      rollupCreatorVersion: 'v2.1',
       owner: vitalik,
       chainId,
     }),
@@ -91,10 +93,10 @@ it('creates config for a chain on top of arbitrum sepolia with overrides', () =>
   });
 
   expect(
-    createRollupPrepareDeploymentParamsConfig(
-      arbitrumSepoliaClient,
-      getOverrides({ owner: vitalik, chainId }),
-    ),
+    createRollupPrepareDeploymentParamsConfig(arbitrumSepoliaClient, {
+      rollupCreatorVersion: 'v2.1',
+      ...getOverrides({ owner: vitalik, chainId }),
+    }),
   ).toMatchSnapshot();
 });
 
@@ -106,6 +108,7 @@ it('creates config for a chain on top of base with defaults', () => {
 
   expect(
     createRollupPrepareDeploymentParamsConfig(baseClient, {
+      rollupCreatorVersion: 'v2.1',
       owner: vitalik,
       chainId,
     }),
@@ -120,6 +123,7 @@ it('creates config for a chain on top of base sepolia with defaults', () => {
 
   expect(
     createRollupPrepareDeploymentParamsConfig(baseSepoliaClient, {
+      rollupCreatorVersion: 'v2.1',
       owner: vitalik,
       chainId,
     }),
@@ -138,6 +142,7 @@ it('fails to create a config for a chain on top of a custom parent chain if "con
 
   expect(() =>
     createRollupPrepareDeploymentParamsConfig(publicClient, {
+      rollupCreatorVersion: 'v2.1',
       owner: vitalik,
       chainId: BigInt(chain.id),
     }),
@@ -156,6 +161,7 @@ it('fails to create a config for a chain on top of a custom parent chain if "seq
 
   expect(() =>
     createRollupPrepareDeploymentParamsConfig(publicClient, {
+      rollupCreatorVersion: 'v2.1',
       owner: vitalik,
       chainId: BigInt(chain.id),
       confirmPeriodBlocks: 1n,
@@ -180,6 +186,7 @@ it('creates a config for a chain on top of a custom parent chain', () => {
 
   expect(
     createRollupPrepareDeploymentParamsConfig(publicClient, {
+      rollupCreatorVersion: 'v2.1',
       owner: vitalik,
       chainId: BigInt(chain.id),
       confirmPeriodBlocks: 1n,

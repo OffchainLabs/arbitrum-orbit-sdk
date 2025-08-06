@@ -1,7 +1,7 @@
 import { zeroAddress, zeroHash, parseEther } from 'viem';
 
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
-import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from './createRollupPrepareDeploymentParamsConfig';
+import { CreateRollupPrepareDeploymentParamsConfigResult as ConfigV3Dot1 } from './createRollupPrepareDeploymentParamsConfig-v3.1';
 
 const defaultsV2Dot1 = {
   extraChallengeTimeBlocks: BigInt(0),
@@ -12,13 +12,13 @@ const defaultsV2Dot1 = {
   genesisBlockNum: BigInt(0),
 } as const;
 
-const bufferConfig: Config['bufferConfig'] = {
+const bufferConfig: ConfigV3Dot1['bufferConfig'] = {
   threshold: BigInt(2 ** 32),
   max: BigInt(2 ** 32),
   replenishRateInBasis: BigInt(500),
 };
 
-const genesisAssertionState: Config['genesisAssertionState'] = {
+const genesisAssertionState: ConfigV3Dot1['genesisAssertionState'] = {
   globalState: {
     bytes32Vals: [zeroHash, zeroHash],
     u64Vals: [BigInt(0), BigInt(0)],
