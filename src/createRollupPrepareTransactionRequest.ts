@@ -1,9 +1,9 @@
-import { Address, PublicClient, Transport, Chain, encodeFunctionData, zeroAddress } from 'viem';
+import { Address, PublicClient, Transport, Chain, zeroAddress } from 'viem';
 
 import { defaults } from './createRollupDefaults';
+import { createRollupEncodeFunctionData } from './createRollupEncodeFunctionData';
 import { createRollupGetCallValue } from './createRollupGetCallValue';
 import { createRollupGetMaxDataSize } from './createRollupGetMaxDataSize';
-import { rollupCreatorABI } from './contracts/RollupCreator';
 import { validateParentChain } from './types/ParentChain';
 import { isNonZeroAddress } from './utils/isNonZeroAddress';
 import { ChainConfig } from './types/ChainConfig';
@@ -12,31 +12,18 @@ import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
 import { Prettify } from './types/utils';
-import {
-  CreateRollupFunctionInputs,
-  CreateRollupParams,
-  WithRollupCreatorAddressOverride,
-} from './types/createRollupTypes';
+import { CreateRollupParams } from './types/createRollupTypes';
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
-function createRollupEncodeFunctionData(args: CreateRollupFunctionInputs) {
-  return encodeFunctionData({
-    abi: rollupCreatorABI,
-    functionName: 'createRollup',
-    args,
-  });
-}
-
 export type CreateRollupPrepareTransactionRequestParams<TChain extends Chain | undefined> =
-  Prettify<
-    WithRollupCreatorAddressOverride<{
-      params: CreateRollupParams;
-      account: Address;
-      value?: bigint;
-      publicClient: PublicClient<Transport, TChain>;
-      gasOverrides?: TransactionRequestGasOverrides;
-    }>
-  >;
+  Prettify<{
+    params: CreateRollupParams;
+    account: Address;
+    value?: bigint;
+    publicClient: PublicClient<Transport, TChain>;
+    gasOverrides?: TransactionRequestGasOverrides;
+    rollupCreatorAddressOverride?: Address;
+  }>;
 
 export async function createRollupPrepareTransactionRequest<TChain extends Chain | undefined>({
   params,
@@ -115,7 +102,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    data: createRollupEncodeFunctionData([paramsWithDefaults]),
+    data: createRollupEncodeFunctionData({ args: [paramsWithDefaults] }),
     value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
