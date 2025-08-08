@@ -29,7 +29,7 @@
     "prettier": "^2.8.3",
     "ts-morph": "^21.0.1",
     "typescript": "^5.2.2",
-    "vitest": "^3.0.9"
+    "vitest": "^3.2.4"
   },
   "resolutions": {
     "**/@wagmi/cli/viem/ws": "8.17.1",

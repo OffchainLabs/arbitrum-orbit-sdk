@@ -1,20 +1,20 @@
 import { expect, it } from 'vitest';
 import { createPublicClient, http } from 'viem';
-import { sepolia, arbitrumNova, arbitrumSepolia } from 'viem/chains';
+import { sepolia, arbitrumSepolia } from 'viem/chains';
 
 import { isAnyTrust } from './isAnyTrust';
 
 it('should return true for AnyTrust chain (RollupCreator v1.1)', async () => {
   const client = createPublicClient({
-    chain: arbitrumNova,
+    chain: arbitrumSepolia,
     transport: http(),
   });
-  // https://nova.arbiscan.io/tx/0x37be7a29db10d18501dcf4d0243fa6aefeeba21cbc17832ef16ccf288ce58ef2
-  const isPlaynanceAnyTrust = await isAnyTrust({
+  // https://sepolia.arbiscan.io/tx/0xc21f011b46ce87e34a2f6328f6adf20aa60f4c07a972fab0b34ae9c1b9847ff0
+  const isAnyTrustChain = await isAnyTrust({
     publicClient: client,
-    rollup: '0x04ea347cC6A258A7F65D67aFb60B1d487062A1d0',
+    rollup: '0xc83d107F43740bD572b299B1C5251CeB79c7fc0a',
   });
-  expect(isPlaynanceAnyTrust).toBeTruthy();
+  expect(isAnyTrustChain).toBeTruthy();
 });
 
 it('should return true for AnyTrust chain (RollupCreator v2.1)', async () => {
