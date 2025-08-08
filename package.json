@@ -12,7 +12,6 @@
     "generate": "wagmi generate",
     "generate:node-config-type": "yarn build && node ./src/dist/scripts/generateNodeConfigType.js",
     "postgenerate:node-config-type": "prettier --write ./src/types/NodeConfig.generated.ts",
-    "test:type": "vitest --config vitest.type.config.ts",
     "test:unit": "vitest --config vitest.unit.config.ts",
     "test:integration": "vitest --config vitest.integration.config.ts",
     "postinstall": "patch-package",
