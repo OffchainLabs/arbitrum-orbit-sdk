@@ -2,9 +2,10 @@ import { it, expectTypeOf } from 'vitest';
 import { createPublicClient, http } from 'viem';
 
 import { arbitrumOne } from '../chains';
-import { createRollupPrepareDeploymentParamsConfig } from './index';
-import { CreateRollupPrepareDeploymentParamsConfigResult as v2Dot1Result } from './v2.1';
-import { CreateRollupPrepareDeploymentParamsConfigResult as v3Dot1Result } from './v3.1';
+import {
+  createRollupPrepareDeploymentParamsConfig,
+  CreateRollupPrepareDeploymentParamsConfigResult,
+} from './index';
 
 const client = createPublicClient({
   chain: arbitrumOne,
@@ -19,22 +20,25 @@ const baseParams = {
 it('no version parameter defaults to v3.1 result', () => {
   const result = createRollupPrepareDeploymentParamsConfig(client, baseParams);
 
-  expectTypeOf(result).toEqualTypeOf<v3Dot1Result>();
-  expectTypeOf(result).not.toEqualTypeOf<v2Dot1Result>();
+  expectTypeOf(result).toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult>();
+  expectTypeOf(result).toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult<'v3.1'>>();
+  expectTypeOf(result).not.toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult<'v2.1'>>();
 });
 
 it('explicit v3.1 parameter uses v3.1 result', () => {
   const result = createRollupPrepareDeploymentParamsConfig(client, baseParams, 'v3.1');
 
-  expectTypeOf(result).toEqualTypeOf<v3Dot1Result>();
-  expectTypeOf(result).not.toEqualTypeOf<v2Dot1Result>();
+  expectTypeOf(result).toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult>();
+  expectTypeOf(result).toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult<'v3.1'>>();
+  expectTypeOf(result).not.toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult<'v2.1'>>();
 });
 
 it('explicit v2.1 parameter uses v2.1 result', () => {
   const result = createRollupPrepareDeploymentParamsConfig(client, baseParams, 'v2.1');
 
-  expectTypeOf(result).toEqualTypeOf<v2Dot1Result>();
-  expectTypeOf(result).not.toEqualTypeOf<v3Dot1Result>();
+  expectTypeOf(result).not.toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult>();
+  expectTypeOf(result).not.toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult<'v3.1'>>();
+  expectTypeOf(result).toEqualTypeOf<CreateRollupPrepareDeploymentParamsConfigResult<'v2.1'>>();
 });
 
 it('no version parameter defaults to v3.1 result', () => {

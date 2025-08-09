@@ -12,13 +12,18 @@ import {
   CreateRollupPrepareDeploymentParamsConfigResult as CreateRollupPrepareDeploymentParamsConfigResultV3Dot1,
 } from './v3.1';
 
-// Re-export the latest version types as defaults
-export type CreateRollupPrepareDeploymentParamsConfigParams =
-  CreateRollupPrepareDeploymentParamsConfigParamsV3Dot1;
-export type CreateRollupPrepareDeploymentParamsConfigResult =
-  CreateRollupPrepareDeploymentParamsConfigResultV3Dot1;
+export type CreateRollupPrepareDeploymentParamsConfigParams<
+  TRollupCreatorVersion extends 'v2.1' | 'v3.1' = 'v3.1',
+> = TRollupCreatorVersion extends 'v2.1'
+  ? CreateRollupPrepareDeploymentParamsConfigParamsV2Dot1
+  : CreateRollupPrepareDeploymentParamsConfigParamsV3Dot1;
 
-// Discriminated union function signature with conditional types
+export type CreateRollupPrepareDeploymentParamsConfigResult<
+  TRollupCreatorVersion extends 'v2.1' | 'v3.1' = 'v3.1',
+> = TRollupCreatorVersion extends 'v2.1'
+  ? CreateRollupPrepareDeploymentParamsConfigResultV2Dot1
+  : CreateRollupPrepareDeploymentParamsConfigResultV3Dot1;
+
 export function createRollupPrepareDeploymentParamsConfig<
   TChain extends Chain | undefined,
   TRollupCreatorVersion extends 'v2.1' | 'v3.1' | undefined = 'v3.1',
@@ -37,11 +42,15 @@ export function createRollupPrepareDeploymentParamsConfig<
     return createRollupPrepareDeploymentParamsConfigV2Dot1(
       client,
       params as CreateRollupPrepareDeploymentParamsConfigParamsV2Dot1,
-    ) as any;
+    ) as TRollupCreatorVersion extends 'v2.1'
+      ? CreateRollupPrepareDeploymentParamsConfigResultV2Dot1
+      : CreateRollupPrepareDeploymentParamsConfigResultV3Dot1;
   }
 
   return createRollupPrepareDeploymentParamsConfigV3Dot1(
     client,
     params as CreateRollupPrepareDeploymentParamsConfigParamsV3Dot1,
-  ) as any;
+  ) as TRollupCreatorVersion extends 'v2.1'
+    ? CreateRollupPrepareDeploymentParamsConfigResultV2Dot1
+    : CreateRollupPrepareDeploymentParamsConfigResultV3Dot1;
 }
