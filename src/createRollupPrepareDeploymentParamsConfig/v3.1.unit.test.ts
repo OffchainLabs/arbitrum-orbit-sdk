@@ -7,11 +7,11 @@ import {
   base,
   baseSepolia,
   registerCustomParentChain,
-} from './chains';
-import { prepareChainConfig } from './prepareChainConfig';
-import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
+} from '../chains';
+import { prepareChainConfig } from '../prepareChainConfig';
+import { createRollupPrepareDeploymentParamsConfig } from '../createRollupPrepareDeploymentParamsConfig';
 
-import { testHelper_createCustomParentChain } from './testHelpers';
+import { testHelper_createCustomParentChain } from '../testHelpers';
 
 const chainId = 69_420n;
 const vitalik: `0x${string}` = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
