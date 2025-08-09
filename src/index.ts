@@ -1,3 +1,4 @@
+import { createRollupPrepareDeploymentParamsConfigDefaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import {
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
@@ -23,6 +24,10 @@ import {
   CreateRollupFunctionInputs,
   CreateRollupParams,
 } from './types/createRollupTypes';
+import {
+  createRollupEncodeFunctionData,
+  CreateRollupEncodeFunctionDataParams,
+} from './createRollupEncodeFunctionData';
 import {
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
@@ -208,6 +213,9 @@ export {
   rollupAdminLogicPrepareFunctionData,
   RollupAdminLogicPrepareFunctionDataParameters,
   //
+  createRollupEncodeFunctionData,
+  CreateRollupEncodeFunctionDataParams,
+  //
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
@@ -217,6 +225,7 @@ export {
   RollupCreatorLatestVersion,
   RollupCreatorABI,
   //
+  createRollupPrepareDeploymentParamsConfigDefaults,
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
