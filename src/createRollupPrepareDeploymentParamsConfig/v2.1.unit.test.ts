@@ -9,7 +9,7 @@ import {
   registerCustomParentChain,
 } from '../chains';
 import { prepareChainConfig } from '../prepareChainConfig';
-import { createRollupPrepareDeploymentParamsConfig } from './v2.1';
+import { createRollupPrepareDeploymentParamsConfig } from '../createRollupPrepareDeploymentParamsConfig';
 
 import { testHelper_createCustomParentChain } from '../testHelpers';
 
@@ -49,10 +49,11 @@ it('creates config for a chain on top of arbitrum one with defaults', () => {
   });
 
   expect(
-    createRollupPrepareDeploymentParamsConfig(arbitrumOneClient, {
-      owner: vitalik,
-      chainId,
-    }),
+    createRollupPrepareDeploymentParamsConfig(
+      arbitrumOneClient,
+      { owner: vitalik, chainId },
+      'v2.1',
+    ),
   ).toMatchSnapshot();
 });
 
@@ -66,6 +67,7 @@ it('creates config for a chain on top of arbitrum one with overrides', () => {
     createRollupPrepareDeploymentParamsConfig(
       arbitrumOneClient,
       getOverrides({ owner: vitalik, chainId }),
+      'v2.1',
     ),
   ).toMatchSnapshot();
 });
@@ -77,10 +79,11 @@ it('creates config for a chain on top of arbitrum sepolia with defaults', () => 
   });
 
   expect(
-    createRollupPrepareDeploymentParamsConfig(arbitrumSepoliaClient, {
-      owner: vitalik,
-      chainId,
-    }),
+    createRollupPrepareDeploymentParamsConfig(
+      arbitrumSepoliaClient,
+      { owner: vitalik, chainId },
+      'v2.1',
+    ),
   ).toMatchSnapshot();
 });
 
@@ -94,6 +97,7 @@ it('creates config for a chain on top of arbitrum sepolia with overrides', () =>
     createRollupPrepareDeploymentParamsConfig(
       arbitrumSepoliaClient,
       getOverrides({ owner: vitalik, chainId }),
+      'v2.1',
     ),
   ).toMatchSnapshot();
 });
@@ -105,10 +109,12 @@ it('creates config for a chain on top of base with defaults', () => {
   });
 
   expect(
-    createRollupPrepareDeploymentParamsConfig(baseClient, {
-      owner: vitalik,
-      chainId,
-    }),
+    createRollupPrepareDeploymentParamsConfig(
+      //
+      baseClient,
+      { owner: vitalik, chainId },
+      'v2.1',
+    ),
   ).toMatchSnapshot();
 });
 
@@ -119,10 +125,11 @@ it('creates config for a chain on top of base sepolia with defaults', () => {
   });
 
   expect(
-    createRollupPrepareDeploymentParamsConfig(baseSepoliaClient, {
-      owner: vitalik,
-      chainId,
-    }),
+    createRollupPrepareDeploymentParamsConfig(
+      baseSepoliaClient,
+      { owner: vitalik, chainId },
+      'v2.1',
+    ),
   ).toMatchSnapshot();
 });
 
@@ -137,10 +144,11 @@ it('fails to create a config for a chain on top of a custom parent chain if "con
   registerCustomParentChain(chain);
 
   expect(() =>
-    createRollupPrepareDeploymentParamsConfig(publicClient, {
-      owner: vitalik,
-      chainId: BigInt(chain.id),
-    }),
+    createRollupPrepareDeploymentParamsConfig(
+      publicClient,
+      { owner: vitalik, chainId: BigInt(chain.id) },
+      'v2.1',
+    ),
   ).toThrowError('"params.confirmPeriodBlocks" must be provided when using a custom parent chain');
 });
 
@@ -155,11 +163,11 @@ it('fails to create a config for a chain on top of a custom parent chain if "seq
   registerCustomParentChain(chain);
 
   expect(() =>
-    createRollupPrepareDeploymentParamsConfig(publicClient, {
-      owner: vitalik,
-      chainId: BigInt(chain.id),
-      confirmPeriodBlocks: 1n,
-    }),
+    createRollupPrepareDeploymentParamsConfig(
+      publicClient,
+      { owner: vitalik, chainId: BigInt(chain.id), confirmPeriodBlocks: 1n },
+      'v2.1',
+    ),
   ).toThrowError(
     '"params.sequencerInboxMaxTimeVariation" must be provided when using a custom parent chain.',
   );
@@ -179,16 +187,20 @@ it('creates a config for a chain on top of a custom parent chain', () => {
   registerCustomParentChain(chain);
 
   expect(
-    createRollupPrepareDeploymentParamsConfig(publicClient, {
-      owner: vitalik,
-      chainId: BigInt(chain.id),
-      confirmPeriodBlocks: 1n,
-      sequencerInboxMaxTimeVariation: {
-        delayBlocks: 2n,
-        futureBlocks: 3n,
-        delaySeconds: 4n,
-        futureSeconds: 5n,
+    createRollupPrepareDeploymentParamsConfig(
+      publicClient,
+      {
+        owner: vitalik,
+        chainId: BigInt(chain.id),
+        confirmPeriodBlocks: 1n,
+        sequencerInboxMaxTimeVariation: {
+          delayBlocks: 2n,
+          futureBlocks: 3n,
+          delaySeconds: 4n,
+          futureSeconds: 5n,
+        },
       },
-    }),
+      'v2.1',
+    ),
   ).toMatchSnapshot();
 });
