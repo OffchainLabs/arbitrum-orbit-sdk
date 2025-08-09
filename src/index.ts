@@ -24,10 +24,7 @@ import {
   CreateRollupFunctionInputs,
   CreateRollupParams,
 } from './types/createRollupTypes';
-import {
-  createRollupEncodeFunctionData,
-  CreateRollupEncodeFunctionDataParams,
-} from './createRollupEncodeFunctionData';
+import { createRollupEncodeFunctionData } from './createRollupEncodeFunctionData';
 import {
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
@@ -214,7 +211,6 @@ export {
   RollupAdminLogicPrepareFunctionDataParameters,
   //
   createRollupEncodeFunctionData,
-  CreateRollupEncodeFunctionDataParams,
   //
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,

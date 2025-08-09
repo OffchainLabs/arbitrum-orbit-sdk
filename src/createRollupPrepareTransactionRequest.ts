@@ -102,7 +102,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
-    data: createRollupEncodeFunctionData({ args: [paramsWithDefaults] }),
+    data: createRollupEncodeFunctionData([paramsWithDefaults]),
     value: value ?? (await createRollupGetCallValue(publicClient, createRollupGetCallValueParams)),
     account,
     // if the base gas limit override was provided, hardcode gas to 0 to skip estimation
