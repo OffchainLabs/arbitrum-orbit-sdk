@@ -1,23 +1,23 @@
 import { Chain, Client, Transport, parseEther } from 'viem';
 
-import { ChainConfig } from './types/ChainConfig';
-import { validateParentChain } from './types/ParentChain';
-import { Prettify } from './types/utils';
-import { getWethAddress } from './utils';
+import { ChainConfig } from '../types/ChainConfig';
+import { validateParentChain } from '../types/ParentChain';
+import { Prettify } from '../types/utils';
+import { getWethAddress } from '../utils';
 
-import { createRollup } from './createRollup';
-import { CreateRollupFunctionInputs } from './types/createRollupTypes';
-import { prepareChainConfig } from './prepareChainConfig';
+import { createRollup } from '../createRollup';
+import { CreateRollupFunctionInputs } from '../types/createRollupTypes';
+import { prepareChainConfig } from '../prepareChainConfig';
 
-import { createRollupPrepareDeploymentParamsConfigDefaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
-import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
-import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
-import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
-import { getDefaultValidatorAfkBlocks } from './getDefaultValidatorAfkBlocks';
+import { createRollupPrepareDeploymentParamsConfigDefaults } from '../createRollupPrepareDeploymentParamsConfigDefaults';
+import { getDefaultConfirmPeriodBlocks } from '../getDefaultConfirmPeriodBlocks';
+import { getDefaultChallengeGracePeriodBlocks } from '../getDefaultChallengeGracePeriodBlocks';
+import { getDefaultMinimumAssertionPeriod } from '../getDefaultMinimumAssertionPeriod';
+import { getDefaultValidatorAfkBlocks } from '../getDefaultValidatorAfkBlocks';
 import {
   SequencerInboxMaxTimeVariation,
   getDefaultSequencerInboxMaxTimeVariation,
-} from './getDefaultSequencerInboxMaxTimeVariation';
+} from '../getDefaultSequencerInboxMaxTimeVariation';
 
 export type CreateRollupPrepareDeploymentParamsConfigResult =
   CreateRollupFunctionInputs[0]['config'];
