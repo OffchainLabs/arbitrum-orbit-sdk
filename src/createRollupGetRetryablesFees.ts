@@ -83,7 +83,6 @@ export type CreateRollupGetRetryablesFeesParams = {
   account: Address;
   nativeToken?: Address;
   maxFeePerGasForRetryables?: bigint;
-  rollupCreatorVersion?: 'v2.1' | 'v3.1';
 };
 
 /**
@@ -93,18 +92,14 @@ export type CreateRollupGetRetryablesFeesParams = {
  * @param params.account Account used for deploying the rollup.
  * @param params.nativeToken (Optional) The native token used for the rollup. Defaults to ETH.
  * @param params.maxFeePerGasForRetryables (Optional) `maxFeePerGas` to use for retryables. Defaults to 0.1 Gwei.
- * @param params.rollupCreatorVersion (Optional) Version of RollupCreator to use. Defaults to latest (currently v3.1).
+ * @param rollupCreatorVersion (Optional) Version of RollupCreator to use. Defaults to latest (currently v3.1).
  *
  * @returns Estimated fees.
  */
 export async function createRollupGetRetryablesFees<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  {
-    account,
-    nativeToken,
-    maxFeePerGasForRetryables,
-    rollupCreatorVersion = 'v3.1',
-  }: CreateRollupGetRetryablesFeesParams,
+  { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
+  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
 ): Promise<bigint> {
   const deployHelperAddress = await publicClient.readContract({
     abi: rollupCreatorABI,
@@ -178,26 +173,25 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
  * @param params.account Account used for deploying the rollup.
  * @param params.nativeToken (Optional) The native token used for the rollup. Defaults to ETH.
  * @param params.maxFeePerGasForRetryables (Optional) `maxFeePerGas` to use for retryables. Defaults to 0.1 Gwei.
- * @param params.rollupCreatorVersion (Optional) Version of RollupCreator to use. Defaults to latest (currently v3.1).
+ * @param rollupCreatorVersion (Optional) Version of RollupCreator to use. Defaults to latest (currently v3.1).
  *
  * @returns Estimated fees.
  */
 export async function createRollupGetRetryablesFeesWithDefaults<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  {
-    account,
-    nativeToken,
-    maxFeePerGasForRetryables,
-    rollupCreatorVersion,
-  }: CreateRollupGetRetryablesFeesParams,
+  { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
+  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
 ): Promise<bigint> {
   try {
-    return await createRollupGetRetryablesFees(publicClient, {
-      account,
-      nativeToken,
-      maxFeePerGasForRetryables,
+    return await createRollupGetRetryablesFees(
+      publicClient,
+      {
+        account,
+        nativeToken,
+        maxFeePerGasForRetryables,
+      },
       rollupCreatorVersion,
-    });
+    );
   } catch (error) {
     console.error(
       `[createRollupGetRetryablesFeesWithDefaults] Failed to fetch retryables fees, falling back to defaults.\n\n${error}`,
