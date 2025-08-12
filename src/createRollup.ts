@@ -172,15 +172,9 @@ export async function createRollup<TChain extends Chain | undefined>({
   params,
   account,
   parentChainPublicClient,
-  ...rest
+  rollupCreatorVersion = 'v3.1',
 }: CreateRollupFunctionParams<TChain>): Promise<CreateRollupResults> {
   validateParentChain(parentChainPublicClient);
-
-  const rollupCreatorVersion =
-    'rollupCreatorVersion' in rest
-      ? //
-        rest.rollupCreatorVersion ?? 'v3.1'
-      : 'v3.1';
 
   const parentChain = parentChainPublicClient.chain;
   const nativeToken = params.nativeToken ?? zeroAddress;
