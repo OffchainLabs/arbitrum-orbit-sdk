@@ -5,6 +5,8 @@ import { validateParentChain } from './types/ParentChain';
 import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 
 import { Prettify } from './types/utils';
+import { RollupCreatorSupportedVersion } from './types/createRollupTypes';
+
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
 import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
@@ -17,7 +19,7 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   account: Address;
   publicClient: PublicClient<Transport, TChain>;
   rollupCreatorAddressOverride?: Address;
-  rollupCreatorVersion?: 'v2.1' | 'v3.1';
+  rollupCreatorVersion?: RollupCreatorSupportedVersion;
 }>;
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest<

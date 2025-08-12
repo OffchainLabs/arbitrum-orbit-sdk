@@ -3,7 +3,10 @@ import { encodeFunctionData, Hex } from 'viem';
 import { rollupCreatorABI as rollupCreatorV3Dot1ABI } from './contracts/RollupCreator/v3.1';
 import { rollupCreatorABI as rollupCreatorV2Dot1ABI } from './contracts/RollupCreator/v2.1';
 
-import { CreateRollupFunctionInputs } from './types/createRollupTypes';
+import {
+  CreateRollupFunctionInputs,
+  RollupCreatorSupportedVersion,
+} from './types/createRollupTypes';
 
 /**
  * Encodes function data for the `createRollup` function call based on the RollupCreator version using the appropriate ABI.
@@ -22,7 +25,7 @@ import { CreateRollupFunctionInputs } from './types/createRollupTypes';
  * const encodedDataV3 = createRollupEncodeFunctionData(args, 'v3.1');
  */
 export function createRollupEncodeFunctionData<
-  TRollupCreatorVersion extends 'v2.1' | 'v3.1' = 'v3.1',
+  TRollupCreatorVersion extends RollupCreatorSupportedVersion = 'v3.1',
 >(
   args: CreateRollupFunctionInputs<TRollupCreatorVersion>,
   rollupCreatorVersion: TRollupCreatorVersion = 'v3.1' as TRollupCreatorVersion,
