@@ -51,13 +51,8 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
   publicClient,
   gasOverrides,
   rollupCreatorAddressOverride,
-  ...rest
+  rollupCreatorVersion = 'v3.1',
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
-  const rollupCreatorVersion =
-    'rollupCreatorVersion' in rest //
-      ? rest.rollupCreatorVersion ?? 'v3.1'
-      : 'v3.1';
-
   const { chainId: parentChainId, isCustom: parentChainIsCustom } =
     validateParentChain(publicClient);
 
