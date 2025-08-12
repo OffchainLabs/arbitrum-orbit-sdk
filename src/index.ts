@@ -20,6 +20,7 @@ import {
 import {
   RollupCreatorVersion,
   RollupCreatorLatestVersion,
+  RollupCreatorSupportedVersion,
   RollupCreatorABI,
   CreateRollupFunctionInputs,
   CreateRollupParams,
@@ -219,6 +220,7 @@ export {
   //
   RollupCreatorVersion,
   RollupCreatorLatestVersion,
+  RollupCreatorSupportedVersion,
   RollupCreatorABI,
   //
   createRollupPrepareDeploymentParamsConfigDefaults,
