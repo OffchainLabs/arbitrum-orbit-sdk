@@ -1,5 +1,7 @@
 import { Chain, Client, Transport } from 'viem';
 
+import { RollupCreatorSupportedVersion } from '../types/createRollupTypes';
+
 import {
   createRollupPrepareDeploymentParamsConfig as createRollupPrepareDeploymentParamsConfigV2Dot1,
   CreateRollupPrepareDeploymentParamsConfigParams as CreateRollupPrepareDeploymentParamsConfigParamsV2Dot1,
@@ -13,20 +15,20 @@ import {
 } from './v3.1';
 
 export type CreateRollupPrepareDeploymentParamsConfigParams<
-  TRollupCreatorVersion extends 'v2.1' | 'v3.1' = 'v3.1',
+  TRollupCreatorVersion extends RollupCreatorSupportedVersion = 'v3.1',
 > = TRollupCreatorVersion extends 'v2.1'
   ? CreateRollupPrepareDeploymentParamsConfigParamsV2Dot1
   : CreateRollupPrepareDeploymentParamsConfigParamsV3Dot1;
 
 export type CreateRollupPrepareDeploymentParamsConfigResult<
-  TRollupCreatorVersion extends 'v2.1' | 'v3.1' = 'v3.1',
+  TRollupCreatorVersion extends RollupCreatorSupportedVersion = 'v3.1',
 > = TRollupCreatorVersion extends 'v2.1'
   ? CreateRollupPrepareDeploymentParamsConfigResultV2Dot1
   : CreateRollupPrepareDeploymentParamsConfigResultV3Dot1;
 
 export function createRollupPrepareDeploymentParamsConfig<
   TChain extends Chain | undefined,
-  TRollupCreatorVersion extends 'v2.1' | 'v3.1' | undefined = 'v3.1',
+  TRollupCreatorVersion extends RollupCreatorSupportedVersion | undefined = 'v3.1',
 >(
   client: Client<Transport, TChain>,
   params: TRollupCreatorVersion extends 'v2.1'

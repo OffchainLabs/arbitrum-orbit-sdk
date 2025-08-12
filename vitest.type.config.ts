@@ -10,7 +10,11 @@ export default mergeConfig(
         './src/**/*.unit.test.ts',
         './src/**/*.integration.test.ts',
       ],
-      include: ['./src/**/*.type.test.ts'],
+      typecheck: {
+        enabled: true,
+        only: true,
+        include: ['./src/**/*.type.test.ts'],
+      },
     },
   }),
 );

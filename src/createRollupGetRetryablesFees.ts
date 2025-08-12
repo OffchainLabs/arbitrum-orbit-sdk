@@ -18,6 +18,7 @@ import { isNonZeroAddress } from './utils/isNonZeroAddress';
 import { defaults as createRollupDefaults } from './createRollupDefaults';
 import { applyPercentIncrease } from './utils/gasOverrides';
 import { createRollupDefaultRetryablesFees } from './constants';
+import { RollupCreatorSupportedVersion } from './types/createRollupTypes';
 
 const deployHelperABI = [
   {
@@ -34,7 +35,7 @@ const deployHelperABI = [
 
 async function getTemplates<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
-  rollupCreatorVersion: 'v2.1' | 'v3.1',
+  rollupCreatorVersion: RollupCreatorSupportedVersion,
 ) {
   const bridgeCreatorAddress = await publicClient.readContract({
     abi: rollupCreatorABI,
@@ -99,7 +100,7 @@ export type CreateRollupGetRetryablesFeesParams = {
 export async function createRollupGetRetryablesFees<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
-  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
+  rollupCreatorVersion: RollupCreatorSupportedVersion = 'v3.1',
 ): Promise<bigint> {
   const deployHelperAddress = await publicClient.readContract({
     abi: rollupCreatorABI,
@@ -180,7 +181,7 @@ export async function createRollupGetRetryablesFees<TChain extends Chain | undef
 export async function createRollupGetRetryablesFeesWithDefaults<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   { account, nativeToken, maxFeePerGasForRetryables }: CreateRollupGetRetryablesFeesParams,
-  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
+  rollupCreatorVersion: RollupCreatorSupportedVersion = 'v3.1',
 ): Promise<bigint> {
   try {
     return await createRollupGetRetryablesFees(

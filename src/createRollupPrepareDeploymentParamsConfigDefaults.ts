@@ -2,6 +2,7 @@ import { zeroAddress, zeroHash, parseEther } from 'viem';
 
 import { getConsensusReleaseByVersion } from './wasmModuleRoot';
 import { CreateRollupPrepareDeploymentParamsConfigResult as Config } from './createRollupPrepareDeploymentParamsConfig';
+import { RollupCreatorSupportedVersion } from './types/createRollupTypes';
 
 const defaultsV2Dot1 = {
   extraChallengeTimeBlocks: BigInt(0),
@@ -42,7 +43,7 @@ const defaultsV3Dot1 = {
 /**
  * Returns default values for the `config` parameter in `createRollup` for a given RollupCreator version.
  *
- * @param {('v2.1' | 'v3.1')} [rollupCreatorVersion='v3.1'] - The version of the RollupCreator contract
+ * @param {RollupCreatorSupportedVersion} [rollupCreatorVersion='v3.1'] - The version of the RollupCreator contract
  * @returns {Object} Default configuration parameters specific to the RollupCreator version
  *
  * @example
@@ -66,7 +67,7 @@ export function createRollupPrepareDeploymentParamsConfigDefaults(
   rollupCreatorVersion?: never,
 ): typeof defaultsV3Dot1;
 export function createRollupPrepareDeploymentParamsConfigDefaults(
-  rollupCreatorVersion: 'v3.1' | 'v2.1' = 'v3.1',
+  rollupCreatorVersion: RollupCreatorSupportedVersion = 'v3.1',
 ) {
   if (rollupCreatorVersion === 'v2.1') {
     return defaultsV2Dot1;
