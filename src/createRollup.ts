@@ -20,6 +20,7 @@ type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain extends Ch
   nativeToken: Address;
   parentChainPublicClient: PublicClient<Transport, TChain>;
   account: PrivateKeyAccount;
+  rollupCreatorVersion?: 'v2.1' | 'v3.1';
 };
 
 /**
@@ -36,11 +37,13 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator<
   nativeToken,
   parentChainPublicClient,
   account,
+  rollupCreatorVersion = 'v3.1',
 }: EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain>) {
   const allowanceParams = {
     nativeToken,
     account: account.address,
     publicClient: parentChainPublicClient,
+    rollupCreatorVersion,
   };
 
   if (!(await createRollupEnoughCustomFeeTokenAllowance(allowanceParams))) {
@@ -73,11 +76,25 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator<
 /**
  * This type is for the params of the createRollup function
  */
-export type CreateRollupFunctionParams<TChain extends Chain | undefined> = {
-  params: CreateRollupParams;
-  account: PrivateKeyAccount;
-  parentChainPublicClient: PublicClient<Transport, TChain>;
-};
+export type CreateRollupFunctionParams<TChain extends Chain | undefined> =
+  | {
+      params: CreateRollupParams<'v2.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion: 'v2.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion: 'v3.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion?: never;
+    };
 
 /**
  * @param {Object} createRollupResults - results of the createRollup function
@@ -155,6 +172,7 @@ export async function createRollup<TChain extends Chain | undefined>({
   params,
   account,
   parentChainPublicClient,
+  rollupCreatorVersion = 'v3.1',
 }: CreateRollupFunctionParams<TChain>): Promise<CreateRollupResults> {
   validateParentChain(parentChainPublicClient);
 
@@ -167,15 +185,25 @@ export async function createRollup<TChain extends Chain | undefined>({
       nativeToken,
       parentChainPublicClient,
       account,
+      rollupCreatorVersion,
     });
   }
 
   // prepare the transaction for deploying the core contracts
-  const txRequest = await createRollupPrepareTransactionRequest({
-    params,
-    account: account.address,
-    publicClient: parentChainPublicClient,
-  });
+  const txRequest =
+    rollupCreatorVersion === 'v2.1'
+      ? await createRollupPrepareTransactionRequest({
+          params: params as CreateRollupParams<'v2.1'>,
+          account: account.address,
+          publicClient: parentChainPublicClient,
+          rollupCreatorVersion: 'v2.1',
+        })
+      : await createRollupPrepareTransactionRequest({
+          params: params as CreateRollupParams<'v3.1'>,
+          account: account.address,
+          publicClient: parentChainPublicClient,
+          rollupCreatorVersion: 'v3.1',
+        });
 
   // sign and send the transaction
   console.log(`Deploying the Rollup...`);

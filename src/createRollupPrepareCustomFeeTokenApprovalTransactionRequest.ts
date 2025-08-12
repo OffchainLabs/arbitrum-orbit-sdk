@@ -17,6 +17,7 @@ export type CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<
   account: Address;
   publicClient: PublicClient<Transport, TChain>;
   rollupCreatorAddressOverride?: Address;
+  rollupCreatorVersion?: 'v2.1' | 'v3.1';
 }>;
 
 export async function createRollupPrepareCustomFeeTokenApprovalTransactionRequest<
@@ -28,14 +29,19 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
   account,
   publicClient,
   rollupCreatorAddressOverride,
+  rollupCreatorVersion = 'v3.1',
 }: CreateRollupPrepareCustomFeeTokenApprovalTransactionRequestParams<TChain>) {
   const { chainId } = validateParentChain(publicClient);
 
-  const fees = await createRollupGetRetryablesFeesWithDefaults(publicClient, {
-    account,
-    nativeToken,
-    maxFeePerGasForRetryables,
-  });
+  const fees = await createRollupGetRetryablesFeesWithDefaults(
+    publicClient,
+    {
+      account,
+      nativeToken,
+      maxFeePerGasForRetryables,
+    },
+    rollupCreatorVersion,
+  );
 
   const decimals = await fetchDecimals({
     address: nativeToken,
@@ -45,7 +51,8 @@ export async function createRollupPrepareCustomFeeTokenApprovalTransactionReques
   const request = await approvePrepareTransactionRequest({
     address: nativeToken,
     owner: account,
-    spender: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient),
+    spender:
+      rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient, rollupCreatorVersion),
     amount: amount ?? scaleFrom18DecimalsToNativeTokenDecimals({ amount: fees, decimals }),
     publicClient,
   });
