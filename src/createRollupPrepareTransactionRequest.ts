@@ -55,7 +55,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
 }: CreateRollupPrepareTransactionRequestParams<TChain>) {
   const rollupCreatorVersion =
     'rollupCreatorVersion' in rest //
-      ? rest.rollupCreatorVersion
+      ? rest.rollupCreatorVersion ?? 'v3.1'
       : 'v3.1';
 
   const { chainId: parentChainId, isCustom: parentChainIsCustom } =
