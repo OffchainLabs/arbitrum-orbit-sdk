@@ -7,7 +7,7 @@ const defaultsV2Dot1 = {
   extraChallengeTimeBlocks: BigInt(0),
   stakeToken: zeroAddress,
   baseStake: parseEther(String(0.1)),
-  wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
+  wasmModuleRoot: getConsensusReleaseByVersion(40).wasmModuleRoot,
   loserStakeEscrow: zeroAddress,
   genesisBlockNum: BigInt(0),
 } as const;
@@ -36,7 +36,7 @@ const defaultsV3Dot1 = {
   layerZeroBigStepEdgeHeight: BigInt(2 ** 19),
   layerZeroSmallStepEdgeHeight: BigInt(2 ** 23),
   numBigStepLevel: 1,
-  wasmModuleRoot: getConsensusReleaseByVersion(32).wasmModuleRoot,
+  wasmModuleRoot: getConsensusReleaseByVersion(40).wasmModuleRoot,
 } as const;
 
 /**
