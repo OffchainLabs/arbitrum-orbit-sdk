@@ -149,20 +149,26 @@ export async function createRollupHelper({
   client: PublicClient;
 }) {
   const chainId = generateChainId();
+  const rollupCreatorVersion = testHelper_getRollupCreatorVersionFromEnv();
 
-  const createRollupConfig = createRollupPrepareDeploymentParamsConfig(client, {
-    chainId: BigInt(chainId),
-    owner: deployer.address,
-    chainConfig: prepareChainConfig({
-      chainId,
-      arbitrum: {
-        InitialChainOwner: deployer.address,
-        DataAvailabilityCommittee: true,
-      },
-    }),
-  });
+  const createRollupConfig = createRollupPrepareDeploymentParamsConfig(
+    client,
+    {
+      chainId: BigInt(chainId),
+      owner: deployer.address,
+      chainConfig: prepareChainConfig({
+        chainId,
+        arbitrum: {
+          InitialChainOwner: deployer.address,
+          DataAvailabilityCommittee: true,
+        },
+      }),
+    },
+    rollupCreatorVersion,
+  );
 
   const createRollupInformation = await createRollup({
+    // @ts-ignore (spsjvc fix this before shipping)
     params: {
       config: createRollupConfig,
       batchPosters,
@@ -171,6 +177,7 @@ export async function createRollupHelper({
     },
     account: deployer,
     parentChainPublicClient: client,
+    rollupCreatorVersion,
   });
 
   // create test rollup with ETH as gas token
