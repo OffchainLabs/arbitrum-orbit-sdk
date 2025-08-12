@@ -1,28 +1,14 @@
 import { it } from 'vitest';
-import { createPublicClient, http } from 'viem';
+import { PublicClient } from 'viem';
 
-import { arbitrumOne } from './chains';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
-import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
+import { CreateRollupPrepareDeploymentParamsConfigResult } from './createRollupPrepareDeploymentParamsConfig';
 
-const client = createPublicClient({
-  chain: arbitrumOne,
-  transport: http(),
-});
-
+const client = {} as PublicClient;
 const owner = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' as const;
 
-const configV2Dot1 = createRollupPrepareDeploymentParamsConfig(
-  client,
-  { chainId: 123_456n, owner },
-  'v2.1',
-);
-
-const configV3Dot1 = createRollupPrepareDeploymentParamsConfig(
-  client,
-  { chainId: 123_456n, owner },
-  'v3.1',
-);
+const configV2Dot1 = {} as CreateRollupPrepareDeploymentParamsConfigResult<'v2.1'>;
+const configV3Dot1 = {} as CreateRollupPrepareDeploymentParamsConfigResult<'v3.1'>;
 
 it('no rollupCreatorVersion parameter accepts v3.1 config (defaults to v3.1)', () => {
   // this should work - v3.1 config with no version
