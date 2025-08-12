@@ -3,6 +3,8 @@ import { Chain, PublicClient, Transport, Address } from 'viem';
 import { createRollupGetRetryablesFeesWithDefaults } from './createRollupGetRetryablesFees';
 import { isNonZeroAddress } from './utils/isNonZeroAddress';
 
+import { RollupCreatorSupportedVersion } from './types/createRollupTypes';
+
 export async function createRollupGetCallValue<TChain extends Chain | undefined>(
   publicClient: PublicClient<Transport, TChain>,
   params: {
@@ -10,7 +12,7 @@ export async function createRollupGetCallValue<TChain extends Chain | undefined>
     nativeToken: Address;
     deployFactoriesToL2: boolean;
   },
-  rollupCreatorVersion: 'v2.1' | 'v3.1' = 'v3.1',
+  rollupCreatorVersion: RollupCreatorSupportedVersion = 'v3.1',
 ): Promise<bigint> {
   // when not deploying deterministic factories to L2, no callvalue is necessary, as no retryable tickets will be created
   if (!params.deployFactoriesToL2) {

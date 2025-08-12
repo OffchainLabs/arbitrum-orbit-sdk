@@ -8,6 +8,7 @@ import { Prettify } from './utils';
 
 export type RollupCreatorVersion = 'v3.1' | 'v2.1' | 'v1.1';
 export type RollupCreatorLatestVersion = Extract<RollupCreatorVersion, 'v3.1'>;
+export type RollupCreatorSupportedVersion = Extract<RollupCreatorVersion, 'v3.1' | 'v2.1'>;
 
 export type RollupCreatorABI<TVersion extends RollupCreatorVersion = RollupCreatorLatestVersion> =
   //

@@ -11,7 +11,11 @@ import { getRollupCreatorAddress } from './utils/getRollupCreatorAddress';
 import { fetchDecimals } from './utils/erc20';
 import { TransactionRequestGasOverrides, applyPercentIncrease } from './utils/gasOverrides';
 
-import { CreateRollupParams, CreateRollupFunctionInputs } from './types/createRollupTypes';
+import {
+  CreateRollupParams,
+  CreateRollupFunctionInputs,
+  RollupCreatorSupportedVersion,
+} from './types/createRollupTypes';
 
 import { isKnownWasmModuleRoot, getConsensusReleaseByWasmModuleRoot } from './wasmModuleRoot';
 
@@ -145,7 +149,7 @@ export async function createRollupPrepareTransactionRequest<TChain extends Chain
     chain: publicClient.chain,
     to: rollupCreatorAddressOverride ?? getRollupCreatorAddress(publicClient, rollupCreatorVersion),
     data: createRollupEncodeFunctionData(
-      [paramsWithDefaults] as CreateRollupFunctionInputs<'v2.1' | 'v3.1'>,
+      [paramsWithDefaults] as CreateRollupFunctionInputs<RollupCreatorSupportedVersion>,
       rollupCreatorVersion,
     ),
     value:
