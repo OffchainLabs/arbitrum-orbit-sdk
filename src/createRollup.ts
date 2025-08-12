@@ -196,13 +196,20 @@ export async function createRollup<TChain extends Chain | undefined>({
   }
 
   // prepare the transaction for deploying the core contracts
-  // @ts-ignore (spsjvc fix this before shipping)
-  const txRequest = await createRollupPrepareTransactionRequest({
-    params,
-    account: account.address,
-    publicClient: parentChainPublicClient,
-    rollupCreatorVersion,
-  });
+  const txRequest =
+    rollupCreatorVersion === 'v2.1'
+      ? await createRollupPrepareTransactionRequest({
+          params: params as CreateRollupParams<'v2.1'>,
+          account: account.address,
+          publicClient: parentChainPublicClient,
+          rollupCreatorVersion: 'v2.1',
+        })
+      : await createRollupPrepareTransactionRequest({
+          params: params as CreateRollupParams<'v3.1'>,
+          account: account.address,
+          publicClient: parentChainPublicClient,
+          rollupCreatorVersion: 'v3.1',
+        });
 
   // sign and send the transaction
   console.log(`Deploying the Rollup...`);

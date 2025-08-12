@@ -7,6 +7,7 @@ import { generateChainId, sanitizePrivateKey } from './utils';
 import { createRollup } from './createRollup';
 import { createRollupPrepareDeploymentParamsConfig } from './createRollupPrepareDeploymentParamsConfig';
 import { prepareChainConfig } from './prepareChainConfig';
+import { CreateRollupParams } from './types/createRollupTypes';
 
 config();
 
@@ -135,21 +136,22 @@ export function getInformationFromTestnode(): TestnodeInformation {
   throw new Error('nitro-testnode sequencer not found');
 }
 
-export async function createRollupHelper({
+export async function createRollupHelper<TRollupCreatorVersion extends 'v3.1' | 'v2.1' = 'v3.1'>({
   deployer,
   batchPosters,
   validators,
   nativeToken = zeroAddress,
   client,
+  rollupCreatorVersion = testHelper_getRollupCreatorVersionFromEnv() as TRollupCreatorVersion,
 }: {
   deployer: PrivateKeyAccountWithPrivateKey;
   batchPosters: Address[];
   validators: Address[];
   nativeToken: Address;
   client: PublicClient;
+  rollupCreatorVersion?: TRollupCreatorVersion;
 }) {
   const chainId = generateChainId();
-  const rollupCreatorVersion = testHelper_getRollupCreatorVersionFromEnv();
 
   const createRollupConfig = createRollupPrepareDeploymentParamsConfig(
     client,
@@ -167,18 +169,30 @@ export async function createRollupHelper({
     rollupCreatorVersion,
   );
 
-  const createRollupInformation = await createRollup({
-    // @ts-ignore (spsjvc fix this before shipping)
-    params: {
-      config: createRollupConfig,
-      batchPosters,
-      validators,
-      nativeToken,
-    },
-    account: deployer,
-    parentChainPublicClient: client,
-    rollupCreatorVersion,
-  });
+  const createRollupInformation =
+    rollupCreatorVersion === 'v2.1'
+      ? await createRollup({
+          params: {
+            config: createRollupConfig,
+            batchPosters,
+            validators,
+            nativeToken,
+          } as CreateRollupParams<'v2.1'>,
+          account: deployer,
+          parentChainPublicClient: client,
+          rollupCreatorVersion: 'v2.1',
+        })
+      : await createRollup({
+          params: {
+            config: createRollupConfig,
+            batchPosters,
+            validators,
+            nativeToken,
+          } as CreateRollupParams<'v3.1'>,
+          account: deployer,
+          parentChainPublicClient: client,
+          rollupCreatorVersion: 'v3.1',
+        });
 
   // create test rollup with ETH as gas token
   return {
