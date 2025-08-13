@@ -113,6 +113,12 @@
     // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>rimraf>glob>minimatch>brace-expansion
     // from: patch-package>rimraf>glob>minimatch>brace-expansion
     // from: ts-morph>@ts-morph/common>minimatch>brace-expansion
-    "GHSA-v6h2-p8h4-qcjw"
+    "GHSA-v6h2-p8h4-qcjw",
+    // https://github.com/advisories/GHSA-52f5-9888-hmc6
+    // tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter
+    // Only used in development
+    // from: patch-package>tmp
+    // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>tmp
+    "GHSA-52f5-9888-hmc6"
   ]
 }
