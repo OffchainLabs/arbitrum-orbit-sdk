@@ -3,7 +3,7 @@ import { Chain, Client, Transport } from 'viem';
 import { ChainConfig } from '../types/ChainConfig';
 import { validateParentChain } from '../types/ParentChain';
 import { Prettify } from '../types/utils';
-import { sortKeys } from '../utils/sortKeys';
+import { prepareChainConfigSortKeys } from '../prepareChainConfigSortKeys';
 
 import { createRollup } from '../createRollup';
 import { CreateRollupFunctionInputs } from '../types/createRollupTypes';
@@ -117,7 +117,7 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     chainConfig: JSON.stringify(
       typeof chainConfig !== 'undefined'
         ? // if config is provided by user, sort keys for consistency
-          sortKeys(chainConfig)
+          prepareChainConfigSortKeys(chainConfig)
         : // if config is provided by prepareChainConfig, keys are already sorted
           prepareChainConfig({
             chainId: Number(params.chainId),
