@@ -1,66 +1,40 @@
-// Order matches Go's ChainConfig struct field order from:
-// https://github.com/OffchainLabs/go-ethereum/blob/060ec4165f5fef525ddff1d3facff142532413a2/params/config.go#L392
-const CHAIN_CONFIG_KEY_ORDER = [
-  'chainId',
-  'homesteadBlock',
-  'daoForkBlock',
-  'daoForkSupport',
-  'eip150Block',
-  'eip155Block',
-  'eip158Block',
-  'byzantiumBlock',
-  'constantinopleBlock',
-  'petersburgBlock',
-  'istanbulBlock',
-  'muirGlacierBlock',
-  'berlinBlock',
-  'londonBlock',
-  'arrowGlacierBlock',
-  'grayGlacierBlock',
-  'mergeNetsplitBlock',
-  'shanghaiTime',
-  'cancunTime',
-  'pragueTime',
-  'osakaTime',
-  'verkleTime',
-  'terminalTotalDifficulty',
-  'depositContractAddress',
-  'enableVerkleAtGenesis',
-  'ethash',
-  'clique',
-  'blobScheduleConfig',
-  'arbitrum',
-];
+import { ChainConfig } from './types/ChainConfig';
 
-export function prepareChainConfigSortKeys<T extends Record<string, any>>(obj: T): T {
-  const result = {} as T;
-  const objKeys = Object.keys(obj);
+export function prepareChainConfigSortKeys(config: ChainConfig): ChainConfig {
+  return {
+    // https://github.com/OffchainLabs/go-ethereum/blob/d1bc3070cae4c3cbf711830148d696b66c6ada6e/params/config.go#L393
+    chainId: config.chainId,
+    homesteadBlock: config.homesteadBlock,
+    daoForkBlock: config.daoForkBlock,
+    daoForkSupport: config.daoForkSupport,
+    eip150Block: config.eip150Block,
+    eip150Hash: config.eip150Hash,
+    eip155Block: config.eip155Block,
+    eip158Block: config.eip158Block,
+    byzantiumBlock: config.byzantiumBlock,
+    constantinopleBlock: config.constantinopleBlock,
+    petersburgBlock: config.petersburgBlock,
+    istanbulBlock: config.istanbulBlock,
+    muirGlacierBlock: config.muirGlacierBlock,
+    berlinBlock: config.berlinBlock,
+    londonBlock: config.londonBlock,
 
-  // First, add keys in the predefined order if they exist
-  for (const key of CHAIN_CONFIG_KEY_ORDER) {
-    if (key in obj) {
-      const value = obj[key];
+    // https://github.com/OffchainLabs/go-ethereum/blob/d1bc3070cae4c3cbf711830148d696b66c6ada6e/params/config.go#L461
+    clique: {
+      period: config.clique.period,
+      epoch: config.clique.epoch,
+    },
 
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        result[key as keyof T] = prepareChainConfigSortKeys(value);
-      } else {
-        result[key as keyof T] = value;
-      }
-    }
-  }
-
-  // Then add any remaining keys alphabetically
-  const remainingKeys = objKeys.filter((key) => !CHAIN_CONFIG_KEY_ORDER.includes(key)).sort();
-
-  for (const key of remainingKeys) {
-    const value = obj[key];
-
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      result[key as keyof T] = prepareChainConfigSortKeys(value);
-    } else {
-      result[key as keyof T] = value;
-    }
-  }
-
-  return result;
+    // https://github.com/OffchainLabs/go-ethereum/blob/d1bc3070cae4c3cbf711830148d696b66c6ada6e/params/config_arbitrum.go#L49
+    arbitrum: {
+      EnableArbOS: config.arbitrum.EnableArbOS,
+      AllowDebugPrecompiles: config.arbitrum.AllowDebugPrecompiles,
+      DataAvailabilityCommittee: config.arbitrum.DataAvailabilityCommittee,
+      InitialArbOSVersion: config.arbitrum.InitialArbOSVersion,
+      InitialChainOwner: config.arbitrum.InitialChainOwner,
+      GenesisBlockNum: config.arbitrum.GenesisBlockNum,
+      MaxCodeSize: config.arbitrum.MaxCodeSize,
+      MaxInitCodeSize: config.arbitrum.MaxInitCodeSize,
+    },
+  };
 }
