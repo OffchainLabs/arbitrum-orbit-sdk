@@ -12,6 +12,7 @@
     "generate": "wagmi generate",
     "generate:node-config-type": "yarn build && node ./src/dist/scripts/generateNodeConfigType.js",
     "postgenerate:node-config-type": "prettier --write ./src/types/NodeConfig.generated.ts",
+    "test:type": "vitest --config vitest.type.config.ts",
     "test:unit": "vitest --config vitest.unit.config.ts",
     "test:integration": "vitest --config vitest.integration.config.ts",
     "postinstall": "patch-package",
@@ -29,13 +30,14 @@
     "prettier": "^2.8.3",
     "ts-morph": "^21.0.1",
     "typescript": "^5.2.2",
-    "vitest": "^3.0.9"
+    "vitest": "^3.2.4"
   },
   "resolutions": {
     "**/@wagmi/cli/viem/ws": "8.17.1",
     "**/@ethersproject/providers/ws": "7.5.10",
     "**/elliptic": "6.6.1",
     "**/nanoid": "3.3.8",
-    "**/base-x": "3.0.11"
+    "**/base-x": "3.0.11",
+    "**/pbkdf2": "3.1.3"
   }
 }

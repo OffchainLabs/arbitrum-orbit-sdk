@@ -1,3 +1,4 @@
+import { createRollupPrepareDeploymentParamsConfigDefaults } from './createRollupPrepareDeploymentParamsConfigDefaults';
 import {
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
@@ -19,10 +20,12 @@ import {
 import {
   RollupCreatorVersion,
   RollupCreatorLatestVersion,
+  RollupCreatorSupportedVersion,
   RollupCreatorABI,
   CreateRollupFunctionInputs,
   CreateRollupParams,
 } from './types/createRollupTypes';
+import { createRollupEncodeFunctionData } from './createRollupEncodeFunctionData';
 import {
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
@@ -92,6 +95,7 @@ import { ParentChain, ParentChainId } from './types/ParentChain';
 import { NodeConfig } from './types/NodeConfig.generated';
 import { NodeConfigChainInfoJson } from './types/NodeConfig';
 import { PrepareNodeConfigParams, prepareNodeConfig } from './prepareNodeConfig';
+import { BridgeUiConfig } from './types/BridgeUiConfig';
 import {
   CreateTokenBridgeParams,
   CreateTokenBridgeResults,
@@ -126,6 +130,7 @@ import {
 } from './feeRouterDeployRewardDistributor';
 import * as utils from './utils';
 
+import { getBridgeUiConfig, GetBridgeUiConfigFunctionParams } from './getBridgeUiConfig';
 import { getDefaultConfirmPeriodBlocks } from './getDefaultConfirmPeriodBlocks';
 import { getDefaultChallengeGracePeriodBlocks } from './getDefaultChallengeGracePeriodBlocks';
 import { getDefaultMinimumAssertionPeriod } from './getDefaultMinimumAssertionPeriod';
@@ -206,6 +211,8 @@ export {
   rollupAdminLogicPrepareFunctionData,
   RollupAdminLogicPrepareFunctionDataParameters,
   //
+  createRollupEncodeFunctionData,
+  //
   createRollupPrepareTransactionRequest,
   CreateRollupPrepareTransactionRequestParams,
   CreateRollupFunctionInputs,
@@ -213,8 +220,10 @@ export {
   //
   RollupCreatorVersion,
   RollupCreatorLatestVersion,
+  RollupCreatorSupportedVersion,
   RollupCreatorABI,
   //
+  createRollupPrepareDeploymentParamsConfigDefaults,
   createRollupPrepareDeploymentParamsConfig,
   CreateRollupPrepareDeploymentParamsConfigParams,
   CreateRollupPrepareDeploymentParamsConfigResult,
@@ -292,6 +301,10 @@ export {
   getDefaultValidatorAfkBlocks,
   getDefaultSequencerInboxMaxTimeVariation,
   SequencerInboxMaxTimeVariation,
+  //
+  getBridgeUiConfig,
+  BridgeUiConfig,
+  GetBridgeUiConfigFunctionParams,
   //
   getValidators,
   GetValidatorsParams,
