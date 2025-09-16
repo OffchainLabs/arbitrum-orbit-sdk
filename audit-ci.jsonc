@@ -99,6 +99,12 @@
     // https://github.com/advisories/GHSA-859w-5945-r5v3
     // the vite dev server (when exposed to the network with --host) can return contents of arbitrary files
     //
+    // https://github.com/advisories/GHSA-g4jq-h2w9-997c
+    // files starting with the same name with the public directory were served bypassing the server.fs settings
+    //
+    // https://github.com/advisories/GHSA-jqfw-vq24-v9c3
+    // any HTML files on the machine were served regardless of the server.fs settings
+    //
     // vite is only used with vitest for running tests, and without exposing the dev server to the network
     //
     // from: vitest>vite
@@ -107,6 +113,8 @@
     "GHSA-356w-63v5-8wf4",
     "GHSA-xcj6-pq6g-qj4x",
     "GHSA-859w-5945-r5v3",
+    "GHSA-g4jq-h2w9-997c",
+    "GHSA-jqfw-vq24-v9c3",
     // https://github.com/advisories/GHSA-v6h2-p8h4-qcjw
     // brace-expansion exposes a regular expression denial of service vulnerability
     // Only used in development (patch-package and ts-morph)
