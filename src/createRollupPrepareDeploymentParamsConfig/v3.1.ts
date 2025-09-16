@@ -4,6 +4,7 @@ import { ChainConfig } from '../types/ChainConfig';
 import { validateParentChain } from '../types/ParentChain';
 import { Prettify } from '../types/utils';
 import { getWethAddress } from '../utils';
+import { prepareChainConfigSortKeys } from '../prepareChainConfigSortKeys';
 
 import { createRollup } from '../createRollup';
 import { CreateRollupFunctionInputs } from '../types/createRollupTypes';
@@ -159,11 +160,14 @@ export function createRollupPrepareDeploymentParamsConfig<TChain extends Chain |
     ...paramsByParentBlockTime,
     ...params,
     chainConfig: JSON.stringify(
-      chainConfig ??
-        prepareChainConfig({
-          chainId: Number(params.chainId),
-          arbitrum: { InitialChainOwner: params.owner },
-        }),
+      typeof chainConfig !== 'undefined'
+        ? // if config is provided by user, sort keys for consistency
+          prepareChainConfigSortKeys(chainConfig)
+        : // if config is provided by prepareChainConfig, keys are already sorted
+          prepareChainConfig({
+            chainId: Number(params.chainId),
+            arbitrum: { InitialChainOwner: params.owner },
+          }),
     ),
   };
 }
