@@ -1,11 +1,25 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directories:
-      - '**/*'
+    directory: '/'
     schedule:
       interval: daily
     versioning-strategy: increase
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
+  - package-ecosystem: npm
+    directories:
+      - '/examples/*'
+    schedule:
+      interval: daily
+    versioning-strategy: increase
+    groups:
+      # Group all updates for examples together
+      examples:
+        patterns:
+          - '*'
     ignore:
       - dependency-name: '*'
         update-types:
