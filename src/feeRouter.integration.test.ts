@@ -37,27 +37,26 @@ const nitroTestnodeL2WalletClient = createWalletClient({
 });
 
 const testRouter = async (routerType: 'ARB' | 'OP') => {
-  const childToParentRewardRouterDeploymentTransactionHash = routerType === 'ARB' ?
-    await feeRouterDeployChildToParentRewardRouter({
-      parentChainPublicClient: nitroTestnodeL1Client,
-      orbitChainWalletClient: nitroTestnodeL2WalletClient,
-      parentChainTargetAddress: randomAccount.address,
-    })
-    : await feeRouterDeployChildToParentRewardRouter({
-      parentChainPublicClient: nitroTestnodeL1Client,
-      orbitChainWalletClient: nitroTestnodeL2WalletClient,
-      parentChainTargetAddress: randomAccount.address,
-      routerType,         
-    });
+  const childToParentRewardRouterDeploymentTransactionHash =
+    routerType === 'ARB'
+      ? await feeRouterDeployChildToParentRewardRouter({
+          parentChainPublicClient: nitroTestnodeL1Client,
+          orbitChainWalletClient: nitroTestnodeL2WalletClient,
+          parentChainTargetAddress: randomAccount.address,
+        })
+      : await feeRouterDeployChildToParentRewardRouter({
+          parentChainPublicClient: nitroTestnodeL1Client,
+          orbitChainWalletClient: nitroTestnodeL2WalletClient,
+          parentChainTargetAddress: randomAccount.address,
+          routerType,
+        });
 
   const childToParentRewardRouterDeploymentTransactionReceipt =
     await nitroTestnodeL2Client.waitForTransactionReceipt({
       hash: childToParentRewardRouterDeploymentTransactionHash,
     });
 
-  expect(childToParentRewardRouterDeploymentTransactionReceipt).to.have.property(
-    'contractAddress',
-  );
+  expect(childToParentRewardRouterDeploymentTransactionReceipt).to.have.property('contractAddress');
 
   const childToParentRewardRouterAddress = getAddress(
     childToParentRewardRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
@@ -72,8 +71,8 @@ const testRouter = async (routerType: 'ARB' | 'OP') => {
 
   expect(parentChainTarget).toEqual(randomAccount.address);
 
-  return childToParentRewardRouterAddress
-}
+  return childToParentRewardRouterAddress;
+};
 
 describe('Fee routing tests', () => {
   it(`successfully deploys and configures the ChildToParentRewardRouter`, async () => {
