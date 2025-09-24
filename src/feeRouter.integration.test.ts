@@ -36,36 +36,61 @@ const nitroTestnodeL2WalletClient = createWalletClient({
   account: deployer,
 });
 
-describe('Fee routing tests', () => {
-  it(`successfully deploys and configures the ChildToParentRewardRouter`, async () => {
-    const childToParentRewardRouterDeploymentTransactionHash =
-      await feeRouterDeployChildToParentRewardRouter({
-        parentChainPublicClient: nitroTestnodeL1Client,
-        orbitChainWalletClient: nitroTestnodeL2WalletClient,
-        parentChainTargetAddress: randomAccount.address,
-      });
-
-    const childToParentRewardRouterDeploymentTransactionReceipt =
-      await nitroTestnodeL2Client.waitForTransactionReceipt({
-        hash: childToParentRewardRouterDeploymentTransactionHash,
-      });
-
-    expect(childToParentRewardRouterDeploymentTransactionReceipt).to.have.property(
-      'contractAddress',
-    );
-
-    const childToParentRewardRouterAddress = getAddress(
-      childToParentRewardRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
-    );
-
-    // reading the parentChainTarget
-    const parentChainTarget = await nitroTestnodeL2Client.readContract({
-      address: childToParentRewardRouterAddress,
-      abi: parseAbi(['function parentChainTarget() view returns (address)']),
-      functionName: 'parentChainTarget',
+const testRouter = async (routerType: 'ARB' | 'OP') => {
+  const childToParentRewardRouterDeploymentTransactionHash = routerType === 'ARB' ?
+    await feeRouterDeployChildToParentRewardRouter({
+      parentChainPublicClient: nitroTestnodeL1Client,
+      orbitChainWalletClient: nitroTestnodeL2WalletClient,
+      parentChainTargetAddress: randomAccount.address,
+    })
+    : await feeRouterDeployChildToParentRewardRouter({
+      parentChainPublicClient: nitroTestnodeL1Client,
+      orbitChainWalletClient: nitroTestnodeL2WalletClient,
+      parentChainTargetAddress: randomAccount.address,
+      routerType,         
     });
 
-    expect(parentChainTarget).toEqual(randomAccount.address);
+  const childToParentRewardRouterDeploymentTransactionReceipt =
+    await nitroTestnodeL2Client.waitForTransactionReceipt({
+      hash: childToParentRewardRouterDeploymentTransactionHash,
+    });
+
+  expect(childToParentRewardRouterDeploymentTransactionReceipt).to.have.property(
+    'contractAddress',
+  );
+
+  const childToParentRewardRouterAddress = getAddress(
+    childToParentRewardRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
+  );
+
+  // reading the parentChainTarget
+  const parentChainTarget = await nitroTestnodeL2Client.readContract({
+    address: childToParentRewardRouterAddress,
+    abi: parseAbi(['function parentChainTarget() view returns (address)']),
+    functionName: 'parentChainTarget',
+  });
+
+  expect(parentChainTarget).toEqual(randomAccount.address);
+
+  return childToParentRewardRouterAddress
+}
+
+describe('Fee routing tests', () => {
+  it(`successfully deploys and configures the ChildToParentRewardRouter`, async () => {
+    await testRouter('ARB');
+  });
+
+  it(`successfully deploys and configures an OPChildToParentRewardRouter`, async () => {
+    const childToParentRewardRouterAddress = await testRouter('OP');
+
+    // reading the opStandardBridge
+    const opStandardBridge = await nitroTestnodeL2Client.readContract({
+      address: childToParentRewardRouterAddress,
+      abi: parseAbi(['function opStandardBridge() view returns (address)']),
+      functionName: 'opStandardBridge',
+    });
+
+    expect(opStandardBridge).toEqual('0x4200000000000000000000000000000000000010');
   });
 
   it(`successfully deploys and configures the RewardDistributor`, async () => {
