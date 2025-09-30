@@ -10,6 +10,7 @@ import {
 } from 'viem';
 
 import arbChildToParentRewardRouter from '@offchainlabs/fund-distribution-contracts/out/ArbChildToParentRewardRouter.sol/ArbChildToParentRewardRouter.json';
+import opChildToParentRewardRouter from '@offchainlabs/fund-distribution-contracts/out/OpChildToParentRewardRouter.sol/OpChildToParentRewardRouter.json';
 
 import { createTokenBridgeFetchTokenBridgeContracts } from './createTokenBridgeFetchTokenBridgeContracts';
 import { Prettify } from './types/utils';
@@ -28,6 +29,7 @@ export type FeeRouterDeployChildToParentRewardRouterParams<TChain extends Chain 
       minDistributionInvervalSeconds?: bigint;
       rollup?: Address;
       parentChainTokenAddress?: Address;
+      routerType?: 'ARB' | 'OP';
     }>
   >;
 
@@ -58,6 +60,7 @@ const oneAddress = getAddress(
  * @param {bigint} feeRouterDeployChildToParentRewardRouterParams.minDistributionInvervalSeconds - [Optional] The number of seconds that needs to pass before funds can be sent again (to prevent griefing)
  * @param {Address} feeRouterDeployChildToParentRewardRouterParams.rollup - [Optional] If sending a token different than the native token of the Orbit chain, the Rollup contract address of the chain
  * @param {Address} feeRouterDeployChildToParentRewardRouterParams.parentChainTokenAddress - [Optional] If sending a token different than the native token of the Orbit chain, address of the token in the parent chain
+ * @param {'ARB' | 'OP'} feeRouterDeployChildToParentRewardRouterParams.routerType - [Optional] The type of router to deploy. Defaults to 'ARB' - when the child chain is nitro-stack. Use 'OP' when the child chain is OP Stack.
  *
  * @returns Promise<0x${string}> - The hash of the deployment transaction
  *
@@ -83,6 +86,7 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
   rollup,
   parentChainTokenAddress,
   tokenBridgeCreatorAddressOverride,
+  routerType = 'ARB',
 }: FeeRouterDeployChildToParentRewardRouterParams<TChain>) {
   validateParentChain(parentChainPublicClient);
 
@@ -135,8 +139,19 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
     constructorArguments.orbitChainGatewayRouter = orbitChainGatewayRouter;
   }
 
+  const routerContract = (() => {
+    switch (routerType) {
+      case 'OP':
+        return opChildToParentRewardRouter;
+      case 'ARB':
+        return arbChildToParentRewardRouter;
+      default:
+        throw new Error(`Invalid routerType: ${routerType}. Must be 'ARB' or 'OP'`);
+    }
+  })();
+
   const transactionHash = await orbitChainWalletClient.deployContract({
-    abi: arbChildToParentRewardRouter.abi,
+    abi: routerContract.abi,
     account: orbitChainWalletClient.account!,
     chain: orbitChainWalletClient.chain,
     args: [
@@ -146,7 +161,7 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
       constructorArguments.orbitChainTokenAddress,
       constructorArguments.orbitChainGatewayRouter,
     ],
-    bytecode: arbChildToParentRewardRouter.bytecode.object as `0x${string}`,
+    bytecode: routerContract.bytecode.object as `0x${string}`,
   });
 
   return transactionHash;
