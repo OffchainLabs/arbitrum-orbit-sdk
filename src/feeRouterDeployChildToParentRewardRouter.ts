@@ -139,12 +139,23 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
     constructorArguments.orbitChainGatewayRouter = orbitChainGatewayRouter;
   }
 
-  const routerContract = (() => {
+  const [routerContract, args] = (() => {
     switch (routerType) {
       case 'OP':
-        return opChildToParentRewardRouter;
+        return [opChildToParentRewardRouter, [
+      constructorArguments.parentChainTargetAddress,
+      constructorArguments.minDistributionInvervalSeconds,
+      constructorArguments.parentChainTokenAddress,
+      constructorArguments.orbitChainTokenAddress
+    ]];
       case 'ARB':
-        return arbChildToParentRewardRouter;
+        return [arbChildToParentRewardRouter, [
+      constructorArguments.parentChainTargetAddress,
+      constructorArguments.minDistributionInvervalSeconds,
+      constructorArguments.parentChainTokenAddress,
+      constructorArguments.orbitChainTokenAddress,
+      constructorArguments.orbitChainGatewayRouter,
+    ]];
       default:
         throw new Error(`Invalid routerType: ${routerType}. Must be 'ARB' or 'OP'`);
     }
@@ -154,13 +165,7 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
     abi: routerContract.abi,
     account: orbitChainWalletClient.account!,
     chain: orbitChainWalletClient.chain,
-    args: [
-      constructorArguments.parentChainTargetAddress,
-      constructorArguments.minDistributionInvervalSeconds,
-      constructorArguments.parentChainTokenAddress,
-      constructorArguments.orbitChainTokenAddress,
-      constructorArguments.orbitChainGatewayRouter,
-    ],
+    args: args,
     bytecode: routerContract.bytecode.object as `0x${string}`,
   });
 

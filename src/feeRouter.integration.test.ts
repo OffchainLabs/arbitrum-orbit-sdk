@@ -70,7 +70,15 @@ const testRouter = async (routerType: 'ARB' | 'OP') => {
 
 describe('Fee routing tests', () => {
   it(`successfully deploys and configures an ArbChildToParentRewardRouter`, async () => {
-    await testRouter('ARB');
+    const childToParentRewardRouterAddress = await testRouter('ARB');
+
+    const childChainGatewayRouter = await nitroTestnodeL2Client.readContract({
+      address: childToParentRewardRouterAddress,
+      abi: parseAbi(['function childChainGatewayRouter() view returns (address)']),
+      functionName: 'childChainGatewayRouter',
+    });
+
+    expect(childChainGatewayRouter).not.equal('0x0000000000000000000000000000000000000000');
   });
 
   it(`successfully deploys and configures an OPChildToParentRewardRouter`, async () => {
