@@ -38,18 +38,12 @@ const nitroTestnodeL2WalletClient = createWalletClient({
 
 const testRouter = async (routerType: 'ARB' | 'OP') => {
   const childToParentRewardRouterDeploymentTransactionHash =
-    routerType === 'ARB'
-      ? await feeRouterDeployChildToParentRewardRouter({
-          parentChainPublicClient: nitroTestnodeL1Client,
-          orbitChainWalletClient: nitroTestnodeL2WalletClient,
-          parentChainTargetAddress: randomAccount.address,
-        })
-      : await feeRouterDeployChildToParentRewardRouter({
-          parentChainPublicClient: nitroTestnodeL1Client,
-          orbitChainWalletClient: nitroTestnodeL2WalletClient,
-          parentChainTargetAddress: randomAccount.address,
-          routerType,
-        });
+    await feeRouterDeployChildToParentRewardRouter({
+      parentChainPublicClient: nitroTestnodeL1Client,
+      orbitChainWalletClient: nitroTestnodeL2WalletClient,
+      parentChainTargetAddress: randomAccount.address,
+      routerType,
+    });
 
   const childToParentRewardRouterDeploymentTransactionReceipt =
     await nitroTestnodeL2Client.waitForTransactionReceipt({
