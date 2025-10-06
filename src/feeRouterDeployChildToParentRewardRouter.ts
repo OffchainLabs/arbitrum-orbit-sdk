@@ -142,20 +142,26 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
   const [routerContract, args] = (() => {
     switch (routerType) {
       case 'OP':
-        return [opChildToParentRewardRouter, [
-      constructorArguments.parentChainTargetAddress,
-      constructorArguments.minDistributionInvervalSeconds,
-      constructorArguments.parentChainTokenAddress,
-      constructorArguments.orbitChainTokenAddress
-    ]];
+        return [
+          opChildToParentRewardRouter,
+          [
+            constructorArguments.parentChainTargetAddress,
+            constructorArguments.minDistributionInvervalSeconds,
+            constructorArguments.parentChainTokenAddress,
+            constructorArguments.orbitChainTokenAddress,
+          ],
+        ];
       case 'ARB':
-        return [arbChildToParentRewardRouter, [
-      constructorArguments.parentChainTargetAddress,
-      constructorArguments.minDistributionInvervalSeconds,
-      constructorArguments.parentChainTokenAddress,
-      constructorArguments.orbitChainTokenAddress,
-      constructorArguments.orbitChainGatewayRouter,
-    ]];
+        return [
+          arbChildToParentRewardRouter,
+          [
+            constructorArguments.parentChainTargetAddress,
+            constructorArguments.minDistributionInvervalSeconds,
+            constructorArguments.parentChainTokenAddress,
+            constructorArguments.orbitChainTokenAddress,
+            constructorArguments.orbitChainGatewayRouter,
+          ],
+        ];
       default:
         throw new Error(`Invalid routerType: ${routerType}. Must be 'ARB' or 'OP'`);
     }
