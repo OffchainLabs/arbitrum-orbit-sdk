@@ -8,6 +8,7 @@ import {
   pad,
   parseAbi,
 } from 'viem';
+import { getBytecode } from 'viem/actions';
 
 import arbChildToParentRewardRouter from '@offchainlabs/fund-distribution-contracts/out/ArbChildToParentRewardRouter.sol/ArbChildToParentRewardRouter.json';
 import opChildToParentRewardRouter from '@offchainlabs/fund-distribution-contracts/out/OpChildToParentRewardRouter.sol/OpChildToParentRewardRouter.json';
@@ -32,6 +33,17 @@ export type FeeRouterDeployChildToParentRewardRouterParams<TChain extends Chain 
       routerType?: 'ARB' | 'OP';
     }>
   >;
+
+/**
+ * This type is for the params of the feeRouterDeployChildToParentRewardRouter function
+ */
+export type FeeRouterDeployOPChildToParentRewardRouterParams = Prettify<{
+  childChainWalletClient: WalletClient;
+  parentChainTargetAddress: Address;
+  minDistributionInvervalSeconds?: bigint;
+  parentChainTokenAddress?: Address;
+  childChainTokenAddress?: Address;
+}>;
 
 // Default minimum distribution interval seconds
 const DEFAULT_MIN_DISTRIBUTION_INVERVAL_SECONDS = BigInt(60 * 60 * 24 * 7); // 1 week
@@ -86,7 +98,6 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
   rollup,
   parentChainTokenAddress,
   tokenBridgeCreatorAddressOverride,
-  routerType = 'ARB',
 }: FeeRouterDeployChildToParentRewardRouterParams<TChain>) {
   validateParentChain(parentChainPublicClient);
 
@@ -139,40 +150,68 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
     constructorArguments.orbitChainGatewayRouter = orbitChainGatewayRouter;
   }
 
-  const [routerContract, args] = (() => {
-    switch (routerType) {
-      case 'OP':
-        return [
-          opChildToParentRewardRouter,
-          [
-            constructorArguments.parentChainTargetAddress,
-            constructorArguments.minDistributionInvervalSeconds,
-            constructorArguments.parentChainTokenAddress,
-            constructorArguments.orbitChainTokenAddress,
-          ],
-        ];
-      case 'ARB':
-        return [
-          arbChildToParentRewardRouter,
-          [
-            constructorArguments.parentChainTargetAddress,
-            constructorArguments.minDistributionInvervalSeconds,
-            constructorArguments.parentChainTokenAddress,
-            constructorArguments.orbitChainTokenAddress,
-            constructorArguments.orbitChainGatewayRouter,
-          ],
-        ];
-      default:
-        throw new Error(`Invalid routerType: ${routerType}. Must be 'ARB' or 'OP'`);
-    }
-  })();
+  // safety check that this is an orbit chain
+  const nodeIfaceBytecode = await getBytecode(orbitChainWalletClient, {
+    address: '0x00000000000000000000000000000000000000c8',
+  });
+  if (nodeIfaceBytecode !== '0xfe') {
+    throw new Error('Not an orbit chain');
+  }
 
   const transactionHash = await orbitChainWalletClient.deployContract({
-    abi: routerContract.abi,
+    abi: arbChildToParentRewardRouter.abi,
     account: orbitChainWalletClient.account!,
     chain: orbitChainWalletClient.chain,
-    args: args,
-    bytecode: routerContract.bytecode.object as `0x${string}`,
+    args: [
+      constructorArguments.parentChainTargetAddress,
+      constructorArguments.minDistributionInvervalSeconds,
+      constructorArguments.parentChainTokenAddress,
+      constructorArguments.orbitChainTokenAddress,
+      constructorArguments.orbitChainGatewayRouter,
+    ],
+    bytecode: arbChildToParentRewardRouter.bytecode.object as `0x${string}`,
+  });
+
+  return transactionHash;
+}
+
+export async function feeRouterDeployOPChildToParentRewardRouter({
+  childChainWalletClient,
+  parentChainTargetAddress,
+  minDistributionInvervalSeconds,
+  parentChainTokenAddress,
+  childChainTokenAddress,
+}: FeeRouterDeployOPChildToParentRewardRouterParams) {
+  if (
+    (parentChainTargetAddress != undefined && childChainTokenAddress == undefined) ||
+    (parentChainTokenAddress == undefined && childChainTokenAddress != undefined)
+  ) {
+    throw new Error(
+      'Both parentChainTokenAddress and childChainTokenAddress must be provided together.',
+    );
+  }
+
+  const constructorArguments = {
+    parentChainTargetAddress,
+    minDistributionInvervalSeconds:
+      minDistributionInvervalSeconds ?? DEFAULT_MIN_DISTRIBUTION_INVERVAL_SECONDS,
+
+    // setting the default values here
+    parentChainTokenAddress: oneAddress || childChainTokenAddress,
+    childChainTokenAddress: oneAddress || childChainTokenAddress,
+  };
+
+  const transactionHash = await childChainWalletClient.deployContract({
+    abi: opChildToParentRewardRouter.abi,
+    account: childChainWalletClient.account!,
+    chain: childChainWalletClient.chain,
+    args: [
+      constructorArguments.parentChainTargetAddress,
+      constructorArguments.minDistributionInvervalSeconds,
+      constructorArguments.parentChainTokenAddress,
+      constructorArguments.childChainTokenAddress,
+    ],
+    bytecode: opChildToParentRewardRouter.bytecode.object as `0x${string}`,
   });
 
   return transactionHash;
