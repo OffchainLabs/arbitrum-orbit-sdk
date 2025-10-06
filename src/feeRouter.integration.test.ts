@@ -69,7 +69,7 @@ const testRouter = async (routerType: 'ARB' | 'OP') => {
 };
 
 describe('Fee routing tests', () => {
-  it(`successfully deploys and configures the ChildToParentRewardRouter`, async () => {
+  it(`successfully deploys and configures an ArbChildToParentRewardRouter`, async () => {
     await testRouter('ARB');
   });
 
