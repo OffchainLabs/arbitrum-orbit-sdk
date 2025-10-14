@@ -191,6 +191,9 @@ import {
   FetchDecimalsProps,
 } from './utils/erc20';
 import { prepareArbitrumNetwork } from './utils/registerNewNetwork';
+import { createGenesisBuilder, GenesisBuilder } from './createGenesisBuilder';
+import { getDefaultPredeploys } from './getDefaultPredeploys';
+import { Genesis, GenesisAlloc, GenesisAccount, PredeployInput } from './createGenesisBuilderTypes';
 
 export {
   arbOwnerPublicActions,
@@ -354,4 +357,12 @@ export {
   FetchDecimalsProps,
   //
   prepareArbitrumNetwork,
+  //
+  createGenesisBuilder,
+  GenesisBuilder,
+  getDefaultPredeploys,
+  Genesis,
+  GenesisAlloc,
+  GenesisAccount,
+  PredeployInput,
 };
