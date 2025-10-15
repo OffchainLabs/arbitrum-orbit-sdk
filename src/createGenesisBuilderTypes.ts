@@ -30,4 +30,5 @@ export type PredeployInput = {
   balance?: bigint;
   code: Hex;
   storage?: Record<Hex, Hex>;
+  nonce?: bigint;
 };

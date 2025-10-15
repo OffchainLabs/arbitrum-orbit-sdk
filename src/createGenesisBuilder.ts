@@ -17,9 +17,19 @@ export class GenesisBuilder {
     const normalizedPredeploy: PredeployInput = {
       address: predeploy.address,
       code: predeploy.code,
-      balance: predeploy.balance ?? 0n,
-      storage: predeploy.storage,
     };
+
+    if (typeof predeploy.balance !== 'undefined') {
+      normalizedPredeploy.balance = predeploy.balance;
+    }
+
+    if (typeof predeploy.nonce !== 'undefined') {
+      normalizedPredeploy.nonce = predeploy.nonce;
+    }
+
+    if (typeof predeploy.storage !== 'undefined') {
+      normalizedPredeploy.storage = predeploy.storage;
+    }
 
     this.predeploys.set(predeploy.address, normalizedPredeploy);
     return this;
@@ -44,13 +54,24 @@ export class GenesisBuilder {
   build(): Genesis {
     const alloc: GenesisAlloc = {};
 
-    // Add predeploys to alloc
     for (const [address, predeploy] of this.predeploys) {
-      alloc[address] = {
-        balance: predeploy.balance?.toString() || '0',
+      const account: Record<string, unknown> = {
         code: predeploy.code,
-        storage: predeploy.storage,
       };
+
+      if (typeof predeploy.balance !== 'undefined') {
+        account.balance = predeploy.balance.toString();
+      }
+
+      if (typeof predeploy.nonce !== 'undefined') {
+        account.nonce = predeploy.nonce.toString();
+      }
+
+      if (typeof predeploy.storage !== 'undefined') {
+        account.storage = predeploy.storage;
+      }
+
+      alloc[address] = account;
     }
 
     return { alloc };
