@@ -15,11 +15,12 @@ import { createTokenBridgePrepareTransactionReceipt } from './createTokenBridgeP
 import { deployTokenBridgeCreator } from './createTokenBridge-testHelpers';
 import { CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams } from './createTokenBridgeEnoughCustomFeeTokenAllowance';
 import { createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest } from './createTokenBridgePrepareCustomFeeTokenApprovalTransactionRequest';
-import { erc20 } from './contracts';
+import { erc20ABI } from './contracts/ERC20';
 import { createTokenBridgePrepareSetWethGatewayTransactionRequest } from './createTokenBridgePrepareSetWethGatewayTransactionRequest';
 import { createTokenBridgePrepareSetWethGatewayTransactionReceipt } from './createTokenBridgePrepareSetWethGatewayTransactionReceipt';
 import { createTokenBridge } from './createTokenBridge';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
+import { scaleFrom18DecimalsToNativeTokenDecimals } from './utils/decimals';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
 const l2RollupOwner = testnodeAccounts.l2RollupOwner;
@@ -103,6 +104,10 @@ async function checkWethGateways(
   expect(tokenBridgeContracts.orbitChainContracts.weth).not.toEqual(zeroAddress);
   expect(tokenBridgeContracts.orbitChainContracts.wethGateway).not.toEqual(zeroAddress);
 }
+
+const nativeTokenDecimals = process.env.INTEGRATION_TEST_DECIMALS
+  ? Number(process.env.INTEGRATION_TEST_DECIMALS)
+  : 18;
 
 describe('createTokenBridge utils function', () => {
   it(`successfully deploys token bridge contracts through token bridge creator`, async () => {
@@ -216,9 +221,12 @@ describe('createTokenBridge utils function', () => {
       chain: nitroTestnodeL2Client.chain,
       to: testnodeInformation.l3NativeToken,
       data: encodeFunctionData({
-        abi: erc20.abi,
+        abi: erc20ABI,
         functionName: 'transfer',
-        args: [l3RollupOwner.address, parseEther('500')],
+        args: [
+          l3RollupOwner.address,
+          scaleFrom18DecimalsToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
+        ],
       }),
       value: BigInt(0),
       account: l3TokenBridgeDeployer,
@@ -238,7 +246,9 @@ describe('createTokenBridge utils function', () => {
 
     // -----------------------------
     // 2. approve custom fee token to be spent by the TokenBridgeCreator
-    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams = {
+    const allowanceParams: CreateTokenBridgeEnoughCustomFeeTokenAllowanceParams<
+      typeof nitroTestnodeL2
+    > = {
       nativeToken: testnodeInformation.l3NativeToken,
       owner: l3RollupOwner.address,
       publicClient: nitroTestnodeL2Client,
@@ -380,9 +390,12 @@ describe('createTokenBridge', () => {
       chain: nitroTestnodeL2Client.chain,
       to: testnodeInformation.l3NativeToken,
       data: encodeFunctionData({
-        abi: erc20.abi,
+        abi: erc20ABI,
         functionName: 'transfer',
-        args: [l3RollupOwner.address, parseEther('500')],
+        args: [
+          l3RollupOwner.address,
+          scaleFrom18DecimalsToNativeTokenDecimals({ amount: 500n, decimals: nativeTokenDecimals }),
+        ],
       }),
       value: BigInt(0),
       account: l3TokenBridgeDeployer,
@@ -433,5 +446,53 @@ describe('createTokenBridge', () => {
 
     checkTokenBridgeContracts(tokenBridgeContracts);
     checkWethGateways(tokenBridgeContracts, { customFeeToken: true });
+  });
+
+  it('should throw when createTokenBridge is called multiple times', async () => {
+    const testnodeInformation = getInformationFromTestnode();
+
+    const tokenBridgeCreator = await deployTokenBridgeCreator({
+      publicClient: nitroTestnodeL1Client,
+    });
+
+    const cfg = {
+      rollupOwner: l2RollupOwner.address,
+      rollupAddress: testnodeInformation.rollup,
+      account: l2RollupOwner,
+      parentChainPublicClient: nitroTestnodeL1Client,
+      orbitChainPublicClient: nitroTestnodeL2Client,
+      tokenBridgeCreatorAddressOverride: tokenBridgeCreator,
+      gasOverrides: {
+        gasLimit: {
+          base: 6_000_000n,
+        },
+      },
+      retryableGasOverrides: {
+        maxGasForFactory: {
+          base: 20_000_000n,
+        },
+        maxGasForContracts: {
+          base: 20_000_000n,
+        },
+        maxSubmissionCostForFactory: {
+          base: 4_000_000_000_000n,
+        },
+        maxSubmissionCostForContracts: {
+          base: 4_000_000_000_000n,
+        },
+      },
+      setWethGatewayGasOverrides: {
+        gasLimit: {
+          base: 100_000n,
+        },
+      },
+    };
+    const { tokenBridgeContracts } = await createTokenBridge(cfg);
+    await expect(createTokenBridge(cfg)).rejects.toThrowError(
+      `Token bridge contracts for Rollup ${testnodeInformation.rollup} are already deployed`,
+    );
+
+    checkTokenBridgeContracts(tokenBridgeContracts);
+    checkWethGateways(tokenBridgeContracts, { customFeeToken: false });
   });
 });

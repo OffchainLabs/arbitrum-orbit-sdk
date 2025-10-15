@@ -6,17 +6,8 @@ import {
 import { ChainConfig } from './types/ChainConfig';
 import { CoreContracts } from './types/CoreContracts';
 import { ParentChainId, validateParentChain } from './types/ParentChain';
-import {
-  mainnet,
-  arbitrumOne,
-  arbitrumNova,
-  sepolia,
-  holesky,
-  arbitrumSepolia,
-  nitroTestnodeL1,
-  nitroTestnodeL2,
-} from './chains';
 import { getParentChainLayer } from './utils';
+import { parentChainIsArbitrum } from './parentChainIsArbitrum';
 
 // this is different from `sanitizePrivateKey` from utils, as this removes the 0x prefix
 function sanitizePrivateKey(privateKey: string) {
@@ -33,33 +24,27 @@ function stringifyBackendsJson(
   return JSON.stringify(backendsJson);
 }
 
-function parentChainIsArbitrum(parentChainId: ParentChainId): boolean {
-  // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
-  switch (parentChainId) {
-    case mainnet.id:
-    case sepolia.id:
-    case holesky.id:
-    case nitroTestnodeL1.id:
-      return false;
-
-    case arbitrumOne.id:
-    case arbitrumNova.id:
-    case arbitrumSepolia.id:
-    case nitroTestnodeL2.id:
-      return true;
-  }
-}
-
 export type PrepareNodeConfigParams = {
   chainName: string;
   chainConfig: ChainConfig;
   coreContracts: CoreContracts;
   batchPosterPrivateKey: string;
   validatorPrivateKey: string;
+  stakeToken: string;
   parentChainId: ParentChainId;
+  parentChainIsArbitrum?: boolean;
   parentChainRpcUrl: string;
   parentChainBeaconRpcUrl?: string;
+  dasServerUrl?: string;
 };
+
+function getDisableBlobReader(parentChainId: ParentChainId): boolean {
+  if (getParentChainLayer(parentChainId) !== 1 && !parentChainIsArbitrum(parentChainId)) {
+    return true;
+  }
+
+  return false;
+}
 
 export function prepareNodeConfig({
   chainName,
@@ -67,13 +52,25 @@ export function prepareNodeConfig({
   coreContracts,
   batchPosterPrivateKey,
   validatorPrivateKey,
+  stakeToken,
   parentChainId,
+  parentChainIsArbitrum: parentChainIsArbitrumParam,
   parentChainRpcUrl,
   parentChainBeaconRpcUrl,
+  dasServerUrl,
 }: PrepareNodeConfigParams): NodeConfig {
   // For L2 Orbit chains settling to Ethereum mainnet or testnet, a parentChainBeaconRpcUrl is enforced
   if (getParentChainLayer(parentChainId) === 1 && !parentChainBeaconRpcUrl) {
     throw new Error(`"parentChainBeaconRpcUrl" is required for L2 Orbit chains.`);
+  }
+
+  const { chainId: parentChainIdValidated, isCustom: parentChainIsCustom } =
+    validateParentChain(parentChainId);
+
+  if (parentChainIsCustom && typeof parentChainIsArbitrumParam === 'undefined') {
+    throw new Error(
+      `"params.parentChainIsArbitrum" must be provided when using a custom parent chain.`,
+    );
   }
 
   const config: NodeConfig = {
@@ -82,7 +79,9 @@ export function prepareNodeConfig({
         {
           'chain-id': chainConfig.chainId,
           'parent-chain-id': parentChainId,
-          'parent-chain-is-arbitrum': parentChainIsArbitrum(validateParentChain(parentChainId)),
+          'parent-chain-is-arbitrum': parentChainIsCustom
+            ? parentChainIsArbitrumParam!
+            : parentChainIsArbitrum(parentChainIdValidated),
           'chain-name': chainName,
           'chain-config': chainConfig,
           'rollup': {
@@ -92,6 +91,7 @@ export function prepareNodeConfig({
             'rollup': coreContracts.rollup,
             'validator-utils': coreContracts.validatorUtils,
             'validator-wallet-creator': coreContracts.validatorWalletCreator,
+            'stake-token': stakeToken,
             'deployed-at': coreContracts.deployedAtBlockNumber,
           },
         },
@@ -133,6 +133,10 @@ export function prepareNodeConfig({
       },
       'dangerous': {
         'no-sequencer-coordinator': true,
+        'disable-blob-reader': getDisableBlobReader(parentChainId),
+      },
+      'bold': {
+        strategy: 'MakeNodes',
       },
     },
     'execution': {
@@ -154,6 +158,8 @@ export function prepareNodeConfig({
     };
   }
 
+  const dasServerUrlWithFallback = dasServerUrl ?? 'http://localhost';
+
   if (chainConfig.arbitrum.DataAvailabilityCommittee) {
     config.node!['data-availability'] = {
       'enable': true,
@@ -161,14 +167,14 @@ export function prepareNodeConfig({
       'parent-chain-node-url': parentChainRpcUrl,
       'rest-aggregator': {
         enable: true,
-        urls: ['http://localhost:9877'],
+        urls: [`${dasServerUrlWithFallback}:9877`],
       },
       'rpc-aggregator': {
         'enable': true,
         'assumed-honest': 1,
         'backends': stringifyBackendsJson([
           {
-            url: 'http://localhost:9876',
+            url: `${dasServerUrlWithFallback}:9876`,
             pubkey:
               'YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
             signermask: 1,

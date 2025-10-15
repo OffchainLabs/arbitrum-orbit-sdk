@@ -1,0 +1,132 @@
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "low": true,
+  "allowlist": [
+    // OpenZeppelin
+    ////////////
+    // https://github.com/advisories/GHSA-4g63-c64m-25w9
+    // OpenZeppelin Contracts's SignatureChecker may revert on invalid EIP-1271 signers
+    // We dont use EIP-1271
+    "GHSA-4g63-c64m-25w9",
+    // https://github.com/advisories/GHSA-qh9x-gcfh-pcrw
+    // OpenZeppelin Contracts's ERC165Checker may revert instead of returning false
+    // We don't use ERC165Checker
+    "GHSA-qh9x-gcfh-pcrw",
+    // https://github.com/advisories/GHSA-7grf-83vw-6f5x
+    // OpenZeppelin Contracts ERC165Checker unbounded gas consumption
+    // We don't use ERC165Checker
+    "GHSA-7grf-83vw-6f5x",
+    // https://github.com/advisories/GHSA-xrc4-737v-9q75
+    // OpenZeppelin Contracts's GovernorVotesQuorumFraction updates to quorum may affect past defeated proposals
+    // We don't use GovernorVotesQuorumFraction
+    "GHSA-xrc4-737v-9q75",
+    // https://github.com/advisories/GHSA-4h98-2769-gh6h
+    // OpenZeppelin Contracts vulnerable to ECDSA signature malleability
+    // We don’t use signatures for replay protection anywhere
+    "GHSA-4h98-2769-gh6h",
+    // https://github.com/advisories/GHSA-mx2q-35m2-x2rh
+    // OpenZeppelin Contracts TransparentUpgradeableProxy clashing selector calls may not be delegated
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts-upgradeable
+    // from: arb-bridge-peripherals>@openzeppelin/contracts-upgradeable
+    // from: arb-bridge-peripherals>arb-bridge-eth>@openzeppelin/contracts-upgradeable
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts
+    // from: arb-bridge-peripherals>@openzeppelin/contracts
+    // from: arb-bridge-peripherals>arb-bridge-eth>@openzeppelin/contracts
+    // Clashing selector between proxy and implementation can only be caused deliberately
+    "GHSA-mx2q-35m2-x2rh",
+    // https://github.com/advisories/GHSA-93hq-5wgc-jc82
+    // GovernorCompatibilityBravo may trim proposal calldata
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts-upgradeable
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts
+    // We don't use GovernorCompatibilityBravo
+    "GHSA-93hq-5wgc-jc82",
+    // https://github.com/advisories/GHSA-5h3x-9wvq-w4m2
+    // OpenZeppelin Contracts's governor proposal creation may be blocked by frontrunning
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts-upgradeable
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts
+    // We don't use Governor or GovernorCompatibilityBravo
+    "GHSA-5h3x-9wvq-w4m2",
+    // https://github.com/advisories/GHSA-g4vp-m682-qqmp
+    // OpenZeppelin Contracts vulnerable to Improper Escaping of Output
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts-upgradeable
+    // from @arbitrum/nitro-contracts>@openzeppelin/contracts
+    // We don't use ERC2771Context
+    "GHSA-g4vp-m682-qqmp",
+    // https://github.com/advisories/GHSA-wprv-93r4-jj2p
+    // OpenZeppelin Contracts using MerkleProof multiproofs may allow proving arbitrary leaves for specific trees
+    // we don't use oz/merkle-trees anywhere
+    // from @arbitrum/nitro-contracts>@offchainlabs/upgrade-executor>@openzeppelin/contracts-upgradeable
+    // from @arbitrum/nitro-contracts>@offchainlabs/upgrade-executor>@openzeppelin/contracts
+    "GHSA-wprv-93r4-jj2p",
+    // https://github.com/advisories/GHSA-9vx6-7xxf-x967
+    // OpenZeppelin Contracts base64 encoding may read from potentially dirty memory
+    // we don't use the base64 functions
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts-upgradeable
+    // from: @arbitrum/token-bridge-contracts>@openzeppelin/contracts-upgradeable
+    // from: @arbitrum/nitro-contracts>@openzeppelin/contracts
+    // from: @arbitrum/token-bridge-contracts>@openzeppelin/contracts
+    "GHSA-9vx6-7xxf-x967",
+    // https://github.com/advisories/GHSA-584q-6j8j-r5pm
+    // secp256k1-node allows private key extraction over ECDH
+    // We're using eliptic 5.0.7 which doesn't contain the issue
+    // https://github.com/cryptocoinjs/secp256k1-node/commit/dc37f41f2abfe87853b54bcd7d1b556db41b0c64#diff-7ae45ad102eab3b6d7e7896acd08c427a9b25b346470d7bc6507b6481575d519R35
+    // from: @arbitrum/token-bridge-contracts > @openzeppelin/upgrades-core > ethereumjs-util > ethereum-cryptography
+    "GHSA-584q-6j8j-r5pm",
+    // https://github.com/advisories/GHSA-3xgq-45jj-v275
+    // cross-spawn command injection vulnerability
+    // Only used during development via audit-ci, nyc, and patch-package
+    // from: audit-ci>cross-spawn
+    // from: nyc>foreground-child>cross-spawn
+    // from: nyc>spawn-wrap>foreground-child>cross-spawn
+    // from: @arbitrum/nitro-contracts>patch-package>cross-spawn
+    // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>cross-spawn
+    // from: @offchainlabs/l1-l3-teleport-contracts>@arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>cross-spawn
+    "GHSA-3xgq-45jj-v275",
+    // https://github.com/advisories/GHSA-67mh-4wv8-2f99
+    // esbuild enables any website to send any requests to the development server and read the response
+    // esbuild is only used with @wagmi/cli during development
+    // from: @wagmi/cli>esbuild
+    "GHSA-67mh-4wv8-2f99",
+    // https://github.com/advisories/GHSA-4r4m-qw57-chr8
+    // the vite dev server (when exposed to the network with --host) can return contents of arbitrary files
+    //
+    // https://github.com/advisories/GHSA-356w-63v5-8wf4
+    // the vite dev server (when exposed to the network with --host) can return contents of arbitrary files
+    //
+    // https://github.com/advisories/GHSA-xcj6-pq6g-qj4x
+    // the vite dev server (when exposed to the network with --host) can return contents of arbitrary files
+    //
+    // https://github.com/advisories/GHSA-859w-5945-r5v3
+    // the vite dev server (when exposed to the network with --host) can return contents of arbitrary files
+    //
+    // https://github.com/advisories/GHSA-g4jq-h2w9-997c
+    // files starting with the same name with the public directory were served bypassing the server.fs settings
+    //
+    // https://github.com/advisories/GHSA-jqfw-vq24-v9c3
+    // any HTML files on the machine were served regardless of the server.fs settings
+    //
+    // vite is only used with vitest for running tests, and without exposing the dev server to the network
+    //
+    // from: vitest>vite
+    // from: vitest>vite-node>vite
+    "GHSA-4r4m-qw57-chr8",
+    "GHSA-356w-63v5-8wf4",
+    "GHSA-xcj6-pq6g-qj4x",
+    "GHSA-859w-5945-r5v3",
+    "GHSA-g4jq-h2w9-997c",
+    "GHSA-jqfw-vq24-v9c3",
+    // https://github.com/advisories/GHSA-v6h2-p8h4-qcjw
+    // brace-expansion exposes a regular expression denial of service vulnerability
+    // Only used in development (patch-package and ts-morph)
+    // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>rimraf>glob>minimatch>brace-expansion
+    // from: patch-package>rimraf>glob>minimatch>brace-expansion
+    // from: ts-morph>@ts-morph/common>minimatch>brace-expansion
+    "GHSA-v6h2-p8h4-qcjw",
+    // https://github.com/advisories/GHSA-52f5-9888-hmc6
+    // tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter
+    // Only used in development
+    // from: patch-package>tmp
+    // from: @arbitrum/token-bridge-contracts>@arbitrum/nitro-contracts>patch-package>tmp
+    "GHSA-52f5-9888-hmc6"
+  ]
+}

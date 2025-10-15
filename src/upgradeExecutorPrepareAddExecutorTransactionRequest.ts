@@ -1,24 +1,29 @@
 import {
   Address,
   PublicClient,
+  Transport,
+  Chain,
   encodeFunctionData,
   PrepareTransactionRequestReturnType,
 } from 'viem';
-import { upgradeExecutor } from './contracts';
+
+import { upgradeExecutorABI } from './contracts/UpgradeExecutor';
 import {
   UPGRADE_EXECUTOR_ROLE_EXECUTOR,
   upgradeExecutorEncodeFunctionData,
 } from './upgradeExecutorEncodeFunctionData';
-import { validateChain } from './utils/validateChain';
+import { assertChainId } from './utils/assertChainId';
 
 /**
  * Type for the params of the {@link upgradeExecutorPrepareAddExecutorTransactionRequest} function
  */
-export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams = {
+export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams<
+  TChain extends Chain | undefined,
+> = {
   account: Address;
   upgradeExecutorAddress: Address;
   executorAccountAddress: Address;
-  publicClient: PublicClient;
+  publicClient: PublicClient<Transport, TChain>;
 };
 
 /**
@@ -42,18 +47,20 @@ export type UpgradeExecutorPrepareAddExecutorTransactionRequestParams = {
  *   publicClient,
  * });
  */
-export async function upgradeExecutorPrepareAddExecutorTransactionRequest({
+export async function upgradeExecutorPrepareAddExecutorTransactionRequest<
+  TChain extends Chain | undefined,
+>({
   account,
   upgradeExecutorAddress,
   executorAccountAddress,
   publicClient,
-}: UpgradeExecutorPrepareAddExecutorTransactionRequestParams) {
-  const chainId = validateChain(publicClient);
+}: UpgradeExecutorPrepareAddExecutorTransactionRequestParams<TChain>) {
+  const chainId = assertChainId(publicClient);
 
   // 0. Verify that the account doesn't have the EXECUTOR role already
   const accountHasExecutorRole = await publicClient.readContract({
     address: upgradeExecutorAddress,
-    abi: upgradeExecutor.abi,
+    abi: upgradeExecutorABI,
     functionName: 'hasRole',
     args: [UPGRADE_EXECUTOR_ROLE_EXECUTOR, account],
   });
@@ -63,7 +70,7 @@ export async function upgradeExecutorPrepareAddExecutorTransactionRequest({
 
   // 1. Encode the calldata to be sent in the transaction (through the UpgradeExecutor)
   const grantRoleCalldata = encodeFunctionData({
-    abi: upgradeExecutor.abi,
+    abi: upgradeExecutorABI,
     functionName: 'grantRole',
     args: [
       UPGRADE_EXECUTOR_ROLE_EXECUTOR, // role
@@ -72,6 +79,7 @@ export async function upgradeExecutorPrepareAddExecutorTransactionRequest({
   });
 
   // 2. Prepare the transaction (must be called through the UpgradeExecutor)
+  // @ts-ignore (todo: fix viem type issue)
   const request = await publicClient.prepareTransactionRequest({
     chain: publicClient.chain,
     to: upgradeExecutorAddress,

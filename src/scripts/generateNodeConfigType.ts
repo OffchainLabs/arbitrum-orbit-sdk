@@ -5,7 +5,7 @@ import { Project, WriterFunction, Writers } from 'ts-morph';
 const { objectType } = Writers;
 
 function getNitroNodeImageTag(): string {
-  const defaultNitroNodeTag = 'v2.3.3-6a1c1a7';
+  const defaultNitroNodeTag = 'v3.6.0-fc07dd2';
   const argv = process.argv.slice(2);
 
   if (argv.length < 2 || argv[0] !== '--nitro-node-tag') {
@@ -49,11 +49,17 @@ function parseCliOptions(fileContents: string): CliOption[] {
     strings: 'string[]',
     stringArray: 'string[]',
     int: 'number',
+    int16: 'number',
+    int32: 'number',
     uint: 'number',
+    uint16: 'number',
     uint32: 'number',
     float: 'number',
+    AllowedSeeks: 'number',
+    backendConfigList: 'string',
     boolean: 'boolean',
     duration: 'string',
+    durationSlice: 'string[]',
   };
 
   // split into lines

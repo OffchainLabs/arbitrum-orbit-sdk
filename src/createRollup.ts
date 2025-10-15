@@ -1,4 +1,4 @@
-import { Address, Chain, PrivateKeyAccount, PublicClient, zeroAddress } from 'viem';
+import { Address, Chain, PrivateKeyAccount, PublicClient, Transport, zeroAddress } from 'viem';
 
 import { CoreContracts } from './types/CoreContracts';
 import { createRollupPrepareTransactionRequest } from './createRollupPrepareTransactionRequest';
@@ -8,18 +8,19 @@ import {
 } from './createRollupPrepareTransactionReceipt';
 import { createRollupEnoughCustomFeeTokenAllowance } from './createRollupEnoughCustomFeeTokenAllowance';
 import { createRollupPrepareCustomFeeTokenApprovalTransactionRequest } from './createRollupPrepareCustomFeeTokenApprovalTransactionRequest';
-import { getBlockExplorerUrl } from './utils/getters';
+import { getBlockExplorerUrl } from './utils/getBlockExplorerUrl';
 import {
   CreateRollupTransaction,
   createRollupPrepareTransaction,
 } from './createRollupPrepareTransaction';
-import { CreateRollupParams } from './types/createRollupTypes';
-import { ParentChainPublicClient, validateParentChainPublicClient } from './types/ParentChain';
+import { CreateRollupParams, RollupCreatorSupportedVersion } from './types/createRollupTypes';
+import { validateParentChain } from './types/ParentChain';
 
-type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
+type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain extends Chain | undefined> = {
   nativeToken: Address;
-  parentChainPublicClient: ParentChainPublicClient;
+  parentChainPublicClient: PublicClient<Transport, TChain>;
   account: PrivateKeyAccount;
+  rollupCreatorVersion?: RollupCreatorSupportedVersion;
 };
 
 /**
@@ -30,15 +31,19 @@ type EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams = {
  * If not, perform an approval transaction to grant the custom fee token
  * spend allowance to the Rollup Creator address.
  */
-async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
+async function ensureCustomGasTokenAllowanceGrantedToRollupCreator<
+  TChain extends Chain | undefined,
+>({
   nativeToken,
   parentChainPublicClient,
   account,
-}: EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams) {
+  rollupCreatorVersion = 'v3.1',
+}: EnsureCustomGasTokenAllowanceGrantedToRollupCreatorParams<TChain>) {
   const allowanceParams = {
     nativeToken,
     account: account.address,
     publicClient: parentChainPublicClient,
+    rollupCreatorVersion,
   };
 
   if (!(await createRollupEnoughCustomFeeTokenAllowance(allowanceParams))) {
@@ -71,11 +76,25 @@ async function ensureCustomGasTokenAllowanceGrantedToRollupCreator({
 /**
  * This type is for the params of the createRollup function
  */
-export type CreateRollupFunctionParams = {
-  params: CreateRollupParams;
-  account: PrivateKeyAccount;
-  parentChainPublicClient: PublicClient;
-};
+export type CreateRollupFunctionParams<TChain extends Chain | undefined> =
+  | {
+      params: CreateRollupParams<'v2.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion: 'v2.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion: 'v3.1';
+    }
+  | {
+      params: CreateRollupParams<'v3.1'>;
+      account: PrivateKeyAccount;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+      rollupCreatorVersion?: never;
+    };
 
 /**
  * @param {Object} createRollupResults - results of the createRollup function
@@ -123,7 +142,7 @@ export type CreateRollupResults = {
  * @returns Promise<{@link CreateRollupResults}> - the transaction, the transaction receipt, and the core contracts.
  *
  * @example
- * const createRollupConfig = createRollupPrepareConfig({
+ * const createRollupConfig = createRollupPrepareDeploymentParamsConfig(parentChainPublicClient, {
  *   chainId: BigInt(chainId),
  *   owner: deployer.address,
  *   chainConfig: prepareChainConfig({
@@ -141,48 +160,60 @@ export type CreateRollupResults = {
  *   coreContracts,
  * } = await createRollup({
  *   params: {
- *    config: createRollupConfig,
- *     batchPoster,
+ *     config: createRollupConfig,
+ *     batchPosters,
  *     validators,
  *  },
  *  account: deployer,
  *  parentChainPublicClient,
  * });
  */
-export async function createRollup({
+export async function createRollup<TChain extends Chain | undefined>({
   params,
   account,
   parentChainPublicClient,
-}: CreateRollupFunctionParams): Promise<CreateRollupResults> {
-  const validatedParentChainPublicClient = validateParentChainPublicClient(parentChainPublicClient);
-  const parentChain = validatedParentChainPublicClient.chain;
+  rollupCreatorVersion = 'v3.1',
+}: CreateRollupFunctionParams<TChain>): Promise<CreateRollupResults> {
+  validateParentChain(parentChainPublicClient);
+
+  const parentChain = parentChainPublicClient.chain;
   const nativeToken = params.nativeToken ?? zeroAddress;
 
   if (nativeToken !== zeroAddress) {
     // check Rollup Creator custom gas token spending allowance and approve if necessary
     await ensureCustomGasTokenAllowanceGrantedToRollupCreator({
       nativeToken,
-      parentChainPublicClient: validatedParentChainPublicClient,
+      parentChainPublicClient,
       account,
+      rollupCreatorVersion,
     });
   }
 
   // prepare the transaction for deploying the core contracts
-  const txRequest = await createRollupPrepareTransactionRequest({
-    params,
-    account: account.address,
-    publicClient: validatedParentChainPublicClient,
-  });
+  const txRequest =
+    rollupCreatorVersion === 'v2.1'
+      ? await createRollupPrepareTransactionRequest({
+          params: params as CreateRollupParams<'v2.1'>,
+          account: account.address,
+          publicClient: parentChainPublicClient,
+          rollupCreatorVersion: 'v2.1',
+        })
+      : await createRollupPrepareTransactionRequest({
+          params: params as CreateRollupParams<'v3.1'>,
+          account: account.address,
+          publicClient: parentChainPublicClient,
+          rollupCreatorVersion: 'v3.1',
+        });
 
   // sign and send the transaction
   console.log(`Deploying the Rollup...`);
-  const txHash = await validatedParentChainPublicClient.sendRawTransaction({
+  const txHash = await parentChainPublicClient.sendRawTransaction({
     serializedTransaction: await account.signTransaction(txRequest),
   });
 
   // get the transaction receipt after waiting for the transaction to complete
   const txReceipt = createRollupPrepareTransactionReceipt(
-    await validatedParentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
+    await parentChainPublicClient.waitForTransactionReceipt({ hash: txHash }),
   );
 
   // get the transaction
@@ -190,7 +221,8 @@ export async function createRollup({
   // from RPCs that use load balancing and caching. More information can be found here:
   // https://github.com/wevm/viem/issues/1056#issuecomment-1689800265 )
   const tx = createRollupPrepareTransaction(
-    await validatedParentChainPublicClient.getTransaction({ hash: txHash }),
+    // @ts-ignore (todo: fix viem type issue)
+    await parentChainPublicClient.getTransaction({ hash: txHash }),
   );
 
   console.log(`Deployed in ${getBlockExplorerUrl(parentChain)}/tx/${txReceipt.transactionHash}`);

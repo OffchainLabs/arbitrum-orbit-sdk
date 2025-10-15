@@ -9,7 +9,7 @@ import {
   createRollupHelper,
 } from '../testHelpers';
 import { sequencerInboxActions } from './sequencerInboxActions';
-import { sequencerInboxABI } from '../abi/sequencerInboxABI';
+import { sequencerInboxABI } from '../contracts/SequencerInbox';
 
 const { l3RollupOwner, l3TokenBridgeDeployer, deployer } = getNitroTestnodePrivateKeyAccounts();
 
@@ -37,7 +37,7 @@ describe('sequencerInboxReadContract', () => {
       sequencerInbox: l3SequencerInbox,
     });
 
-    expect(result.toLowerCase()).toEqual(l3Bridge);
+    expect(result.toLowerCase()).toEqual(l3Bridge.toLowerCase());
   });
 
   it('successfully fetches dasKeySetInfo', async () => {
@@ -102,7 +102,7 @@ describe('sequencerInboxReadContract', () => {
       sequencerInbox: l3SequencerInbox,
     });
 
-    expect(result.toLowerCase()).toEqual(l3Rollup);
+    expect(result.toLowerCase()).toEqual(l3Rollup.toLowerCase());
   });
 
   it('successfully call totalDelayedMessagesRead', async () => {
@@ -115,16 +115,15 @@ describe('sequencerInboxReadContract', () => {
   });
 });
 
-describe('sequencerInboxPrepareTransactionRequest', async () => {
+describe('sequencerInboxPrepareTransactionRequest', () => {
   it('successfully call setValidKeyset', async () => {
     // Keyset needs to be set on anytrust chain
-    const deployerAddress = deployer.address;
-    const batchPoster = deployer.address;
-    const validators: [Address] = [deployerAddress];
+    const batchPosters = [deployer.address];
+    const validators = [deployer.address];
 
     const { createRollupInformation } = await createRollupHelper({
       deployer: l3TokenBridgeDeployer,
-      batchPoster,
+      batchPosters,
       validators,
       nativeToken: zeroAddress,
       client,
@@ -178,9 +177,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       upgradeExecutor: l3UpgradeExecutor,
     });
 
-    await client.sendRawTransaction({
+    const txHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
+
+    await client.waitForTransactionReceipt({ hash: txHash });
 
     const result = await client.sequencerInboxReadContract({
       functionName: 'isBatchPoster',
@@ -197,9 +198,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       account: l3RollupOwner.address,
       upgradeExecutor: l3UpgradeExecutor,
     });
-    await client.sendRawTransaction({
+    const revertTxHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(revertTransactionRequest),
     });
+
+    await client.waitForTransactionReceipt({ hash: revertTxHash });
 
     const resultAfterReverting = await client.sequencerInboxReadContract({
       functionName: 'isBatchPoster',
@@ -229,9 +232,11 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       ],
       account: l3RollupOwner.address,
     });
-    await client.sendRawTransaction({
+    const txHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(transactionRequest),
     });
+
+    await client.waitForTransactionReceipt({ hash: txHash });
 
     const result = await client.sequencerInboxReadContract({
       functionName: 'maxTimeVariation',
@@ -254,8 +259,10 @@ describe('sequencerInboxPrepareTransactionRequest', async () => {
       ],
       account: l3RollupOwner.address,
     });
-    await client.sendRawTransaction({
+    const revertTxHash = await client.sendRawTransaction({
       serializedTransaction: await l3RollupOwner.signTransaction(transactionRequestRevert),
     });
+
+    await client.waitForTransactionReceipt({ hash: revertTxHash });
   });
 });

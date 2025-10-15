@@ -1,6 +1,7 @@
-import { PublicClient } from 'viem';
+import { Client, Transport, Chain } from 'viem';
 
 import { ParentChainId, validateParentChain } from './types/ParentChain';
+import { getParentChainBlockTime } from './getParentChainBlockTime';
 
 export type SequencerInboxMaxTimeVariation = {
   delayBlocks: bigint;
@@ -9,20 +10,26 @@ export type SequencerInboxMaxTimeVariation = {
   futureSeconds: bigint;
 };
 
-export function getDefaultSequencerInboxMaxTimeVariation(
-  parentChainIdOrPublicClient: ParentChainId | PublicClient,
+export function getDefaultSequencerInboxMaxTimeVariation<TChain extends Chain | undefined>(
+  parentChainIdOrClient: ParentChainId | Client<Transport, TChain>,
 ): SequencerInboxMaxTimeVariation {
-  validateParentChain(parentChainIdOrPublicClient);
+  const { chainId: parentChainId, isCustom: parentChainIsCustom } =
+    validateParentChain(parentChainIdOrClient);
+
+  if (parentChainIsCustom) {
+    throw new Error(
+      `[getDefaultSequencerInboxMaxTimeVariation] can't provide defaults for custom parent chain with id ${parentChainId}`,
+    );
+  }
 
   const delaySeconds = 60 * 60 * 24 * 4; // 4 days;
-  const delayBlocks = delaySeconds / 12;
-
   const futureSeconds = 60 * 60; // 1 hour;
-  const futureBlocks = futureSeconds / 12;
+
+  const blockTime = getParentChainBlockTime(parentChainId);
 
   return {
-    delayBlocks: BigInt(delayBlocks),
-    futureBlocks: BigInt(futureBlocks),
+    delayBlocks: BigInt(delaySeconds / blockTime),
+    futureBlocks: BigInt(futureSeconds / blockTime),
     delaySeconds: BigInt(delaySeconds),
     futureSeconds: BigInt(futureSeconds),
   };

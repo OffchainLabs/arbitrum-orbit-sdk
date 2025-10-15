@@ -1,33 +1,35 @@
 import {
   mainnet,
-  sepolia,
-  holesky,
-  nitroTestnodeL1,
   arbitrumOne,
   arbitrumNova,
+  base,
+  sepolia,
   arbitrumSepolia,
+  baseSepolia,
+  nitroTestnodeL1,
   nitroTestnodeL2,
 } from './chains';
 import { ParentChainId } from './types/ParentChain';
 
-export function createRollupGetMaxDataSize(parentChainId: ParentChainId) {
+export function createRollupGetMaxDataSize(parentChainId: ParentChainId): bigint {
   // doing switch here to make sure it's exhaustive when checking against `ParentChainId`
   switch (parentChainId) {
-    // L2 mainnet
+    // mainnet L1
     case mainnet.id:
-    // L2 testnet
+    // testnet L1
     case sepolia.id:
-    case holesky.id:
-    // L2 nitro-testnode
+    // local nitro-testnode L1
     case nitroTestnodeL1.id:
       return BigInt(117_964);
 
-    // L3 mainnet
+    // mainnet L2
     case arbitrumOne.id:
     case arbitrumNova.id:
-    // L3 testnet
+    case base.id:
+    // testnet L2
     case arbitrumSepolia.id:
-    // L3 nitro-testnode
+    case baseSepolia.id:
+    // local nitro-testnode L2
     case nitroTestnodeL2.id:
       return BigInt(104_857);
   }

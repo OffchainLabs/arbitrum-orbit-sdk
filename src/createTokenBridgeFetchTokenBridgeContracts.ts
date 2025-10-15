@@ -1,24 +1,25 @@
-import { Address, PublicClient } from 'viem';
+import { Address, PublicClient, Transport, Chain } from 'viem';
 
-import { tokenBridgeCreator } from './contracts';
+import { tokenBridgeCreatorABI } from './contracts/TokenBridgeCreator';
 
 import { Prettify } from './types/utils';
 import { WithTokenBridgeCreatorAddressOverride } from './types/createTokenBridgeTypes';
 import { TokenBridgeContracts } from './types/TokenBridgeContracts';
-import { getTokenBridgeCreatorAddress } from './utils/getters';
+import { getTokenBridgeCreatorAddress } from './utils/getTokenBridgeCreatorAddress';
 
-export type CreateTokenBridgeFetchTokenBridgeContractsParams = Prettify<
-  WithTokenBridgeCreatorAddressOverride<{
-    inbox: Address;
-    parentChainPublicClient: PublicClient;
-  }>
->;
+export type CreateTokenBridgeFetchTokenBridgeContractsParams<TChain extends Chain | undefined> =
+  Prettify<
+    WithTokenBridgeCreatorAddressOverride<{
+      inbox: Address;
+      parentChainPublicClient: PublicClient<Transport, TChain>;
+    }>
+  >;
 
-export async function createTokenBridgeFetchTokenBridgeContracts({
+export async function createTokenBridgeFetchTokenBridgeContracts<TChain extends Chain | undefined>({
   inbox,
   parentChainPublicClient,
   tokenBridgeCreatorAddressOverride,
-}: CreateTokenBridgeFetchTokenBridgeContractsParams): Promise<TokenBridgeContracts> {
+}: CreateTokenBridgeFetchTokenBridgeContractsParams<TChain>): Promise<TokenBridgeContracts> {
   const tokenBridgeCreatorAddress =
     tokenBridgeCreatorAddressOverride ?? getTokenBridgeCreatorAddress(parentChainPublicClient);
 
@@ -31,14 +32,14 @@ export async function createTokenBridgeFetchTokenBridgeContracts({
     parentChainWeth,
   ] = await parentChainPublicClient.readContract({
     address: tokenBridgeCreatorAddress,
-    abi: tokenBridgeCreator.abi,
+    abi: tokenBridgeCreatorABI,
     functionName: 'inboxToL1Deployment',
     args: [inbox],
   });
 
   const parentChainMulticall = await parentChainPublicClient.readContract({
     address: tokenBridgeCreatorAddress,
-    abi: tokenBridgeCreator.abi,
+    abi: tokenBridgeCreatorABI,
     functionName: 'l1Multicall',
   });
 
@@ -64,7 +65,7 @@ export async function createTokenBridgeFetchTokenBridgeContracts({
     orbitChainMulticall,
   ] = await parentChainPublicClient.readContract({
     address: tokenBridgeCreatorAddress,
-    abi: tokenBridgeCreator.abi,
+    abi: tokenBridgeCreatorABI,
     functionName: 'inboxToL2Deployment',
     args: [inbox],
   });
