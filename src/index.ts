@@ -193,7 +193,13 @@ import {
 import { prepareArbitrumNetwork } from './utils/registerNewNetwork';
 import { createGenesisBuilder, GenesisBuilder } from './createGenesisBuilder';
 import { getDefaultPredeploys } from './getDefaultPredeploys';
-import { Genesis, GenesisAlloc, GenesisAccount, PredeployInput } from './createGenesisBuilderTypes';
+import {
+  Genesis,
+  GenesisAlloc,
+  GenesisAccount,
+  PredeployInput,
+  AccountInput,
+} from './createGenesisBuilderTypes';
 
 export {
   arbOwnerPublicActions,
@@ -365,4 +371,5 @@ export {
   GenesisAlloc,
   GenesisAccount,
   PredeployInput,
+  AccountInput,
 };

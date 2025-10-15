@@ -23,12 +23,23 @@ export type GenesisAccount = {
 };
 
 /**
- * Input type for adding a predeploy
+ * Input type for adding a predeploy contract (code required)
  */
 export type PredeployInput = {
   address: Address;
   balance?: bigint;
   code: Hex;
+  storage?: Record<Hex, Hex>;
+  nonce?: bigint;
+};
+
+/**
+ * Input type for adding any account allocation (code optional)
+ */
+export type AccountInput = {
+  address: Address;
+  balance?: bigint;
+  code?: Hex;
   storage?: Record<Hex, Hex>;
   nonce?: bigint;
 };
