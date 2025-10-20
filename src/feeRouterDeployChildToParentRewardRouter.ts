@@ -196,8 +196,8 @@ export async function feeRouterDeployOPChildToParentRewardRouter({
       minDistributionInvervalSeconds ?? DEFAULT_MIN_DISTRIBUTION_INVERVAL_SECONDS,
 
     // setting the default values here
-    parentChainTokenAddress: oneAddress || childChainTokenAddress,
-    childChainTokenAddress: oneAddress || childChainTokenAddress,
+    parentChainTokenAddress: parentChainTokenAddress || oneAddress,
+    childChainTokenAddress: childChainTokenAddress || oneAddress,
   };
 
   const transactionHash = await childChainWalletClient.deployContract({
