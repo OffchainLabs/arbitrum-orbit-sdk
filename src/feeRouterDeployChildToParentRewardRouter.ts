@@ -164,7 +164,6 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
   return transactionHash;
 }
 
-
 /**
  * Deploys the OpChildToParentRewardRouter smart contract and initializes it with the provided configuration.
  *
