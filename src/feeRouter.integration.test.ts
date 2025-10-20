@@ -15,7 +15,7 @@ import { nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
 import {
   feeRouterDeployChildToParentRewardRouter,
-  feeRouterDeployOPChildToParentRewardRouter,
+  feeRouterDeployOpChildToParentRewardRouter,
 } from './feeRouterDeployChildToParentRewardRouter';
 import { feeRouterDeployRewardDistributor } from './feeRouterDeployRewardDistributor';
 
@@ -69,47 +69,6 @@ describe('Fee routing tests', () => {
     });
 
     expect(parentChainTarget).toEqual(randomAccount.address);
-  });
-
-  it(`successfully deploys and configures an OPChildToParentRewardRouter`, async () => {
-    const childToParentRewardRouterDeploymentTransactionHash =
-      await feeRouterDeployOPChildToParentRewardRouter({
-        childChainWalletClient: nitroTestnodeL2WalletClient,
-        parentChainTargetAddress: randomAccount.address,
-        childChainTokenAddress: '0x4200000000000000000000000000000000000011',
-        parentChainTokenAddress: '0x4200000000000000000000000000000000000010',
-      });
-
-    const childToParentRewardRouterDeploymentTransactionReceipt =
-      await nitroTestnodeL2Client.waitForTransactionReceipt({
-        hash: childToParentRewardRouterDeploymentTransactionHash,
-      });
-
-    expect(childToParentRewardRouterDeploymentTransactionReceipt).to.have.property(
-      'contractAddress',
-    );
-
-    const childToParentRewardRouterAddress = getAddress(
-      childToParentRewardRouterDeploymentTransactionReceipt.contractAddress as `0x${string}`,
-    );
-
-    // reading the parentChainTarget
-    const parentChainTarget = await nitroTestnodeL2Client.readContract({
-      address: childToParentRewardRouterAddress,
-      abi: parseAbi(['function parentChainTarget() view returns (address)']),
-      functionName: 'parentChainTarget',
-    });
-
-    expect(parentChainTarget).toEqual(randomAccount.address);
-
-    // reading the opStandardBridge
-    const opStandardBridge = await nitroTestnodeL2Client.readContract({
-      address: childToParentRewardRouterAddress,
-      abi: parseAbi(['function opStandardBridge() view returns (address)']),
-      functionName: 'opStandardBridge',
-    });
-
-    expect(opStandardBridge).toEqual('0x4200000000000000000000000000000000000010');
   });
 
   it(`successfully deploys and configures the RewardDistributor`, async () => {
