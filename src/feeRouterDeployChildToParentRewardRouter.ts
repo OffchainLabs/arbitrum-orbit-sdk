@@ -30,7 +30,6 @@ export type FeeRouterDeployChildToParentRewardRouterParams<TChain extends Chain 
       minDistributionInvervalSeconds?: bigint;
       rollup?: Address;
       parentChainTokenAddress?: Address;
-      routerType?: 'ARB' | 'OP';
     }>
   >;
 
@@ -155,7 +154,7 @@ export async function feeRouterDeployChildToParentRewardRouter<TChain extends Ch
     address: '0x00000000000000000000000000000000000000c8',
   });
   if (nodeIfaceBytecode !== '0xfe') {
-    throw new Error('Not an orbit chain');
+    throw new Error(`Not an orbit chain: ${nodeIfaceBytecode}`);
   }
 
   const transactionHash = await orbitChainWalletClient.deployContract({
