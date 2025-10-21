@@ -10,21 +10,21 @@ For the contents of the genesis.json file, and what predeploys it contains, you 
 
 1. Install dependencies
 
-  ```bash
-  yarn install
-  ```
+```bash
+yarn install
+```
 
 2. Create .env file and add the env vars
 
-  ```bash
-  cp .env.example .env
-  ```
+```bash
+cp .env.example .env
+```
 
-  > [!NOTE]
-  > Make sure you set the correct values of the environment variables for your chain
+> [!NOTE]
+> Make sure you set the correct values of the environment variables for your chain
 
 3. Run the example
 
-  ```bash
-  yarn dev
-  ```
+```bash
+yarn dev
+```

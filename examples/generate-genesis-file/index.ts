@@ -17,14 +17,12 @@ function main() {
   // Note: remove this step once we have a public image
   console.log(`Build genesis file generator container...`);
   execSync(
-    `docker build -t genesis-file-generator https://github.com/OffchainLabs/genesis-file-generator.git#containerization`
+    `docker build -t genesis-file-generator https://github.com/OffchainLabs/genesis-file-generator.git#containerization`,
   );
 
   // Step 1 - Generate genesis file
   console.log(`Generate genesis file...`);
-  execSync(
-    `docker run --env-file ./.env genesis-file-generator > genesis.json`
-  );
+  execSync(`docker run --env-file ./.env genesis-file-generator > genesis.json`);
 
   // Step 2 - Obtain genesis block hash and sendRoot hash
   console.log(`Obtain genesis block hash and sendRoot hash...`);
@@ -37,15 +35,9 @@ function main() {
   // genesisHashes has the following structure:
   // BlockHash: 0xabcd, SendRoot: 0x1234, Batch: 1, PosInBatch: 0
   const genesisHashesStr = genesisHashes.toString();
-  const genesisBlockHash = genesisHashesStr
-    .split(',')[0]
-    .split(':')[1]
-    .trim();
-  const sendRootHash = genesisHashesStr
-    .split(',')[1]
-    .split(':')[1]
-    .trim();
-  
+  const genesisBlockHash = genesisHashesStr.split(',')[0].split(':')[1].trim();
+  const sendRootHash = genesisHashesStr.split(',')[1].split(':')[1].trim();
+
   console.log('');
   console.log('-------------------');
   console.log('Genesis information');
