@@ -13,7 +13,10 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 import { nitroTestnodeL1, nitroTestnodeL2 } from './chains';
 import { getNitroTestnodePrivateKeyAccounts } from './testHelpers';
-import { feeRouterDeployChildToParentRewardRouter } from './feeRouterDeployChildToParentRewardRouter';
+import {
+  feeRouterDeployChildToParentRewardRouter,
+  feeRouterDeployOpChildToParentRewardRouter,
+} from './feeRouterDeployChildToParentRewardRouter';
 import { feeRouterDeployRewardDistributor } from './feeRouterDeployRewardDistributor';
 
 const testnodeAccounts = getNitroTestnodePrivateKeyAccounts();
@@ -37,7 +40,7 @@ const nitroTestnodeL2WalletClient = createWalletClient({
 });
 
 describe('Fee routing tests', () => {
-  it(`successfully deploys and configures the ChildToParentRewardRouter`, async () => {
+  it(`successfully deploys and configures an ArbChildToParentRewardRouter`, async () => {
     const childToParentRewardRouterDeploymentTransactionHash =
       await feeRouterDeployChildToParentRewardRouter({
         parentChainPublicClient: nitroTestnodeL1Client,
