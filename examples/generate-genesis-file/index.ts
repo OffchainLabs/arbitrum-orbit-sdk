@@ -6,6 +6,7 @@ import { sanitizePrivateKey } from '@arbitrum/orbit-sdk/utils';
 import { config } from 'dotenv';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import { createInterface } from 'readline';
 config();
 
 // Env variables check
@@ -41,17 +42,47 @@ function withFallbackPrivateKey(privateKey: string | undefined): `0x${string}` {
   return sanitizePrivateKey(privateKey);
 }
 
-async function main() {
-  // Step 0 - Build genesis file generator container from Github
-  // Note: remove this step once we have a public image
-  console.log(`Build genesis file generator container...`);
-  execSync(
-    `docker build -t genesis-file-generator https://github.com/OffchainLabs/genesis-file-generator.git#containerization`,
-  );
+async function askQuestion(question: string): Promise<string> {
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 
-  // Step 1 - Generate genesis file
-  console.log(`Generate genesis file...`);
-  execSync(`docker run --env-file ./.env genesis-file-generator > genesis.json`);
+  return new Promise((resolve) =>
+    rl.question(question, (answer: string) => {
+      rl.close();
+      resolve(answer);
+    }),
+  );
+}
+
+async function main() {
+  // Step 0 - Check if there's a genesis.json file present in the directory
+  let generateGenesisFile = true;
+  if (fs.existsSync('genesis.json')) {
+    // Ask the user if they want to overwrite the existing file
+    const generateGenesisuserResponse = await askQuestion(
+      'A genesis.json file already exists in the current directory. Do you want to overwrite it? (y/n): ',
+    );
+    if (generateGenesisuserResponse.toLowerCase() !== 'y') {
+      generateGenesisFile = false;
+      console.log('Using existing genesis.json file.');
+    }
+  }
+
+  // Step 1 - If needed, generate the genesis file
+  // Note: remove this step once we have a public image
+  if (generateGenesisFile) {
+    // Build genesis file generator container from Github
+    console.log(`Build genesis file generator container...`);
+    execSync(
+      `docker build -t genesis-file-generator https://github.com/OffchainLabs/genesis-file-generator.git#containerization`,
+    );
+
+    // Generate genesis file
+    console.log(`Generate genesis file...`);
+    execSync(`docker run --env-file ./.env genesis-file-generator > genesis.json`);
+  }
 
   // Step 2 - Obtain genesis block hash and sendRoot hash
   console.log(`Obtain genesis block hash and sendRoot hash...`);
@@ -76,7 +107,11 @@ async function main() {
   console.log(`SendRoot hash: ${sendRootHash}`);
 
   // Step 4 - Create Rollup (optional)
-  if (process.env.CREATE_ROLLUP === 'true') {
+  // Ask the user if they want to create a rollup
+  const createRollupUserResponse = await askQuestion(
+    'Do you want to continue creating the rollup with the current genesis.json file? (y/n)',
+  );
+  if (createRollupUserResponse.toLowerCase() === 'y') {
     // load or generate a random batch poster account
     const batchPosterPrivateKey = withFallbackPrivateKey(process.env.BATCH_POSTER_PRIVATE_KEY);
     const batchPoster = privateKeyToAccount(batchPosterPrivateKey).address;
