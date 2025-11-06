@@ -8,13 +8,19 @@ For the contents of the genesis.json file, and what predeploys it contains, you 
 
 ## Setup
 
-1. Install dependencies
+1. Install dependencies and build the SDK project (from the root of the repository)
 
 ```bash
-yarn install
+yarn install && yarn build
 ```
 
-2. Create .env file and add the env vars
+2. Move to the example script directory
+
+```bash
+cd examples/generate-genesis-file
+```
+
+3. Create .env file and add the env vars
 
 ```bash
 cp .env.example .env
@@ -23,7 +29,7 @@ cp .env.example .env
 > [!NOTE]
 > Make sure you set the correct values of the environment variables for your chain
 
-3. Run the example
+4. Run the example
 
 ```bash
 yarn dev
