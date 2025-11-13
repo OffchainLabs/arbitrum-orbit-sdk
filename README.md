@@ -1,6 +1,6 @@
 # Arbitrum Chain SDK
 
-TypeScript SDK for building [Arbitrum chains](https://docs.arbitrum.io/launch-arbitrum-chain/a-gentle-introduction).
+TypeScript SDK for [building Arbitrum chains](https://docs.arbitrum.io/launch-arbitrum-chain/a-gentle-introduction).
 
 ## Installation
 
