@@ -56,6 +56,28 @@ async function askQuestion(question: string): Promise<string> {
   );
 }
 
+function cleanChainConfigInFile(genesisFilePath: string) {
+  // Read the genesis file
+  const genesisFileContents = fs.readFileSync(genesisFilePath, { encoding: 'utf8' });
+  const genesisConfig = JSON.parse(genesisFileContents);
+
+  // Minify the `config` property
+  const chainConfigMinified = JSON.stringify(genesisConfig.config);
+
+  // Put a placeholder in its place so we can pretty-print the rest
+  const PLACEHOLDER = '__CONFIG_MINIFIED__';
+  genesisConfig.config = PLACEHOLDER;
+
+  // Create the final JSON contents
+  let genesisFileFinalContents = JSON.stringify(genesisConfig, null, 2);
+
+  // Replace the placeholder string (with quotes) by the minified config
+  genesisFileFinalContents = genesisFileFinalContents.replace(`"${PLACEHOLDER}"`, chainConfigMinified);
+
+  // Write result back to file
+  fs.writeFileSync(genesisFilePath, genesisFileFinalContents + '\n', { encoding: 'utf8' });
+}
+
 async function main() {
   // Step 0 - Check if there's a genesis.json file present in the directory
   let generateGenesisFile = true;
@@ -76,13 +98,16 @@ async function main() {
     // Build genesis file generator container from Github
     console.log(`Build genesis file generator container...`);
     execSync(
-      `docker build -t genesis-file-generator https://github.com/OffchainLabs/genesis-file-generator.git`,
+      `docker build -t genesis-file-generator https://github.com/OffchainLabs/genesis-file-generator.git#clean-chain-config`,
     );
 
     // Generate genesis file
     console.log(`Generate genesis file...`);
     execSync(`docker run --env-file ./.env genesis-file-generator > genesis.json`);
   }
+
+  // Remove the extra newlines and whitespaces from the chainConfig in the genesis file
+  cleanChainConfigInFile('genesis.json');
 
   // Step 2 - Obtain genesis block hash and sendRoot hash
   console.log(`Obtain genesis block hash and sendRoot hash...`);
